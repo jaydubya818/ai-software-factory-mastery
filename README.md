@@ -1,7 +1,6 @@
 # The Executive Architect Playbook
 
-_My Personal Guide to Building AI Software Factories, Mastering AI Engineering
-Leadership, and Becoming the Best Version of Myself_
+_My Personal Guide to Building AI Software Factories
 
 This is my private operating manual, textbook, notebook, and mentor. It exists
 to help me become an exceptional AI engineering executive and Executive
