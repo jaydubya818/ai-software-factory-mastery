@@ -1,0 +1,56 @@
+schema_version: 1
+lab: governed-issue-to-validated-pull-request
+run_date: 2026-08-08
+result: PARTIAL
+mastery_credit: false
+classification: INTERNAL
+mission_control:
+  head_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
+  worktree_clean: false
+  runtime_profile: research-lab
+  source_reproducible: false
+target_repository:
+  repository: jaydubya818/mission-control-factory-lab
+  commit: a4c864d743e2304feb2979870f41efbbae5d632b
+  tag: lab-baseline-v1
+  branch_protected: true
+  ci_run: https://github.com/jaydubya818/mission-control-factory-lab/actions/runs/31239800515
+records:
+  workspace_id: sn783ww03ds4ksc0814yxtvw8d8b6vk7
+  mission_id: gs7zf5n8p9qkr64j9exwx2xqhn8c3hex
+  plan_revision: 1
+  implementation_work_order_id: yh74b499sa4d8qjepjmydj1dqd8c25tw
+  validator_work_order_id: yh7edkdw4s30h14ybzyfjd4b2d8c2zp1
+  assertion_id: assertion-1
+  task_ids: []
+  attempt_ids: []
+  evidence_ids: []
+  pull_request: null
+blockers:
+  - github_app_server_credentials_missing
+  - github_app_installation_missing
+  - governance_policy_missing
+  - factory_configuration_missing
+  - real_codex_github_worker_incomplete
+  - mission_control_worktree_not_reproducible
+agent_assistance:
+  tool: Codex
+  contribution: full_setup_diagnostic_and_documentation
+  learner_independent_minutes: 0
+  mastery_claimed: false
+artifacts:
+  - path: mission-draft.png
+    classification: INTERNAL
+    sha256: 925a08b607a92079d712dab225dd894c4051e64d34489ea3f5700646818341b9
+  - path: approved-plan.png
+    classification: INTERNAL
+    sha256: 38e2ab5e295714a17bbba900a47d0fb1320db946747b55ad897d19e287565ee1
+  - path: work-order-approval-gate.png
+    classification: INTERNAL
+    sha256: 5fcd4abc888ea8fe82db4d8f6cd0707c71a66dc34df523928ffc566bb73bdc66
+  - path: factory-readiness-blockers.png
+    classification: INTERNAL
+    sha256: f14a2706b5bcfe5e69c762326d62193de4e73b4d25b7fe6badd523e7100d18c0
+  - path: mission-control-operator-error.png
+    classification: INTERNAL
+    sha256: 8700113e90b98672d18a1c944ef7c4fd368c6f419a5f6afbab975984c6109454
