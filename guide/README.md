@@ -47,6 +47,10 @@ progressive autonomy, organizational transformation, human attention, and
 factory economics. Distinguish factory-owned deployment governance from
 deployment execution delegated to CI/CD systems.
 
+Chapter:
+
+- [The Human-Agent Operating Model](./03-operating-model/01-human-agent-operating-model.md)
+
 ## 4. Domain Model
 
 Develop the authoritative chain from organizational scope to accepted outcome:
@@ -88,6 +92,10 @@ Cover testing, evaluations, observability, reliability, evidence provenance,
 freshness, conflicting results, waivers, and production feedback. Treat lead
 time to validated customer value, change failure rate, and engineering
 leverage as a coupled success system.
+
+Chapter:
+
+- [Quality and Evidence Architecture](./07-quality-engineering/01-quality-and-evidence-architecture.md)
 
 ## 8. Security and Governance
 
