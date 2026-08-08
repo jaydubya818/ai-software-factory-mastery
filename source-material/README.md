@@ -4,6 +4,10 @@ These files are preserved verbatim as research. They are not current doctrine
 and should not be edited in place. New material should synthesize, challenge,
 and improve them while retaining their provenance.
 
+Only AI Software Factory material should be promoted into authored chapters.
+Any broader personal-development content remains historical source context and
+is outside the current repository scope.
+
 | Source | SHA-256 |
 | --- | --- |
 | [AI Software Factory Mission](./ai-software-factory-mission.txt) | `2720b4d3507f26455bf1934a1ba9b453e4b08fc7f648865f18d6ae1d45c1ebbd` |
