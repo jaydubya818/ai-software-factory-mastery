@@ -1,12 +1,12 @@
 ---
 title: Governed Issue to Validated Pull Request
-status: proposed
+status: execution-blocked
 audience:
   - executive
   - architect
   - senior-engineer
   - ai-engineer
-last_verified: 2026-08-07
+last_verified: 2026-08-08
 ---
 
 # Governed Issue to Validated Pull Request
@@ -38,11 +38,13 @@ human accountability without introducing unrelated architectural risk.
 
 ## Current Mission Control Implementation
 
-The implementation baseline has not yet been selected or traced for this lab.
-Before execution, record the exact Mission Control commit, controlled target
-repository commit, relevant source paths, applicable Factory Configuration,
-tests, and browser route. Until the complete journey is observed, this document
-is a proposed lab contract rather than proof of current capability.
+The controlled target baseline is
+`jaydubya818/mission-control-factory-lab` at commit
+`a4c864d743e2304feb2979870f41efbbae5d632b`, tagged `lab-baseline-v1`.
+The first browser run reached an approved Plan and two released WorkOrders but
+stopped before dispatch. It therefore remains evidence of partial control-plane
+operation, not proof of the complete factory promise. See the
+[2026-08-08 execution assessment](evidence/2026-08-08-golden-path/README.md).
 
 ## Acceptance criteria
 
