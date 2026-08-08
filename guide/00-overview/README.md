@@ -88,7 +88,8 @@ For a first pass of roughly one hour:
 3. Read [What Is an AI Software Factory?](../01-vision/01-what-is-an-ai-software-factory.md).
 4. Read [Operational Autonomy and Trust Calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md).
 5. Read [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
-6. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+6. Read [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md).
+7. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture

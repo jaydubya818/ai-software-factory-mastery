@@ -70,6 +70,10 @@ machines, concurrency, retries, cancellation, recovery, and orchestration.
 Implementation-specific material must remain clearly separated from enduring
 runtime principles.
 
+Chapter:
+
+- [Control Plane and Execution Plane](./05-runtime-architecture/01-control-plane-and-execution-plane.md)
+
 ## 6. AI Engineering
 
 Build technical fluency in language models, agents, tool use, MCP, context
