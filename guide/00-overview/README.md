@@ -81,7 +81,7 @@ promotion of authority, merge, and consequential production decisions.
 
 ## Recommended reading order
 
-For a first pass of roughly one hour:
+For the foundational pass, read in this order:
 
 1. Read [AI Software Factory and Mission Control](./01-ai-software-factory-and-mission-control.md).
 2. Read the [Canonical Glossary](./02-canonical-glossary.md).
@@ -90,9 +90,15 @@ For a first pass of roughly one hour:
 5. Read [The Human-Agent Operating Model](../03-operating-model/01-human-agent-operating-model.md).
 6. Read [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
 7. Read [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md).
-8. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
-9. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
-10. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+8. Read [Runtime Orchestration and State Machines](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md).
+9. Read [Tasks, Attempts, Leases, Idempotency, and Recovery](../05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md).
+10. Read [Agent Architecture, MCP, Tools, Context, and Memory](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md).
+11. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
+12. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
+13. Read [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md).
+14. Read [Factory Economics and Operating Metrics](../03-operating-model/02-factory-economics-and-operating-metrics.md).
+15. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
+16. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture
