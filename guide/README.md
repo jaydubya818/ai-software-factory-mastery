@@ -103,6 +103,10 @@ Study identity, authentication, authorization, policy, approvals, isolation,
 data boundaries, auditability, budgets, risk, prompt injection, service
 identity, and separation of duties.
 
+Chapter:
+
+- [Governance, Policy, and Risk-Proportional Approval](./08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md)
+
 ## 9. Mission Control Case Studies
 
 Use Mission Control to examine real architectural decisions, implementation
@@ -143,3 +147,19 @@ Start with the [initial research canon](./12-research-journal/initial-canon.md).
 All full chapters follow the [chapter writing standard](./writing-standard.md).
 The original planning and interview drafts remain in
 [source material](../source-material/README.md).
+
+## Next chapter sequence
+
+The next major chapters will be developed in this order:
+
+1. Runtime Orchestration and State Machines.
+2. Tasks, Attempts, Leases, Idempotency, and Recovery.
+3. Agent Architecture, MCP, Tools, Context, and Memory.
+4. Security and Identity Architecture.
+5. Factory Economics and Operating Metrics.
+6. Executive and Interview Mastery.
+
+The golden-path lab should not be rerun until Mission Control todo 024 is
+complete, its GitHub App is configured for the controlled repository, and an
+active Governance Policy and passing Factory Configuration are available.
+Chapter development does not depend on those runtime prerequisites.

@@ -91,7 +91,8 @@ For a first pass of roughly one hour:
 6. Read [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
 7. Read [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md).
 8. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
-9. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+9. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
+10. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture
