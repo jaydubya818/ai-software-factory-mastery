@@ -47,9 +47,10 @@ progressive autonomy, organizational transformation, human attention, and
 factory economics. Distinguish factory-owned deployment governance from
 deployment execution delegated to CI/CD systems.
 
-Chapter:
+Chapters:
 
 - [The Human-Agent Operating Model](./03-operating-model/01-human-agent-operating-model.md)
+- [Factory Economics and Operating Metrics](./03-operating-model/02-factory-economics-and-operating-metrics.md)
 
 ## 4. Domain Model
 
@@ -74,9 +75,11 @@ machines, concurrency, retries, cancellation, recovery, and orchestration.
 Implementation-specific material must remain clearly separated from enduring
 runtime principles.
 
-Chapter:
+Chapters:
 
 - [Control Plane and Execution Plane](./05-runtime-architecture/01-control-plane-and-execution-plane.md)
+- [Runtime Orchestration and State Machines](./05-runtime-architecture/02-runtime-orchestration-and-state-machines.md)
+- [Tasks, Attempts, Leases, Idempotency, and Recovery](./05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md)
 
 ## 6. AI Engineering
 
@@ -84,6 +87,10 @@ Build technical fluency in language models, agents, tool use, MCP, context
 engineering, retrieval, memory, evaluations, structured outputs, model routing,
 and multi-agent systems. Connect each capability to the factory problem it
 solves and the new failure modes it introduces.
+
+Chapter:
+
+- [Agent Architecture, MCP, Tools, Context, and Memory](./06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md)
 
 ## 7. Quality Engineering
 
@@ -103,9 +110,10 @@ Study identity, authentication, authorization, policy, approvals, isolation,
 data boundaries, auditability, budgets, risk, prompt injection, service
 identity, and separation of duties.
 
-Chapter:
+Chapters:
 
 - [Governance, Policy, and Risk-Proportional Approval](./08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md)
+- [Security and Identity Architecture](./08-security-and-governance/02-security-and-identity-architecture.md)
 
 ## 9. Mission Control Case Studies
 
@@ -134,6 +142,10 @@ and AI startup leadership conversations. Include system-design interviews,
 whiteboard exercises, executive explanations, technical deep dives, objections,
 and evidence-backed stories.
 
+Chapter:
+
+- [Executive and Interview Mastery](./11-interview-mastery/01-executive-and-interview-mastery.md)
+
 ## 12. Research Journal
 
 Analyze papers, standards, industry systems, and emerging architectures from
@@ -148,16 +160,11 @@ All full chapters follow the [chapter writing standard](./writing-standard.md).
 The original planning and interview drafts remain in
 [source material](../source-material/README.md).
 
-## Next chapter sequence
+## Core curriculum status
 
-The next major chapters will be developed in this order:
-
-1. Runtime Orchestration and State Machines.
-2. Tasks, Attempts, Leases, Idempotency, and Recovery.
-3. Agent Architecture, MCP, Tools, Context, and Memory.
-4. Security and Identity Architecture.
-5. Factory Economics and Operating Metrics.
-6. Executive and Interview Mastery.
+The planned foundation sequence is now drafted. Chapters remain
+`draft-for-study` until the learner completes their labs, teach-backs, and
+independent review. Draft completion is not mastery.
 
 The golden-path lab should not be rerun until Mission Control todo 024 is
 complete, its GitHub App is configured for the controlled repository, and an
