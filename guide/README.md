@@ -51,6 +51,7 @@ Chapters:
 
 - [The Human-Agent Operating Model](./03-operating-model/01-human-agent-operating-model.md)
 - [Factory Economics and Operating Metrics](./03-operating-model/02-factory-economics-and-operating-metrics.md)
+- [Governed Continuous Learning and Recursive Improvement](./03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md)
 
 ## 4. Domain Model
 
@@ -62,9 +63,10 @@ Plan -> WorkOrder -> Task -> Attempt -> Evidence -> Pull Request -> Release`
 Each concept must explain the decision it owns, what it does not own, its
 lifecycle, its relationships, and the failure caused when layers are collapsed.
 
-Chapter:
+Chapters:
 
 - [The Authoritative Delivery Hierarchy](./04-domain-model/01-authoritative-delivery-hierarchy.md)
+- [Factory Configuration, Workflow Contracts, and Execution Manifests](./04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md)
 
 ## 5. Runtime Architecture
 
@@ -80,6 +82,7 @@ Chapters:
 - [Control Plane and Execution Plane](./05-runtime-architecture/01-control-plane-and-execution-plane.md)
 - [Runtime Orchestration and State Machines](./05-runtime-architecture/02-runtime-orchestration-and-state-machines.md)
 - [Tasks, Attempts, Leases, Idempotency, and Recovery](./05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md)
+- [Sandboxed Execution, Isolation, and Publication](./05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md)
 
 ## 6. AI Engineering
 
@@ -88,9 +91,10 @@ engineering, retrieval, memory, evaluations, structured outputs, model routing,
 and multi-agent systems. Connect each capability to the factory problem it
 solves and the new failure modes it introduces.
 
-Chapter:
+Chapters:
 
 - [Agent Architecture, MCP, Tools, Context, and Memory](./06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md)
+- [Model Routing, Evaluations, and Capability Selection](./06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md)
 
 ## 7. Quality Engineering
 
@@ -100,9 +104,10 @@ freshness, conflicting results, waivers, and production feedback. Treat lead
 time to validated customer value, change failure rate, and engineering
 leverage as a coupled success system.
 
-Chapter:
+Chapters:
 
 - [Quality and Evidence Architecture](./07-quality-engineering/01-quality-and-evidence-architecture.md)
+- [Release, Production Feedback, and Factory SRE](./07-quality-engineering/02-release-production-feedback-and-factory-sre.md)
 
 ## 8. Security and Governance
 
@@ -121,6 +126,10 @@ Use Mission Control to examine real architectural decisions, implementation
 tradeoffs, failures, and lessons. Every case study cites the exact product
 source and commit while preserving the distinction between product
 documentation and personal learning.
+
+Current case study:
+
+- [Mission Control Implementation Maturity and Evidence Map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md)
 
 ## 10. Labs
 
@@ -166,7 +175,10 @@ The planned foundation sequence is now drafted. Chapters remain
 `draft-for-study` until the learner completes their labs, teach-backs, and
 independent review. Draft completion is not mastery.
 
-The golden-path lab should not be rerun until Mission Control todo 024 is
-complete, its GitHub App is configured for the controlled repository, and an
-active Governance Policy and passing Factory Configuration are available.
-Chapter development does not depend on those runtime prerequisites.
+The next accepted golden-path run should use a clean, merged, and pinned
+Mission Control commit after draft PR #64 is resolved. Before that run, repair
+the browser Mission policy and receipt-reconciliation path, configure the
+controlled repository's GitHub App, and provide an active Governance Policy and
+passing Factory Configuration. PR #61 proves the publication component; it
+does not satisfy the browser-only lab. Chapter development does not depend on
+those runtime prerequisites.
