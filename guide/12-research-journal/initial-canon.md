@@ -1,7 +1,7 @@
 ---
 title: Initial AI Software Factory Research Canon
 status: active
-last_reviewed: 2026-08-02
+last_reviewed: 2026-08-11
 ---
 
 # Initial AI Software Factory Research Canon
@@ -50,6 +50,15 @@ tests, and direct operation supply different forms of evidence.
 | --- | --- |
 | [SWE-bench paper](https://arxiv.org/abs/2310.06770) | Study repository-level evaluation design and the limits of reducing software engineering to issue resolution. |
 | [SWE-bench repository](https://github.com/SWE-bench/SWE-bench) | Inspect current harnesses, datasets, variants, and reproducibility mechanisms. |
+| [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf) | Study requirements, design review, verification, provenance, vulnerability response, and continuous improvement across the SDLC. |
+| [NIST AI Risk Management Framework Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/) | Study documented TEVV, independent assessment, production monitoring, and AI risk decisions. |
+| [SLSA specification](https://slsa.dev/spec/v1.2/) | Study source and build provenance, hardened build levels, artifact verification, and supply-chain threat boundaries. |
+| [in-toto Attestation Framework](https://github.com/in-toto/attestation) | Study typed, verifiable claims bound to immutable software subjects by digest. |
+| [OMG Structured Assurance Case Metamodel](https://www.omg.org/spec/SACM/About-SACM) | Study formal relationships among claims, arguments, evidence, context, and counterclaims. |
+| [Anthropic: Demystifying Evals for AI Agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) | Study tasks, trials, graders, assertions, transcripts, evaluation layers, and production feedback for agents. |
+| [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) | Study prompt injection, excessive agency, supply-chain, output-handling, and resource risks for AI-enabled systems. |
+| [OpenTelemetry Signals](https://opentelemetry.io/docs/concepts/signals/) | Study correlated traces, metrics, logs, and baggage for production evidence. |
+| [DORA software delivery performance metrics](https://dora.dev/guides/dora-metrics/) | Study delivery throughput and instability without substituting activity metrics for outcomes. |
 | [Google Site Reliability Engineering books](https://sre.google/books/) | Study reliability, toil, service levels, incident response, monitoring, and production operations. |
 | [Designing Data-Intensive Applications](https://martin.kleppmann.com/2017/03/27/designing-data-intensive-applications.html) | Develop durable reasoning about state, consistency, replication, streams, failure, and distributed-system tradeoffs. |
 

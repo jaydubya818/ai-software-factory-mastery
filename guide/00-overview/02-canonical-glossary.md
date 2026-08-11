@@ -3,8 +3,8 @@ title: Canonical Glossary
 status: draft-for-study
 audience:
   - all
-last_verified: 2026-08-07
-mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
+last_verified: 2026-08-11
+mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
 ---
 
 # Canonical Glossary
@@ -110,6 +110,52 @@ governance; it is not resolved by majority vote.
 **Review package** — A concise decision packet containing the original intent,
 approved plan, changed scope, technical decisions, criterion-level evidence,
 risks, deviations, uncertainty, rollback approach, and exact source lineage.
+
+## Quality and assurance concepts
+
+**Quality Contract** — A versioned, machine-readable specification of the
+requirements, constraints, risks, verification methods, evidence, hard gates,
+approvals, release policy, and production signals required for one WorkOrder or
+release candidate. It defines what “done” means before execution.
+
+**Validation assertion** — A stable, testable claim derived from a requirement.
+It identifies the expected outcome, method, pass condition, required evidence,
+independence, and waiver policy.
+
+**Verification receipt** — An immutable record that a known verifier applied a
+defined method to an exact artifact and observed a result in a defined context.
+It is an observation, not the acceptance decision.
+
+**Requirement-to-evidence graph** — The traceable relationships among intent,
+requirements, assertions, implementation artifacts, verification methods,
+receipts, policy decisions, releases, and production outcomes. Missing, stale,
+waived, contradictory, and counterevidence relationships remain explicit.
+
+**Quality Proof Package** — The complete assurance case for one exact release
+candidate, including its Quality Contract, evidence graph, raw artifacts,
+provenance, validator receipts, risks, gates, waivers, approvals, deployment,
+and production evidence.
+
+**Software Quality Certificate** — A concise, signed projection stating that an
+exact artifact satisfied a particular Quality Contract using referenced
+evidence and approvals at a particular time. It does not claim the artifact is
+defect-free and may expire, be revoked, or be superseded.
+
+**Hard gate** — A non-compensable policy condition. A failing hard gate blocks
+advancement regardless of aggregate quality or trust score.
+
+**Quality confidence** — A multidimensional assessment of the strength,
+coverage, independence, freshness, provenance, and reproducibility of evidence
+for one artifact. A numeric projection may aid trending but cannot replace hard
+gates.
+
+**Artifact Trust** — Confidence in one exact change or release candidate based
+on its current evidence. It is distinct from the historical trust of the agent
+that produced it.
+
+**Agent Trust** — Historical evidence about the reliability and policy
+compliance of a governed executor configuration. It constrains eligible
+autonomy but cannot certify a particular artifact.
 
 ## Runtime concepts
 
