@@ -60,6 +60,14 @@ agent session or task list.
 authorizes an exact plan version. Plan approval does not dispatch work, merge
 code, or deploy software.
 
+**Specification baseline** — An approved, immutable version of requirements,
+criteria, assertions, assumptions, constraints, and rationale. A material
+change creates a new baseline and triggers impact analysis.
+
+**Invariant** — A condition that must remain true across all permitted states
+and transitions, such as tenant isolation or the prohibition on accepting a
+WorkOrder from a stale Attempt.
+
 **WorkOrder** — The bounded unit of engineering authority and acceptance. It
 defines permitted scope, repositories, tools, agents, constraints, risk, budget,
 acceptance criteria, quality gates, and required evidence.
@@ -141,6 +149,12 @@ exact artifact satisfied a particular Quality Contract using referenced
 evidence and approvals at a particular time. It does not claim the artifact is
 defect-free and may expire, be revoked, or be superseded.
 
+**Evidence envelope** — A normalized immutable record binding a typed claim,
+producer, method, time, and native artifact to an exact subject digest.
+
+**Certificate revocation** — An authorized declaration that a previously issued
+certificate must no longer be relied upon, without deleting its history.
+
 **Hard gate** — A non-compensable policy condition. A failing hard gate blocks
 advancement regardless of aggregate quality or trust score.
 
@@ -185,6 +199,16 @@ network responses may be delivered more than once.
 events, evidence, and revisions. Corrections create new records rather than
 silently rewriting the past.
 
+**Attestation** — A typed claim made by an identified producer about one or more
+immutable subjects. A valid attestation does not by itself prove quality.
+
+**Software Bill of Materials (SBOM)** — A machine-readable inventory of the
+components and dependency relationships associated with an artifact. It aids
+supply-chain analysis but does not prove that the artifact is secure.
+
+**Trace context** — Correlation metadata propagated across service and
+asynchronous boundaries. It connects observations but does not confer authority.
+
 ## Autonomy and trust
 
 **Operational autonomy** — A revocable, scoped grant of authority. It belongs to
@@ -204,6 +228,10 @@ performance or a trust-loss event. It may occur automatically.
 
 **Quarantine** — A fail-safe condition that prevents autonomous execution for an
 affected scope until authorized review and recovery occur.
+
+**Factory maturity level** — An evidence-backed description of the operating
+capability achieved by a specific workflow, repository, risk class, and
+environment. It is not a permanent organization-wide badge.
 
 ## Outcome measures
 

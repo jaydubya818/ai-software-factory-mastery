@@ -54,10 +54,18 @@ tests, and direct operation supply different forms of evidence.
 | [NIST AI Risk Management Framework Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/) | Study documented TEVV, independent assessment, production monitoring, and AI risk decisions. |
 | [SLSA specification](https://slsa.dev/spec/v1.2/) | Study source and build provenance, hardened build levels, artifact verification, and supply-chain threat boundaries. |
 | [in-toto Attestation Framework](https://github.com/in-toto/attestation) | Study typed, verifiable claims bound to immutable software subjects by digest. |
+| [DSSE](https://github.com/secure-systems-lab/dsse) | Study a typed signing envelope that avoids application-level canonicalization. |
+| [SPDX 3.0](https://spdx.dev/use/specifications/) | Study the current ISO-standard family for software bill-of-material and supply-chain data. |
+| [CycloneDX 1.7](https://cyclonedx.org/specification/overview/) | Study the current CycloneDX BOM model, lifecycle phases, and attestation predicate. |
+| [Sigstore Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/) | Study identity-aware signature, attestation, timestamp, and transparency verification. |
+| [RFC 8785 JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785.html) | Study deterministic JSON representation for repeatable hashing and signing, including its constraints. |
 | [OMG Structured Assurance Case Metamodel](https://www.omg.org/spec/SACM/About-SACM) | Study formal relationships among claims, arguments, evidence, context, and counterclaims. |
 | [Anthropic: Demystifying Evals for AI Agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) | Study tasks, trials, graders, assertions, transcripts, evaluation layers, and production feedback for agents. |
 | [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) | Study prompt injection, excessive agency, supply-chain, output-handling, and resource risks for AI-enabled systems. |
 | [OpenTelemetry Signals](https://opentelemetry.io/docs/concepts/signals/) | Study correlated traces, metrics, logs, and baggage for production evidence. |
+| [OpenTelemetry Semantic Conventions 1.43.0](https://opentelemetry.io/docs/specs/semconv/) | Study shared telemetry vocabulary. Pin versions: CI/CD is release-candidate and GenAI conventions are moving/developing, so do not make them the authoritative factory schema. |
+| [NASA Systems Engineering Handbook Appendix](https://www.nasa.gov/reference/system-engineering-handbook-appendix/) | Study clear, singular, traceable, verifiable requirements and verification/validation matrices. |
+| [NASA Product Realization](https://www.nasa.gov/reference/5-0-product-realization/) | Study the distinction between objective verification and validation in the intended environment. |
 | [DORA software delivery performance metrics](https://dora.dev/guides/dora-metrics/) | Study delivery throughput and instability without substituting activity metrics for outcomes. |
 | [Google Site Reliability Engineering books](https://sre.google/books/) | Study reliability, toil, service levels, incident response, monitoring, and production operations. |
 | [Designing Data-Intensive Applications](https://martin.kleppmann.com/2017/03/27/designing-data-intensive-applications.html) | Develop durable reasoning about state, consistency, replication, streams, failure, and distributed-system tradeoffs. |
