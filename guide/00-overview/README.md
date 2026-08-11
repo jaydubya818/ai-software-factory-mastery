@@ -97,14 +97,15 @@ For the foundational pass, read in this order:
 12. Read [Agent Architecture, MCP, Tools, Context, and Memory](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md).
 13. Read [Model Routing, Evaluations, and Capability Selection](../06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md).
 14. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
-15. Read [Release, Production Feedback, and Factory SRE](../07-quality-engineering/02-release-production-feedback-and-factory-sre.md).
-16. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
-17. Read [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md).
-18. Read [Factory Economics and Operating Metrics](../03-operating-model/02-factory-economics-and-operating-metrics.md).
-19. Read [Governed Continuous Learning and Recursive Improvement](../03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md).
-20. Review the [Mission Control Implementation Maturity and Evidence Map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
-21. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
-22. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+15. Read [Continuous Quality Contracts, Proof Packages, and Certificates](../07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md).
+16. Read [Release, Production Feedback, and Factory SRE](../07-quality-engineering/02-release-production-feedback-and-factory-sre.md).
+17. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
+18. Read [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md).
+19. Read [Factory Economics and Operating Metrics](../03-operating-model/02-factory-economics-and-operating-metrics.md).
+20. Read [Governed Continuous Learning and Recursive Improvement](../03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md).
+21. Review the [Mission Control Implementation Maturity and Evidence Map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
+22. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
+23. Review the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture

@@ -108,6 +108,7 @@ Chapters:
 
 - [Quality and Evidence Architecture](./07-quality-engineering/01-quality-and-evidence-architecture.md)
 - [Release, Production Feedback, and Factory SRE](./07-quality-engineering/02-release-production-feedback-and-factory-sre.md)
+- [Continuous Quality Contracts, Proof Packages, and Certificates](./07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md)
 
 ## 8. Security and Governance
 
