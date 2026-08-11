@@ -52,6 +52,7 @@ Chapters:
 - [The Human-Agent Operating Model](./03-operating-model/01-human-agent-operating-model.md)
 - [Factory Economics and Operating Metrics](./03-operating-model/02-factory-economics-and-operating-metrics.md)
 - [Governed Continuous Learning and Recursive Improvement](./03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md)
+- [Enterprise Adoption and Factory Maturity Model](./03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md)
 
 ## 4. Domain Model
 
@@ -67,6 +68,7 @@ Chapters:
 
 - [The Authoritative Delivery Hierarchy](./04-domain-model/01-authoritative-delivery-hierarchy.md)
 - [Factory Configuration, Workflow Contracts, and Execution Manifests](./04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md)
+- [Specification Engineering, Executable Requirements, and Plan Assurance](./04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md)
 
 ## 5. Runtime Architecture
 
@@ -83,6 +85,8 @@ Chapters:
 - [Runtime Orchestration and State Machines](./05-runtime-architecture/02-runtime-orchestration-and-state-machines.md)
 - [Tasks, Attempts, Leases, Idempotency, and Recovery](./05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md)
 - [Sandboxed Execution, Isolation, and Publication](./05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md)
+- [Factory Observability and Agent Runtime Telemetry](./05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md)
+- [AI Software Factory Reference Architecture](./05-runtime-architecture/06-ai-software-factory-reference-architecture.md)
 
 ## 6. AI Engineering
 
@@ -109,6 +113,7 @@ Chapters:
 - [Quality and Evidence Architecture](./07-quality-engineering/01-quality-and-evidence-architecture.md)
 - [Release, Production Feedback, and Factory SRE](./07-quality-engineering/02-release-production-feedback-and-factory-sre.md)
 - [Continuous Quality Contracts, Proof Packages, and Certificates](./07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md)
+- [Quality Contract and Certificate Technical Specification](./07-quality-engineering/04-quality-contract-and-certificate-technical-specification.md)
 
 ## 8. Security and Governance
 
@@ -120,6 +125,7 @@ Chapters:
 
 - [Governance, Policy, and Risk-Proportional Approval](./08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md)
 - [Security and Identity Architecture](./08-security-and-governance/02-security-and-identity-architecture.md)
+- [Software Supply Chain Security, Provenance, and Attestation](./08-security-and-governance/03-software-supply-chain-security-provenance-and-attestation.md)
 
 ## 9. Mission Control Case Studies
 
@@ -144,6 +150,7 @@ with human merge approval and does not require autonomous deployment.
 Initial lab:
 
 - [Governed Issue to Validated Pull Request](./10-labs/01-governed-issue-to-validated-pull-request.md)
+- [Capstone Architecture and Executive Defense](./10-labs/02-capstone-architecture-and-executive-defense.md)
 
 ## 11. Interview Mastery
 
@@ -172,7 +179,7 @@ The original planning and interview drafts remain in
 
 ## Core curriculum status
 
-The planned foundation sequence is now drafted. Chapters remain
+The foundation and second-layer architecture sequence are now drafted. Chapters remain
 `draft-for-study` until the learner completes their labs, teach-backs, and
 independent review. Draft completion is not mastery.
 
