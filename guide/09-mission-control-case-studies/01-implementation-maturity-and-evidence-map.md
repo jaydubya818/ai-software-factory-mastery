@@ -1,6 +1,6 @@
 ---
 title: Mission Control Implementation Maturity and Evidence Map
-status: current-assessment
+status: historical-assessment
 audience: [executive, architect, senior-engineer, ai-engineer, platform, product]
 assessed_on: 2026-08-11
 mission_control_main_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
@@ -9,6 +9,10 @@ mission_control_pr: 64
 ---
 
 # Mission Control Implementation Maturity and Evidence Map
+
+> Historical assessment: this map captures the repository states listed below.
+> For the verification architecture at merged commit `ff0524e`, continue with
+> the [Verification-First Software Factory case study](./02-verification-first-software-factory.md).
 
 ## Purpose
 

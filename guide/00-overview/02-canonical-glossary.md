@@ -4,7 +4,7 @@ status: draft-for-study
 audience:
   - all
 last_verified: 2026-08-11
-mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
+mission_control_commit: ff0524ea0dac4159535d463fcf8787dc6dca0b91
 ---
 
 # Canonical Glossary
@@ -133,6 +133,22 @@ independence, and waiver policy.
 **Verification receipt** — An immutable record that a known verifier applied a
 defined method to an exact artifact and observed a result in a defined context.
 It is an observation, not the acceptance decision.
+
+**Verification Run** — One immutable evaluation of a versioned verification
+contract against an exact candidate and manifest. A rerun creates a new record;
+it does not replace the history of an errored or failing run.
+
+**Change Budget** — A machine-enforced boundary over changed paths, change size,
+and permitted change types. It constrains an Attempt's mutation authority but
+does not prove that an in-budget change is correct.
+
+**Quality Gate Decision** — A versioned policy decision over an exact Quality
+Contract, candidate, and evidence set. It records eligibility, explanation,
+missing or conflicting proof, and required human decisions.
+
+**Publication permit** — A scoped, expiring, usually single-use authority to
+perform one external publication action for an exact repository, WorkOrder
+revision, candidate, and gate decision. It is not merge or deployment approval.
 
 **Requirement-to-evidence graph** — The traceable relationships among intent,
 requirements, assertions, implementation artifacts, verification methods,

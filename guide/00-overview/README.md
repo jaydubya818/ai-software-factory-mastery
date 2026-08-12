@@ -110,9 +110,10 @@ For the foundational pass, read in this order:
 25. Read [Enterprise Adoption and Factory Maturity Model](../03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md).
 26. Read [Governed Continuous Learning and Recursive Improvement](../03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md).
 27. Review the [Mission Control Implementation Maturity and Evidence Map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
-28. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
-29. Run the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
-30. Complete the [Capstone Architecture and Executive Defense](../10-labs/02-capstone-architecture-and-executive-defense.md).
+28. Study the [Verification-First Software Factory case study](../09-mission-control-case-studies/02-verification-first-software-factory.md).
+29. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
+30. Run the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+31. Complete the [Capstone Architecture and Executive Defense](../10-labs/02-capstone-architecture-and-executive-defense.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture
