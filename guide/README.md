@@ -134,9 +134,13 @@ tradeoffs, failures, and lessons. Every case study cites the exact product
 source and commit while preserving the distinction between product
 documentation and personal learning.
 
-Current case study:
+Current case studies:
 
 - [Mission Control Implementation Maturity and Evidence Map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md)
+- [Verification-First Software Factory — Mission Control Case Study](./09-mission-control-case-studies/02-verification-first-software-factory.md)
+  — explains the assurance architecture, traces the implemented P0 at an exact
+  Mission Control commit, distinguishes proposed completion work, and provides
+  interview questions, whiteboard exercises, and hands-on mastery labs.
 
 ## 10. Labs
 
