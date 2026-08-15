@@ -82,8 +82,7 @@ The repository develops twelve connected areas:
 8. security and governance
 9. Mission Control case studies
 10. labs
-11. interview mastery
-12. research journal
+11. research journal
 
 See the [curriculum map](./guide/README.md) for the detailed scope.
 
