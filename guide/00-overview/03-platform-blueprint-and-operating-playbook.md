@@ -18,6 +18,14 @@ principles, current Mission Control evidence, and future vision.
 > **Intent → Plan → Define Agent → Execute through Harness → Apply Skills →
 > Evaluate → Improve → Deliver Software**
 
+This is a value-stream mnemonic, not a claim that the factory is eight serial
+services. Skills are selected and frozen before execution, then applied inside
+the harnessed loop. Improvement consumes evaluation and production evidence to
+create governed candidates for future runs. It cannot self-promote or silently
+mutate the active Attempt. The
+[Intent-to-Delivery Lifecycle](./04-intent-to-delivery-lifecycle.md) defines the
+precise stage contracts.
+
 The AI Software Factory is not merely an AI coding assistant. It is the
 platform and control system that makes agentic software engineering
 repeatable, governed, measurable, and scalable across thousands of engineers.
@@ -518,6 +526,7 @@ execution control, independent evidence, and governed improvement.
 
 ## Related chapters
 
+- [Intent-to-Delivery Lifecycle](./04-intent-to-delivery-lifecycle.md)
 - [AI Software Factory Reference Architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md)
 - [Agent Architecture, MCP, Tools, Context, and Memory](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md)
 - [Model Routing, Evaluations, and Capability Selection](../06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md)

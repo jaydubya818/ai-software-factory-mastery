@@ -20,7 +20,7 @@ The central question is not "how do I prompt a coding agent?" It is:
 ## What this project explores
 
 - AI Software Factory architecture and operating models
-- an intent-first builders experience for developers, PMs, QA, designers, and other builders
+- an intent-first builder experience for developers, PMs, QA, designers, and other builders
 - multi-agent orchestration and agent harness engineering
 - WorkOrders, Tasks, Attempts, evidence, and delivery lineage
 - deterministic controls around nondeterministic agents
@@ -36,6 +36,7 @@ The central question is not "how do I prompt a coding agent?" It is:
 
 ## Start here
 
+- Read the [Intent-to-Delivery Lifecycle](./guide/00-overview/04-intent-to-delivery-lifecycle.md) for the precise operating contract behind the factory's one-line value stream.
 - Read the [platform blueprint and operating playbook](./guide/00-overview/03-platform-blueprint-and-operating-playbook.md) for the complete system map, capability model, incident framework, learning design, adoption model, and metrics.
 - Use [Start Here](./guide/00-overview/README.md) for the recommended reading order.
 - Use the [curriculum map](./guide/README.md) to navigate the detailed chapters and labs.
@@ -56,6 +57,13 @@ Intent
   → Improve
   → Deliver Software
 ```
+
+This line is a value-stream mnemonic, not a literal runtime call graph. Skills
+are bound before execution and applied inside the harnessed loop. Improvement
+uses evaluation and production outcomes to propose future versions; it cannot
+silently change or promote the active run. See the
+[Intent-to-Delivery Lifecycle](./guide/00-overview/04-intent-to-delivery-lifecycle.md)
+for the stage contracts, records, controls, and evidence.
 
 ## Platform commitments
 

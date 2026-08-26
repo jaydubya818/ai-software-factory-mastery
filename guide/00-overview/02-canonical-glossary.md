@@ -3,7 +3,7 @@ title: Canonical Glossary
 status: draft-for-study
 audience:
   - all
-last_verified: 2026-08-11
+last_verified: 2026-08-25
 mission_control_commit: ff0524ea0dac4159535d463fcf8787dc6dca0b91
 ---
 
@@ -19,12 +19,43 @@ business intent into validated customer value through human accountability,
 agent execution, policy, independent validation, evidence, and feedback. It is
 larger than a coding tool or agent runtime.
 
+**Agentic software factory** — An informal synonym that emphasizes the use of
+agents across the software lifecycle. This guide uses **AI Software Factory**
+as the canonical product and operating-model term; “agentic” describes how some
+work is executed, not a reduction of the factory to agents alone.
+
+**Agentic software engineering** — An engineering mode in which model-driven
+agents pursue bounded outcomes through tools and an observe-adjust loop while a
+deterministic platform owns authority, state, evidence, recovery, and delivery
+controls. It does not mean replacing every deterministic workflow with an
+agent.
+
+**Intent-to-Delivery Lifecycle** — The factory value stream summarized as
+`Intent → Plan → Define Agent → Execute through Harness → Apply Skills →
+Evaluate → Improve → Deliver Software`. It is a mnemonic, not a literal call
+graph: skills execute inside the harnessed loop and improvement changes future
+versions through governed promotion.
+
 **Coding assistant** — A system that suggests, explains, or generates code under
 direct human control. It does not own a governed delivery lifecycle.
 
 **Agent** — A model-driven worker that can reason, choose tools, act, observe the
 result, and continue toward a bounded objective. Capability does not imply
 authority.
+
+**Agent Definition** — A versioned declaration of an agent's role, objective,
+instructions, capabilities, eligible models, tools, skills, context policy,
+permissions, budgets, stop conditions, escalation, success criteria, and
+evaluation policy. It is configuration, not a credential.
+
+**Agent Harness** — The runtime and control system that compiles an execution
+manifest, routes models, supplies context, invokes tools, applies policy,
+isolates execution, tracks state, enforces budgets and stop conditions,
+recovers from failure, and emits telemetry and evidence.
+
+**Skill** — A reusable, versioned, evaluated method that supplies instructions,
+decision criteria, examples, and tool-use patterns for a class of tasks. A
+skill teaches behavior; it does not grant authority or certify its own result.
 
 **Agent platform** — Infrastructure for building and operating agents, including
 tools, context, memory, identity, routing, and orchestration. It becomes part of
@@ -134,6 +165,11 @@ independence, and waiver policy.
 defined method to an exact artifact and observed a result in a defined context.
 It is an observation, not the acceptance decision.
 
+**Trajectory evaluation** — Evaluation of how an Attempt reached its output,
+including its context, tool calls, permissions, policy decisions, budgets,
+recovery, and stop behavior. A correct artifact does not excuse an unauthorized
+or materially unsafe trajectory.
+
 **Verification Run** — One immutable evaluation of a versioned verification
 contract against an exact candidate and manifest. A rerun creates a new record;
 it does not replace the history of an errored or failing run.
@@ -195,6 +231,11 @@ does not approve its own plan or evidence.
 
 **Executor** — A runtime adapter that performs authorized work using a specific
 agent or tool environment and returns structured events, artifacts, and status.
+
+**Completion report** — The explicit terminal report for an Attempt. It records
+whether execution succeeded, partially completed, blocked, failed, or was
+cancelled; identifies exact artifacts and criteria; and states unresolved
+findings and required human action. It does not accept the WorkOrder.
 
 **Worktree** — An isolated Git working directory used to keep concurrent changes
 separate and bind an Attempt to an exact repository state.

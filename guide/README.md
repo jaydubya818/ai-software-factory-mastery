@@ -10,6 +10,7 @@ understands the authority and outcome model they serve.
 Begin with the [high-level reading guide](./00-overview/README.md). It links a
 concise system overview, the
 [platform blueprint and operating playbook](./00-overview/03-platform-blueprint-and-operating-playbook.md),
+the [Intent-to-Delivery Lifecycle](./00-overview/04-intent-to-delivery-lifecycle.md),
 the canonical glossary, the foundational chapters, and the first golden-path
 lab.
 
@@ -19,9 +20,12 @@ Define an AI Software Factory, explain why it matters now, and develop a
 credible view of how software engineering changes when humans direct systems
 that perform increasing amounts of execution.
 
-Planned chapters:
+Current chapter:
 
 - [What is an AI Software Factory?](./01-vision/01-what-is-an-ai-software-factory.md)
+
+Further scope is developed within that chapter:
+
 - Why it matters
 - Why now
 - The future of software engineering
@@ -33,9 +37,12 @@ implementation stacks. These include human-led and agent-executed engineering,
 quality as the basis for autonomy, evidence over confidence, risk-proportional
 control, and durable accountability.
 
-Planned chapters:
+Current chapter:
 
 - [Operational Autonomy and Trust Calibration](./02-first-principles/01-operational-autonomy-and-trust-calibration.md)
+
+Further scope is developed within that chapter and the operating-model sequence:
+
 - Human-led, agent-executed engineering
 - Quality enables autonomy
 - Evidence over confidence
@@ -158,7 +165,7 @@ Initial lab:
 - [Governed Issue to Validated Pull Request](./10-labs/01-governed-issue-to-validated-pull-request.md)
 - [Capstone Architecture and Executive Defense](./10-labs/02-capstone-architecture-and-executive-defense.md)
 
-## 11. Interview Mastery
+## Supplemental: Interview Practice
 
 Prepare for CTO, VP Engineering, Head of AI Engineering, Principal Engineer,
 and AI startup leadership conversations. Include system-design interviews,
@@ -169,7 +176,11 @@ Chapter:
 
 - [Executive and Interview Mastery](./11-interview-mastery/01-executive-and-interview-mastery.md)
 
-## 12. Research Journal
+The existing directory prefixes are retained to avoid breaking published
+links. Interview practice is supplemental; the Research Journal remains the
+eleventh core curriculum area.
+
+## 11. Research Journal
 
 Analyze papers, standards, industry systems, and emerging architectures from
 OpenAI, Anthropic, Google, Microsoft, GitHub, academia, and other primary
@@ -185,14 +196,12 @@ The original planning and interview drafts remain in
 
 ## Core curriculum status
 
-The foundation and second-layer architecture sequence are now drafted. Chapters remain
-`draft-for-study` until the learner completes their labs, teach-backs, and
-independent review. Draft completion is not mastery.
+The foundation and second-layer architecture sequence are drafted. Chapters
+remain `draft-for-study` until the learner completes their labs, teach-backs,
+and independent review. Draft completion is not mastery.
 
-The next accepted golden-path run should use a clean, merged, and pinned
-Mission Control commit after draft PR #64 is resolved. Before that run, repair
-the browser Mission policy and receipt-reconciliation path, configure the
-controlled repository's GitHub App, and provide an active Governance Policy and
-passing Factory Configuration. PR #61 proves the publication component; it
-does not satisfy the browser-only lab. Chapter development does not depend on
-those runtime prerequisites.
+Mission Control changes independently of this curriculum. Use the versioned
+[implementation maturity map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md)
+and retained [golden-path evidence](./10-labs/evidence/2026-08-08-golden-path/README.md)
+for point-in-time readiness claims. This landing page is navigation, not
+evidence of current product capability.
