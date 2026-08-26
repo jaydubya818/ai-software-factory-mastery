@@ -1,0 +1,126 @@
+1. Intent & Planning
+
+Purpose: Understand what the developer wants and determine how to accomplish it.
+
+* Intent Recognition — Understand the developer’s actual goal.
+* Goal Interpretation — Translate a request into a concrete outcome.
+* Task Decomposition — Break complex work into smaller executable tasks.
+* Planning — Determine the steps and sequence required.
+* Task Definition — Create clear units of work for agents.
+* Dependency Mapping — Identify ordering and dependencies between tasks.
+* Acceptance Criteria — Define what “done” means.
+* Constraint Identification — Recognize technical, security, policy, and resource boundaries.
+* Agent Routing — Select the appropriate agent or capability for each task.
+* Dynamic Replanning — Adjust the plan when execution produces unexpected results.
+
+2. Agent Definitions
+
+Purpose: Define what each agent is, what it can do, and how it should behave.
+
+* Role — The agent’s responsibility or specialization.
+* Instructions — Rules describing how the agent should operate.
+* Capabilities — Actions the agent is capable of performing.
+* Policies — Boundaries governing agent behavior.
+* Goals — Outcomes the agent is expected to achieve.
+* Permissions — Systems, data, and actions the agent may access.
+* Tool Access — Tools available to the agent.
+* Model Configuration — Models and parameters available to the agent.
+* Autonomy Level — How independently the agent may operate.
+* Escalation Rules — When the agent must involve a human.
+* Success Criteria — Conditions indicating successful completion.
+
+3. Agent Harness
+
+Purpose: Provide the runtime infrastructure that allows agents to actually work.
+
+* Runtime — Environment where the agent operates.
+* Execution Loop — Understand → Plan → Act → Observe → Evaluate → Adjust.
+* Model Abstraction — Allow different models/providers behind a common interface.
+* Model Routing — Select the best model for a particular task.
+* Context Management — Supply the right information at the right time.
+* Context Window Management — Optimize what information enters the model.
+* Tools — APIs and capabilities agents use to perform actions.
+* MCP — Standard protocol for connecting agents to tools and context.
+* State Management — Track progress and information across execution.
+* Memory — Preserve useful information across interactions or tasks.
+* Sandboxes — Isolated environments for safely executing agent work.
+* Controls / Guardrails — Restrict unsafe or unauthorized actions.
+* Human-in-the-Loop — Require human review or approval at defined points.
+* Observability — Trace agent decisions, actions, latency, failures, and costs.
+* Error Recovery — Detect failures and retry, repair, or replan.
+* Orchestration — Coordinate multiple agents, tools, and workflows.
+
+4. Skills Framework
+
+Purpose: Give agents reusable, standardized capabilities for accomplishing work.
+
+* Skill — Reusable instructions and capabilities for a specific task.
+* Coding Skills — Generate, modify, refactor, and review code.
+* Testing Skills — Create and execute tests.
+* Debugging Skills — Diagnose and fix failures.
+* Deployment Skills — Build, package, release, and deploy software.
+* Security Skills — Perform security checks and remediation.
+* Repository Skills — Understand and operate within codebases.
+* Adobe-Specific Skills — Encode Adobe frameworks, standards, and practices.
+* Workflow Skills — Automate repeatable engineering processes.
+* Tool Composition — Combine multiple tools into a reusable capability.
+* Skill Versioning — Manage and evolve skills safely.
+* Skill Discovery — Determine which skill should be used for a task.
+
+5. Evaluation
+
+Purpose: Determine whether the agent actually produced the right result.
+
+* Task Completion — Did the agent accomplish the requested work?
+* Intent Alignment — Did the result satisfy the developer’s actual goal?
+* Correctness — Is the output technically correct?
+* Code Quality — Does the code meet engineering standards?
+* Functional Testing — Does the implementation behave correctly?
+* Security Evaluation — Did the agent introduce vulnerabilities?
+* Policy Compliance — Did execution follow organizational rules?
+* Regression Testing — Did the change break existing functionality?
+* LLM-as-Judge — Use models to evaluate outputs against defined criteria.
+* Deterministic Evals — Use tests, compilers, linters, scanners, and other objective checks.
+* Quality Metrics — Quantify agent performance over time.
+* Evaluation Dataset — Standard tasks used to benchmark agents.
+* Production Evals — Measure agent quality on real-world executions.
+
+6. Self-Improvement
+
+Purpose: Turn execution outcomes into measurable improvements in future agent performance.
+
+* Failure Analysis — Understand why an agent failed.
+* Root-Cause Analysis — Identify the underlying source of failure.
+* Feedback Loop — Feed execution results back into the system.
+* Strategy Optimization — Discover better ways to accomplish tasks.
+* Skill Improvement — Update reusable capabilities based on outcomes.
+* Context Optimization — Improve what information agents receive.
+* Prompt Optimization — Improve agent instructions.
+* Tool Optimization — Improve tool selection and usage.
+* Eval-Driven Development — Use evaluation results to guide improvements.
+* Learning from Success — Capture strategies associated with strong outcomes.
+* Regression Detection — Identify when changes make performance worse.
+* Experimentation / A-B Testing — Compare approaches before adopting improvements.
+* Continuous Improvement — Repeatedly execute → evaluate → learn → improve.
+
+7. Software Delivery
+
+Purpose: Connect agent intelligence to the actual engineering lifecycle.
+
+* Repository — Source-of-truth location for code.
+* Branching — Isolate proposed code changes.
+* Pull Request (PR) — Package changes for review and integration.
+* Code Review — Validate implementation quality before merging.
+* CI/CD — Automate building, testing, integration, and deployment.
+* Unit Testing — Validate individual components.
+* Integration Testing — Validate interactions between components.
+* End-to-End Testing — Validate complete workflows.
+* Static Analysis — Automatically inspect code for quality or security issues.
+* Build Verification — Confirm the software compiles and packages correctly.
+* Verification Gates — Require evidence before allowing work to progress.
+* Artifact Management — Manage generated builds and packages.
+* Deployment — Release verified software into an environment.
+* Rollback — Safely reverse unsuccessful changes.
+* Release Management — Control how changes move into production.
+* Production Validation — Verify the change works after deployment.
+* Observability — Monitor production behavior after release.

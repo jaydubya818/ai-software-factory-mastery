@@ -12,6 +12,8 @@ is outside the current repository scope.
 | --- | --- |
 | [AI Software Factory Mission](./ai-software-factory-mission.txt) | `2720b4d3507f26455bf1934a1ba9b453e4b08fc7f648865f18d6ae1d45c1ebbd` |
 | [AI Software Factory Interview Study Guide](./ai-software-factory-interview-study-guide.txt) | `cf986182bd4dd92181b83b6394f6734faa59e53df60974b5bf5c6c8f1e340f59` |
+| [AI Software Factory Core Capability Taxonomy](./ai-software-factory-core-capability-taxonomy.txt) | `0d1b9c04e9a297c4f9b8c290c76407da4f1781b5ef454cfd1f5066ecae5bc730` |
 
-The files originated from personal planning and study-guide drafts supplied on
-August 2, 2026.
+The first two files originated from personal planning and study-guide drafts
+supplied on August 2, 2026. The core capability taxonomy was supplied on
+August 25, 2026.

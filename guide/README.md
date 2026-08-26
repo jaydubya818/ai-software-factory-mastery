@@ -8,8 +8,10 @@ understands the authority and outcome model they serve.
 ## Start here
 
 Begin with the [high-level reading guide](./00-overview/README.md). It links a
-concise system overview, the canonical glossary, the foundational chapters, and
-the first golden-path lab.
+concise system overview, the
+[platform blueprint and operating playbook](./00-overview/03-platform-blueprint-and-operating-playbook.md),
+the canonical glossary, the foundational chapters, and the first golden-path
+lab.
 
 ## 1. Vision
 

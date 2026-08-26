@@ -3,10 +3,13 @@ title: Start Here
 status: draft-for-study
 audience:
   - all
-last_verified: 2026-08-11
+last_verified: 2026-08-25
 ---
 
 # Start Here
+
+> **Intent → Plan → Define Agent → Execute through Harness → Apply Skills →
+> Evaluate → Improve → Deliver Software**
 
 This section is the shortest path into AI Software Factory mastery. Read it
 before the detailed chapters. It establishes the system model, the vocabulary,
@@ -84,36 +87,37 @@ promotion of authority, merge, and consequential production decisions.
 For the foundational pass, read in this order:
 
 1. Read [AI Software Factory and Mission Control](./01-ai-software-factory-and-mission-control.md).
-2. Read the [Canonical Glossary](./02-canonical-glossary.md).
-3. Read [What Is an AI Software Factory?](../01-vision/01-what-is-an-ai-software-factory.md).
-4. Read [Operational Autonomy and Trust Calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md).
-5. Read [The Human-Agent Operating Model](../03-operating-model/01-human-agent-operating-model.md).
-6. Read [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
-7. Read [Factory Configuration, Workflow Contracts, and Execution Manifests](../04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md).
-8. Read [Specification Engineering, Executable Requirements, and Plan Assurance](../04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md).
-9. Read [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md).
-10. Read [Runtime Orchestration and State Machines](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md).
-11. Read [Tasks, Attempts, Leases, Idempotency, and Recovery](../05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md).
-12. Read [Sandboxed Execution, Isolation, and Publication](../05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md).
-13. Read [Factory Observability and Agent Runtime Telemetry](../05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md).
-14. Read [Agent Architecture, MCP, Tools, Context, and Memory](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md).
-15. Read [Model Routing, Evaluations, and Capability Selection](../06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md).
-16. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
-17. Read [Continuous Quality Contracts, Proof Packages, and Certificates](../07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md).
-18. Read [Quality Contract and Certificate Technical Specification](../07-quality-engineering/04-quality-contract-and-certificate-technical-specification.md).
-19. Read [Release, Production Feedback, and Factory SRE](../07-quality-engineering/02-release-production-feedback-and-factory-sre.md).
-20. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
-21. Read [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md).
-22. Read [Software Supply Chain Security, Provenance, and Attestation](../08-security-and-governance/03-software-supply-chain-security-provenance-and-attestation.md).
-23. Read [AI Software Factory Reference Architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md).
-24. Read [Factory Economics and Operating Metrics](../03-operating-model/02-factory-economics-and-operating-metrics.md).
-25. Read [Enterprise Adoption and Factory Maturity Model](../03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md).
-26. Read [Governed Continuous Learning and Recursive Improvement](../03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md).
-27. Review the [Mission Control Implementation Maturity and Evidence Map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
-28. Study the [Verification-First Software Factory case study](../09-mission-control-case-studies/02-verification-first-software-factory.md).
-29. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
-30. Run the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
-31. Complete the [Capstone Architecture and Executive Defense](../10-labs/02-capstone-architecture-and-executive-defense.md).
+2. Read the [Platform Blueprint and Operating Playbook](./03-platform-blueprint-and-operating-playbook.md).
+3. Read the [Canonical Glossary](./02-canonical-glossary.md).
+4. Read [What Is an AI Software Factory?](../01-vision/01-what-is-an-ai-software-factory.md).
+5. Read [Operational Autonomy and Trust Calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md).
+6. Read [The Human-Agent Operating Model](../03-operating-model/01-human-agent-operating-model.md).
+7. Read [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
+8. Read [Factory Configuration, Workflow Contracts, and Execution Manifests](../04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md).
+9. Read [Specification Engineering, Executable Requirements, and Plan Assurance](../04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md).
+10. Read [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md).
+11. Read [Runtime Orchestration and State Machines](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md).
+12. Read [Tasks, Attempts, Leases, Idempotency, and Recovery](../05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md).
+13. Read [Sandboxed Execution, Isolation, and Publication](../05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md).
+14. Read [Factory Observability and Agent Runtime Telemetry](../05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md).
+15. Read [Agent Architecture, MCP, Tools, Context, and Memory](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md).
+16. Read [Model Routing, Evaluations, and Capability Selection](../06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md).
+17. Read [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md).
+18. Read [Continuous Quality Contracts, Proof Packages, and Certificates](../07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md).
+19. Read [Quality Contract and Certificate Technical Specification](../07-quality-engineering/04-quality-contract-and-certificate-technical-specification.md).
+20. Read [Release, Production Feedback, and Factory SRE](../07-quality-engineering/02-release-production-feedback-and-factory-sre.md).
+21. Read [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md).
+22. Read [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md).
+23. Read [Software Supply Chain Security, Provenance, and Attestation](../08-security-and-governance/03-software-supply-chain-security-provenance-and-attestation.md).
+24. Read [AI Software Factory Reference Architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md).
+25. Read [Factory Economics and Operating Metrics](../03-operating-model/02-factory-economics-and-operating-metrics.md).
+26. Read [Enterprise Adoption and Factory Maturity Model](../03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md).
+27. Read [Governed Continuous Learning and Recursive Improvement](../03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md).
+28. Review the [Mission Control Implementation Maturity and Evidence Map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
+29. Study the [Verification-First Software Factory case study](../09-mission-control-case-studies/02-verification-first-software-factory.md).
+30. Read [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md).
+31. Run the [Governed Issue to Validated Pull Request lab](../10-labs/01-governed-issue-to-validated-pull-request.md).
+32. Complete the [Capstone Architecture and Executive Defense](../10-labs/02-capstone-architecture-and-executive-defense.md).
 
 On the second pass, explain the complete flow without notes. Give a 30-second
 version for a CEO, a two-minute version for a CTO, and a ten-minute architecture
