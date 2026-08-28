@@ -2,7 +2,7 @@
 title: Executive and Interview Mastery
 status: draft-for-study
 audience: [executive, architect, senior-engineer, product, all]
-last_verified: 2026-08-09
+last_verified: 2026-08-25
 mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
 ---
 
@@ -114,6 +114,32 @@ Use this sequence under pressure:
 7. Close the loop through delivery, production outcome, and metrics.
 8. State tradeoffs, current limitations, and staged adoption.
 
+### Handle reliability and security incidents consistently
+
+Use one operating sequence under pressure:
+
+> **Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent →
+> Measure**
+
+Clarify the affected builders, workflows, tenants, repositories, data, and
+business impact. Contain unsafe execution with scoped cancellation, authority
+reduction, credential revocation, or a kill switch. Preserve traces, events,
+tool calls, policy decisions, artifacts, and evidence. Isolate the failure to
+intent, context, model, tool, state, policy, or evaluation. Restore a known-safe
+version, correct and reconcile the defect, add a regression evaluation and
+stronger control, then measure the affected cohort until confidence returns.
+
+Practice the sequence against production-agent failure, reliability or
+evaluation regression, model degradation or provider outage, tool misuse,
+prompt injection, malicious repository content, secret exfiltration, MCP
+poisoning, privilege escalation, unauthorized file or data access, sandbox
+escape, approval bypass, supply-chain compromise, cross-tenant leakage, failed
+deployment, and runaway token spend.
+
+The governing security thesis is: **an agent should receive the minimum
+context, tools, permissions, time, and budget required for the task—and every
+consequential action should produce evidence.**
+
 ### Lead adoption through progressive proof
 
 A serious adoption begins with one controlled repository and one
@@ -171,6 +197,7 @@ recovered, and taught without agent assistance.
 - [AI Software Factory V1 decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/decisions/ai-software-factory-v1-decisions.md)
 - [Golden-path assessment](../10-labs/evidence/2026-08-08-golden-path/README.md)
 - [Guide writing standard](../writing-standard.md)
+- [Platform Blueprint and Operating Playbook](../00-overview/03-platform-blueprint-and-operating-playbook.md)
 
 ## 8. Notes and lessons learned
 

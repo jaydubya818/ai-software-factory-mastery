@@ -1,7 +1,9 @@
 ---
 title: Initial AI Software Factory Research Canon
 status: active
-last_reviewed: 2026-08-11
+audience: [architect, senior-engineer, platform, security, quality, product, ai-engineer]
+last_verified: 2026-08-25
+last_reviewed: 2026-08-25
 ---
 
 # Initial AI Software Factory Research Canon
@@ -20,9 +22,11 @@ tests, and direct operation supply different forms of evidence.
 | Source | Initial use |
 | --- | --- |
 | [Anthropic: Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) | Distinguish workflows from agents and study orchestration patterns. |
+| [Anthropic: Trustworthy Agents in Practice](https://www.anthropic.com/research/trustworthy-agents) | Study the agent loop, meaningful human control, transparency, privacy, and security as autonomy increases. |
 | [Anthropic: Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) | Study context selection, compaction, memory, and long-running agent behavior. |
 | [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28) | Use the authoritative protocol for hosts, clients, servers, tools, resources, authorization, and versioning. |
 | [OpenAI Agents SDK](https://developers.openai.com/api/docs/guides/agents) | Study agent definitions, orchestration, guardrails, state, tracing, and evaluation. |
+| [OpenAI: A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/) | Study agent selection, models, tools, instructions, orchestration, layered guardrails, evaluation baselines, and human intervention. |
 | [OpenAI Responses API](https://developers.openai.com/api/docs/guides/responses) | Study tool-using model execution and durable application integration. |
 | [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/) | Study the relationship among the model, harness, tools, context, and execution loop. |
 | [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/) | Examine an agent-first engineering environment as an industry case study, separating reported experience from independently verified general law. |
@@ -51,6 +55,7 @@ tests, and direct operation supply different forms of evidence.
 | [SWE-bench paper](https://arxiv.org/abs/2310.06770) | Study repository-level evaluation design and the limits of reducing software engineering to issue resolution. |
 | [SWE-bench repository](https://github.com/SWE-bench/SWE-bench) | Inspect current harnesses, datasets, variants, and reproducibility mechanisms. |
 | [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf) | Study requirements, design review, verification, provenance, vulnerability response, and continuous improvement across the SDLC. |
+| [NIST SP 800-218A](https://csrc.nist.gov/pubs/sp/800/218/a/final) | Study the AI-specific community profile for securing generative-AI model development across the software lifecycle. |
 | [NIST AI Risk Management Framework Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/) | Study documented TEVV, independent assessment, production monitoring, and AI risk decisions. |
 | [SLSA specification](https://slsa.dev/spec/v1.2/) | Study source and build provenance, hardened build levels, artifact verification, and supply-chain threat boundaries. |
 | [in-toto Attestation Framework](https://github.com/in-toto/attestation) | Study typed, verifiable claims bound to immutable software subjects by digest. |
@@ -62,6 +67,7 @@ tests, and direct operation supply different forms of evidence.
 | [OMG Structured Assurance Case Metamodel](https://www.omg.org/spec/SACM/About-SACM) | Study formal relationships among claims, arguments, evidence, context, and counterclaims. |
 | [Anthropic: Demystifying Evals for AI Agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) | Study tasks, trials, graders, assertions, transcripts, evaluation layers, and production feedback for agents. |
 | [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) | Study prompt injection, excessive agency, supply-chain, output-handling, and resource risks for AI-enabled systems. |
+| [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/initiatives/agentic-security-initiative/) | Study risks and mitigations specific to autonomous, tool-using, multi-step agent systems and MCP integrations. |
 | [OpenTelemetry Signals](https://opentelemetry.io/docs/concepts/signals/) | Study correlated traces, metrics, logs, and baggage for production evidence. |
 | [OpenTelemetry Semantic Conventions 1.43.0](https://opentelemetry.io/docs/specs/semconv/) | Study shared telemetry vocabulary. Pin versions: CI/CD is release-candidate and GenAI conventions are moving/developing, so do not make them the authoritative factory schema. |
 | [NASA Systems Engineering Handbook Appendix](https://www.nasa.gov/reference/system-engineering-handbook-appendix/) | Study clear, singular, traceable, verifiable requirements and verification/validation matrices. |

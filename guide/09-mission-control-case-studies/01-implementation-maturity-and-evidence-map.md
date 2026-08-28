@@ -3,6 +3,7 @@ title: Mission Control Implementation Maturity and Evidence Map
 status: current-pinned-assessment
 audience: [executive, architect, senior-engineer, ai-engineer, platform, product]
 assessed_on: 2026-08-25
+last_verified: 2026-08-25
 mission_control_main_commit: b3dfcee
 production_pilot_evidence_commit: db44819ec59e79cdd71ba9ed36fce8064a120af3
 ---
