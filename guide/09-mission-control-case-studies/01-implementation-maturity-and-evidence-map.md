@@ -1,74 +1,67 @@
 ---
 title: Mission Control Implementation Maturity and Evidence Map
-status: historical-assessment
+status: current-pinned-assessment
 audience: [executive, architect, senior-engineer, ai-engineer, platform, product]
-assessed_on: 2026-08-11
-mission_control_main_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
-mission_control_study_commit: 9d5f8e36aff45a001a8848cc0516b3dc800e29b8
-mission_control_pr: 64
+assessed_on: 2026-08-25
+mission_control_main_commit: b3dfcee
+production_pilot_evidence_commit: db44819ec59e79cdd71ba9ed36fce8064a120af3
 ---
 
 # Mission Control Implementation Maturity and Evidence Map
 
-> Historical assessment: this map captures the repository states listed below.
-> For the verification architecture at merged commit `ff0524e`, continue with
-> the [Verification-First Software Factory case study](./02-verification-first-software-factory.md).
+> Current pinned assessment: this map records Mission Control at merged commit
+> `b3dfcee` and retained Production Factory Pilot V3 evidence. Mutable status
+> remains authoritative in Mission Control's
+> [capability maturity ledger](https://github.com/jaydubya818/MissionControl/blob/main/docs/product/software-factory-capability-maturity.md).
 
 ## Purpose
 
-This case study prevents the mastery guide from confusing four different
-evidence states:
+This case study prevents the mastery guide from confusing five evidence states:
 
 1. merged capability on GitHub `main`;
-2. committed and tested capability on an open branch;
-3. live or browser evidence with a known limitation; and
-4. uncommitted proposal or future vision.
+2. deterministic system or browser qualification at an exact revision;
+3. bounded production-pilot evidence with a known limitation;
+4. sustained real-product production evidence; and
+5. proposal or future vision.
 
 It is a point-in-time assessment, not product documentation.
 
 ## Source boundaries
 
-| Source | State on 2026-08-11 | Permitted claim |
+| Source | State on 2026-08-25 | Permitted claim |
 | --- | --- | --- |
-| `b31e275` on GitHub `main` | Merged | Current committed baseline |
-| `9d5f8e3` on `codex/sandbox` | Open draft PR #64 | Tested branch implementation, not `main` |
-| PR #61 at commit `2fd0a5a` | Open, all checks passing | One real GitHub App publication proof |
-| Original mastery Golden Path 01 | Partial run against dirty `8014d5a` worktree | Control-plane behavior and blockers only |
-| Three remote-sandbox documents | Uncommitted local files | Design and blocked provider evidence only |
+| `b3dfcee` on GitHub `main` | Merged | Current product baseline for this assessment |
+| Production Factory Pilot V3 at `db44819` | Retained qualification evidence | Human-governed production-pilot readiness on deterministic disposable workloads |
+| V3 live remote cohort | 3/3 first-pass, serial | Bounded exe.dev proof with guest-enforced egress; not general production certification |
+| Current capability maturity ledger | Mutable product documentation | Current status, limitations, owners, and promotion gates |
+| This mastery map | Pinned educational case study | Enduring lessons at the recorded source/evidence revisions |
 
 ## Capability map
 
-| Capability | GitHub-main status | Newer evidence | Remaining boundary |
+| Capability | Current status | Evidence | Remaining boundary |
 | --- | --- | --- | --- |
-| Governed Mission and versioned Plan | Implemented | Browser control-plane path retained | Complete clean browser rerun |
-| WorkOrder, Task, and Attempt hierarchy | Implemented | Stronger revision-bound Task authority on PR #64 | Merge and browser proof |
-| Independent validation and evidence | Implemented mechanisms | Phase 0 canary independently verified before acceptance | Complete review package across real PR path |
-| Factory Configuration and readiness | Implemented baseline | Agent bindings, code scopes, workflow contract, and manifest on PR #64 | Merge, policy/configuration for lab repo |
-| Policy and risk approval | Partial but material | Active policy used for live PR proof | Canonical fail-closed policy across every tool boundary |
-| Durable lease and heartbeat | Not on main | Implemented and tested on PR #64 | Merge and full late-event/cancel browser matrix |
-| Real Codex-to-GitHub PR | Not on main | PR #61 proves one real bot-authored review-ready PR | Browser Mission path required direct mutations |
-| Exact execution manifest | Not on main | Implemented and tested on PR #64 | Merge and retained end-to-end evidence |
-| Structured workflow handoff | Partial | Six workflows hardened on PR #64 | Merge and representative real execution |
-| GitHub App boundary | Connection contract on main | Real token, push, PR, and passing CI proof | Webhook evidence-ingestion defects and lab setup |
-| Model routing | Implemented platform mechanisms | Operational thresholds documented | Outcome-normalized ranking and automatic canary control |
-| Loop/Graph Engineering | Implemented bounded slices | Browser failure containment and human gate evidence | Live agent deliverables and complete evidence ingestion |
-| Governed continuous learning | Substrate exists | Phase 0 operational canary passed on PR #64 | Scheduler off; source registry and ingestion not built |
-| Release and production outcome | Partial records and policy | None establishes customer-value completion | Deployment reconciliation and production outcome loop |
-| Remote sandbox | Not implemented | Local design and blocked provider doctor only | Capacity, lifecycle canaries, privilege, egress, and teardown proof |
-| Trust Score and autonomy calibration | Doctrine | No canonical product proof | Outcome model, demotion, quarantine, and human promotion workflow |
+| Governed Mission, Plan, WorkOrder, Task, and Attempt | Qualified | System Factory E2E V2 and V3 | Sustained work on a named product repository |
+| Factory Configuration, agent bindings, context, skills, and manifests | Qualified architecture | Exact version and admission contracts | Builder-facing role contributions and real-work calibration |
+| Durable execution, leases, recovery, and stop controls | Qualified | V3 success cohort plus 17 fail-closed drills | Fleet-scale and sustained provider-failure operation |
+| Independent verification and Quality Gates | Qualified | Exact candidate/subject evidence and separate verifier Attempts | Risk-based expansion without weakening independence |
+| Codex harness | Production admission | V3 15/15 accepted deterministic workloads | Real product-repository outcomes |
+| Model/harness/backend routing | Implemented, gated | Advisory decisions and frozen thresholds | Complete cost/outcome coverage; Guarded Auto remains off |
+| Observability, evals, and Factory Learning | Qualified, diagnostic/advisory | Traces, datasets, experiments, learning candidate | Production incidents, corrections, rollback, and customer outcomes |
+| Remote Sandbox | Production-pilot eligible; Preview | 3/3 live exe.dev cohort | Provider-enforced egress, larger sample, real repositories |
+| Supply-chain provenance | Strong partial | Pinned image, SBOM, vulnerability gates, SLSA provenance | Verify every attestation at consumption boundaries |
+| Tools and MCP | Native partial; MCP missing | Harness manifests explicitly report MCP unsupported | One governed read-only broker proof |
+| Factory incident response | Missing canonical lifecycle | Existing alerts, events, traces, and containment controls | One incident aggregate and browser-operable command flow |
+| Release, production feedback, and economics | Partial | Release records; token/latency observations | Real deployment observation, rollback, provider cost, and accepted-outcome economics |
+| Multi-tenant and adoption proof | Partial | Company/workspace scope and operator surfaces | Live cross-company denial and sustained design-partner evidence |
 
-## What changed since the original golden-path assessment
+## What changed since the 2026-08-11 assessment
 
-The original 2026-08-08 run correctly reported no Task, Attempt, Evidence, or
-PR. Since then, PR #64 implemented much of todo 024’s deterministic runtime,
-and the local work log records a real GitHub App PR with exact lineage and
-passing checks. That is meaningful progress.
-
-It does not retroactively make the original lab pass. The real recovery used
-direct control-plane mutations because the browser Mission path could not start
-the released Plan, preserve the implementation policy, or reconcile the receipt
-into the assertion. The accepted mastery lab still requires a clean,
-browser-initiated run through the supported path.
+Mission Control merged the generic harness, durable worker, browser-governed
+Mission path, exact execution and verification contracts, Factory Memory,
+Observability/Evals, advisory learning, execution routing, system qualification,
+and three generations of production-pilot evidence. These later proofs do not
+rewrite the original lab; they supersede its product-maturity conclusions at a
+new exact baseline.
 
 ## Documentation gaps closed by this review
 
@@ -85,28 +78,25 @@ study findings. Mission Control product documentation was not copied.
 
 ## Recommended next evidence sequence
 
-1. Review and merge PR #64 or establish a different clean pinned baseline.
-2. Repair the browser Mission path and GitHub webhook evidence reconciliation.
-3. Configure the controlled `mission-control-factory-lab` repository with the
-   exact GitHub App, active Governance Policy, and passing Factory version.
-4. Rerun Golden Path 01 from its pinned target baseline without direct database
-   or script mutations.
-5. Retain Task, Attempt, lease, manifest, commit, PR, receipt, failure, recovery,
-   and review-package evidence.
-6. Only then extend the proof into deployment and production outcome.
+1. Select one named real product repository and design-partner team.
+2. Complete a preflight incident drill using the canonical incident framework.
+3. Run at least ten accepted WorkOrders with complete lineage and human decisions.
+4. Capture model, compute, sandbox, human-attention, retry, correction, and review cost.
+5. Keep sensitive remote work blocked until provider-enforced egress is proven.
+6. Add canonical incident and read-only Tool/MCP authority boundaries.
+7. Extend the same lineage to production outcomes and governed learning proposals.
 
 ## Review questions
 
 1. Which claims are safe to state in present tense?
 2. Which tests prove a mechanism but not an end-to-end capability?
-3. Why does PR #61 not satisfy the browser-only lab?
-4. What evidence would promote remote sandboxing from proposal to Preview?
-5. Which current mastery chapters must be reverified after PR #64 changes?
+3. Why do 15 disposable workloads not prove real-team adoption?
+4. What evidence would promote Remote Sandbox beyond Preview?
+5. Which chapter-specific historical snapshots should be reverified at the current baseline?
 
 ## Versioned references
 
-- [Mission Control main baseline](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1)
-- [Mission Control study commit](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8)
-- [Draft PR #64](https://github.com/jaydubya818/MissionControl/pull/64)
-- [Real publication proof PR #61](https://github.com/jaydubya818/MissionControl/pull/61)
+- [Mission Control current case-study baseline](https://github.com/jaydubya818/MissionControl/tree/b3dfcee)
+- [Production Factory Pilot V3 evidence](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/docs/testing/evidence/production-factory-pilot-v3/README.md)
+- [Mission Control capability maturity ledger](https://github.com/jaydubya818/MissionControl/blob/main/docs/product/software-factory-capability-maturity.md)
 - [Original Golden Path 01 assessment](../10-labs/evidence/2026-08-08-golden-path/README.md)

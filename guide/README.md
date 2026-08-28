@@ -142,6 +142,10 @@ Current case studies:
   Mission Control commit, distinguishes proposed completion work, and provides
   interview questions, whiteboard exercises, and hands-on mastery labs.
 
+Chapter-specific Mission Control commit pins remain point-in-time study
+snapshots. Use the maturity map for the current pinned product assessment and
+Mission Control's own capability ledger for mutable implementation status.
+
 ## 10. Labs
 
 Convert conceptual understanding into implementation fluency through code
@@ -187,10 +191,11 @@ The foundation and second-layer architecture sequence are now drafted. Chapters 
 `draft-for-study` until the learner completes their labs, teach-backs, and
 independent review. Draft completion is not mastery.
 
-The next accepted golden-path run should use a clean, merged, and pinned
-Mission Control commit after draft PR #64 is resolved. Before that run, repair
-the browser Mission policy and receipt-reconciliation path, configure the
-controlled repository's GitHub App, and provide an active Governance Policy and
-passing Factory Configuration. PR #61 proves the publication component; it
-does not satisfy the browser-only lab. Chapter development does not depend on
-those runtime prerequisites.
+The current Mission Control case-study baseline is merged commit `b3dfcee`. Its
+retained Production Factory Pilot V3 evidence proves 15/15 accepted
+deterministic workloads, 17 fail-closed drills, and a bounded 3/3 live remote
+cohort while preserving human acceptance. The next evidence gate is sustained
+work on a named real product repository with complete outcome economics,
+provider-enforced egress for sensitive remote work, and a preflight incident
+drill. Chapter development does not convert those future gates into present
+capability claims.

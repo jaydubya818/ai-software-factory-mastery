@@ -29,6 +29,19 @@ An **AI Software Factory** is a governed engineering operating model where human
 
 Humans retain accountability. Agents provide execution. Independent evidence determines whether work is ready to advance.
 
+The factory has two useful descriptions:
+
+**Builder loop**
+
+`Intent → Plan → Configure agents, harnesses, skills, and tools → Execute → Verify and evaluate → Deliver → Observe → Improve`
+
+**Governed delivery lifecycle**
+
+`Mission → approved Plan → WorkOrder → Task → Attempt → candidate → independent evidence → pull request → human decision → release → observed outcome → governed learning`
+
+Agent definitions, harnesses, skills, and tools configure execution. They are
+not separate authority states and cannot approve or certify their own work.
+
 ```text
 Intent
   → WorkOrder
@@ -91,6 +104,11 @@ See the [curriculum map](./guide/README.md) for the detailed scope.
 [Mission Control](https://github.com/jaydubya818/MissionControl) is the primary living case study: a control plane for human-directed, agent-executed software development with governed WorkOrders, bounded execution, verification, evidence, recovery, and controlled publication.
 
 The purpose here is not to duplicate Mission Control documentation. It is to extract the enduring engineering principles, tradeoffs, and patterns behind building trustworthy autonomous delivery systems.
+
+The current pinned assessment is the
+[Mission Control Implementation Maturity and Evidence Map](./guide/09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md).
+Mutable product status remains authoritative in Mission Control's
+[capability maturity ledger](https://github.com/jaydubya818/MissionControl/blob/main/docs/product/software-factory-capability-maturity.md).
 
 ## What mastery means
 

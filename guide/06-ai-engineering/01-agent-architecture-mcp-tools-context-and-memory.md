@@ -2,8 +2,8 @@
 title: Agent Architecture, MCP, Tools, Context, and Memory
 status: draft-for-study
 audience: [architect, senior-engineer, ai-engineer, platform, executive]
-last_verified: 2026-08-09
-mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
+last_verified: 2026-08-25
+mission_control_commit: b3dfcee
 ---
 
 # Agent Architecture, MCP, Tools, Context, and Memory
@@ -122,9 +122,9 @@ needs an evaluation proving that it improves the target workflow.
 ## 5. Current Mission Control Implementation
 
 At commit
-[`b31e27564deb1c03c167e61b5ee094567c2ba7b1`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1),
-Mission Control contains several agent-platform components at different levels
-of maturity.
+[`b3dfcee`](https://github.com/jaydubya818/MissionControl/tree/b3dfcee),
+Mission Control contains versioned agent-platform components at different
+levels of maturity.
 
 Agent templates, versions, instances, and identities provide versioned registry
 records. The older agent model also stores role, allowed task types and tools,
@@ -143,13 +143,10 @@ Mission Control records tool calls and applies risk policy, while the executor
 adapter freezes repository root, allowed paths, isolation, timeout, and model.
 Provider packages implement structured model tool-call formats.
 
-Memory is partial. `packages/memory` implements session, project, and global
-in-memory abstractions. Convex records run episodes and execution traces and can
-consolidate batches into knowledge graph nodes. The proposed GraphRAG design
-correctly identifies missing provenance, contradiction, permission-aware
-retrieval, ingestion checkpoints, evaluation, and correction lifecycle. The
-live audit described an empty operational graph, so the proposal must not be
-presented as a production memory system.
+Factory Memory and Attempt-bound Context Packages are implemented as
+provenance-backed advisory inputs. They do not gain acceptance authority and
+remain default-off by phase until relevance and isolation are qualified for the
+specific workflow.
 
 MCP is currently adjacent rather than a canonical governed subsystem. Product
 documents and plugin guidance describe MCP integrations, but the committed
@@ -171,14 +168,13 @@ and learned rules should require evaluation and human approval.
 
 ## 7. Versioned references
 
-- [Agent identities](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentIdentities.ts)
-- [Agent versions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentVersions.ts)
-- [Context manifests](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/manifests.ts)
-- [Context activation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/activation.ts)
-- [Context router](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/context-router/src/router.ts)
-- [Memory lifecycle](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/memoryLifecycle.ts)
-- [Graph-assisted memory proposal](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/plans/memory-graphrag-architecture.md)
-- [Plugin and MCP guidance](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/CREATING_PLUGINS.md)
+- [Agent identities](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/registry/agentIdentities.ts)
+- [Agent versions](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/registry/agentVersions.ts)
+- [Context manifests](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/context/manifests.ts)
+- [Context activation](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/context/activation.ts)
+- [Context router](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/packages/context-router/src/router.ts)
+- [Harness manifests](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/packages/workflow-engine/src/harnessManifests.ts)
+- [Factory Memory architecture](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/docs/architecture/factory-memory-context-intelligence.md)
 
 ## 8. Notes and lessons learned
 
@@ -205,9 +201,11 @@ the agent to exfiltrate a secret. Explain every boundary that prevents it.
 ## 11. Hands-on lab
 
 Trace a repository manifest through version resolution, lock creation, context
-activation, and WorkflowRun receipt at commit `b31e275`. Change a package hash
-in a disposable fixture and prove activation fails. Then design the complete
-execution manifest that todo 024 should retain.
+activation, and WorkflowRun receipt at commit `b3dfcee`. Change a package hash
+in a disposable fixture and prove activation fails. Then inspect the exact
+Attempt execution manifest and identify where a governed MCP grant would bind.
 
 Required evidence: manifest, lock, package versions and hashes, activation
-receipt, failure output, and teach-backs for an AI engineer and CTO.
+receipt, failure output, and teach-backs for an AI engineer and CTO. Treat MCP
+as an architecture exercise until Mission Control qualifies an exact read-only
+broker path; the admitted harness manifests currently report it unsupported.

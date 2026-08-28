@@ -2,8 +2,8 @@
 title: AI Software Factory Reference Architecture
 status: draft-for-study
 audience: [executive, architect, senior-engineer, platform, security, product]
-last_verified: 2026-08-11
-mission_control_local_head: a49064875d0711253d74029e3066cc74c7c1c2a5
+last_verified: 2026-08-25
+mission_control_commit: b3dfcee
 ---
 
 # AI Software Factory Reference Architecture
@@ -96,9 +96,17 @@ Multi-agent orchestration is a capability, not a mandatory topology. A single ex
 
 ## 5. Current Mission Control Implementation
 
-Mission Control’s React UI and Convex functions form much of the control/data plane. The Hono orchestration server, executor adapters, worktrees, GitHub App integration, leases, run events, and artifacts form an emerging execution plane. QC runs, verification receipts, approval decisions, GitHub checks, and release-gate automation form an incomplete quality/delivery plane. Identity, permissions, governance policy, and sandbox controls supply parts of the security plane.
+At merged commit `b3dfcee`, Mission Control implements the control/data plane,
+generic harness and durable worker execution plane, independent verification
+plane, exact-current GitHub publication boundary, traces/evals, Factory Memory,
+advisory learning, and deterministic tuple routing. Production Factory Pilot V3
+proved the composed human-governed path on disposable workloads.
 
-The boundaries are not equally mature. `convex/qcRuns.ts` still invokes mock adapters and contains a policy TODO; `convex/governance/releaseGateAutomation.ts` operates in `SHADOW`; PR publication and remote sandbox controls live on study branches rather than the cited main baseline; and the browser-operated Mission-to-validated-PR path remains the decisive proof gap.
+The boundaries are not equally mature. Remote Sandbox remains Preview because
+provider-enforced egress and sustained real-repository evidence are missing.
+Tools/MCP and canonical incident command remain planned authority boundaries.
+Release/customer-outcome feedback, complete provider cost, cross-company proof,
+and design-partner adoption remain partial.
 
 ## 6. Future Vision
 
@@ -106,8 +114,8 @@ Do not add more planes or top-level products. Complete one vertical slice: gover
 
 ## 7. Versioned references
 
-- Mission Control main baseline: `b31e27564deb1c03c167e61b5ee094567c2ba7b1`
-- Local source HEAD: `a49064875d0711253d74029e3066cc74c7c1c2a5`; staged-only runtime work is not a product claim
+- Mission Control main baseline: `b3dfcee`
+- Product maturity source: `docs/product/software-factory-capability-maturity.md`
 - Product sources: `convex/missions.ts`, `convex/factory/attempts.ts`, `convex/qcRuns.ts`, `convex/governance/releaseGateAutomation.ts`, `apps/orchestration-server/src/index.ts`, `apps/mission-control-ui/src/eos/`
 - Related mastery chapters: control/execution planes, runtime state machines, security, quality, and specification engineering
 

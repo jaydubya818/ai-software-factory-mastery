@@ -2,8 +2,8 @@
 title: Release, Production Feedback, and Factory SRE
 status: draft-for-study
 audience: [executive, architect, senior-engineer, platform, product, ai-engineer]
-last_verified: 2026-08-11
-mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
+last_verified: 2026-08-25
+mission_control_commit: b3dfcee
 ---
 
 # Release, Production Feedback, and Factory SRE
@@ -76,6 +76,25 @@ autonomy or pause feature expansion.
 Operator attention is also a budget. Alerts should identify a required decision,
 risk, affected scope, evidence, safe actions, and what resumes afterward.
 
+### Use one incident operating loop
+
+For production-agent failure, security incidents, model degradation, tool
+misuse, cost explosion, failed deployment, or evaluation regression, use:
+
+`Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure`
+
+Clarify affected builders and business impact. Limit unsafe execution before
+investigation widens the blast radius. Preserve traces, model requests, tool
+calls, policy decisions, credentials, candidates, evidence, and release facts.
+Isolate the failed layer—intent, context, model, tool, state, policy, or
+evaluation. Restore a separately authorized known-safe version, correct the
+defect, add regression controls, and measure whether the correction holds.
+
+This loop should exercise the OWASP Agentic Top 10 threat families, including
+goal hijack, tool misuse, identity/privilege abuse, supply-chain compromise,
+unexpected code execution, memory/context poisoning, insecure inter-agent
+communication, cascading failure, human trust exploitation, and rogue agents.
+
 ## 4. Tradeoffs and alternatives
 
 Long observation windows increase confidence and delay final outcome accounting.
@@ -93,22 +112,16 @@ reconciliation.
 ## 5. Current Mission Control Implementation
 
 At commit
-[`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1),
-Mission Control has deployment records, release gates, approval and evidence
-linkage, GitHub PR/check ingestion, alerts, health queries, run events, and a
-retention policy. V1 decisions keep merge human-owned and select governed
-GitHub Issues linked to exact repository and commit as the source for production
-defects, incidents, and rollbacks.
+[`b3dfcee`](https://github.com/jaydubya818/MissionControl/tree/b3dfcee),
+Mission Control has release/deployment records, exact PR/check ingestion,
+approval and evidence linkage, alerts, traces, health queries, run events,
+retention, bounded containment controls, and a qualified human-governed
+Mission-to-accepted-WorkOrder path.
 
-These mechanisms do not prove a complete Mission-to-production golden path.
-Deployment execution and customer-outcome confirmation are partial. Some
-Factory Health metrics are inferred from Task, run, approval, and verifier
-proxies rather than accepted WorkOrders and production outcomes. The current
-golden path still ends at a review-ready PR.
-
-Study branch `9d5f8e3` improves the real PR publication boundary, but PR #64 is
-open and the browser-only proof remains incomplete. PR #61 proves one real
-GitHub App PR with passing CI, not deployment or customer value.
+It does not yet have one canonical incident aggregate or a complete
+Mission-to-production-outcome proof. Deployment/customer confirmation and cost
+per accepted outcome remain partial. Existing incident information is split
+across alerts, operational events, run failures, traces, and reports.
 
 ## 6. Future Vision
 
@@ -123,11 +136,11 @@ autonomy reductions driven by reliability.
 
 ## 7. Versioned references
 
-- [Deployments](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/governance/deployments.ts)
-- [Release gate automation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/governance/releaseGateAutomation.ts)
-- [Factory health](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/factory/health.ts)
-- [Evidence retention and production outcome policy](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/security/evidence-retention-policy.md)
-- [V1 decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/decisions/ai-software-factory-v1-decisions.md)
+- [Deployments](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/governance/deployments.ts)
+- [Release gate automation](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/governance/releaseGateAutomation.ts)
+- [Factory health](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/convex/factory/health.ts)
+- [Production Pilot V3 evidence](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/docs/testing/evidence/production-factory-pilot-v3/README.md)
+- [OWASP Agentic Top 10 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
 
 ## 8. Notes and lessons learned
 
@@ -152,7 +165,7 @@ webhook replay, and rollback. Name each authoritative record and owner.
 ## 11. Hands-on lab
 
 **Prerequisite:** a read-only checkout of Mission Control main commit
-`b31e275` and the controlled laboratory scenario. Do not deploy software or
+`b3dfcee` and the controlled laboratory scenario. Do not deploy software or
 modify production state.
 
 Trace the deployment and release-gate records. Design a
