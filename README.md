@@ -18,13 +18,15 @@ trust.
 | You are | Your goal | Start here |
 | --- | --- | --- |
 | Executive | Understand value, risk, accountability, and adoption in 20 minutes | [Executive path](./guide/00-overview/06-reading-paths.md#executive-path--20-minutes) |
-| Architect | Whiteboard the complete system and its authority boundaries | [Architect path](./guide/00-overview/06-reading-paths.md#architect-path--2-hours) |
-| Builder | Implement a governed path from issue to validated pull request | [Builder path](./guide/00-overview/06-reading-paths.md#builder-path--hands-on) |
+| Architect | Whiteboard the complete system and its authority boundaries | [Architect path](./guide/00-overview/06-reading-paths.md#architect-path--3-hours) |
+| Builder | Implement a governed path from repository onboarding through delivery, recovery, and learning | [Builder path](./guide/00-overview/06-reading-paths.md#builder-path--hands-on) |
 | Deep-study reader | Master the full curriculum, labs, and interview material | [Deep Study path](./guide/00-overview/06-reading-paths.md#deep-study-path--complete-curriculum) |
 
 [Compare all reading paths](./guide/00-overview/06-reading-paths.md) or use the
 [topic index](./guide/00-overview/07-topic-index.md) when you already know the
 question you need to answer.
+Use [Capability Coverage and Maturity](./guide/00-overview/08-capability-coverage-and-maturity.md)
+before interpreting curriculum breadth as implementation proof.
 
 ## The system in one view
 
@@ -70,17 +72,30 @@ factory.
 ## What the curriculum covers
 
 - factory architecture, operating models, economics, and adoption;
+- Agent Factory registries, capability packaging, dependency resolution,
+  certification, promotion, deprecation, and revocation;
 - business intent, executable specifications, and delivery records;
+- repository onboarding, readiness, codebase intelligence, and autonomous
+  workflow portfolios;
 - AI coding agents, agent orchestration, workflows, and loop engineering;
 - coding harnesses, adapters, lifecycle hooks, MCP, ACP, AG-UI, and A2A;
 - data, knowledge, semantic, context, and model engineering;
 - development environments, compute fleets, sandboxes, and composable
   infrastructure;
 - evaluation datasets, trials, graders, trace replay, and run comparison;
+- evaluation science, calibration, uncertainty, controlled experimentation,
+  optimization, and regression control;
 - independent verification, proof packages, provenance, and quality gates;
+- unit, integration, contract, property, mutation, fuzz, performance,
+  accessibility, and visual testing;
+- CI/CD, artifacts, schema and API compatibility, progressive delivery,
+  rollback, and production verification;
+- developer portals, service catalogs, golden paths, scheduling, capacity,
+  cost, fairness, observability semantics, and disaster recovery;
 - production feedback, reproduction, automated review, and merge maintenance;
 - multi-repository delivery, dependency coordination, submodules, and subtrees;
-- security, identity, policy, progressive autonomy, and human decision rights;
+- agentic threats, workload identity, secrets, privacy, licensing, compliance,
+  policy, progressive autonomy, and human decision rights;
 - compounding engineering, controlled improvement, and human-attention
   economics; and
 - case studies, labs, whiteboard exercises, and interview practice.
@@ -94,9 +109,12 @@ factory.
 4. Use the [canonical glossary](./guide/00-overview/02-canonical-glossary.md)
    for precise terminology.
 5. Use the [curriculum map](./guide/README.md) for the complete sequence.
-6. Use the [Mission Control capability and admission map](./guide/09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
+6. Check the [coverage and maturity map](./guide/00-overview/08-capability-coverage-and-maturity.md)
+   and use the [external reviewer guide](./guide/00-overview/09-reviewer-guide.md)
+   when sharing the curriculum.
+7. Use the [Mission Control capability and admission map](./guide/09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
    for current, versioned implementation claims.
-7. Complete the [golden-path lab](./guide/10-labs/01-governed-issue-to-validated-pull-request.md)
+8. Complete the relevant [executable labs](./guide/README.md#supplemental-labs)
    before claiming practical mastery.
 
 ## Governing principles
@@ -114,9 +132,10 @@ factory.
 You can explain the system at executive and engineering depth, redraw its
 authority boundaries, identify its authoritative records, design failure and
 recovery paths, evaluate complete agent configurations, distinguish current
-evidence from future vision, and implement a governed path from intent to a
-reviewable software candidate.
+evidence from future vision, and implement a governed path from repository
+onboarding and capability resolution through delivery, production verification,
+recovery, and controlled learning.
 
-The repository remains active research and development. Full chapters are
-`draft-for-study` until their labs, teach-backs, and independent review are
-complete.
+The repository remains active research and development. Every document carries
+an explicit maturity status. `Review ready` means ready for external scrutiny;
+it does not mean the described implementation is operationally proven.

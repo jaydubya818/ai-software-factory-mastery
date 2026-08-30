@@ -5,6 +5,7 @@ import { DocumentNav } from "../../components/DocumentNav";
 import { Markdown } from "../../components/Markdown";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
+import { StatusBadge } from "../../components/StatusBadge";
 
 type PageProps = { params: Promise<{ slug: string[] }> };
 
@@ -47,11 +48,14 @@ export default async function DocumentPage({ params }: PageProps) {
               <span>{document.section}</span>
               <span>{document.readingMinutes} min read</span>
               {document.hasQuickRead && <span>Quick Read included</span>}
+              {document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}
             </div>
             <h1>{document.title}</h1>
             <p>{document.description}</p>
             <div className="document-status">
-              <span>Status: {document.status.replaceAll("-", " ")}</span>
+              <StatusBadge status={document.status} prefix />
+              <span>Risk: {document.risk.replaceAll("-", " ")}</span>
+              {document.lifecycle.length > 0 && <span>Lifecycle: {document.lifecycle.join(" · ")}</span>}
               {document.lastVerified && <span>Verified {document.lastVerified}</span>}
             </div>
           </header>

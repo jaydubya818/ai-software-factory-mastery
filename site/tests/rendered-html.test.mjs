@@ -38,7 +38,7 @@ test("renders the finished reader-first landing page", async () => {
   assert.match(html, /Four paths\. One system\./);
   assert.match(html, /The worker is not the system\./);
   assert.match(html, /Reliable autonomy comes from a trustworthy system/);
-  assert.match(html, /property="og:image" content="http:\/\/localhost:3000\/og\.png"/i);
+  assert.match(html, /property="og:image" content="http:\/\/localhost:3000\/og-v2\.png"/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
@@ -46,6 +46,7 @@ test("renders each primary discovery route", async () => {
   const routes = [
     ["/learn", /Executive.*Architect.*Builder.*Deep Study/s],
     ["/topics", /Find the chapter behind the question\./],
+    ["/coverage", /Coverage is not proof\./],
     ["/search", /Search the whole system\./],
   ];
 
@@ -53,6 +54,24 @@ test("renders each primary discovery route", async () => {
     const html = await htmlFor(route);
     assert.match(html, expected);
   }
+});
+
+test("renders the expanded autonomous-factory discovery and maturity system", async () => {
+  const topics = await htmlFor("/topics");
+  const coverage = await htmlFor("/coverage");
+  const capability = await htmlFor("/docs/agent-factory/01-capability-supply-chain-and-registries");
+  const delivery = await htmlFor("/docs/verification-delivery-engineering/03-progressive-delivery-production-verification-and-rollback");
+
+  assert.match(topics, /Filter curriculum topics/);
+  assert.match(topics, /Persona/);
+  assert.match(topics, /Lifecycle/);
+  assert.match(topics, /Maturity/);
+  assert.match(topics, /Risk/);
+  assert.match(coverage, /What is covered\. What is not proven\./);
+  assert.match(coverage, /Operationally proven/);
+  assert.match(capability, /registry is an authority surface/i);
+  assert.match(capability, /Status:\s*(?:<!-- -->)?review ready/i);
+  assert.match(delivery, /deployment is a state transition, not success/i);
 });
 
 test("renders Markdown chapters with document-specific metadata", async () => {
@@ -71,8 +90,10 @@ test("renders distinct metadata for multiple chapter routes", async () => {
 
   assert.match(architecture, /<title>Control Plane and Execution Plane · AI Software Factory Mastery<\/title>/i);
   assert.match(architecture, /Separate durable authority and policy from long running, failure prone execution\./i);
+  assert.doesNotMatch(architecture, /og-v2\.png/i);
   assert.match(evaluation, /<title>Evaluation Engineering, Trace Replay, and Run Comparison · AI Software Factory Mastery<\/title>/i);
   assert.match(evaluation, /Agent behavior changes when the model, prompt, tools, harness, context, environment, repository, or evaluator changes\./i);
+  assert.doesNotMatch(evaluation, /og-v2\.png/i);
 });
 
 test("renders the review-ready agent architecture chapter as a self-contained resource", async () => {

@@ -1,6 +1,6 @@
 ---
 title: Start Here
-status: draft-for-study
+status: review-ready
 audience:
   - all
 last_verified: 2026-08-30
@@ -90,7 +90,7 @@ current decision requires:
 | Path | Best for | Outcome |
 | --- | --- | --- |
 | [Executive](./06-reading-paths.md#executive-path--20-minutes) | Leaders evaluating value, risk, and adoption | Explain the operating model in 20 minutes |
-| [Architect](./06-reading-paths.md#architect-path--2-hours) | System, platform, security, and quality architects | Whiteboard the full system and its authority boundaries |
+| [Architect](./06-reading-paths.md#architect-path--3-hours) | System, platform, security, and quality architects | Whiteboard the full system and its authority boundaries |
 | [Builder](./06-reading-paths.md#builder-path--hands-on) | Engineers implementing agent workflows | Build and debug one governed delivery path |
 | [Deep Study](./06-reading-paths.md#deep-study-path--complete-curriculum) | Readers seeking complete mastery | Follow every curriculum area, lab, and teach-back |
 
@@ -98,6 +98,10 @@ Use the [Topic Index](./07-topic-index.md) when you already know the concept you
 need. Use the [Canonical Glossary](./02-canonical-glossary.md) when a term is
 unclear. Use the [complete curriculum map](../README.md) when you want every
 chapter in sequence.
+Use [Capability Coverage and Maturity](./08-capability-coverage-and-maturity.md)
+to see what is documented, review ready, validated, or operationally proven.
+Use the [External Reviewer Guide](./09-reviewer-guide.md) when sharing the
+curriculum for feedback.
 
 For the shortest foundation pass, read:
 

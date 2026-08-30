@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { searchIndex } from "../../lib/search.generated";
+import { StatusBadge } from "./StatusBadge";
 
 function score(document: (typeof searchIndex)[number], terms: string[]) {
   const title = document.title.toLowerCase();
@@ -66,7 +67,7 @@ export function SearchExperience() {
       <div className="search-results">
         {results.map((result) => (
           <a className="search-result" href={`/docs/${result.slug}`} key={result.slug}>
-            <span>{result.section}</span>
+            <div className="search-result-meta"><span>{result.section}</span><StatusBadge status={result.status} /></div>
             <h2>{result.title}</h2>
             <p>{result.description}</p>
           </a>

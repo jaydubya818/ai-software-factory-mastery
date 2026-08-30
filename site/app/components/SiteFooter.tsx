@@ -16,8 +16,12 @@ export function SiteFooter() {
       <div className="footer-links">
         <Link href="/learn">Choose a path</Link>
         <Link href="/topics">Browse topics</Link>
+        <Link href="/coverage">Coverage and maturity</Link>
+        <Link href="/docs/00-overview/09-reviewer-guide">Reviewer guide</Link>
+        <Link href="/docs/00-overview/10-changelog">Changelog</Link>
         <Link href="/docs/curriculum">Full curriculum</Link>
         <Link href="/docs/12-research-journal/initial-canon">Research canon</Link>
+        <a href="https://github.com/jaydubya818/ai-software-factory-mastery/issues">Give feedback</a>
       </div>
     </footer>
   );

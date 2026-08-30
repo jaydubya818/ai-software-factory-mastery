@@ -4,16 +4,18 @@ import { SiteHeader } from "./components/SiteHeader";
 
 const paths = [
   { label: "Executive", id: "executive", time: "20 min", outcome: "Value, risk, and operating model" },
-  { label: "Architect", id: "architect", time: "2 hours", outcome: "Boundaries, runtime, and assurance" },
+  { label: "Architect", id: "architect", time: "3 hours", outcome: "Boundaries, runtime, and assurance" },
   { label: "Builder", id: "builder", time: "Hands-on", outcome: "Agents, harnesses, evals, and labs" },
   { label: "Deep study", id: "deep-study", time: "Complete", outcome: "The full technical curriculum" },
 ];
 
 const topics = [
-  ["01", "Factory architecture", "Agent Factory, control plane, software factory, and authority boundaries."],
-  ["02", "Agent engineering", "Coding agents, harnesses, orchestration, tools, context, and loops."],
-  ["03", "Production runtime", "Environments, compute, sandboxes, durability, recovery, and observability."],
-  ["04", "Evidence and trust", "Evaluations, independent verification, proof packages, and human decisions."],
+  ["01", "Capability supply chain", "Registries, packaging, versioning, certification, discovery, and revocation.", "/docs/agent-factory/01-capability-supply-chain-and-registries"],
+  ["02", "Autonomous workflows", "Repository onboarding plus feature, defect, test, security, incident, and knowledge work.", "/docs/autonomous-workflows/02-autonomous-engineering-workflow-catalog"],
+  ["03", "Runtime and platform", "Harnesses, environments, scheduling, cost, resilience, and human control surfaces.", "/docs/factory-platform-engineering/02-scheduling-capacity-cost-and-fairness"],
+  ["04", "Verification and delivery", "Testing, artifacts, migrations, progressive delivery, rollback, and production outcomes.", "/docs/verification-delivery-engineering/01-software-testing-strategy-for-agentic-change"],
+  ["05", "Security and identity", "Agentic threats, workload identity, secrets, privacy, provenance, and policy.", "/docs/08-security-and-governance/04-agentic-threat-model-and-adversarial-defense"],
+  ["06", "Evaluation and learning", "Datasets, calibrated graders, controlled experiments, optimization, and regression control.", "/docs/06-ai-engineering/06-evaluation-science-and-controlled-experimentation"],
 ];
 
 export default function Home() {
@@ -101,8 +103,8 @@ export default function Home() {
           <Link className="text-link" href="/topics">View the topic index <span aria-hidden="true">→</span></Link>
         </div>
         <div className="topic-grid">
-          {topics.map(([number, title, description]) => (
-            <Link className="topic-card" href="/topics" key={number}>
+          {topics.map(([number, title, description, href]) => (
+            <Link className="topic-card" href={href} key={number}>
               <span>{number}</span>
               <h3>{title}</h3>
               <p>{description}</p>
@@ -124,6 +126,15 @@ export default function Home() {
           <div><strong>Software</strong><span>Policy, state, recovery, and control</span></div>
           <div><strong>Evidence</strong><span>Independent proof of readiness</span></div>
         </div>
+      </section>
+
+      <section className="coverage-home-callout">
+        <div>
+          <span className="section-kicker">Truth before breadth</span>
+          <h2>See what is covered—and what is not yet proven.</h2>
+        </div>
+        <p>Every document carries a maturity label. The coverage map separates review-ready architecture from validated and operational evidence.</p>
+        <Link className="button button-primary" href="/coverage">Inspect coverage and maturity</Link>
       </section>
 
       <section className="case-study-callout">

@@ -9,13 +9,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin = `${protocol}://${host}`;
   const title = "AI Software Factory Mastery";
   const description = "A practical curriculum for governed, evidence-backed autonomous software delivery.";
-  const image = new URL("/og.png", origin).toString();
+  const image = new URL("/og-v2.png", origin).toString();
 
   return {
     metadataBase: new URL(origin),
     title,
     description,
-    openGraph: { title, description, images: [{ url: image, width: 1731, height: 909 }] },
+    openGraph: { title, description, images: [{ url: image, width: 1729, height: 910 }] },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }

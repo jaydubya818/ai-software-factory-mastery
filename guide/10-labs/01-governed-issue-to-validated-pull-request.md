@@ -7,6 +7,7 @@ audience:
   - senior-engineer
   - ai-engineer
 last_verified: 2026-08-08
+lab_type: executable
 ---
 
 # Governed Issue to Validated Pull Request

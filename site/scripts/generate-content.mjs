@@ -14,14 +14,79 @@ const sectionNames = {
   "02-first-principles": "First Principles",
   "03-operating-model": "Operating Model",
   "04-domain-model": "Domain Model",
+  "agent-factory": "Agent Factory",
   "05-runtime-architecture": "Runtime Architecture",
   "06-ai-engineering": "AI Engineering",
+  "autonomous-workflows": "Autonomous Workflows",
+  "verification-delivery-engineering": "Verification & Delivery",
+  "factory-platform-engineering": "Factory Platform",
   "07-quality-engineering": "Quality Engineering",
   "08-security-and-governance": "Security & Governance",
   "09-mission-control-case-studies": "Case Studies",
   "10-labs": "Labs",
   "11-interview-mastery": "Interview Practice",
   "12-research-journal": "Research Journal",
+};
+
+const sectionOrder = [
+  "00-overview",
+  "01-vision",
+  "02-first-principles",
+  "03-operating-model",
+  "04-domain-model",
+  "agent-factory",
+  "05-runtime-architecture",
+  "06-ai-engineering",
+  "autonomous-workflows",
+  "verification-delivery-engineering",
+  "factory-platform-engineering",
+  "07-quality-engineering",
+  "08-security-and-governance",
+  "09-mission-control-case-studies",
+  "10-labs",
+  "11-interview-mastery",
+  "12-research-journal",
+  "reference",
+];
+
+const lifecycleDefaults = {
+  "00-overview": ["intent", "plan", "execute", "verify", "deliver", "learn"],
+  "01-vision": ["intent", "learn"],
+  "02-first-principles": ["intent", "verify", "learn"],
+  "03-operating-model": ["intent", "plan", "verify", "learn"],
+  "04-domain-model": ["intent", "plan"],
+  "agent-factory": ["define", "verify", "learn"],
+  "05-runtime-architecture": ["execute"],
+  "06-ai-engineering": ["plan", "execute", "verify", "learn"],
+  "autonomous-workflows": ["intent", "plan", "execute", "verify", "deliver", "learn"],
+  "verification-delivery-engineering": ["verify", "deliver"],
+  "factory-platform-engineering": ["execute", "deliver", "learn"],
+  "07-quality-engineering": ["verify", "deliver", "learn"],
+  "08-security-and-governance": ["intent", "execute", "verify", "deliver"],
+  "09-mission-control-case-studies": ["execute", "verify"],
+  "10-labs": ["execute", "verify", "learn"],
+  "11-interview-mastery": ["learn"],
+  "12-research-journal": ["learn"],
+};
+
+const riskDefaults = {
+  "00-overview": "variable",
+  "01-vision": "variable",
+  "02-first-principles": "high",
+  "03-operating-model": "high",
+  "04-domain-model": "high",
+  "agent-factory": "high",
+  "05-runtime-architecture": "high",
+  "06-ai-engineering": "high",
+  "autonomous-workflows": "variable",
+  "verification-delivery-engineering": "high",
+  "factory-platform-engineering": "high",
+  "07-quality-engineering": "high",
+  "08-security-and-governance": "critical",
+  "09-mission-control-case-studies": "high",
+  "10-labs": "high",
+  "11-interview-mastery": "variable",
+  "12-research-journal": "variable",
 };
 
 async function walk(directory) {
@@ -130,6 +195,12 @@ for (const file of files) {
     sectionKey,
     status: parsed.data.status ?? "reference",
     audience: Array.isArray(parsed.data.audience) ? parsed.data.audience : [],
+    lifecycle: Array.isArray(parsed.data.lifecycle)
+      ? parsed.data.lifecycle
+      : (lifecycleDefaults[sectionKey] ?? []),
+    risk: String(parsed.data.risk ?? riskDefaults[sectionKey] ?? "variable"),
+    topics: Array.isArray(parsed.data.topics) ? parsed.data.topics : [],
+    labType: parsed.data.lab_type ? String(parsed.data.lab_type) : null,
     lastVerified: normalizeDate(parsed.data.last_verified),
     description: extractDescription(body),
     readingMinutes: readingMinutes(body, words),
@@ -140,15 +211,27 @@ for (const file of files) {
 }
 
 documents.sort((a, b) => {
-  if (a.sectionKey !== b.sectionKey) return a.sectionKey.localeCompare(b.sectionKey);
+  if (a.sectionKey !== b.sectionKey) {
+    const aOrder = sectionOrder.indexOf(a.sectionKey);
+    const bOrder = sectionOrder.indexOf(b.sectionKey);
+    const normalizedA = aOrder === -1 ? sectionOrder.length : aOrder;
+    const normalizedB = bOrder === -1 ? sectionOrder.length : bOrder;
+    if (normalizedA !== normalizedB) return normalizedA - normalizedB;
+    return a.sectionKey.localeCompare(b.sectionKey);
+  }
   return a.sourcePath.localeCompare(b.sourcePath);
 });
 
 const searchIndex = documents.map((document) => ({
   slug: document.slug,
   title: document.title,
-  section: document.section,
-  description: document.description,
+    section: document.section,
+    status: document.status,
+    audience: document.audience,
+    lifecycle: document.lifecycle,
+    risk: document.risk,
+    topics: document.topics,
+    description: document.description,
   headings: document.headings.map((heading) => heading.text),
   text: plainText(document.content),
 }));

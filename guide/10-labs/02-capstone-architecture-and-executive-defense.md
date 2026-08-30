@@ -3,6 +3,7 @@ title: Capstone Architecture and Executive Defense
 status: draft-for-study
 audience: [executive, architect, senior-engineer]
 last_verified: 2026-08-11
+lab_type: assessment
 ---
 
 # Capstone Architecture and Executive Defense

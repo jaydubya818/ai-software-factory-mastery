@@ -1,6 +1,6 @@
 ---
 title: Canonical Glossary
-status: draft-for-study
+status: review-ready
 audience:
   - all
 last_verified: 2026-08-28
@@ -29,6 +29,50 @@ packages, versions, evaluates, publishes, discovers, admits, deprecates, and
 revokes reusable agents, skills, tools, model profiles, and configurations. It
 supplies capabilities to an AI Software Factory but does not authorize or
 accept a particular delivery outcome.
+
+**Capability Registry** — The authoritative service that assigns canonical
+identity, stores immutable versions and provenance, resolves dependencies and
+compatibility, records evaluation and certification, and enforces lifecycle
+state for reusable factory capabilities. A searchable catalog may present its
+contents but is not itself the authority.
+
+**Agent Registry** — The type-specific registry for Agent Definitions and their
+ownership, composition, eligibility, evaluation, support, and lifecycle. An
+agent name without an exact registered version is not a reproducible binding.
+
+**Skill Registry** — The type-specific registry for reusable, evaluated task
+methods and their versions, dependencies, required tools, compatibility,
+ownership, and lifecycle. Publication does not grant permission to use a skill
+for a particular WorkOrder.
+
+**Tool Registry** — The type-specific registry for tool schemas, endpoints,
+side effects, identity requirements, data classifications, policies,
+qualifications, and lifecycle. Discovery does not imply authorization.
+
+**Prompt Registry** — The type-specific registry for parameterized prompt and
+instruction artifacts, including source, immutable versions, variables,
+expected outputs, dependencies, evaluation, and promotion status. Runtime
+composition must remain attributable to exact versions.
+
+**Evaluator Registry** — The type-specific registry for deterministic checks,
+human rubrics, model graders, datasets, calibration evidence, eligible claims,
+and lifecycle. A registered evaluator cannot certify its own reliability.
+
+**Capability Package** — An immutable, digest-bound artifact containing a
+capability manifest, content or executable source, schemas, dependencies,
+tests, evaluation references, provenance, signature, and lifecycle metadata.
+
+**Capability Certification** — A scoped, expiring decision that an exact
+capability graph has sufficient evidence for defined tasks, risks,
+environments, data classes, and controls. It is not a universal quality claim.
+
+**Capability deprecation** — A lifecycle state that warns against new use,
+names a support and migration window, and may restrict eligibility while
+existing consumers move. It differs from immediate revocation.
+
+**Capability revocation** — An authoritative state that blocks new resolution
+of an unsafe or invalid capability version and triggers impact analysis for
+active consumers while preserving historical lineage.
 
 **Agentic software factory** — An informal synonym that emphasizes the use of
 agents across the software lifecycle. This guide uses **AI Software Factory**
@@ -267,8 +311,10 @@ an agent for one task. More context is not automatically better context.
 
 **Context Package** — An immutable, provenance-backed, budgeted set of code,
 documents, decisions, history, and retrieval results frozen for one Attempt.
-It is advisory input and cannot silently change approved intent or satisfy an
-acceptance criterion.
+It is a versioned, addressable unit that may carry a declared type such as
+skill, rule, documentation, workflow, tool guide, or prompt template. It is
+advisory input and cannot silently change approved intent, grant authority, or
+satisfy an acceptance criterion.
 
 **Context compaction** — The controlled replacement of a growing working
 context with a smaller representation that preserves governing instructions,
@@ -321,6 +367,25 @@ repositories, configuration, and factory records.
 
 **Repository** — The registered source-control target against which work may be
 authorized. A repository record does not itself permit modification.
+
+**Repository Readiness Record** — A versioned assessment of repository
+identity, ownership, instructions, architecture, dependencies, build, tests,
+delivery, data, security, environment, and eligible workflow classes. It is
+scoped and expiring; registration alone does not establish readiness.
+
+**Codebase intelligence** — Derived, attributable views such as symbol,
+dependency, ownership, build, test-impact, change-history, and architecture
+indexes created from exact source versions. Derived intelligence is not an
+authority record and must expose freshness and uncertainty.
+
+**Workflow Catalog** — The governed inventory of supported factory workflow
+products, including trigger, owner, inputs, eligible scope, capabilities,
+authority, evidence, recovery, outcomes, measures, and maturity.
+
+**Autonomous backlog** — A policy-bounded set of eligible, owned work from
+which the factory may recommend or select execution according to value,
+urgency, risk, dependencies, capacity, and work-in-progress limits. It does not
+grant agents product-priority authority.
 
 **Mission** — A durable governed outcome. It owns the objective, business reason,
 constraints, risk, acceptance criteria, and accountable owner. It is not an
@@ -563,6 +628,69 @@ activity, and timing emitted during a run. Telemetry explains behavior; it
 becomes acceptance evidence only when a governed verifier binds it to an exact
 subject, method, criterion, and provenance.
 
+**Test-impact analysis** — The attributable selection of tests and verification
+methods from changed code, behavior, dependencies, schemas, configuration, and
+risk. It must explain both inclusion and material omission.
+
+**Unit testing** — Verification of a small component in a controlled context.
+It supports fault localization but does not prove integration or user behavior.
+
+**Integration testing** — Verification that components, services, databases,
+or external dependencies cooperate under defined conditions. It does not by
+itself prove a complete user journey.
+
+**End-to-end testing** — Verification of a complete workflow through its real
+or qualified interfaces. It provides journey confidence while usually being
+slower and harder to diagnose than focused tests.
+
+**Contract testing** — Verification that a producer and consumer satisfy a
+versioned interface and semantic agreement. Passing syntax checks does not
+prove business compatibility.
+
+**Flaky test** — A test whose result changes without a relevant change to its
+subject or declared environment. Quarantine is visible debt with an owner and
+expiry, not permission to treat the test as passing.
+
+**Mutation testing** — Evaluation of a test suite by introducing controlled
+faults and measuring whether tests detect them. Surviving mutations identify
+possible weakness but require interpretation.
+
+**Property-based testing** — Verification of declared invariants across
+generated input cases. Its confidence depends on the correctness of the
+property and generators.
+
+**Fuzz testing** — Automated generation or mutation of unexpected inputs to
+find crashes, unsafe parsing, resource exhaustion, and boundary failures. It
+does not establish intended business behavior.
+
+**Performance and load testing** — Measurement of latency, throughput,
+saturation, and resource behavior under representative load and failure. A
+single benchmark environment is not a production guarantee.
+
+**Accessibility testing** — Automated and human evaluation of whether people
+with varied access needs can perceive, navigate, understand, and operate an
+interface. Automated checks cover only part of the requirement.
+
+**Visual-regression testing** — Comparison of rendered interfaces against an
+approved baseline under controlled viewports and data. Pixel similarity does
+not prove semantic or interaction correctness.
+
+**Artifact Registry** — The authoritative store and metadata service for
+immutable build outputs, digests, provenance, signatures, SBOMs, lifecycle,
+and promotion state. A source commit is not a deployable artifact identity.
+
+**Progressive delivery** — Controlled expansion of an exact release through
+bounded cohorts, feature flags, canaries, regions, or parallel environments
+under predeclared gates, stop conditions, observation, and rollback.
+
+**Production verification** — Independent evaluation that an exact deployed
+artifact and configuration are technically healthy and satisfy defined
+production behavior. It remains distinct from customer-outcome confirmation.
+
+**Rollback** — A governed, pre-engineered transition toward a prior safe
+artifact or configuration with verification of data, dependencies, and external
+effects. It is not a universal undo operation.
+
 ## Runtime concepts
 
 **Orchestrator** — The control-plane actor that sequences authorized work,
@@ -722,9 +850,41 @@ unsafe dependency after defined conditions and probes for recovery under
 policy. Opening a circuit should produce an operator-visible state and fallback
 decision.
 
+**Recovery Time Objective (RTO)** — The maximum targeted time to restore a
+defined factory capability after disruption. Different capabilities may have
+different objectives.
+
+**Recovery Point Objective (RPO)** — The maximum targeted loss of durable state
+for a defined capability after disruption. Authority and audit records often
+require stricter objectives than diagnostic telemetry.
+
+**Break-glass access** — Narrow, time-limited emergency authority protected by
+strong authentication, independent logging, explicit reason, and post-event
+review. It must not become the routine control path.
+
 **Backpressure** — A mechanism that slows or rejects new work when downstream
 capacity is insufficient. It protects the system from unbounded queues and
 resource exhaustion but requires explicit prioritization and user-visible state.
+
+**Admission control** — The fail-closed policy that determines whether work may
+enter or continue in a runtime lane given authority, readiness, capability,
+risk, budget, quota, and dependency state. It precedes scheduling.
+
+**Scheduler** — The component that chooses when and where eligible work runs
+using priority, fairness, deadlines, capabilities, locality, cost, and current
+capacity. Scheduling cannot make ineligible work admissible.
+
+**Capacity reservation** — Resources held for a bounded workload class such as
+incident recovery so normal demand cannot consume every qualified execution or
+review path.
+
+**Capacity planning** — Forecasting and provisioning qualified model,
+environment, compute, tool, storage, network, and human-review capacity for
+expected demand, growth, failure, and recovery reserves.
+
+**Cost per accepted outcome** — Total model, compute, environment, tool,
+storage, retry, validation, and human-attention cost divided by independently
+accepted outcomes. It is more decision-useful than token price alone.
 
 **Dead-letter or quarantine queue** — A retained destination for work or events
 that cannot be processed safely after bounded handling. Placement preserves
@@ -744,6 +904,69 @@ supply-chain analysis but does not prove that the artifact is secure.
 
 **Trace context** — Correlation metadata propagated across service and
 asynchronous boundaries. It connects observations but does not confer authority.
+
+## Platform experience and agentic security
+
+**Developer portal** — A user-facing projection of catalog, workflow,
+ownership, documentation, evidence, and control-plane services organized around
+developer outcomes. It must not become a second source of authority.
+
+**Service catalog** — A maintained inventory connecting services,
+repositories, owners, dependencies, interfaces, workflows, environments,
+runbooks, and maturity. Catalog presence does not establish readiness.
+
+**Golden path** — A supported, observable, self-service route for a recurring
+outcome with defaults, templates, controls, documentation, recovery, ownership,
+and measured adoption. It requires an explicit extension and exception model.
+
+**Plan preview** — A decision-oriented view of proposed steps, assumptions,
+affected systems, capabilities, tests, cost, uncertainty, rollout, and rollback
+before authority is granted to an exact Plan version.
+
+**Review inbox** — A prioritized control surface for decisions requiring human
+authority, showing scope, risk, evidence, recommendation, alternatives,
+deadline, and consequence of action or inaction.
+
+**Indirect prompt injection** — Adversarial instructions embedded in content
+the agent retrieves or observes rather than supplied as the direct user
+request. Untrusted content cannot grant authority or alter policy.
+
+**Tool poisoning** — Manipulation of tool descriptions, schemas, endpoints, or
+outputs to influence agent behavior, steal data, or trigger unsafe action.
+Registry provenance, output validation, policy, and least privilege constrain
+its impact.
+
+**Memory poisoning** — Insertion of false, adversarial, or unauthorized content
+into durable memory so future runs inherit the attack. Recovery includes
+quarantine, provenance analysis, affected-run inventory, and controlled repair.
+
+**Denial of wallet** — Resource exhaustion intended to cause excessive model,
+compute, tool, storage, or human-review cost. Budgets, quotas, backpressure,
+anomaly detection, and bounded retries limit exposure.
+
+**Workload identity** — A cryptographically verifiable identity issued to a
+running workload and used to obtain scoped, short-lived access. It identifies
+the actor but does not itself authorize a resource operation.
+
+**Delegated authorization** — The attributable chain by which an accountable
+principal permits a specific workload to perform bounded actions for an exact
+subject, purpose, and time. Every delegation may narrow but not widen authority.
+
+**Data retention policy** — The versioned rules governing how long prompts,
+context, telemetry, artifacts, evidence, memory, indexes, and backups are kept,
+who may access them, and how deletion or legal hold works.
+
+**Data residency** — The requirement that defined information and processing
+remain within approved geographic or legal locations throughout providers,
+backups, telemetry, and derived stores.
+
+**License compliance** — The controls that identify software and content
+licenses, evaluate policy compatibility, preserve attribution, and block or
+escalate unacceptable use. Generated output does not remove provenance duties.
+
+**Policy as code** — Versioned, testable policy expressed in machine-executable
+form. It improves consistency but does not replace ownership, rationale,
+exceptions, evidence, or human risk accountability.
 
 ## Autonomy and trust
 
@@ -767,7 +990,9 @@ affected scope until authorized review and recovery occur.
 
 **Learning Signal** — A bounded, attributable observation derived from an
 Attempt, evaluation, review, incident, delivery, or production outcome. It can
-support an improvement proposal but cannot modify active configuration.
+include a human correction, repeated instruction, context miss, tool mismatch,
+validation failure, cost anomaly, or successful strategy. It can support an
+improvement proposal but cannot modify active configuration.
 
 **Improvement Candidate** — A reviewable proposal to change a prompt, Agent
 Definition, skill, tool, context policy, model route, evaluator, budget, retry
@@ -779,12 +1004,6 @@ capability achieved by a specific workflow, repository, risk class, and
 environment. It is not a permanent organization-wide badge.
 
 ## Context and configuration concepts
-
-**Context Package** — A versioned, addressable unit of supplied context that an
-agent may load during execution, identified by a `scope/name` slug and carrying
-a declared type such as skill, rules, documentation, workflow, tool guide, or
-prompt template. It supplies material to reason with; it does not grant
-authority, and loading one does not certify that its contents are current.
 
 **Context policy** — The rules determining which Context Packages an agent is
 eligible to load for a given task, and under what budget. It constrains what
@@ -808,25 +1027,12 @@ work is normally carried out, including the shape of the plan, the agents and
 skills typically involved, and the expected verification. A recipe proposes an
 approach; it does not authorize execution or accept a result.
 
-**Factory Version** — The versioned, resolved configuration of the factory in
-force for a unit of work, binding together the applicable policy, recipes,
-context policy, and routing decisions. It makes an execution reproducible and
-attributable; it is not itself an approval.
-
 **Model routing** — The policy-governed selection of which model serves a given
 step, based on declared eligibility, capability, cost, and risk. A routing
 decision is a configuration outcome; it does not widen the authority of the
 work being routed.
 
 ## Factory learning and improvement
-
-**Learning signal** — An observed, attributable indication that the factory's
-own configuration, context, routing, or process underperformed — for example a
-human correction, a repeated instruction, a verification or deterministic gate
-failure, a context miss or overload, a routing or tool-selection mismatch, a
-recipe mismatch, config drift, unnecessary agent usage, or token waste. A
-signal carries evidence and severity; it explicitly carries **no acceptance
-authority** and cannot by itself change any governed record.
 
 **Signal severity** — The operator-facing weight assigned to a learning signal:
 Low, Medium, High, or Critical. Severity orders attention; it does not
@@ -837,17 +1043,44 @@ window, used to distinguish a recurring systemic pattern from an isolated
 incident. Clustering is an analytical projection; it creates no obligation and
 proves no cause.
 
-**Improvement candidate** — A specific, typed proposal derived from clustered
-signals — such as adding or modifying a deterministic gate, updating a prompt,
-agent rule, skill, or context policy, changing a recipe, retry policy, model
-routing, or tool configuration, replacing an agent with deterministic code, or
-adding documentation. It is a proposal for human review, not a decision, and
-generating one grants no authority to apply it.
-
 **Governed experiment** — A bounded, reversible trial of an improvement
 candidate under explicit success criteria, scope, and stop conditions, run so
 that its effect can be measured before any durable change. An experiment
 produces evidence; it does not promote itself.
+
+**A/B testing** — A controlled comparison that assigns eligible cases to two
+versions under predefined measures, guardrails, sample, duration, stop
+conditions, and analysis. Assignment does not override workflow authority or
+user and data protections.
+
+**Prompt optimization** — Controlled experimentation that changes instructions
+or prompt composition to improve defined outcomes without widening authority.
+It requires holdout evaluation, regression controls, and versioned promotion.
+
+**Tool optimization** — Controlled improvement of tool selection, schemas,
+descriptions, execution, or feedback based on attributable outcomes. A tool
+change creates a new evaluated capability version.
+
+**Skill improvement** — A governed update to a reusable task method based on
+diagnosed evidence, followed by evaluation, certification, promotion, and
+rollback planning.
+
+**Learning from success** — Analysis of matched successful runs to identify
+strategies associated with accepted outcomes, low retry, safe recovery, cost,
+and human attention. Incidental or sensitive context must not become standing
+instruction.
+
+**Evaluator calibration** — Comparison of an evaluator against trusted labels,
+rubrics, counterexamples, and bias tests to determine where its judgments are
+reliable enough for a defined claim.
+
+**Inter-rater reliability** — Measurement of agreement among independent human
+or automated raters beyond chance or simple majority. Disagreement should be
+investigated rather than averaged away.
+
+**Statistical significance** — Evidence that an observed difference is
+unlikely under a defined null model. It does not establish practical value,
+safety, causal validity, or freedom from bias.
 
 **Promotion recommendation** — The evidence-backed suggestion that a validated
 improvement be adopted into the standing factory configuration. It remains a

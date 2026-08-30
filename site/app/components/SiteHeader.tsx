@@ -13,6 +13,7 @@ export function SiteHeader() {
       <nav className="desktop-nav" aria-label="Primary navigation">
         <Link href="/learn">Learning paths</Link>
         <Link href="/topics">Topics</Link>
+        <Link href="/coverage">Coverage</Link>
         <Link href="/docs/00-overview/02-canonical-glossary">Glossary</Link>
         <Link className="search-link" href="/search" aria-label="Search the curriculum">
           Search <kbd>/</kbd>
@@ -23,6 +24,7 @@ export function SiteHeader() {
         <nav aria-label="Mobile navigation">
           <Link href="/learn">Learning paths</Link>
           <Link href="/topics">Topics</Link>
+          <Link href="/coverage">Coverage</Link>
           <Link href="/docs/00-overview/02-canonical-glossary">Glossary</Link>
           <Link href="/search">Search</Link>
         </nav>
