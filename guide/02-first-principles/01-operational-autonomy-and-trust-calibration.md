@@ -12,6 +12,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # Operational Autonomy and Trust Calibration
 
+## Quick Read
+
+- **Purpose:** Replace vague autonomy labels with scoped, revocable operating
+  authority.
+- **Best for:** Executives, security, platform, and governance leaders.
+- **Prerequisites:** [What Is an AI Software Factory?](../01-vision/01-what-is-an-ai-software-factory.md).
+- **Reading time:** 24 minutes.
+- **You will learn:** How capability, trust evidence, risk, promotion,
+  demotion, and quarantine determine eligible autonomy.
+
+Keep three ideas: model capability is not authority; autonomy belongs to a
+specific workflow and risk scope; and trust must fall faster than it rises when
+evidence deteriorates.
+
 Autonomy is not a personality trait of a model. It is a revocable grant of
 authority from an accountable organization to a governed system. The grant has
 a scope, a ceiling, evidence requirements, and conditions under which it must

@@ -13,6 +13,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # What Is an AI Software Factory?
 
+## Quick Read
+
+- **Purpose:** Explain the business and engineering case for a factory-level
+  operating model.
+- **Best for:** Leaders, architects, and first-time readers.
+- **Prerequisites:** None; the overview chapter is helpful but not required.
+- **Reading time:** 22 minutes.
+- **You will learn:** Why local code-generation speed is not business
+  throughput and how a factory changes the unit of optimization.
+
+Keep three ideas: code is an intermediate artifact; lead time ends at validated
+customer value; and human accountability remains even as execution autonomy
+increases.
+
 An AI Software Factory is not a more productive code editor. It is an
 engineering operating model designed to convert governed business intent into
 validated customer value. Coding agents are important factory workers, but

@@ -9,6 +9,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # AI Software Factory and Mission Control
 
+## Quick Read
+
+- **Purpose:** Establish the factory's governing idea and separate it from a
+  coding assistant, coding agent, or generic agent platform.
+- **Best for:** Every reader; use this as the conceptual starting point.
+- **Prerequisites:** None.
+- **Reading time:** 12 minutes.
+- **You will learn:** Why authority, evidence, durable state, and human
+  accountability matter as much as agent capability.
+
+Keep three ideas: the agent is a worker, not the factory; execution never
+creates its own authority; and validated customer value—not generated code—is
+the outcome that matters.
+
 ## 1. The problem
 
 Coding assistants can generate code quickly, but software delivery is not only

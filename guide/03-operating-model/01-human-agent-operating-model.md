@@ -14,6 +14,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # The Human-Agent Operating Model
 
+## Quick Read
+
+- **Purpose:** Define how people and agents divide decisions, execution,
+  oversight, and accountability.
+- **Best for:** Engineering, product, platform, and organizational leaders.
+- **Prerequisites:** [Operational Autonomy and Trust Calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md).
+- **Reading time:** 20 minutes.
+- **You will learn:** Which responsibilities remain human, which can be
+  delegated, and how exception-first operation avoids approval theater.
+
+Keep three ideas: humans own intent and material risk; agents perform bounded
+work and assemble evidence; and escalation should present a decision packet,
+not a transcript.
+
 ## 1. The problem
 
 Adding agents to an engineering organization does not define how the

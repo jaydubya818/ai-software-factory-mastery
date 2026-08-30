@@ -14,6 +14,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # The Authoritative Delivery Hierarchy
 
+## Quick Read
+
+- **Purpose:** Preserve intent, authority, causality, evidence, and acceptance
+  across every delivery record.
+- **Best for:** Architects, platform engineers, product leaders, and reviewers.
+- **Prerequisites:** [The Human-Agent Operating Model](../03-operating-model/01-human-agent-operating-model.md).
+- **Reading time:** 22 minutes.
+- **You will learn:** Why Mission, Plan, WorkOrder, Task, Attempt, Evidence,
+  Pull Request, and Release must remain distinct.
+
+Keep three ideas: “done” is not one state; retries create new Attempts rather
+than rewriting history; and evidence must remain bound to the exact candidate
+and governing requirement.
+
 ## 1. The problem
 
 Agentic engineering systems produce many forms of activity: conversations,

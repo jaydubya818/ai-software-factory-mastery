@@ -107,8 +107,8 @@ scope, runs Codex, blocks out-of-scope changes, commits, mints an ephemeral
 repository-restricted GitHub App token, pushes, and creates or reuses an exact
 PR. Terminal reporting requires the active matching lease.
 
-Todo 024 records a real GitHub App proof: branch and commit were created and PR
-#61 opened with passing checks. The proof required direct control-plane
+Todo 024 records a real GitHub App proof: branch and commit were created, and
+PR #61 opened with passing checks. The proof required direct control-plane
 mutations because the browser Mission path could not yet carry all policy and
 receipt data. The browser-only golden path and complete UI state matrix remain
 open.

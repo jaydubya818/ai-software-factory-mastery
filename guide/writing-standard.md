@@ -25,6 +25,22 @@ Every chapter must visibly distinguish three kinds of knowledge:
 The labels are epistemic boundaries. They prevent an attractive target
 architecture from being mistaken for working software.
 
+### Quick Read
+
+Every new full chapter and every chapter included in a primary reading path
+begins with a compact **Quick Read** immediately after the title. It includes:
+
+- the chapter's purpose;
+- the readers who benefit most;
+- prerequisite chapters or “none”;
+- an honest reading-time estimate;
+- the capability the reader will gain; and
+- three ideas worth retaining if the reader stops there.
+
+The Quick Read is progressive disclosure, not an abstract. It helps a reader
+decide whether the full chapter is relevant without pretending to replace the
+chapter's reasoning, evidence, tradeoffs, or exercises.
+
 ### 1. The problem
 
 Describe the engineering or organizational problem before introducing a

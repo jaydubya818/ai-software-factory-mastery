@@ -217,17 +217,17 @@ claim.
 
 ### Architecture
 
-5. Design the factory for 100 repositories and several risk tiers.
-6. How do you prevent duplicate effects after a worker crash?
-7. How do policy, identity, context, validation, and trust interact?
-8. What is the minimum independent-validation boundary?
+1. Design the factory for 100 repositories and several risk tiers.
+2. How do you prevent duplicate effects after a worker crash?
+3. How do policy, identity, context, validation, and trust interact?
+4. What is the minimum independent-validation boundary?
 
 ### Adversarial
 
-9. Your change failure rate rose while lead time fell. What do you do?
-10. A security validator fails while two other validators pass. What happens?
-11. An agent created a correct PR outside its WorkOrder scope. Is it acceptable?
-12. A board member asks for a headcount reduction forecast. How do you answer?
+1. Your change failure rate rose while lead time fell. What do you do?
+2. A security validator fails while two other validators pass. What happens?
+3. An agent created a correct PR outside its WorkOrder scope. Is it acceptable?
+4. A board member asks for a headcount reduction forecast. How do you answer?
 
 ## 10. Whiteboard exercise
 

@@ -7,12 +7,24 @@ understands the authority and outcome model they serve.
 
 ## Start here
 
-Begin with the [high-level reading guide](./00-overview/README.md). It links a
-concise system overview, the
-[platform blueprint and operating playbook](./00-overview/03-platform-blueprint-and-operating-playbook.md),
-the [Intent-to-Delivery Lifecycle](./00-overview/04-intent-to-delivery-lifecycle.md),
-the canonical glossary, the foundational chapters, and the first golden-path
-lab.
+Begin with the [high-level reading guide](./00-overview/README.md), then choose
+the [Executive, Architect, Builder, or Deep Study path](./00-overview/06-reading-paths.md).
+Use the [Topic Index](./00-overview/07-topic-index.md) for question-led discovery
+and the [Canonical Glossary](./00-overview/02-canonical-glossary.md) for precise
+terms.
+
+## Content types
+
+- **Foundation** establishes vocabulary and first principles.
+- **Core architecture** defines records, boundaries, runtime, and assurance.
+- **Production operations** covers scale, reliability, feedback, and governance.
+- **Advanced** deepens specialized engineering disciplines.
+- **Case study** records versioned implementation evidence.
+- **Lab** converts understanding into demonstrated capability.
+- **Reference** supports lookup rather than sequential reading.
+
+Each priority chapter begins with a **Quick Read**. Use it to decide whether the
+full chapter is relevant to the decision in front of you.
 
 ## 1. Vision
 
@@ -62,6 +74,7 @@ Chapters:
 - [Factory Economics and Operating Metrics](./03-operating-model/02-factory-economics-and-operating-metrics.md)
 - [Governed Continuous Learning and Recursive Improvement](./03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md)
 - [Enterprise Adoption and Factory Maturity Model](./03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md)
+- [Compounding Engineering and Human Attention](./03-operating-model/05-compounding-engineering-and-human-attention.md)
 
 ## 4. Domain Model
 
@@ -78,6 +91,7 @@ Chapters:
 - [The Authoritative Delivery Hierarchy](./04-domain-model/01-authoritative-delivery-hierarchy.md)
 - [Factory Configuration, Workflow Contracts, and Execution Manifests](./04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md)
 - [Specification Engineering, Executable Requirements, and Plan Assurance](./04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md)
+- [Multi-Repository Development and Coordinated Delivery](./04-domain-model/04-multi-repository-development-and-coordinated-delivery.md)
 
 ## 5. Runtime Architecture
 
@@ -96,6 +110,8 @@ Chapters:
 - [Sandboxed Execution, Isolation, and Publication](./05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md)
 - [Factory Observability and Agent Runtime Telemetry](./05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md)
 - [AI Software Factory Reference Architecture](./05-runtime-architecture/06-ai-software-factory-reference-architecture.md)
+- [Development Environments, Compute, and Composable Infrastructure](./05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md)
+- [Coding Harnesses, Adapters, and Agent Protocols](./05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md)
 
 ## 6. AI Engineering
 
@@ -108,6 +124,9 @@ Chapters:
 
 - [Agent Architecture, MCP, Tools, Context, and Memory](./06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md)
 - [Model Routing, Evaluations, and Capability Selection](./06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md)
+- [Data, Knowledge, Context, and Semantic Engineering](./06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md)
+- [Evaluation Engineering, Trace Replay, and Run Comparison](./06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison.md)
+- [Agent and Loop Engineering Patterns](./06-ai-engineering/05-agent-and-loop-engineering-patterns.md)
 
 ## 7. Quality Engineering
 
@@ -123,6 +142,7 @@ Chapters:
 - [Release, Production Feedback, and Factory SRE](./07-quality-engineering/02-release-production-feedback-and-factory-sre.md)
 - [Continuous Quality Contracts, Proof Packages, and Certificates](./07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md)
 - [Quality Contract and Certificate Technical Specification](./07-quality-engineering/04-quality-contract-and-certificate-technical-specification.md)
+- [Production Feedback, Reproduction, Review, and Merge](./07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md)
 
 ## 8. Security and Governance
 
@@ -150,6 +170,11 @@ Current case studies:
   — explains the assurance architecture, traces the implemented P0 at an exact
   Mission Control commit, distinguishes proposed completion work, and provides
   interview questions, whiteboard exercises, and hands-on mastery labs.
+- [Mission Control Capability, Workflow, and Admission Map](./09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
+  — maps the current checked-out implementation across the complete
+  Intent-to-Delivery Lifecycle, explains production execution admission,
+  identifies exact capability boundaries, and distinguishes qualified code
+  from configured production operation.
 
 ## 10. Labs
 
@@ -201,7 +226,9 @@ remain `draft-for-study` until the learner completes their labs, teach-backs,
 and independent review. Draft completion is not mastery.
 
 Mission Control changes independently of this curriculum. Use the versioned
-[implementation maturity map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md)
+[current capability, workflow, and admission map](./09-mission-control-case-studies/03-capability-workflow-and-admission-map.md),
+the historical
+[implementation maturity map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md),
 and retained [golden-path evidence](./10-labs/evidence/2026-08-08-golden-path/README.md)
 for point-in-time readiness claims. This landing page is navigation, not
 evidence of current product capability.

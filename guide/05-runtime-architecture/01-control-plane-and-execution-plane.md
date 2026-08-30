@@ -13,6 +13,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # Control Plane and Execution Plane
 
+## Quick Read
+
+- **Purpose:** Separate durable authority and policy from long-running,
+  failure-prone execution.
+- **Best for:** Architects, platform engineers, security, and runtime teams.
+- **Prerequisites:** [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
+- **Reading time:** 20 minutes.
+- **You will learn:** Which decisions belong to the control plane, which effects
+  belong to the execution plane, and how the two reconcile safely.
+
+Keep three ideas: execution reports observations but cannot mint authority;
+deployment topology does not define architectural responsibility; and durable
+state must survive worker, provider, and network failure.
+
 ## 1. The problem
 
 An AI Software Factory must both decide what work is allowed and perform that

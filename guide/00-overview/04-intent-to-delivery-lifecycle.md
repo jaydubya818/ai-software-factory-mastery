@@ -2,10 +2,24 @@
 title: Intent-to-Delivery Lifecycle
 status: canonical-overview
 audience: [executive, architect, senior-engineer, platform, product, security, quality, design]
-last_verified: 2026-08-25
+last_verified: 2026-08-28
 ---
 
 # Intent-to-Delivery Lifecycle
+
+## Quick Read
+
+- **Purpose:** Turn the factory's memorable value stream into precise records,
+  decisions, controls, and evidence.
+- **Best for:** Readers who need to explain or design the complete lifecycle.
+- **Prerequisites:** [Software Factory Stack Boundaries](./05-software-factory-stack-boundaries.md).
+- **Reading time:** 18 minutes.
+- **You will learn:** What each lifecycle stage consumes, produces, authorizes,
+  and must never imply.
+
+Keep three ideas: the mnemonic is not a literal call graph; lower-level
+execution cannot accept higher-level outcomes; and improvement changes future
+versions only through governed promotion.
 
 ## 1. The problem
 
@@ -331,16 +345,20 @@ software is simpler and more reliable.
 The repository's Mission Control case studies show records and mechanisms for
 Missions, versioned Plans, WorkOrders, Tasks, Attempts, agent/context bindings,
 execution manifests, policy, approvals, evidence, pull requests, and emerging
-release controls. They also preserve an important limitation: the cited
-assessments do not prove the complete browser-originated intent-to-production
-outcome path as one accepted run.
+release controls. The current assessment also shows exact model-route, harness,
+sandbox, worker, and Factory Version admission. It preserves an important
+limitation: qualified implementation and retained local composition do not
+prove that production is configured or that the complete browser-originated
+intent-to-production outcome path has run successfully.
 
-Use the
-[implementation maturity map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md)
-for the historical boundary and the
+Use the current
+[capability, workflow, and admission map](../09-mission-control-case-studies/03-capability-workflow-and-admission-map.md),
+the historical
+[implementation maturity map](../09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md),
+and the
 [verification-first case study](../09-mission-control-case-studies/02-verification-first-software-factory.md)
-for the merged assurance architecture. Do not infer current product capability
-from this lifecycle target model.
+for versioned boundaries. Do not infer current product capability from this
+lifecycle target model.
 
 ## 6. Future Vision
 

@@ -14,6 +14,20 @@ mission_control_commit: 8014d5af427b43ff5c5a63cfdf82ec92742c208c
 
 # Quality and Evidence Architecture
 
+## Quick Read
+
+- **Purpose:** Define how the factory proves that an exact candidate satisfies
+  exact requirements under known conditions.
+- **Best for:** Quality, security, platform, product, and engineering leaders.
+- **Prerequisites:** [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md).
+- **Reading time:** 22 minutes.
+- **You will learn:** How verification, evidence freshness, independence,
+  quality gates, and human acceptance make autonomy trustworthy.
+
+Keep three ideas: confidence is not evidence; a green check is meaningful only
+when its subject and method are known; and agents must not be the sole
+certifiers of their own work.
+
 ## 1. The problem
 
 Agentic systems can produce convincing completion reports even when the work is

@@ -2,8 +2,8 @@
 title: Initial AI Software Factory Research Canon
 status: active
 audience: [architect, senior-engineer, platform, security, quality, product, ai-engineer]
-last_verified: 2026-08-25
-last_reviewed: 2026-08-25
+last_verified: 2026-08-30
+last_reviewed: 2026-08-30
 ---
 
 # Initial AI Software Factory Research Canon
@@ -25,10 +25,15 @@ tests, and direct operation supply different forms of evidence.
 | [Anthropic: Trustworthy Agents in Practice](https://www.anthropic.com/research/trustworthy-agents) | Study the agent loop, meaningful human control, transparency, privacy, and security as autonomy increases. |
 | [Anthropic: Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) | Study context selection, compaction, memory, and long-running agent behavior. |
 | [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28) | Use the authoritative protocol for hosts, clients, servers, tools, resources, authorization, and versioning. |
+| [Agent Client Protocol](https://zed.dev/acp) | Study the editor-to-agent boundary, transport model, capability negotiation, and version-compatibility responsibilities. |
+| [AG-UI documentation](https://docs.ag-ui.com/) | Study event-based agent-to-user-interface integration, streaming state, human interaction, and protocol interoperability. |
+| [Agent2Agent Protocol specification](https://a2a-protocol.org/dev/specification/) | Study agent discovery, tasks, messages, artifacts, streaming, and long-running agent-to-agent collaboration. |
 | [OpenAI Agents SDK](https://developers.openai.com/api/docs/guides/agents) | Study agent definitions, orchestration, guardrails, state, tracing, and evaluation. |
 | [OpenAI: A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/) | Study agent selection, models, tools, instructions, orchestration, layered guardrails, evaluation baselines, and human intervention. |
 | [OpenAI Responses API](https://developers.openai.com/api/docs/guides/responses) | Study tool-using model execution and durable application integration. |
 | [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/) | Study the relationship among the model, harness, tools, context, and execution loop. |
+| [Claude Code: Run programmatically](https://code.claude.com/docs/en/headless) | Study headless coding-agent invocation, structured output, session continuity, and automation boundaries as a dated product case. |
+| [Claude Code hooks reference](https://code.claude.com/docs/en/hooks) | Study lifecycle interception, policy checks, event capture, and the risks of shell-level automation as a dated product case. |
 | [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/) | Examine an agent-first engineering environment as an industry case study, separating reported experience from independently verified general law. |
 | [Google DeepMind research](https://deepmind.google/research/) | Track primary agent, evaluation, multi-agent, and safety research. |
 | [Google DeepMind: Co-Scientist](https://deepmind.google/blog/co-scientist-a-multi-agent-ai-partner-to-accelerate-research/) | Study specialization, debate, ranking, and human accountability in a multi-agent system outside software engineering. |
@@ -44,9 +49,26 @@ tests, and direct operation supply different forms of evidence.
 | [GitHub Agentic Workflows](https://docs.github.com/en/copilot/concepts/agents/about-github-agentic-workflows) | Study natural-language automation compiled into permissioned GitHub Actions workflows. |
 | [GitHub Spark](https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/spark) | Study natural-language application creation and deployment as a comparison case, not as the definition of a factory. |
 | [GitHub Actions](https://docs.github.com/en/actions) | Study repository-native automation, runners, environments, permissions, CI, and deployment controls. |
+| [GitHub merge queues](https://docs.github.com/en/enterprise-cloud@latest/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue) | Study current-head validation, required checks, queue batching, and protected-branch admission. |
+| [GitHub stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs) | Study dependent change review and the coordination costs of ordered pull-request chains. |
+| [Git submodules](https://git-scm.com/docs/gitsubmodules) | Study commit-pinned repository composition and its checkout, update, publication, and ownership tradeoffs. |
+| [Git subtree](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.txt) | Study copied-history repository composition and contrast it with submodules and coordinated repositories. |
+| [Devfile schema](https://devfile.io/docs/2.3.0/devfile-schema) | Study declarative development-environment components, commands, events, resources, and portability. |
+| [CodeRabbit pull-request review](https://docs.coderabbit.ai/overview/pull-request-review) | Study automated review as a dated product case, including incremental review and human resolution boundaries. |
 | [Convex overview](https://docs.convex.dev/understanding/overview) | Study the reactive database, transactional server functions, scheduling, and durable application state used by Mission Control. |
 | [Convex functions](https://docs.convex.dev/functions/overview) | Distinguish queries, mutations, actions, transactions, and external side effects. |
 | [Hono documentation](https://hono.dev/docs) | Study the web-standard orchestration boundary used by Mission Control for long-running runtime integration. |
+
+## Data, knowledge, retrieval, and semantics
+
+| Source | Initial use |
+| --- | --- |
+| [Retrieval-Augmented Generation paper](https://arxiv.org/abs/2005.11401) | Study the original retrieval-plus-generation formulation and separate research results from production retrieval engineering. |
+| [Dense Passage Retrieval paper](https://arxiv.org/abs/2004.04906) | Study learned dense retrieval and compare it with lexical and hybrid retrieval under domain-specific evaluation. |
+| [Robertson and Zaragoza: The Probabilistic Relevance Framework](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf) | Study BM25 and the assumptions behind lexical relevance scoring. |
+| [Cormack, Clarke, and Buettcher: Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114) | Study a simple method for combining ranked retrieval results without treating fusion as proof of relevance. |
+| [W3C SKOS Reference](https://www.w3.org/TR/skos-reference/) | Study standards for controlled vocabularies, taxonomies, thesauri, labels, mappings, and concept schemes. |
+| [W3C PROV-O](https://www.w3.org/TR/prov-o/) | Study a standard model for representing entity, activity, and agent provenance across transformed knowledge. |
 
 ## Evaluation, quality, reliability, and systems
 
