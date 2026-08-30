@@ -778,6 +778,92 @@ baseline, expected benefit, risk, evaluation, promotion, and rollback.
 capability achieved by a specific workflow, repository, risk class, and
 environment. It is not a permanent organization-wide badge.
 
+## Context and configuration concepts
+
+**Context Package** — A versioned, addressable unit of supplied context that an
+agent may load during execution, identified by a `scope/name` slug and carrying
+a declared type such as skill, rules, documentation, workflow, tool guide, or
+prompt template. It supplies material to reason with; it does not grant
+authority, and loading one does not certify that its contents are current.
+
+**Context policy** — The rules determining which Context Packages an agent is
+eligible to load for a given task, and under what budget. It constrains what
+may enter the working set; it does not guarantee the agent used what it loaded.
+
+**Context miss** — An observed condition in which an Attempt lacked context it
+needed and that the factory could have supplied. It is evidence about the
+context system, not a verdict on the agent.
+
+**Context overload** — An observed condition in which an Attempt was supplied
+more context than it could use effectively. It indicates a budgeting or
+selection defect; more retrieval is not the remedy.
+
+**Factory Memory** — The governed retrieval surface over a factory's own
+accumulated artifacts, decisions, traces, and outcomes. It is a first-class
+subsystem serving factory execution, not a general enterprise search product or
+a sidecar chatbot, and retrieval from it is not evidence.
+
+**Recipe** — A reusable, versioned execution pattern describing how a class of
+work is normally carried out, including the shape of the plan, the agents and
+skills typically involved, and the expected verification. A recipe proposes an
+approach; it does not authorize execution or accept a result.
+
+**Factory Version** — The versioned, resolved configuration of the factory in
+force for a unit of work, binding together the applicable policy, recipes,
+context policy, and routing decisions. It makes an execution reproducible and
+attributable; it is not itself an approval.
+
+**Model routing** — The policy-governed selection of which model serves a given
+step, based on declared eligibility, capability, cost, and risk. A routing
+decision is a configuration outcome; it does not widen the authority of the
+work being routed.
+
+## Factory learning and improvement
+
+**Learning signal** — An observed, attributable indication that the factory's
+own configuration, context, routing, or process underperformed — for example a
+human correction, a repeated instruction, a verification or deterministic gate
+failure, a context miss or overload, a routing or tool-selection mismatch, a
+recipe mismatch, config drift, unnecessary agent usage, or token waste. A
+signal carries evidence and severity; it explicitly carries **no acceptance
+authority** and cannot by itself change any governed record.
+
+**Signal severity** — The operator-facing weight assigned to a learning signal:
+Low, Medium, High, or Critical. Severity orders attention; it does not
+determine whether a change is permitted.
+
+**Learning cluster** — A grouping of related learning signals over a bounded
+window, used to distinguish a recurring systemic pattern from an isolated
+incident. Clustering is an analytical projection; it creates no obligation and
+proves no cause.
+
+**Improvement candidate** — A specific, typed proposal derived from clustered
+signals — such as adding or modifying a deterministic gate, updating a prompt,
+agent rule, skill, or context policy, changing a recipe, retry policy, model
+routing, or tool configuration, replacing an agent with deterministic code, or
+adding documentation. It is a proposal for human review, not a decision, and
+generating one grants no authority to apply it.
+
+**Governed experiment** — A bounded, reversible trial of an improvement
+candidate under explicit success criteria, scope, and stop conditions, run so
+that its effect can be measured before any durable change. An experiment
+produces evidence; it does not promote itself.
+
+**Promotion recommendation** — The evidence-backed suggestion that a validated
+improvement be adopted into the standing factory configuration. It remains a
+recommendation until a human with the relevant authority accepts it.
+
+**Meta-loop** — The governed loop by which the factory improves its own
+configuration and process: signals are observed, clustered, turned into
+candidates, reviewed by a human, trialled as experiments, and only then
+promoted. Its defining constraint is that it may not self-authorize, mutate
+governance, bypass verification, or become a token sink.
+
+**Recursive improvement boundary** — The invariant that the system improving
+the factory is subject to the same policy, verification, and acceptance
+controls as the work the factory performs. A learning subsystem is not exempt
+from the governance it informs.
+
 ## Outcome measures
 
 **Lead Time to Validated Customer Value** — Time from governed Mission creation
