@@ -40,7 +40,7 @@ export default function TopicsPage() {
             <h1>Find the chapter behind the question.</h1>
           </div>
           <div>
-            <p>{documents.length} curriculum documents. Filter by responsibility, persona, lifecycle phase, maturity, and risk.</p>
+            <p>{documents.length} curriculum documents. Search directly, browse by area, or follow the factory lifecycle.</p>
             <div className="topic-intro-actions">
               <a className="button button-primary" href="/search">Search everything</a>
               <Link className="button button-secondary" href="/architecture">View architecture</Link>

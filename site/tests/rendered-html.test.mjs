@@ -93,10 +93,10 @@ test("renders the expanded autonomous-factory discovery and maturity system", as
   const delivery = await htmlFor("/docs/verification-delivery-engineering/03-progressive-delivery-production-verification-and-rollback");
 
   assert.match(topics, /Filter curriculum topics/);
-  assert.match(topics, /Persona/);
+  assert.match(topics, /More filters/);
+  assert.match(topics, /All areas/);
   assert.match(topics, /Lifecycle/);
-  assert.match(topics, /Maturity/);
-  assert.match(topics, /Risk/);
+  assert.doesNotMatch(topics, /All personas|All statuses|All risk levels/);
   assert.match(coverage, /What is covered\. What is not proven\./);
   assert.match(coverage, /Operationally proven/);
   assert.match(coverage, /href="\/topics\?status=review-ready"/);
@@ -170,6 +170,8 @@ test("renders the learning, topic, and coverage product surfaces", async () => {
   assert.match(learn, /Four paths\. One canonical system\./);
   assert.match(topics, /System map/);
   assert.match(topics, /Architecture/);
+  assert.match(topics, /More filters/);
+  assert.doesNotMatch(topics, /All personas/);
   assert.match(coverage, /Metadata-derived dashboard/);
   assert.match(coverage, /Lifecycle coverage/);
   assert.match(coverage, /Architecture coverage/);
