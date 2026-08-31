@@ -37,6 +37,10 @@ test("renders the finished reader-first landing page", async () => {
   assert.match(html, /Build the system[\s\S]{0,40}around[\s\S]{0,40}the agent\./);
   assert.match(html, /Four paths\. One system\./);
   assert.match(html, /Canonical architecture explorer/);
+  assert.match(html, /Control flow/);
+  assert.match(html, /Evidence flow/);
+  assert.match(html, /Does not own/);
+  assert.match(html, /Implementation/);
   assert.match(html, /How work moves through the factory\./);
   assert.match(html, /The agent executes\./);
   assert.match(html, /Agent Factory/);
@@ -78,6 +82,21 @@ test("renders the complete architecture hub and canonical reference contracts", 
   assert.match(architecture, /Monitoring/);
   assert.match(architecture, /Data flow/);
   assert.match(architecture, /Evidence/);
+  assert.match(architecture, /Deterministic educational walkthrough/);
+  assert.match(architecture, /Follow one change through the factory\./);
+  assert.match(architecture, /Add semantic search to product documentation\./);
+  assert.match(architecture, /The producer cannot certify its own material work/);
+  assert.match(architecture, /Behavioral evaluation/);
+  assert.match(architecture, /Quality contract failed/);
+  assert.match(architecture, /Completion is not acceptance./);
+  assert.match(architecture, /8\/10 · required threshold 9\/10/);
+  assert.match(architecture, /Acceptance eligibility/);
+  assert.match(architecture, /Who determines whether the completed candidate satisfies the required acceptance evidence/);
+  assert.match(architecture, /Understand the system by contrast./);
+  assert.match(architecture, /Agent Factory \/ Software Factory/);
+  assert.match(architecture, /30 sec/);
+  assert.match(architecture, /2 min/);
+  assert.match(architecture, /Deep dive/);
   assert.match(architecture, /Start broad\. End at the contract\./);
   assert.match(architecture, /Architecture is not proof/);
   assert.match(runtime, /twelve component families/i);
@@ -127,6 +146,7 @@ test("renders Markdown chapters with document-specific metadata", async () => {
 test("renders distinct metadata for multiple chapter routes", async () => {
   const architecture = await htmlFor("/docs/05-runtime-architecture/01-control-plane-and-execution-plane");
   const evaluation = await htmlFor("/docs/06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison");
+  const economics = await htmlFor("/docs/03-operating-model/02-factory-economics-and-operating-metrics");
 
   assert.match(architecture, /<title>Control Plane and Execution Plane · AI Software Factory Mastery<\/title>/i);
   assert.match(architecture, /Separate durable authority and policy from long running, failure prone execution\./i);
@@ -134,6 +154,9 @@ test("renders distinct metadata for multiple chapter routes", async () => {
   assert.match(evaluation, /<title>Evaluation Engineering, Trace Replay, and Run Comparison · AI Software Factory Mastery<\/title>/i);
   assert.match(evaluation, /Agent behavior changes when the model, prompt, tools, harness, context, environment, repository, or evaluator changes\./i);
   assert.doesNotMatch(evaluation, /og-v2\.png/i);
+  assert.match(economics, /Current Metric Lineage and Remaining Evidence Gaps/);
+  assert.match(economics, /immutable lineage[\s\S]{0,180}metric\s+surfaces\s+exist\s+now/i);
+  assert.doesNotMatch(economics, /<h2[^>]*>6\. Future Vision<\/h2>/i);
 });
 
 test("renders the review-ready agent architecture chapter as a self-contained resource", async () => {

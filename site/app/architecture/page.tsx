@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArchitectureExplorer } from "../components/ArchitectureExplorer";
+import { ConceptComparisons } from "../components/ConceptComparisons";
+import { FactoryRunExplorer } from "../components/FactoryRunExplorer";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
@@ -44,6 +46,10 @@ export default function ArchitecturePage() {
 
         <ArchitectureExplorer />
 
+        <FactoryRunExplorer />
+
+        <ConceptComparisons />
+
         <section className="architecture-reading-guide" aria-labelledby="architecture-reading-title">
           <div>
             <span className="section-kicker">How to use the map</span>
@@ -53,7 +59,9 @@ export default function ArchitecturePage() {
             <li><span>01</span><div><strong>Choose a view</strong><p>Use lifecycle for sequence, planes for ownership, components for runtime, or monitoring for failure response.</p></div></li>
             <li><span>02</span><div><strong>Apply a lens</strong><p>Focus on authority, runtime, assurance, or operations without losing the complete system context.</p></div></li>
             <li><span>03</span><div><strong>Inspect the card</strong><p>Every item names responsibility, owner, contract, risk, and required proof in text.</p></div></li>
-            <li><span>04</span><div><strong>Open the source</strong><p>The linked Markdown chapter is canonical and carries failure, recovery, versioning, exercises, and evidence boundaries.</p></div></li>
+            <li><span>04</span><div><strong>Walk the run</strong><p>Use the deterministic scenario to see which record, owner, evidence, and stop condition governs every transition.</p></div></li>
+            <li><span>05</span><div><strong>Compare the boundary</strong><p>Use the contrast guide to separate adjacent concepts before opening their authoritative chapters.</p></div></li>
+            <li><span>06</span><div><strong>Open the source</strong><p>The linked Markdown chapter is canonical and carries failure, recovery, versioning, exercises, and evidence boundaries.</p></div></li>
           </ol>
         </section>
 

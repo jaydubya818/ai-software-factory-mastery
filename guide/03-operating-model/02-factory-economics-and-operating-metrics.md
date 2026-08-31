@@ -2,8 +2,8 @@
 title: Factory Economics and Operating Metrics
 status: draft-for-study
 audience: [executive, architect, product, platform, senior-engineer]
-last_verified: 2026-08-09
-mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
+last_verified: 2026-08-31
+mission_control_commit: af414acfaa7ea793cb43de8ab2617f343d922f23
 ---
 
 # Factory Economics and Operating Metrics
@@ -141,53 +141,72 @@ should remain proportional to the decisions it supports.
 ## 5. Current Mission Control Implementation
 
 At commit
-[`b31e27564deb1c03c167e61b5ee094567c2ba7b1`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1),
-Mission Control has useful operational telemetry but not a complete factory
-economics system.
+[`af414acfaa7ea793cb43de8ab2617f343d922f23`](https://github.com/jaydubya818/MissionControl/tree/af414acfaa7ea793cb43de8ab2617f343d922f23),
+Mission Control implements the metric-lineage foundation and operator reporting
+surfaces. This is current product architecture, not a hypothetical future
+capability.
 
-Convex records run cost, duration, tokens, cost events, generic metrics, workflow
-success, failures, retries, pauses, model cost, completed Tasks, policy denials,
-activity, blocked work, and pending approvals. Factory Configuration versions
-bound maximum cost, runtime, and attempts. Analytics pages can display run,
-Task, spend, denial, activity, and workflow performance summaries.
+Convex retains canonical Task events plus Mission, Plan, WorkOrder, Attempt,
+candidate, evidence, quality-gate, pull-request, audit, run, workflow, and cost
+records. Its effectiveness projection reports verified completion, autonomous
+completion, and cost per verified outcome while labeling provenance as observed,
+projected, or insufficient. The operator product exposes portfolio, Factory
+Health, analytics, trace inspection, WorkOrder, and evidence views over those
+records.
 
-Several measures remain proxies. Task completion is not WorkOrder acceptance.
-Run success is not validated customer value. Activity streaks and tool-call
-volume are operational information, not productivity. Some analytics queries
-collect bounded local-scale data and are not yet a scalable outcome model.
+The current implementation already supports durable lineage, duration and cost
+observations, verification state, human interventions, policy denials, retries,
+blocked work, and pending decisions. Factory Configuration versions bound
+maximum cost, runtime, and attempts. These capabilities make flow and operating
+diagnostics inspectable today.
 
-The V1 decision log selects GitHub Issues with governed labels and exact
-repository/commit linkage as the source for production defects, incidents, and
-rollbacks. The program plan calls for cost per accepted WorkOrder, developer
-review time, recovery metrics, trust, and outcome economics, but the complete
-Mission-to-production measurement chain is not currently proven.
+## 6. Current Metric Lineage and Remaining Evidence Gaps
 
-## 6. Future Vision
+Mission Control now preserves the governed chain from Mission and approved Plan
+through WorkOrder, Task, Attempt, candidate, independent evidence, quality-gate
+decision, and pull-request lineage. Deployment, activation, and production
+verification are separate lifecycle states in the current domain model. Metric
+rollups must continue to reference those immutable records rather than replace
+them with an optimistic summary.
 
-Mission Control should create an immutable metric timeline from Mission
-governance through Plan, WorkOrder, Task, Attempt, evidence, PR, deployment,
-production observation, and outcome confirmation. Every duration and cost
-should roll up without changing the meaning of the underlying records.
+The executive measurement model is implemented in parts. Current projections
+distinguish observed, projected, and insufficient provenance, and the product
+provides portfolio and effectiveness views. Several executive claims remain
+promotion gates rather than proven facts:
 
-The executive view should lead with the three coupled measures and expose flow,
-quality, leverage, cost, and confidence underneath. It should segment by risk,
-repository, workflow, autonomy level, and time window and visibly distinguish
-measured facts, proxies, and missing data.
+- cost per verified outcome is projected, and complete model, provider,
+  compute, sandbox, and human-attention attribution is still partial;
+- release and production feedback are partial, so end-to-end lead time to a
+  confirmed customer outcome is not yet proven across sustained real work;
+- change-failure measurement still needs complete production incident,
+  rollback, hotfix, and observation-window correlation;
+- engineering leverage requires a comparable team baseline and human-attention
+  evidence rather than activity or token proxies; and
+- cohort reporting by risk, repository, workflow, autonomy level, and time
+  window must preserve sample size, coverage, and confidence.
+
+The correct product statement is therefore: **the immutable lineage and metric
+surfaces exist now; complete outcome economics and sustained production proof
+remain incomplete.** This keeps current implementation visible without turning
+partial telemetry into a claim of validated customer value.
 
 ## 7. Versioned references
 
-- [Analytics](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/analytics.ts)
-- [Generic metrics](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/metrics.ts)
-- [Workflow metrics](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/workflowMetrics.ts)
-- [Cost events](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/costEvents.ts)
-- [V1 decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/decisions/ai-software-factory-v1-decisions.md)
-- [V1 program plan](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/plans/2026-08-02-feat-ai-software-factory-v1-program-plan.md)
+- [Canonical Task timeline and metric schemas](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/convex/schema.ts)
+- [Effectiveness and friction projections](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/convex/eos/projections.ts)
+- [Analytics](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/convex/analytics.ts)
+- [Workflow metrics](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/convex/workflowMetrics.ts)
+- [Cost events](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/convex/costEvents.ts)
+- [Current capability maturity ledger](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/docs/product/software-factory-capability-maturity.md)
+- [Production Factory Pilot V3 evidence](https://github.com/jaydubya818/MissionControl/blob/af414acfaa7ea793cb43de8ab2617f343d922f23/docs/testing/evidence/production-factory-pilot-v3/README.md)
 
 ## 8. Notes and lessons learned
 
-Mission Control already measures much of what is easiest to count. The mastery
-challenge is to resist presenting those numbers as proof of value. The system
-needs lineage from intent to accepted outcome before factory ROI is defensible.
+Mission Control now has materially more than activity counters: it retains
+governed lineage and exposes provenance-aware effectiveness projections. The
+mastery challenge is to preserve that distinction. Current operational records
+support flow and diagnostic decisions; complete factory ROI still requires
+sustained intent-to-production outcome evidence and full cost attribution.
 
 ## 9. Interview and discussion questions
 
