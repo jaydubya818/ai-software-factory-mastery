@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { searchIndex } from "../../lib/search.generated";
 import { StatusBadge } from "./StatusBadge";
 
@@ -24,7 +25,9 @@ function score(document: (typeof searchIndex)[number], terms: string[]) {
 
 export function SearchExperience() {
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -48,6 +51,14 @@ export function SearchExperience() {
       .map((result) => result.document);
   }, [query]);
 
+  function highlighted(value: string) {
+    const term = query.trim();
+    if (!term) return value;
+    const index = value.toLowerCase().indexOf(term.toLowerCase());
+    if (index < 0) return value;
+    return <>{value.slice(0, index)}<mark>{value.slice(index, index + term.length)}</mark>{value.slice(index + term.length)}</>;
+  }
+
   return (
     <div className="search-experience">
       <label className="search-box">
@@ -56,20 +67,30 @@ export function SearchExperience() {
           ref={inputRef}
           type="search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => { setQuery(event.target.value); setActive(0); }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") { event.preventDefault(); setActive((value) => Math.min(value + 1, results.length - 1)); }
+            if (event.key === "ArrowUp") { event.preventDefault(); setActive((value) => Math.max(value - 1, 0)); }
+            if (event.key === "Enter" && results[active]) { event.preventDefault(); router.push(`/docs/${results[active].slug}`); }
+          }}
           placeholder="Search agents, harnesses, evidence, environments…"
+          role="combobox"
+          aria-controls="search-results"
+          aria-expanded="true"
+          aria-activedescendant={results[active] ? `search-result-${results[active].slug.replaceAll("/", "-")}` : undefined}
         />
         <kbd>/</kbd>
       </label>
       <div className="search-summary" aria-live="polite">
         {query ? `${results.length} result${results.length === 1 ? "" : "s"}` : "Suggested starting points"}
       </div>
-      <div className="search-results">
-        {results.map((result) => (
-          <a className="search-result" href={`/docs/${result.slug}`} key={result.slug}>
-            <div className="search-result-meta"><span>{result.section}</span><StatusBadge status={result.status} /></div>
-            <h2>{result.title}</h2>
-            <p>{result.description}</p>
+      <div className="search-results" id="search-results" role="listbox">
+        {results.map((result, index) => (
+          <a aria-selected={index === active} className={`search-result ${index === active ? "is-active" : ""}`} href={`/docs/${result.slug}`} id={`search-result-${result.slug.replaceAll("/", "-")}`} key={result.slug} onMouseEnter={() => setActive(index)} role="option">
+            <div className="search-result-meta"><span>{result.section}</span><StatusBadge status={result.status} /><span>{result.contentType}</span><span>{result.readingMinutes} min</span></div>
+            <h2>{highlighted(result.title)}</h2>
+            <p>{highlighted(result.description)}</p>
+            <small>{[...result.lifecycle, ...result.architectureLayers].join(" · ")}</small>
           </a>
         ))}
         {results.length === 0 && (

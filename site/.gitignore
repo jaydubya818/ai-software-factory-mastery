@@ -42,3 +42,5 @@ yarn-error.log*
 # generated from the repository Markdown source
 /lib/content.generated.ts
 /lib/search.generated.ts
+/lib/palette.generated.ts
+*.tsbuildinfo

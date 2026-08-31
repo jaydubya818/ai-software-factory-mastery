@@ -1,13 +1,12 @@
 import Link from "next/link";
+import { documents } from "../lib/content";
+import { learningPathBlueprints, lifecycleStages } from "../lib/curriculum";
+import { ContinueLearning } from "./components/ContinueLearning";
+import { FactoryArchitecture } from "./components/FactoryArchitecture";
+import { LearningPathPreview } from "./components/LearningPathPreview";
+import { LifecycleExplorer } from "./components/LifecycleExplorer";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
-
-const paths = [
-  { label: "Executive", id: "executive", time: "20 min", outcome: "Value, risk, and operating model" },
-  { label: "Architect", id: "architect", time: "3 hours", outcome: "Boundaries, runtime, and assurance" },
-  { label: "Builder", id: "builder", time: "Hands-on", outcome: "Agents, harnesses, evals, and labs" },
-  { label: "Deep study", id: "deep-study", time: "Complete", outcome: "The full technical curriculum" },
-];
 
 const topics = [
   ["01", "Capability supply chain", "Registries, packaging, versioning, certification, discovery, and revocation.", "/docs/agent-factory/01-capability-supply-chain-and-registries"],
@@ -19,36 +18,37 @@ const topics = [
 ];
 
 export default function Home() {
+  const stageContent = lifecycleStages.map((stage) => ({
+    id: stage.id,
+    chapters: documents.filter((document) => document.lifecycle.some((value) => value === stage.id)).slice(0, 3).map((document) => ({ title: document.title, href: `/docs/${document.slug}`, meta: `${document.section} · ${document.readingMinutes} min` })),
+  }));
+  const paths = learningPathBlueprints.map((path) => {
+    const pathDocuments = path.id === "deep-study" ? documents : documents.filter((document) => path.slugs.some((slug) => slug === document.slug));
+    return { ...path, chapterCount: pathDocuments.length, labCount: pathDocuments.filter((document) => document.hasLab).length };
+  });
+
   return (
     <>
       <SiteHeader />
       <main>
 
-      <section className="hero">
+      <section className="hero premium-hero">
+        <div className="hero-status"><span>Mastery console</span><i>96-source curriculum</i><i>Governed architecture</i></div>
         <div className="eyebrow">Engineering autonomous delivery beyond the coding agent</div>
-        <h1>Build the system around the agent.</h1>
-        <p className="hero-copy">
-          A practical curriculum for turning human intent into validated software
-          through bounded agents, durable execution, independent evidence, and
-          explicit authority.
-        </p>
-        <div className="hero-actions">
-          <Link className="button button-primary" href="/learn">Choose your path</Link>
-          <Link className="button button-secondary" href="/architecture">
-            See the architecture
-          </Link>
-        </div>
+        <h1>Build the system <em>around</em> the agent.</h1>
+        <div className="hero-bottom"><p className="hero-copy">Learn how human intent becomes validated software through bounded authority, durable execution, independent evidence, controlled delivery, and governed improvement.</p><div className="hero-actions"><Link className="button button-primary" href="/learn">Start learning</Link><Link className="button button-secondary" href="#factory-architecture">Explore architecture</Link></div></div>
+        <ContinueLearning />
       </section>
 
-      <section className="system-strip" aria-labelledby="system-title">
-        <div>
-          <span className="section-kicker">The governed value stream</span>
-          <h2 id="system-title">From intent to evidence-backed delivery</h2>
-        </div>
-        <ol className="system-flow">
-          <li>Intent</li><li>Plan</li><li>Execute</li><li>Verify</li><li>Deliver</li><li>Learn</li>
-        </ol>
+      <section className="thesis-console" aria-label="Product thesis">
+        <div><span>01 / System</span><strong>The agent executes.</strong><p>It reasons, proposes, and acts inside a bounded runtime.</p></div>
+        <div><span>02 / Governance</span><strong>The factory authorizes.</strong><p>It owns policy, state, admission, recovery, and decisions.</p></div>
+        <div><span>03 / Proof</span><strong>Independent evidence decides readiness.</strong><p>The producer cannot certify its own material work.</p></div>
       </section>
+
+      <FactoryArchitecture />
+
+      <LifecycleExplorer content={stageContent} />
 
       <section className="path-preview" aria-labelledby="path-title">
         <div className="section-heading">
@@ -58,40 +58,7 @@ export default function Home() {
           </div>
           <Link className="text-link" href="/learn">Compare the paths <span aria-hidden="true">→</span></Link>
         </div>
-        <div className="path-grid">
-          {paths.map((path, index) => (
-            <Link className="path-card" href={`/learn#${path.id}`} key={path.label}>
-              <span className="path-number">0{index + 1}</span>
-              <h3>{path.label}</h3>
-              <p>{path.outcome}</p>
-              <span className="path-time">{path.time}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="architecture-section">
-        <div className="architecture-copy">
-          <span className="section-kicker">One canonical model</span>
-          <h2>The worker is not the system.</h2>
-          <p>
-            Capability flows down through explicit contracts. Evidence and outcomes
-            flow back up. No execution layer can silently widen its own authority.
-          </p>
-          <Link className="text-link" href="/architecture">
-            Explore all nine views <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-        <div className="architecture-stack" role="img" aria-label="Canonical AI Software Factory stack">
-          <div className="stack-row stack-human"><span>Human intent, policy, and decisions</span></div>
-          <div className="stack-row stack-control"><span>Control plane</span><span>Orchestration</span></div>
-          <div className="stack-supply">Agent Factory supplies evaluated capabilities</div>
-          <div className="stack-row stack-contract"><span>Frozen execution contract</span></div>
-          <div className="stack-row stack-runtime"><span>Outer harness</span><span>Inner harness</span></div>
-          <div className="stack-row stack-infra"><span>Development environment</span><span>Compute</span></div>
-          <div className="stack-row stack-proof"><span>Independent verification</span><span>Evidence</span></div>
-          <div className="stack-row stack-outcome"><span>Delivery</span><span>Production outcome</span><span>Learning</span></div>
-        </div>
+        <LearningPathPreview paths={paths} />
       </section>
 
       <section className="topics-section">

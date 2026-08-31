@@ -49,4 +49,67 @@ export function adjacentDocuments(slug: string) {
   };
 }
 
+export function relatedDocuments(slug: string, limit = 5) {
+  const current = getDocument(slug);
+  if (!current) return [];
+  const currentLifecycle = new Set<string>(current.lifecycle);
+  const currentTopics = new Set<string>(current.topics);
+  const currentArchitecture = new Set<string>(current.architectureLayers);
+
+  return documents
+    .filter((document) => document.slug !== slug)
+    .map((document) => {
+      const sameSection = document.sectionKey === current.sectionKey ? 5 : 0;
+      const lifecycleOverlap = document.lifecycle.filter((stage) => currentLifecycle.has(stage)).length * 2;
+      const topicOverlap = document.topics.filter((topic) => currentTopics.has(topic)).length * 3;
+      const architectureOverlap = document.architectureLayers
+        .filter((layer) => currentArchitecture.has(layer)).length * 2;
+      return { document, score: sameSection + lifecycleOverlap + topicOverlap + architectureOverlap };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.document.title.localeCompare(b.document.title))
+    .slice(0, limit)
+    .map(({ document }) => document);
+}
+
+export function markdownSections(content: string) {
+  const matches = [...content.matchAll(/^##\s+(.+)$/gm)];
+  if (matches.length === 0) return [{ title: "Chapter", content }];
+
+  const introduction = content.slice(0, matches[0].index).trim();
+  const result = matches.map((match, index) => {
+    const start = match.index ?? 0;
+    const end = matches[index + 1]?.index ?? content.length;
+    return { title: match[1].replace(/[*_`]/g, "").trim(), content: content.slice(start, end).trim() };
+  });
+  return introduction ? [{ title: "Introduction", content: introduction }, ...result] : result;
+}
+
+export function contentForMode(content: string, mode: string) {
+  if (mode === "read") return content;
+  const sections = markdownSections(content);
+  const patterns = {
+    architecture: /architecture|boundary|contract|flow|state|control|authority|failure|tradeoff|diagram|model/i,
+    study: /quick read|principle|definition|lesson|distinction|summary|review|glossary|question/i,
+    interview: /interview|whiteboard|question|tradeoff|objection|explain|lesson|principle|architecture|boundary|failure/i,
+  } as const;
+  const pattern = patterns[mode as keyof typeof patterns];
+  if (!pattern) return content;
+  const selected = sections.filter((section) => pattern.test(section.title));
+  return selected.length > 0 ? selected.map((section) => section.content).join("\n\n") : content;
+}
+
+export function quickReadContent(content: string) {
+  return markdownSections(content).find((section) => /^quick read$/i.test(section.title))?.content
+    .replace(/^##\s+Quick Read\s*/i, "")
+    .trim();
+}
+
+export function withoutQuickRead(content: string) {
+  return markdownSections(content)
+    .filter((section) => !/^quick read$/i.test(section.title))
+    .map((section) => section.content)
+    .join("\n\n");
+}
+
 export { documents };

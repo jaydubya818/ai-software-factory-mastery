@@ -34,9 +34,12 @@ test("renders the finished reader-first landing page", async () => {
   const html = await htmlFor("/");
 
   assert.match(html, /<title>AI Software Factory Mastery<\/title>/i);
-  assert.match(html, /Build the system around the agent\./);
+  assert.match(html, /Build the system[\s\S]{0,40}around[\s\S]{0,40}the agent\./);
   assert.match(html, /Four paths\. One system\./);
-  assert.match(html, /The worker is not the system\./);
+  assert.match(html, /Canonical architecture explorer/);
+  assert.match(html, /How work moves through the factory\./);
+  assert.match(html, /The agent executes\./);
+  assert.match(html, /Agent Factory/);
   assert.match(html, /Reliable autonomy comes from a trustworthy system/);
   assert.match(html, /property="og:image" content="http:\/\/localhost:3000\/og-v2\.png"/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
@@ -102,7 +105,9 @@ test("renders Markdown chapters with document-specific metadata", async () => {
   const html = await htmlFor("/docs/00-overview/05-software-factory-stack-boundaries");
 
   assert.match(html, /<title>Software Factory Stack Boundaries · AI Software Factory Mastery<\/title>/i);
-  assert.match(html, /Quick Read included/);
+  assert.match(html, /Quick Read/);
+  assert.match(html, /Complete chapter/);
+  assert.match(html, /Mark chapter complete/);
   assert.match(html, /Name a layer by the responsibility it owns/);
   assert.match(html, /Independent quality and evidence path/);
   assert.equal((html.match(/<h1>Software Factory Stack Boundaries<\/h1>/g) ?? []).length, 1);
@@ -129,7 +134,33 @@ test("renders the review-ready agent architecture chapter as a self-contained re
   assert.match(html, /MCP is an interoperability boundary/);
   assert.match(html, /Govern the MCP connection, not only the tool call/);
   assert.match(html, /The lab passes only if another reviewer can reconstruct the exact configuration/);
-  assert.doesNotMatch(html, /todo 024|draft for study/i);
+  assert.doesNotMatch(html, /todo 024/i);
+});
+
+test("renders focused chapter modes from the same canonical source", async () => {
+  const architecture = await htmlFor("/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory");
+  const study = await htmlFor("/docs/00-overview/05-software-factory-stack-boundaries");
+  const interview = await htmlFor("/docs/11-interview-mastery/01-executive-and-interview-mastery");
+
+  assert.match(architecture, /\?mode=architecture/);
+  assert.match(architecture, /Boundaries and contracts/);
+  assert.match(study, /The chapter in one pass\./);
+  assert.match(interview, /Interview practice/);
+  assert.match(interview, /Explain the chapter’s thesis/);
+});
+
+test("renders the learning, topic, and coverage product surfaces", async () => {
+  const learn = await htmlFor("/learn");
+  const topics = await htmlFor("/topics");
+  const coverage = await htmlFor("/coverage");
+
+  assert.match(learn, /Selected path/);
+  assert.match(learn, /Four paths\. One canonical system\./);
+  assert.match(topics, /System map/);
+  assert.match(topics, /Architecture/);
+  assert.match(coverage, /Metadata-derived dashboard/);
+  assert.match(coverage, /Lifecycle coverage/);
+  assert.match(coverage, /Architecture coverage/);
 });
 
 test("keeps requested exclusions out of public routes", async () => {

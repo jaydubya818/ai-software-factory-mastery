@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { documents } from "../../lib/content";
+import { lifecycleStages } from "../../lib/curriculum";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { StatusBadge } from "../components/StatusBadge";
@@ -37,6 +38,21 @@ export default function CoveragePage() {
     counts.set(document.status, (counts.get(document.status) ?? 0) + 1);
     return counts;
   }, new Map<string, number>()).entries()].sort((a, b) => b[1] - a[1]);
+  const lifecycleCounts = lifecycleStages.map((stage) => ({ ...stage, count: documents.filter((document) => document.lifecycle.some((value) => value === stage.id)).length }));
+  const architectureCounts = [...documents.reduce((counts, document) => {
+    document.architectureLayers.forEach((layer) => counts.set(layer, (counts.get(layer) ?? 0) + 1));
+    return counts;
+  }, new Map<string, number>()).entries()].sort((a, b) => b[1] - a[1]);
+  const personaCounts = [...documents.reduce((counts, document) => {
+    document.audience.forEach((persona) => counts.set(persona, (counts.get(persona) ?? 0) + 1));
+    return counts;
+  }, new Map<string, number>()).entries()].sort((a, b) => b[1] - a[1]);
+  const activityCounts = [
+    ["Labs", documents.filter((document) => document.hasLab).length, "/topics?type=lab"],
+    ["Whiteboards", documents.filter((document) => document.hasWhiteboardExercise).length, "/topics?q=whiteboard"],
+    ["Interview material", documents.filter((document) => document.hasInterviewQuestions).length, "/topics?q=interview"],
+    ["Evidence references", documents.filter((document) => document.hasImplementationEvidence).length, "/topics?q=evidence"],
+  ] as const;
 
   return (
     <>
@@ -64,6 +80,16 @@ export default function CoveragePage() {
           </div>
           <div className="status-counts">
             {statusCounts.map(([status, count]) => <div key={status}><StatusBadge status={status} /><strong>{count}</strong></div>)}
+          </div>
+        </section>
+
+        <section className="coverage-dashboard" aria-labelledby="coverage-dashboard-title">
+          <header><div><span className="section-kicker">Metadata-derived dashboard</span><h2 id="coverage-dashboard-title">See where the curriculum carries weight.</h2></div><p>Every number below comes from generated frontmatter and content signals. Select any segment to inspect its source material.</p></header>
+          <div className="coverage-activity-grid">{activityCounts.map(([label, count, href]) => <Link href={href} key={label}><span>{label}</span><strong>{count}</strong><small>Open source material →</small></Link>)}</div>
+          <div className="coverage-matrices">
+            <article><header><span>Lifecycle coverage</span><small>Documents may cover multiple stages</small></header><div>{lifecycleCounts.map((stage) => <Link href={`/topics?lifecycle=${stage.id}`} key={stage.id}><span>{stage.label}</span><i><b style={{ width: `${Math.round((stage.count / documents.length) * 100)}%` }} /></i><strong>{stage.count}</strong></Link>)}</div></article>
+            <article><header><span>Architecture coverage</span><small>Section-derived layers</small></header><div>{architectureCounts.map(([layer, count]) => <Link href={`/topics?architecture=${encodeURIComponent(layer)}`} key={layer}><span>{layer}</span><i><b style={{ width: `${Math.round((count / Math.max(...architectureCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></Link>)}</div></article>
+            <article><header><span>Persona coverage</span><small>Declared audiences</small></header><div>{personaCounts.slice(0, 12).map(([persona, count]) => <Link href={`/topics?audience=${encodeURIComponent(persona)}`} key={persona}><span>{persona.replaceAll("-", " ")}</span><i><b style={{ width: `${Math.round((count / Math.max(...personaCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></Link>)}</div></article>
           </div>
         </section>
 

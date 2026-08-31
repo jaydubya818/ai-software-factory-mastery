@@ -17,10 +17,16 @@ const topicDocuments = documents.map((document) => ({
   status: document.status,
   audience: document.audience,
   lifecycle: document.lifecycle,
+  architectureLayers: document.architectureLayers,
+  contentType: document.contentType,
   risk: document.risk,
   description: document.description,
   readingMinutes: document.readingMinutes,
   labType: document.labType,
+  hasLab: document.hasLab,
+  hasInterviewQuestions: document.hasInterviewQuestions,
+  hasWhiteboardExercise: document.hasWhiteboardExercise,
+  hasImplementationEvidence: document.hasImplementationEvidence,
 }));
 
 export default function TopicsPage() {
