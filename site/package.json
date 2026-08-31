@@ -12,7 +12,7 @@
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "prebuild": "npm run content:generate",
     "build": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
-    "vercel-build": "npm run content:generate && next build",
+    "vercel-build": "npm run content:generate && next build && node scripts/check-built-css.mjs",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "pretest": "npm run content:generate",
     "test": "node --test tests/rendered-html.test.mjs",
