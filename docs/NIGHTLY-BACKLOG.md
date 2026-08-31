@@ -67,24 +67,28 @@ producing a fake red baseline; unset it first.
   chosen, `check-links.mjs` should also assert route resolvability, and
   `site/tests/markdown-links.test.mjs` is where the regression belongs.
 
-- [ ] 2026-08-31 — **`extractHeadings` slugifies raw Markdown, not rendered
-  text** — `scripts/generate-content.mjs` builds table-of-contents ids from the
-  raw heading line while `site/app/components/Markdown.tsx` builds the heading
-  element's id from what react-markdown rendered. They agree across all 943
-  headings today only because both collapse runs of non-alphanumerics to one
-  dash. A heading containing a link renders fewer words than it spells and the
-  two diverge: `## See [the topic index](./07-topic-index.md) first` yields a
-  contents entry pointing at `#see-the-topic-index-07-topic-index-md-first`
-  against a heading rendered as `#see-the-topic-index-first`, and the link
-  scrolls nowhere. The same raw text is also used as the visible contents
-  label, so the Markdown syntax would be displayed verbatim.
-  Guarded on `main` by `site/tests/toc-anchors.test.mjs`, which fails on that
-  input. Fix proposed on branch `nightly/2026-08-31-improvements`; close this
-  when that branch merges.
-
 ## Closed
 
 <!-- Resolved items, most recent first. -->
+
+- [x] 2026-08-31 → 2026-08-31 — **`extractHeadings` slugified raw Markdown
+  instead of rendered text** — `scripts/generate-content.mjs` built
+  table-of-contents ids from the raw heading line while
+  `site/app/components/Markdown.tsx` builds the heading element's id from what
+  react-markdown rendered. They agreed across all 943 headings only because
+  both collapse runs of non-alphanumerics to one dash. A heading containing a
+  link renders fewer words than it spells and the two diverged:
+  `## See [the topic index](./07-topic-index.md) first` produced a contents
+  entry pointing at `#see-the-topic-index-07-topic-index-md-first` against a
+  heading rendered as `#see-the-topic-index-first`, and the entry scrolled
+  nowhere. The same raw string was the visible contents label, so the Markdown
+  syntax would have been displayed verbatim.
+  Fixed by deriving both the label and the id from a new `renderedHeadingText`
+  that strips image and link syntax before slugifying. Regenerating produces a
+  byte-identical `lib/content.generated.ts`, so the change is a no-op on the
+  curriculum as it stands and only alters headings that carry inline links.
+  Guarded by `site/tests/toc-anchors.test.mjs`, which fails on that input
+  before the fix and passes after.
 
 ## Checked, not applicable
 

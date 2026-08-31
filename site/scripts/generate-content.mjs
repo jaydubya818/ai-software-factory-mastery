@@ -97,16 +97,32 @@ function slugify(value) {
     .replace(/^-|-$/g, "");
 }
 
+/**
+ * Reduce a raw Markdown heading to the text react-markdown renders for it.
+ *
+ * The heading element's own id is slugified in app/components/Markdown.tsx from
+ * the rendered text, so the table of contents has to start from the same string
+ * or its links point at anchors that do not exist. Links and images are the
+ * cases that matter: they spell more than they render.
+ */
+function renderedHeadingText(heading) {
+  return heading
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function extractHeadings(markdown) {
   return markdown
     .split("\n")
     .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
     .filter(Boolean)
-    .map((match) => ({
-      depth: match[1].length,
-      text: match[2].replace(/[*_`]/g, ""),
-      id: slugify(match[2]),
-    }));
+    .map((match) => {
+      const text = renderedHeadingText(match[2]);
+      return { depth: match[1].length, text, id: slugify(text) };
+    });
 }
 
 const files = (await walk(guideRoot)).sort();
