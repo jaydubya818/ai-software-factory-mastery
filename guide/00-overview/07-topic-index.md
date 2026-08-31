@@ -24,6 +24,9 @@ exercise where one exists.
 | Progressive autonomy | [Trust calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md) | [Maturity model](../03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md) | Promotion/demotion exercise |
 | Compounding engineering | [Glossary](./02-canonical-glossary.md) | [Compounding and attention](../03-operating-model/05-compounding-engineering-and-human-attention.md) | Correction-clustering lab |
 | Capability coverage and maturity | [Coverage map](./08-capability-coverage-and-maturity.md) | [Reviewer guide](./09-reviewer-guide.md) | External review checklist |
+| Detailed architecture ownership | [Coverage matrix](./11-detailed-architecture-coverage-matrix.md) | [Reference architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md) | Four-view trace exercise |
+| System inventory and lifecycle | [Inventory reference](../04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md) | [Governance operating model](../03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md) | Inventory lifecycle exercise |
+| Architecture and autonomy selection | [Selection ladder](../06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection.md) | [Operational autonomy](../02-first-principles/01-operational-autonomy-and-trust-calibration.md) | Simpler-alternative review |
 
 ## Agent Factory and capability supply chain
 
@@ -33,6 +36,7 @@ exercise where one exists.
 | Agent, skill, tool, and prompt versioning | [Packaging and versioning](../agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md) | [Execution manifests](../04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md) | Dependency-lock exercise |
 | Capability discovery and resolution | [Registries](../agent-factory/01-capability-supply-chain-and-registries.md) | [Packaging and dependencies](../agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md) | Revocation exercise |
 | Capability evaluation and promotion | [Certification lifecycle](../agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md) | [Evaluation science](../06-ai-engineering/06-evaluation-science-and-controlled-experimentation.md) | [Continual-improvement lab](../10-labs/08-continual-improvement-promotion-lab.md) |
+| Tool, skill, and integration contracts | [Contract reference](../agent-factory/04-tool-skill-and-integration-contract-reference.md) | [Capability packaging](../agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md) | [External capability lab](../10-labs/13-external-capability-intake-and-recertification-lab.md) |
 
 ## Agents, harnesses, and interoperability
 
@@ -41,6 +45,8 @@ exercise where one exists.
 | AI coding agents | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Agent architecture](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md) | Agent-composition exercise |
 | Inner and outer harnesses | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Harnesses and adapters](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md) | Two-adapter comparison |
 | Agent orchestration | [Agent and loop patterns](../06-ai-engineering/05-agent-and-loop-engineering-patterns.md) | [Runtime orchestration](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md) | Router/verifier lab |
+| Orchestration component contracts | [Reference architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md) | [Runtime contracts](../05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts.md) | [Failure and cost lab](../10-labs/11-orchestration-failure-recovery-and-cost-lab.md) |
+| Multi-agent topology and delegation | [Topology reference](../06-ai-engineering/09-multi-agent-topologies-and-collaboration-contracts.md) | [Architecture selection](../06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection.md) | Independence comparison |
 | Generate–verify–retry–escalate | [Loop engineering glossary](./02-canonical-glossary.md) | [Agent and loop patterns](../06-ai-engineering/05-agent-and-loop-engineering-patterns.md) | Oscillation exercise |
 | MCP | [Agent architecture](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md) | [Protocols](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md) | Tool-gateway threat exercise |
 | ACP, AG-UI, and A2A | [Protocols table](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md#map-protocols-to-their-actual-boundaries) | [Research canon](../12-research-journal/initial-canon.md) | Protocol-boundary whiteboard |
@@ -52,6 +58,7 @@ exercise where one exists.
 | --- | --- | --- | --- |
 | Data Understanding | [Glossary](./02-canonical-glossary.md) | [Data and knowledge engineering](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | Source-quality lab |
 | Knowledge Engineering and RAG | [Agent context](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md) | [Retrieval lifecycle](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | Hybrid-retrieval lab |
+| Knowledge pipeline, poisoning, and revocation | [Knowledge engineering](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | [Pipeline specification](../06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md) | [Knowledge revocation lab](../10-labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md) |
 | Context Engineering | [Quick Read](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md#quick-read) | [Context compilation](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md#compile-context-for-the-decision-not-the-corpus) | Context-package lab |
 | Semantic Engineering | [Glossary](./02-canonical-glossary.md) | [Semantic contracts](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md#treat-semantics-as-executable-infrastructure) | Entity-resolution exercise |
 | AI evaluations | [Model routing](../06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md) | [Evaluation engineering](../06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison.md) | Baseline/candidate lab |
@@ -99,8 +106,11 @@ exercise where one exists.
 | Human-agent control surfaces and accessibility | [Operator experience](../factory-platform-engineering/04-human-agent-control-surfaces-and-operator-experience.md) | [Human attention](../03-operating-model/05-compounding-engineering-and-human-attention.md) | Control-state usability lab |
 | Workflow DSLs, events, schema evolution, and storage | [Workflow and event contracts](../factory-platform-engineering/05-workflow-event-contracts-and-factory-storage.md) | [Runtime orchestration](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md) | Event replay and compensation exercise |
 | Observability semantics, token cost, cardinality, and forensics | [Observability semantics](../factory-platform-engineering/06-observability-semantics-cost-and-forensics.md) | [Factory observability](../05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md) | Forensic-bundle exercise |
+| Enterprise operations, reliability, and FinOps | [Operations reference](../factory-platform-engineering/07-enterprise-operations-reliability-and-finops-reference.md) | [Scheduling and cost](../factory-platform-engineering/02-scheduling-capacity-cost-and-fairness.md) | [Failure and cost lab](../10-labs/11-orchestration-failure-recovery-and-cost-lab.md) |
+| Monitoring, drift, triage, and response | [Control tower response](../factory-platform-engineering/08-control-tower-monitoring-detection-and-response.md) | [Observability semantics](../factory-platform-engineering/06-observability-semantics-cost-and-forensics.md) | Detection-to-closure exercise |
 | Agentic threats, prompt injection, tool abuse, and memory poisoning | [Agentic threat model](../08-security-and-governance/04-agentic-threat-model-and-adversarial-defense.md) | [Security architecture](../08-security-and-governance/02-security-and-identity-architecture.md) | [Attack and containment lab](../10-labs/05-agentic-security-attack-and-containment-lab.md) |
 | Workload identity, secrets, privacy, licensing, and compliance | [Identity and privacy](../08-security-and-governance/05-workload-identity-secrets-privacy-and-compliance.md) | [Governance and policy](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md) | Identity-chain exercise |
+| Authority, emergency control, and recertification | [Governance controls](../08-security-and-governance/06-agentic-governance-control-framework.md) | [Authority and emergency control](../08-security-and-governance/07-authority-autonomy-and-emergency-control.md) | [Containment and replay lab](../10-labs/10-authority-containment-and-decision-replay-lab.md) |
 
 ## Choosing the next document
 

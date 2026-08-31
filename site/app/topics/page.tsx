@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { documents } from "../../lib/content";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -34,7 +35,10 @@ export default function TopicsPage() {
           </div>
           <div>
             <p>{documents.length} curriculum documents. Filter by responsibility, persona, lifecycle phase, maturity, and risk.</p>
-            <a className="button button-primary" href="/search">Search everything</a>
+            <div className="topic-intro-actions">
+              <a className="button button-primary" href="/search">Search everything</a>
+              <Link className="button button-secondary" href="/architecture">View architecture</Link>
+            </div>
           </div>
         </header>
         <TopicExplorer documents={topicDocuments} />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { documents } from "../../lib/content";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -34,18 +35,25 @@ const paths = [
     outcome: "Whiteboard the complete system and identify every authority and failure boundary.",
     instruction: "Read the chapters, then redraw the canonical map from memory.",
     chapters: [
+      ["Architecture Hub", "/architecture"],
+      ["Detailed Coverage Matrix", "/docs/00-overview/11-detailed-architecture-coverage-matrix"],
       ["Stack Boundaries", "/docs/00-overview/05-software-factory-stack-boundaries"],
       ["Intent-to-Delivery Lifecycle", "/docs/00-overview/04-intent-to-delivery-lifecycle"],
       ["Authoritative Delivery Hierarchy", "/docs/04-domain-model/01-authoritative-delivery-hierarchy"],
       ["Control and Execution Planes", "/docs/05-runtime-architecture/01-control-plane-and-execution-plane"],
       ["Runtime Orchestration", "/docs/05-runtime-architecture/02-runtime-orchestration-and-state-machines"],
+      ["Orchestration Contracts", "/docs/05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts"],
       ["Environments and Compute", "/docs/05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure"],
       ["Harnesses and Protocols", "/docs/05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols"],
       ["Capability Supply Chain", "/docs/agent-factory/01-capability-supply-chain-and-registries"],
+      ["Capability Contracts", "/docs/agent-factory/04-tool-skill-and-integration-contract-reference"],
+      ["Knowledge Pipeline", "/docs/06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification"],
       ["Repository Onboarding", "/docs/autonomous-workflows/01-repository-onboarding-and-codebase-intelligence"],
       ["Quality and Evidence", "/docs/07-quality-engineering/01-quality-and-evidence-architecture"],
       ["CI/CD and Compatibility", "/docs/verification-delivery-engineering/02-cicd-artifacts-migrations-and-api-compatibility"],
       ["Agentic Threat Model", "/docs/08-security-and-governance/04-agentic-threat-model-and-adversarial-defense"],
+      ["Governance Controls", "/docs/08-security-and-governance/06-agentic-governance-control-framework"],
+      ["Operations Reference", "/docs/factory-platform-engineering/07-enterprise-operations-reliability-and-finops-reference"],
     ],
   },
   {
@@ -60,12 +68,15 @@ const paths = [
       ["Capability Supply Chain", "/docs/agent-factory/01-capability-supply-chain-and-registries"],
       ["Agent Architecture", "/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory"],
       ["Agent and Loop Patterns", "/docs/06-ai-engineering/05-agent-and-loop-engineering-patterns"],
+      ["Architecture Selection", "/docs/06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection"],
       ["Attempts and Recovery", "/docs/05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery"],
       ["Software Testing Strategy", "/docs/verification-delivery-engineering/01-software-testing-strategy-for-agentic-change"],
       ["Evaluation and Replay", "/docs/06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison"],
       ["CI/CD and Artifacts", "/docs/verification-delivery-engineering/02-cicd-artifacts-migrations-and-api-compatibility"],
       ["Progressive Delivery", "/docs/verification-delivery-engineering/03-progressive-delivery-production-verification-and-rollback"],
       ["Capability Learning", "/docs/06-ai-engineering/07-capability-learning-optimization-and-regression-control"],
+      ["Orchestration Failure Lab", "/docs/10-labs/11-orchestration-failure-recovery-and-cost-lab"],
+      ["Knowledge Revocation Lab", "/docs/10-labs/12-knowledge-poisoning-revocation-and-retrieval-lab"],
       ["Capability Certification Lab", "/docs/10-labs/03-capability-certification-and-revocation-lab"],
       ["Repository Readiness Lab", "/docs/10-labs/04-repository-onboarding-and-readiness-lab"],
       ["Delivery and Rollback Lab", "/docs/10-labs/06-progressive-delivery-and-rollback-lab"],
@@ -111,6 +122,7 @@ export default function LearnPage() {
           <span className="eyebrow">Choose your depth</span>
           <h1>Four paths through one system.</h1>
           <p>Start with the decision you need to make. Move deeper only when the next layer changes that decision.</p>
+          <Link className="text-link" href="/architecture">Orient with the architecture hub <span aria-hidden="true">→</span></Link>
         </header>
         <div className="learning-paths">
           {paths.map((path) => (

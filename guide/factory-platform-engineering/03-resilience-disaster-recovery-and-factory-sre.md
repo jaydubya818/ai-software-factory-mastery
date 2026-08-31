@@ -53,6 +53,47 @@ Run game days for provider outage, queue corruption, lost worker, expired creden
 
 Break-glass access is narrowly scoped, time-limited, strongly authenticated, independently logged, and reviewed afterward. Emergency action cannot silently erase history or become the routine operating path.
 
+### Recovery contract matrix
+
+| Subject | Authoritative or derived | Example RPO | Recovery behavior | Verification |
+|---|---|---|---|---|
+| Intent, policy, grants, decisions | Authoritative | Zero or near-zero by risk | Fail closed; restore ordered durable state | Integrity, sequence, signer, and policy checks |
+| Workflow and attempt state | Authoritative | Bounded by checkpoint | Reconcile leases, commands, and external effects | State-machine invariant and orphan scan |
+| Capability and system inventory | Authoritative | Small bounded loss | Restrict selection until current | Registry digest and dependency resolution |
+| Artifacts and evidence | Immutable authoritative records | Zero after publication | Restore by digest with provenance | Hash, signature, retention, and subject binding |
+| Search indexes and projections | Derived | Rebuildable | Rebuild from authoritative events/sources | Count, digest, and query comparison |
+| Telemetry | Operational, partly lossy | Bounded | Restore collection; mark observation gap | Coverage and clock/correlation checks |
+
+RTO and RPO are scoped to capability, region, risk, and failure mode. A single
+platform-wide number hides the records that cannot tolerate loss.
+
+### Replay, resume, and reconciliation
+
+Replay reprocesses retained inputs in a controlled environment; it must not
+repeat external effects unless explicitly simulated or protected by an
+idempotency contract. Resume continues a paused workflow only after manifest,
+policy, grants, capabilities, context, leases, and budgets are revalidated.
+Reconciliation compares desired durable state with workers, queues, providers,
+artifacts, and downstream systems to classify each effect as absent, completed,
+failed, or unknown. Unknown is a first-class state requiring investigation.
+
+### Disaster and dependency scenarios
+
+Exercise control-store corruption, regional loss, identity issuer outage,
+model/tool provider degradation, artifact/evidence unavailability, queue
+duplication, lost worker, compromised credential, and unavailable human
+approver. Failover uses preapproved identities and versions; it cannot bypass
+authority or evidence because the primary region is unavailable. Preserve
+forensic state before destructive repair where safety permits.
+
+### Factory SLO and error-budget policy
+
+Define SLIs for admission, dispatch, state durability, control enforcement,
+successful reconciliation, proof-package availability, recovery time, and
+accepted-outcome reliability. Error-budget exhaustion reduces change and
+autonomy, prioritizes reliability work, and may restrict high-risk workflows.
+Safety and security incidents are not offset by good average availability.
+
 ## 4. Tradeoffs and alternatives
 
 Multi-region active-active improves availability and makes consistency and fencing harder. Warm standby is simpler and increases recovery time. Chaos experiments reveal coupling and can harm shared environments; begin with simulation and controlled fault injection. Keeping every provider fallback ready may be more expensive than accepting bounded unavailability.

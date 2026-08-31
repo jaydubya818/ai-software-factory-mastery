@@ -27,10 +27,14 @@ Choose one path rather than trying to read everything:
 
 - **Architecture:** canonical boundaries, domain model, Agent Factory, runtime,
   verification, platform, and security.
+- **Reference contracts:** architecture views, inventory, orchestration,
+  knowledge, tool and integration, multi-agent, and operating contracts.
 - **Builder:** repository onboarding, capability resolution, workflow patterns,
   testing, delivery, and executable labs.
 - **Operations and risk:** scheduling, resilience, threat model, identity,
   production verification, and incident response.
+- **Governance and control:** decision rights, control evidence, emergency
+  actions, recertification, drift, and verified closure.
 - **Curriculum and usability:** learning paths, topic discovery, terminology,
   progressive disclosure, exercises, and accessibility.
 
@@ -46,6 +50,10 @@ For each chapter, ask:
 6. Can the lab be executed safely and produce reviewable proof?
 7. Is terminology consistent with the canonical glossary?
 8. Can a reader explain what the component does not own?
+9. Does every diagram have a complete text or table equivalent?
+10. Does the chosen autonomy pattern prove why a simpler design is insufficient?
+11. Can an operator trace one failure through containment, reconciliation,
+    recovery, and verified closure?
 
 ## Feedback labels
 
@@ -69,3 +77,19 @@ A chapter advances from review ready to validated only after material feedback
 is resolved, references are current, internal links and rendering pass, and the
 defined exercise or evidence review succeeds. Editorial approval cannot convert
 future architecture into a current implementation claim.
+
+## Role-based walkthroughs
+
+Use four independent passes and record findings through the feedback labels:
+
+1. **Architect:** Trace one authorized change across lifecycle, plane,
+   component, trust boundary, and record.
+2. **Builder:** Implement or review one capability contract and failure path
+   without inventing identity, retry, evidence, or lifecycle semantics.
+3. **Security:** Challenge authority, indirect instructions, external
+   capability, emergency control, and evidence independence.
+4. **Operations:** Define SLOs and budgets, inject an ambiguous side effect,
+   and trace detection through verified closure.
+
+These walkthroughs are required external review work. Their presence here does
+not claim they have already passed.

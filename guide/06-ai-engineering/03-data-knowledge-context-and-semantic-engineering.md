@@ -8,6 +8,18 @@ mission_control_study_commit: d902fae7032c0696b531c44ae88829c652516fc6
 
 # Data, Knowledge, Context, and Semantic Engineering
 
+## Quick Read
+
+- **Purpose:** Separate data fitness, reusable knowledge, semantic meaning, and
+  task-specific context so failures can be located and corrected.
+- **Pipeline:** Register -> profile -> ingest -> normalize -> index -> retrieve
+  -> permission-filter -> rank -> compile -> freeze -> evaluate -> revoke.
+- **Safety rule:** Retrieved content is untrusted data. It cannot change intent,
+  policy, acceptance criteria, or tool authority.
+- **Specification:** Use the [Knowledge, Context, and Retrieval Pipeline
+  Specification](08-knowledge-context-and-retrieval-pipeline-specification.md)
+  for schemas, state, failure, deletion, and revocation contracts.
+
 ## 1. The problem
 
 An agent cannot compensate reliably for missing, stale, contradictory, or
@@ -148,6 +160,19 @@ free of governing contradictions.
 End-to-end task success remains necessary but is not diagnostic. A system that
 only records final success cannot determine whether improvement should target
 the source, ingestion, semantics, retrieval, context policy, model, or tool.
+
+### Make correction and revocation first-class paths
+
+A corrected, deleted, reclassified, or compromised source must invalidate its
+derived artifacts, index entries, caches, context packages, and dependent
+evidence according to explicit policy. New work stops selecting affected
+material immediately. Running work is paused, cancelled, or allowed to finish
+only through a recorded risk decision. Historical packages remain reproducible
+under restricted retention but are marked ineligible for new decisions.
+
+The system needs both forward lineage—what this source produced—and reverse
+lineage—which runs, decisions, and releases depended on it. Without both,
+revocation is an announcement rather than an enforceable control.
 
 ## 4. Tradeoffs and alternatives
 

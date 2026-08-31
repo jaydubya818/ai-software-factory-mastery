@@ -46,6 +46,7 @@ Read only the **Quick Read** section in this order:
 3. [The Human-Agent Operating Model](../03-operating-model/01-human-agent-operating-model.md)
 4. [Operational Autonomy and Trust Calibration](../02-first-principles/01-operational-autonomy-and-trust-calibration.md)
 5. [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md)
+6. [Enterprise Governance Operating Model and Decision Rights](../03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md)
 
 You should be able to answer: Why is this larger than a coding agent? What
 remains a human responsibility? What evidence justifies more autonomy? Which
@@ -56,18 +57,20 @@ outcome should the organization measure?
 **Outcome:** Whiteboard the complete system, name each authority boundary, and
 identify the failure owner for execution, evidence, environment, and delivery.
 
-1. [Software Factory Stack Boundaries](./05-software-factory-stack-boundaries.md)
-2. [Intent-to-Delivery Lifecycle](./04-intent-to-delivery-lifecycle.md)
-3. [The Authoritative Delivery Hierarchy](../04-domain-model/01-authoritative-delivery-hierarchy.md)
-4. [Control Plane and Execution Plane](../05-runtime-architecture/01-control-plane-and-execution-plane.md)
-5. [Runtime Orchestration and State Machines](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md)
-6. [Development Environments, Compute, and Composable Infrastructure](../05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md)
-7. [Coding Harnesses, Adapters, and Agent Protocols](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md)
-8. [Agent Factory Capability Supply Chain and Registries](../agent-factory/01-capability-supply-chain-and-registries.md)
-9. [Repository Onboarding and Codebase Intelligence](../autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md)
-10. [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md)
-11. [CI/CD, Artifacts, Migrations, and API Compatibility](../verification-delivery-engineering/02-cicd-artifacts-migrations-and-api-compatibility.md)
-12. [Agentic Threat Model and Adversarial Defense](../08-security-and-governance/04-agentic-threat-model-and-adversarial-defense.md)
+1. [Detailed Architecture Coverage Matrix](./11-detailed-architecture-coverage-matrix.md)
+2. [Software Factory Stack Boundaries](./05-software-factory-stack-boundaries.md)
+3. [Intent-to-Delivery Lifecycle](./04-intent-to-delivery-lifecycle.md)
+4. [Factory System Inventory, Classification, and Lifecycle](../04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md)
+5. [AI Software Factory Reference Architecture](../05-runtime-architecture/06-ai-software-factory-reference-architecture.md)
+6. [Orchestration Component Model and Runtime Contracts](../05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts.md)
+7. [Development Environments, Compute, and Composable Infrastructure](../05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md)
+8. [Coding Harnesses, Adapters, and Agent Protocols](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md)
+9. [Tool, Skill, and Integration Contract Reference](../agent-factory/04-tool-skill-and-integration-contract-reference.md)
+10. [Knowledge, Context, and Retrieval Pipeline Specification](../06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md)
+11. [Agentic Architecture Patterns and Autonomy Selection](../06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection.md)
+12. [Quality and Evidence Architecture](../07-quality-engineering/01-quality-and-evidence-architecture.md)
+13. [Agentic Governance Control Framework](../08-security-and-governance/06-agentic-governance-control-framework.md)
+14. [Enterprise Operations, Reliability, and FinOps Reference](../factory-platform-engineering/07-enterprise-operations-reliability-and-finops-reference.md)
 
 Finish by redrawing the canonical map from memory. For every arrow, state the
 contract, identity, failure behavior, telemetry, and authority that crosses it.
@@ -91,6 +94,10 @@ and capability resolution through verified delivery, recovery, and learning.
 12. [Repository Onboarding and Readiness Lab](../10-labs/04-repository-onboarding-and-readiness-lab.md)
 13. [Progressive Delivery and Rollback Lab](../10-labs/06-progressive-delivery-and-rollback-lab.md)
 14. [Continual Improvement Promotion Lab](../10-labs/08-continual-improvement-promotion-lab.md)
+15. [Authority, Containment, and Decision Replay Lab](../10-labs/10-authority-containment-and-decision-replay-lab.md)
+16. [Orchestration Failure, Recovery, and Cost Lab](../10-labs/11-orchestration-failure-recovery-and-cost-lab.md)
+17. [Knowledge Poisoning, Revocation, and Retrieval Lab](../10-labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md)
+18. [External Capability Intake and Recertification Lab](../10-labs/13-external-capability-intake-and-recertification-lab.md)
 
 Do not stop at a successful agent run or pull request. Complete capability
 resolution, evidence, failure, cancellation, delivery, rollback, production

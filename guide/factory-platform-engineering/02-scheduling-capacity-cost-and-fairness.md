@@ -53,6 +53,46 @@ Preemption requires checkpoint or cancellation semantics, cleanup, cost accounti
 
 Measure cost per accepted WorkOrder and validated outcome, including retries, failed Attempts, environments, verification, waiting, and human intervention. Token price alone hides system cost.
 
+### Admission, reservation, and charge contract
+
+An admission request binds workflow, tenant, priority class, deadline, risk,
+resource estimate, model/tool/environment constraints, concurrency keys,
+monetary and token ceilings, and required human-review capacity. Admission
+returns `admitted`, `queued`, `deferred`, or `denied` with reason, reservation,
+expiry, and the policy version. Scheduling never silently changes risk,
+capability, region, or model profile to fit capacity.
+
+| Control | Required behavior | Failure protection |
+|---|---|---|
+| Queue | Durable order, age, deadline, owner, cancellation | Reconcile orphaned and expired work |
+| Priority | Finite classes with documented tie-breaks | Aging prevents starvation |
+| Fairness | Per-tenant and workflow shares | Weighted fair scheduling and burst limits |
+| Reservation | Hold scarce capacity for an admitted window | Expiry and release on cancellation |
+| Quota | Bound aggregate consumption | Hard limit plus governed exception |
+| Rate limit | Bound request velocity | Backoff and retry-after semantics |
+| Concurrency | Serialize conflicting repository/environment effects | Scoped keys and lease expiry |
+| Preemption | Stop lower-priority resumable work at a safe checkpoint | Preserve state and account sunk cost |
+| Budget | Reserve maximum and meter actual usage | Stop before exhaustion; preserve containment capacity |
+
+### Attribute cost to accepted outcomes
+
+Cost records include model input/output and cached tokens, tools and external
+APIs, workers, environments, storage, network, retrieval, evaluation, CI,
+delivery, retries, failed attempts, and human review. Allocate shared cost by a
+versioned rule. Report per mission, workflow, repository, tenant, capability,
+attempt, accepted outcome, and failure class. Preserve reserved, incurred,
+wasted, avoided, and unallocated amounts; do not hide failed-work cost in a
+platform average.
+
+### Overload and provider failure
+
+Admission sheds optional work before critical work, respects tenant fairness,
+and reserves capacity for pause, cancellation, verification, and incident
+response. A provider rate limit opens a scoped circuit and uses a prequalified
+fallback only when its quality, data, region, latency, and cost constraints
+remain eligible. Retry storms are prevented through centralized retry budgets,
+jittered backoff, and deadline-aware cancellation.
+
 ## 4. Tradeoffs and alternatives
 
 Sophisticated schedulers improve utilization and are hard to explain. Begin with explicit priority classes, quotas, concurrency, aging, and reserved capacity. Predictive duration helps packing but can disadvantage novel work. Cost limits prevent runaway use and may block valuable investigation; provide scoped escalation with owner and expiry.

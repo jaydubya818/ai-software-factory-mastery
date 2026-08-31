@@ -11,6 +11,7 @@ export function SiteHeader() {
         </span>
       </Link>
       <nav className="desktop-nav" aria-label="Primary navigation">
+        <Link href="/architecture">Architecture</Link>
         <Link href="/learn">Learning paths</Link>
         <Link href="/topics">Topics</Link>
         <Link href="/coverage">Coverage</Link>
@@ -22,6 +23,7 @@ export function SiteHeader() {
       <details className="mobile-menu">
         <summary aria-label="Open navigation">Menu</summary>
         <nav aria-label="Mobile navigation">
+          <Link href="/architecture">Architecture</Link>
           <Link href="/learn">Learning paths</Link>
           <Link href="/topics">Topics</Link>
           <Link href="/coverage">Coverage</Link>

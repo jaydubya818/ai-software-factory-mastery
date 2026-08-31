@@ -34,7 +34,7 @@ export default function Home() {
         </p>
         <div className="hero-actions">
           <Link className="button button-primary" href="/learn">Choose your path</Link>
-          <Link className="button button-secondary" href="/docs/00-overview/05-software-factory-stack-boundaries">
+          <Link className="button button-secondary" href="/architecture">
             See the architecture
           </Link>
         </div>
@@ -78,8 +78,8 @@ export default function Home() {
             Capability flows down through explicit contracts. Evidence and outcomes
             flow back up. No execution layer can silently widen its own authority.
           </p>
-          <Link className="text-link" href="/docs/00-overview/05-software-factory-stack-boundaries">
-            Study every boundary <span aria-hidden="true">→</span>
+          <Link className="text-link" href="/architecture">
+            Explore all nine views <span aria-hidden="true">→</span>
           </Link>
         </div>
         <div className="architecture-stack" role="img" aria-label="Canonical AI Software Factory stack">
@@ -135,6 +135,15 @@ export default function Home() {
         </div>
         <p>Every document carries a maturity label. The coverage map separates review-ready architecture from validated and operational evidence.</p>
         <Link className="button button-primary" href="/coverage">Inspect coverage and maturity</Link>
+      </section>
+
+      <section className="architecture-home-callout">
+        <div>
+          <span className="section-kicker">Reference depth</span>
+          <h2>From one map to every contract.</h2>
+        </div>
+        <p>Trace lifecycle, planes, runtime components, governance, inventory, autonomy patterns, monitoring, data flow, and evidence—then open the canonical specification behind each item.</p>
+        <Link className="button button-secondary" href="/architecture">Explore the architecture hub</Link>
       </section>
 
       <section className="case-study-callout">

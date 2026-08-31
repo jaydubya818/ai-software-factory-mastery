@@ -20,12 +20,14 @@ const maturity = [
 ];
 
 const areas = [
+  ["Reference architecture", "Lifecycle, logical components, trust boundaries, authority, evidence, inventory, and minimum-sufficient autonomy.", "Review-ready architecture; full implementation conformance remains unproven."],
   ["Agent Factory", "Capability identity, registries, packaging, dependency resolution, certification, promotion, and revocation.", "Review-ready architecture; unified production registry remains unproven."],
   ["Repository intelligence", "Onboarding, owner validation, instructions, architecture, dependencies, build, tests, data, and readiness.", "Review-ready architecture; end-to-end onboarding evidence remains unproven."],
   ["Autonomous workflows", "Feature, defect, test, dependency, security, incident, production, modernization, and knowledge work.", "Catalog and contracts are review ready; only the first bounded workflow has partial evidence."],
   ["Verification & delivery", "Testing, artifacts, CI/CD, migrations, compatibility, progressive release, rollback, and production outcomes.", "Architecture is review ready; the complete production path remains unproven."],
   ["Factory platform", "Portal, catalog, golden paths, scheduling, cost, fairness, resilience, disaster recovery, and operator experience.", "Architecture is review ready; fleet-scale and recovery proof remains unproven."],
   ["Security & governance", "Agentic threats, policy, identity, secrets, privacy, provenance, licensing, and compliance.", "Core controls and review-ready additions exist; full adversarial evidence remains unproven."],
+  ["Control & operations", "Emergency control, decision rights, SLOs, cost, continuity, drift, triage, response, and verified closure.", "Review-ready contracts; exercised fleet-scale operating proof remains unproven."],
   ["Evaluation & learning", "Datasets, graders, uncertainty, experiments, optimization, regression control, and human promotion.", "Architecture is review ready; production optimization and rollback remain unproven."],
   ["Hands-on mastery", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited."],
 ];
@@ -47,7 +49,10 @@ export default function CoveragePage() {
           </div>
           <div>
             <p>Use this map to separate documented architecture, editorial maturity, validation, and operational evidence.</p>
-            <Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Review the curriculum</Link>
+            <div className="coverage-intro-actions">
+              <Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Review the curriculum</Link>
+              <Link className="button button-secondary" href="/architecture">Explore architecture</Link>
+            </div>
           </div>
         </header>
 

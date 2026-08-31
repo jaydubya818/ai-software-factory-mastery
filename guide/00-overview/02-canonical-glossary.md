@@ -3,7 +3,7 @@ title: Canonical Glossary
 status: review-ready
 audience:
   - all
-last_verified: 2026-08-28
+last_verified: 2026-08-30
 mission_control_commit: d902fae7032c0696b531c44ae88829c652516fc6
 ---
 
@@ -1096,6 +1096,53 @@ governance, bypass verification, or become a token sink.
 the factory is subject to the same policy, verification, and acceptance
 controls as the work the factory performs. A learning subsystem is not exempt
 from the governance it informs.
+
+## Architecture, governance, and operations concepts
+
+**Factory System Record** — The governed accountability and classification
+record for one material autonomous delivery system. It identifies purpose,
+owners, scope, registry references, data, integrations, risk, autonomy ceiling,
+evidence, incidents, and lifecycle without duplicating the authoritative
+service, capability, model, policy, or evidence registries.
+
+**Autonomy ceiling** — The highest action class a system, workflow, capability,
+or grant may perform under current policy and evidence. The narrowest
+applicable ceiling wins; runtime confidence cannot raise it.
+
+**Boundary Contract** — The versioned command or event contract crossing a
+responsibility or trust boundary. It defines identity, authority, schema,
+state, delivery, idempotency, timeout, failure, evidence, human decision, and
+compatibility behavior.
+
+**Side-effect class** — The highest consequence category of a capability call:
+read-only, reversible mutation, publication, deployment, destructive mutation,
+privileged administration, or external communication. It determines minimum
+authorization, evidence, and recovery controls.
+
+**Delegation Record** — A durable, versioned assignment from one authorized
+participant to another that binds purpose, scope, capability, context,
+authority, budget, completion, failure, and return contracts. Delegation cannot
+widen the authority held by the delegator.
+
+**Emergency Control** — A tested independent mechanism for pausing, cancelling,
+revoking, quarantining, rolling back, failing over, or shutting down a governed
+subject. A visible control is not evidence until enforcement and recovery have
+been exercised.
+
+**Recertification** — A periodic or event-triggered decision that rechecks
+ownership, purpose, risk, autonomy, models, evaluators, capabilities,
+dependencies, policy, evidence, incidents, drift, cost, and outcomes for an
+exact governed scope.
+
+**Control Tower** — An operations projection that links governed system
+inventory to authority, health, quality, safety, cost, drift, incidents,
+response, and verified closure. It invokes authoritative control APIs but does
+not replace their records.
+
+**Verified closure** — The incident or finding state reached only after
+containment, recovery, downstream reconciliation, independent validation,
+notification decisions, residual risk, and accountable acceptance are
+recorded. Service restoration alone is not closure.
 
 ## Outcome measures
 

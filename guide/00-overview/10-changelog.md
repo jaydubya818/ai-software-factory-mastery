@@ -14,6 +14,36 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-08-30 — Reference architecture depth release
+
+### Added
+
+- A detailed architecture ownership and coverage matrix.
+- Four synchronized reference-architecture views: lifecycle, logical
+  components, deployment/trust boundaries, and authority/evidence.
+- Governed factory-system inventory, governance operating model, decision
+  rights, ten-family control catalog, and emergency-control semantics.
+- Twelve orchestration component families, runtime envelopes, state, stop,
+  failure, recovery, capacity, cost, and compatibility contracts.
+- AI systems foundations, permission-aware knowledge and retrieval pipeline,
+  tool/skill/integration contracts, multi-agent collaboration contracts, and a
+  minimum-sufficient autonomy ladder.
+- Enterprise operations and FinOps reference plus a control-tower response
+  lifecycle from observation through verified improvement.
+- Four failure-injection labs covering authority, orchestration, knowledge, and
+  external capabilities.
+- A public architecture hub with lifecycle, plane, component, governance,
+  inventory, pattern, monitoring, data-flow, and evidence views.
+
+### Changed
+
+- Deepened knowledge engineering, scheduling/capacity/cost, resilience/disaster
+  recovery, and observability/forensics with specification-level contracts.
+- Expanded all navigation, learning, coverage, glossary, reviewer, and search
+  surfaces while preserving Markdown as the source of truth.
+- Kept all new chapters review ready: documentation completeness does not
+  advance implementation evidence to validated or operationally proven.
+
 ## 2026-08-30 — Autonomous factory coverage expansion
 
 ### Added

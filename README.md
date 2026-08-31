@@ -25,6 +25,9 @@ trust.
 [Compare all reading paths](./guide/00-overview/06-reading-paths.md) or use the
 [topic index](./guide/00-overview/07-topic-index.md) when you already know the
 question you need to answer.
+Use the [Detailed Architecture Coverage Matrix](./guide/00-overview/11-detailed-architecture-coverage-matrix.md)
+to find the canonical owner, contract, risk, evidence boundary, and validation
+path for every material factory capability.
 Use [Capability Coverage and Maturity](./guide/00-overview/08-capability-coverage-and-maturity.md)
 before interpreting curriculum breadth as implementation proof.
 
@@ -72,14 +75,22 @@ factory.
 ## What the curriculum covers
 
 - factory architecture, operating models, economics, and adoption;
+- synchronized lifecycle, logical-component, trust-boundary, authority, and
+  evidence architecture views;
+- governed system inventory, classification, organizational decision rights,
+  emergency control, and periodic recertification;
 - Agent Factory registries, capability packaging, dependency resolution,
   certification, promotion, deprecation, and revocation;
 - business intent, executable specifications, and delivery records;
 - repository onboarding, readiness, codebase intelligence, and autonomous
   workflow portfolios;
 - AI coding agents, agent orchestration, workflows, and loop engineering;
+- minimum-sufficient autonomy selection and multi-agent collaboration
+  contracts;
 - coding harnesses, adapters, lifecycle hooks, MCP, ACP, AG-UI, and A2A;
 - data, knowledge, semantic, context, and model engineering;
+- connector, ingestion, permission-aware retrieval, poisoning containment,
+  deletion, and revocation contracts;
 - development environments, compute fleets, sandboxes, and composable
   infrastructure;
 - evaluation datasets, trials, graders, trace replay, and run comparison;
@@ -92,6 +103,8 @@ factory.
   rollback, and production verification;
 - developer portals, service catalogs, golden paths, scheduling, capacity,
   cost, fairness, observability semantics, and disaster recovery;
+- control-tower monitoring, behavior and policy drift, triage, containment,
+  verified recovery, and controlled improvement;
 - production feedback, reproduction, automated review, and merge maintenance;
 - multi-repository delivery, dependency coordination, submodules, and subtrees;
 - agentic threats, workload identity, secrets, privacy, licensing, compliance,
@@ -112,9 +125,12 @@ factory.
 6. Check the [coverage and maturity map](./guide/00-overview/08-capability-coverage-and-maturity.md)
    and use the [external reviewer guide](./guide/00-overview/09-reviewer-guide.md)
    when sharing the curriculum.
-7. Use the [Mission Control capability and admission map](./guide/09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
+7. Use the [detailed architecture matrix](./guide/00-overview/11-detailed-architecture-coverage-matrix.md)
+   and the public Architecture hub to trace lifecycle, components, governance,
+   inventory, failures, evidence, and maturity.
+8. Use the [Mission Control capability and admission map](./guide/09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
    for current, versioned implementation claims.
-8. Complete the relevant [executable labs](./guide/README.md#supplemental-labs)
+9. Complete the relevant [executable labs](./guide/README.md#supplemental-labs)
    before claiming practical mastery.
 
 ## Governing principles

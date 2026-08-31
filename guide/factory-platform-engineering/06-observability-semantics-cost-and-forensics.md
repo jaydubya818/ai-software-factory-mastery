@@ -53,6 +53,47 @@ For material incidents, freeze relevant manifests, identities, policy decisions,
 
 Telemetry supports diagnosis. A verifier converts selected observations into an evidence envelope tied to an exact subject, method, criterion, and producer. Raw trace presence does not satisfy acceptance automatically.
 
+### Stable semantic envelope
+
+Every event or span records timestamp, event/span name, schema version,
+correlation and causation identifiers, tenant, environment, actor/workload,
+system/workflow/task/attempt identifiers, component and capability versions,
+state or operation, status, failure class, duration, usage/cost reference, and
+redaction state. Add subject digests for artifacts, contexts, evaluator
+results, evidence, and releases. Provider fields remain namespaced extensions.
+
+OpenTelemetry generative-AI semantic conventions are developing. Pin an exact
+version, translate through an internal stable vocabulary, and test exporters
+before adopting changed attribute meaning.
+
+### Trace and event rules
+
+Use spans for timed operations and links for asynchronous, fan-out, human-pause,
+and replay relationships. Use domain events for accepted facts and audit
+events for security-relevant actions. Propagate correlation through queues,
+providers, CI, delivery, and production; when a boundary cannot preserve trace
+headers, carry a signed or validated correlation field in the business
+contract. Clock uncertainty and missing segments are explicit.
+
+### Metrics, sampling, and alerting
+
+Metrics use bounded labels such as workflow class, model profile, status,
+failure class, risk, and region. Store attempt, repository, user, and prompt
+identifiers in traces or events. Tail-sample failures, policy denials,
+high-risk actions, latency/cost outliers, and incident-linked runs; apply
+privacy and retention policy before export. Alerts name an owner, severity,
+baseline, threshold, window, deduplication key, runbook, suppression rule, and
+closure evidence.
+
+### Forensic bundle schema
+
+A bundle includes manifest and exact versions; identities, grants, and policy
+decisions; ordered domain/audit events; selected trace/log segments; context
+and source lineage; tool calls and side-effect receipts; artifacts and digests;
+evaluator and proof records; human decisions; cost; incident controls; and
+known gaps. It is immutable, access-controlled, redacted by policy, and bound
+to a case. A bundle preserves observable facts, not hidden reasoning.
+
 ## 4. Tradeoffs and alternatives
 
 Full-fidelity tracing improves reconstruction and increases cost and sensitive-data exposure. Tail sampling and risk-based retention preserve high-value traces. Standard conventions improve comparability and may lag new provider features; retain vendor details under namespaced attributes without breaking the common core.

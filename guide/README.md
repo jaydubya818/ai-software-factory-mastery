@@ -80,6 +80,7 @@ Chapters:
 - [Governed Continuous Learning and Recursive Improvement](./03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md)
 - [Enterprise Adoption and Factory Maturity Model](./03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md)
 - [Compounding Engineering and Human Attention](./03-operating-model/05-compounding-engineering-and-human-attention.md)
+- [Enterprise Governance Operating Model and Decision Rights](./03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md)
 
 ## 4. Domain Model
 
@@ -97,6 +98,7 @@ Chapters:
 - [Factory Configuration, Workflow Contracts, and Execution Manifests](./04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md)
 - [Specification Engineering, Executable Requirements, and Plan Assurance](./04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md)
 - [Multi-Repository Development and Coordinated Delivery](./04-domain-model/04-multi-repository-development-and-coordinated-delivery.md)
+- [Factory System Inventory, Classification, and Lifecycle](./04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md)
 
 ## 5. Agent Factory and Capability Supply Chain
 
@@ -110,6 +112,7 @@ Chapters:
 - [Capability Supply Chain and Registries](./agent-factory/01-capability-supply-chain-and-registries.md)
 - [Capability Packaging, Versioning, and Dependency Resolution](./agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md)
 - [Capability Evaluation, Certification, Promotion, and Retirement](./agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md)
+- [Tool, Skill, and Integration Contract Reference](./agent-factory/04-tool-skill-and-integration-contract-reference.md)
 
 ## 6. Runtime Architecture
 
@@ -130,6 +133,7 @@ Chapters:
 - [AI Software Factory Reference Architecture](./05-runtime-architecture/06-ai-software-factory-reference-architecture.md)
 - [Development Environments, Compute, and Composable Infrastructure](./05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md)
 - [Coding Harnesses, Adapters, and Agent Protocols](./05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md)
+- [Orchestration Component Model and Runtime Contracts](./05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts.md)
 
 ## 7. AI Engineering
 
@@ -140,6 +144,7 @@ solves and the new failure modes it introduces.
 
 Chapters:
 
+- [AI Systems Foundations for Software Factory Architects](./06-ai-engineering/00-ai-systems-foundations-for-software-factory-architects.md)
 - [Agent Architecture, MCP, Tools, Context, and Memory](./06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md)
 - [Model Routing, Evaluations, and Capability Selection](./06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md)
 - [Data, Knowledge, Context, and Semantic Engineering](./06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md)
@@ -147,6 +152,9 @@ Chapters:
 - [Agent and Loop Engineering Patterns](./06-ai-engineering/05-agent-and-loop-engineering-patterns.md)
 - [Evaluation Science and Controlled Experimentation](./06-ai-engineering/06-evaluation-science-and-controlled-experimentation.md)
 - [Capability Learning, Optimization, and Regression Control](./06-ai-engineering/07-capability-learning-optimization-and-regression-control.md)
+- [Knowledge, Context, and Retrieval Pipeline Specification](./06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md)
+- [Multi-Agent Topologies and Collaboration Contracts](./06-ai-engineering/09-multi-agent-topologies-and-collaboration-contracts.md)
+- [Agentic Architecture Patterns and Autonomy Selection](./06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection.md)
 
 ## 8. Autonomous Engineering Workflows
 
@@ -188,6 +196,8 @@ Chapters:
 - [Human-Agent Control Surfaces and Operator Experience](./factory-platform-engineering/04-human-agent-control-surfaces-and-operator-experience.md)
 - [Workflow and Event Contracts, Schema Evolution, and Factory Storage](./factory-platform-engineering/05-workflow-event-contracts-and-factory-storage.md)
 - [Observability Semantics, Cost Attribution, and Forensics](./factory-platform-engineering/06-observability-semantics-cost-and-forensics.md)
+- [Enterprise Operations, Reliability, and FinOps Reference](./factory-platform-engineering/07-enterprise-operations-reliability-and-finops-reference.md)
+- [Control Tower Monitoring, Detection, and Response](./factory-platform-engineering/08-control-tower-monitoring-detection-and-response.md)
 
 ## 11. Quality Engineering
 
@@ -218,6 +228,8 @@ Chapters:
 - [Software Supply Chain Security, Provenance, and Attestation](./08-security-and-governance/03-software-supply-chain-security-provenance-and-attestation.md)
 - [Agentic Threat Model and Adversarial Defense](./08-security-and-governance/04-agentic-threat-model-and-adversarial-defense.md)
 - [Workload Identity, Secrets, Privacy, and Compliance](./08-security-and-governance/05-workload-identity-secrets-privacy-and-compliance.md)
+- [Agentic Governance Control Framework](./08-security-and-governance/06-agentic-governance-control-framework.md)
+- [Authority, Autonomy, and Emergency Control](./08-security-and-governance/07-authority-autonomy-and-emergency-control.md)
 
 ## Supplemental: Mission Control Case Studies
 
@@ -259,6 +271,10 @@ Labs:
 - [Incident Remediation and Postmortem](./10-labs/07-incident-remediation-and-postmortem-lab.md)
 - [Continual Improvement Promotion](./10-labs/08-continual-improvement-promotion-lab.md)
 - [Factory Disaster Recovery](./10-labs/09-factory-disaster-recovery-lab.md)
+- [Authority, Containment, and Decision Replay](./10-labs/10-authority-containment-and-decision-replay-lab.md)
+- [Orchestration Failure, Recovery, and Cost](./10-labs/11-orchestration-failure-recovery-and-cost-lab.md)
+- [Knowledge Poisoning, Revocation, and Retrieval](./10-labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md)
+- [External Capability Intake and Recertification](./10-labs/13-external-capability-intake-and-recertification-lab.md)
 
 ## Supplemental: Interview Practice
 

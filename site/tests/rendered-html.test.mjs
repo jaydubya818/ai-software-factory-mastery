@@ -44,6 +44,7 @@ test("renders the finished reader-first landing page", async () => {
 
 test("renders each primary discovery route", async () => {
   const routes = [
+    ["/architecture", /Trace the factory from intent to evidence\./],
     ["/learn", /Executive.*Architect.*Builder.*Deep Study/s],
     ["/topics", /Find the chapter behind the question\./],
     ["/coverage", /Coverage is not proof\./],
@@ -54,6 +55,29 @@ test("renders each primary discovery route", async () => {
     const html = await htmlFor(route);
     assert.match(html, expected);
   }
+});
+
+test("renders the complete architecture hub and canonical reference contracts", async () => {
+  const architecture = await htmlFor("/architecture");
+  const runtime = await htmlFor("/docs/05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts");
+  const governance = await htmlFor("/docs/08-security-and-governance/06-agentic-governance-control-framework");
+  const knowledge = await htmlFor("/docs/06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification");
+
+  assert.match(architecture, /Lifecycle/);
+  assert.match(architecture, /Planes/);
+  assert.match(architecture, /Components/);
+  assert.match(architecture, /Governance/);
+  assert.match(architecture, /Inventory/);
+  assert.match(architecture, /Patterns/);
+  assert.match(architecture, /Monitoring/);
+  assert.match(architecture, /Data flow/);
+  assert.match(architecture, /Evidence/);
+  assert.match(architecture, /Start broad\. End at the contract\./);
+  assert.match(architecture, /Architecture is not proof/);
+  assert.match(runtime, /twelve component families/i);
+  assert.match(runtime, /Stop-condition table/);
+  assert.match(governance, /ten testable control families/i);
+  assert.match(knowledge, /permission and tenant[\s\S]{0,120}before ranking/i);
 });
 
 test("renders the expanded autonomous-factory discovery and maturity system", async () => {
@@ -109,7 +133,7 @@ test("renders the review-ready agent architecture chapter as a self-contained re
 });
 
 test("keeps requested exclusions out of public routes", async () => {
-  const routes = ["/", "/learn", "/topics", "/docs/00-overview/02-canonical-glossary"];
+  const routes = ["/", "/architecture", "/learn", "/topics", "/docs/00-overview/02-canonical-glossary"];
   const terms = [
     [87, 111, 114, 107, 100, 97, 121],
     [72, 111, 112, 112, 101, 114],

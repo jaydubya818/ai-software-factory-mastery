@@ -260,6 +260,21 @@ h1 {
 .coverage-home-callout h2 { margin: 9px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 500; line-height: 1.12; letter-spacing: -0.035em; }
 .coverage-home-callout p { margin: 0; color: var(--muted); font-size: 15px; }
 .coverage-home-callout .button { white-space: nowrap; }
+.architecture-home-callout {
+  width: min(1180px, calc(100% - 40px));
+  margin: -48px auto 96px;
+  padding: 42px;
+  display: grid;
+  grid-template-columns: 1fr 0.9fr auto;
+  align-items: center;
+  gap: 44px;
+  background: #f6ead7;
+  border: 1px solid #e0c69e;
+  border-radius: 14px;
+}
+.architecture-home-callout h2 { margin: 9px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 500; line-height: 1.12; letter-spacing: -0.035em; }
+.architecture-home-callout p { margin: 0; color: #6c5c46; font-size: 15px; line-height: 1.55; }
+.architecture-home-callout .button { white-space: nowrap; }
 
 .site-footer { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 48px 0 58px; display: flex; justify-content: space-between; gap: 48px; border-top: 1px solid var(--line); }
 .footer-brand { display: inline-flex; }
@@ -274,6 +289,8 @@ h1 {
 .split-intro { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 90px; align-items: end; }
 .split-intro > div:last-child { padding-bottom: 12px; }
 .split-intro .button { margin-top: 24px; }
+.coverage-intro-actions, .topic-intro-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.coverage-intro-actions .button, .topic-intro-actions .button { margin-top: 0; }
 .compact-intro { padding-bottom: 44px; border-bottom: 0; }
 .compact-intro h1 { margin-bottom: 0; }
 
@@ -378,6 +395,138 @@ h1 {
 .coverage-review-callout .button-primary { background: white; border-color: white; color: var(--green-dark); }
 .coverage-review-callout .button-secondary { border-color: #819f90; background: transparent; color: white; }
 
+.architecture-page { padding-bottom: 120px; }
+.architecture-hero {
+  min-height: 540px;
+  padding: 94px 0 70px;
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: clamp(50px, 8vw, 120px);
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+}
+.architecture-hero h1 {
+  max-width: 820px;
+  margin: 18px 0 0;
+  font-size: clamp(62px, 8vw, 108px);
+  line-height: 0.93;
+}
+.architecture-hero-copy { padding-bottom: 10px; }
+.architecture-hero-copy > p { margin: 0 0 28px; color: var(--muted); font-size: 20px; line-height: 1.6; }
+.architecture-hero-copy > div { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.architecture-trace {
+  margin: 30px 0 0;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 18px;
+  align-items: stretch;
+  background: var(--green-dark);
+  color: white;
+  border-radius: 12px;
+}
+.architecture-trace > span { align-self: center; padding-left: 8px; color: #aac8b9; font-family: var(--font-geist-mono), monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+.architecture-trace ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(9, 1fr); border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; overflow: hidden; }
+.architecture-trace li { min-height: 68px; padding: 12px 8px; display: grid; align-content: center; gap: 6px; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); font-size: 11px; font-weight: 650; }
+.architecture-trace li:last-child { border-right: 0; color: #f2b958; }
+.architecture-trace small { color: #9bb7aa; font-family: var(--font-geist-mono), monospace; font-size: 8px; }
+
+.architecture-explorer { padding: 90px 0 110px; }
+.architecture-view-tabs {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--ink);
+  scrollbar-width: thin;
+}
+.architecture-view-tabs button, .architecture-lenses button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255,253,248,0.7);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+}
+.architecture-view-tabs button {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.architecture-view-tabs button:hover, .architecture-view-tabs button.is-active {
+  border-color: var(--green);
+  background: var(--green-dark);
+  color: white;
+}
+.architecture-view-tabs button:focus-visible, .architecture-lenses button:focus-visible {
+  outline: 3px solid rgba(210,151,54,0.35);
+  outline-offset: 2px;
+}
+.architecture-view-panel { padding-top: 58px; }
+.architecture-view-heading { display: grid; grid-template-columns: 1fr 0.72fr; gap: 80px; align-items: end; }
+.architecture-view-heading h2 {
+  max-width: 720px;
+  margin: 12px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(44px, 5.5vw, 72px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+.architecture-view-heading > p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+.architecture-lenses { margin: 44px 0 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.architecture-lenses > span { margin-right: 6px; color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; }
+.architecture-lenses button { min-height: 34px; padding: 0 12px; border-radius: 6px; font-size: 11px; }
+.architecture-lenses button:hover, .architecture-lenses button.is-active { border-color: #8ca393; background: #dfe9e1; color: var(--green-dark); }
+
+.architecture-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
+.architecture-card { min-height: 430px; padding: 26px 28px; display: flex; flex-direction: column; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.architecture-card:nth-child(3n) { border-right: 0; }
+.architecture-card-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.architecture-card-topline > span { color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 10px; }
+.architecture-card-topline small { padding: 4px 7px; border: 1px solid #d6c5a8; border-radius: 999px; color: #765b31; font-family: var(--font-geist-mono), monospace; font-size: 8px; text-transform: uppercase; }
+.architecture-card h3 { margin: 44px 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 31px; font-weight: 500; line-height: 1.02; letter-spacing: -0.04em; }
+.architecture-card > p { min-height: 68px; margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.architecture-card dl { margin: 0; border-top: 1px solid var(--line); }
+.architecture-card dl > div { display: grid; grid-template-columns: 68px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.architecture-card dt { color: #78837d; font-family: var(--font-geist-mono), monospace; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+.architecture-card dd { margin: 0; color: #34463e; font-size: 11px; line-height: 1.4; }
+.architecture-card > a { margin-top: auto; padding-top: 22px; color: var(--green); font-size: 12px; font-weight: 650; }
+.architecture-card > a:hover { color: var(--green-dark); }
+.architecture-empty { padding: 50px; border: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+.architecture-reading-guide {
+  padding: 80px 0;
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 90px;
+  border-top: 1px solid var(--line);
+}
+.architecture-reading-guide h2 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 52px; font-weight: 500; line-height: 1.02; letter-spacing: -0.045em; }
+.architecture-reading-guide ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.architecture-reading-guide li { display: grid; grid-template-columns: 44px 1fr; gap: 20px; padding: 19px 3px; border-bottom: 1px solid var(--line); }
+.architecture-reading-guide li > span { color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 9px; }
+.architecture-reading-guide strong { font-size: 14px; }
+.architecture-reading-guide p { margin: 5px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.architecture-proof-callout {
+  padding: 58px;
+  display: grid;
+  grid-template-columns: 1fr 0.7fr auto;
+  align-items: center;
+  gap: 50px;
+  background: var(--green-dark);
+  color: white;
+  border-radius: 16px;
+}
+.architecture-proof-callout .section-kicker { color: #a8cbb9; }
+.architecture-proof-callout h2 { margin: 11px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 38px; font-weight: 500; line-height: 1.06; letter-spacing: -0.04em; }
+.architecture-proof-callout p { margin: 0; color: #c6d8ce; font-size: 14px; line-height: 1.55; }
+.architecture-proof-callout .button { white-space: nowrap; background: white; border-color: white; color: var(--green-dark); }
+
 .search-page { padding-bottom: 120px; }
 .search-box { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 15px; padding: 0 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 16px 50px rgba(18,32,27,0.07); }
 .search-box:focus-within { border-color: #87a092; box-shadow: 0 0 0 3px rgba(78,111,94,0.11); }
@@ -466,7 +615,8 @@ h1 {
   .path-grid { grid-template-columns: repeat(2, 1fr); }
   .architecture-section { grid-template-columns: 1fr; }
   .principles-section { grid-template-columns: 1fr; padding: 44px; gap: 50px; }
-  .coverage-home-callout { grid-template-columns: 1fr; gap: 24px; }
+  .coverage-home-callout, .architecture-home-callout { grid-template-columns: 1fr; gap: 24px; }
+  .architecture-home-callout { margin-top: -48px; }
   .learning-path { grid-template-columns: 0.25fr 1fr; }
   .chapter-sequence { grid-column: 2; }
   .split-intro { grid-template-columns: 1fr; gap: 30px; }
@@ -479,6 +629,17 @@ h1 {
   .document-nav-mobile .document-nav-groups { max-height: 55vh; overflow-y: auto; padding: 16px; border-top: 1px solid var(--line); }
   .topic-filter-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .coverage-summary, .maturity-ladder { grid-template-columns: 1fr; gap: 40px; }
+  .architecture-hero { min-height: 0; grid-template-columns: 1fr; gap: 44px; }
+  .architecture-trace { grid-template-columns: 1fr; }
+  .architecture-trace ol { grid-template-columns: repeat(3, 1fr); }
+  .architecture-trace li:nth-child(3n) { border-right: 0; }
+  .architecture-trace li { border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .architecture-trace li:nth-last-child(-n + 3) { border-bottom: 0; }
+  .architecture-view-heading, .architecture-reading-guide { grid-template-columns: 1fr; gap: 36px; }
+  .architecture-card-grid { grid-template-columns: repeat(2, 1fr); }
+  .architecture-card:nth-child(3n) { border-right: 1px solid var(--line); }
+  .architecture-card:nth-child(2n) { border-right: 0; }
+  .architecture-proof-callout { grid-template-columns: 1fr; gap: 28px; }
 }
 
 @media (max-width: 520px) {
@@ -512,6 +673,21 @@ h1 {
   .status-counts > div:nth-child(odd) { border-right: 0; }
   .coverage-review-callout { padding: 44px 24px; }
   .coverage-review-callout h2 { font-size: 39px; }
+  .architecture-hero { padding-top: 64px; }
+  .architecture-hero h1 { font-size: 56px; }
+  .architecture-trace ol { grid-template-columns: repeat(2, 1fr); }
+  .architecture-trace li:nth-child(3n) { border-right: 1px solid rgba(255,255,255,0.15); }
+  .architecture-trace li:nth-child(even) { border-right: 0; }
+  .architecture-trace li:nth-last-child(-n + 3) { border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .architecture-trace li:last-child { grid-column: 1 / -1; border-bottom: 0; border-right: 0; }
+  .architecture-explorer { padding-top: 64px; }
+  .architecture-view-panel { padding-top: 42px; }
+  .architecture-view-heading h2 { font-size: 46px; }
+  .architecture-card-grid { grid-template-columns: 1fr; }
+  .architecture-card, .architecture-card:nth-child(3n) { min-height: 0; border-right: 0; }
+  .architecture-card > p { min-height: 0; }
+  .architecture-reading-guide h2 { font-size: 43px; }
+  .architecture-proof-callout { padding: 40px 24px; }
   .search-results { grid-template-columns: 1fr; }
   .search-box input { height: 60px; font-size: 16px; }
   .document-header h1 { font-size: 45px; }

@@ -98,6 +98,9 @@ Use the [Topic Index](./07-topic-index.md) when you already know the concept you
 need. Use the [Canonical Glossary](./02-canonical-glossary.md) when a term is
 unclear. Use the [complete curriculum map](../README.md) when you want every
 chapter in sequence.
+Use the [Detailed Architecture Coverage Matrix](./11-detailed-architecture-coverage-matrix.md)
+when you need the accountable owner, specification, evidence boundary, and
+validation path for a component or control.
 Use [Capability Coverage and Maturity](./08-capability-coverage-and-maturity.md)
 to see what is documented, review ready, validated, or operationally proven.
 Use the [External Reviewer Guide](./09-reviewer-guide.md) when sharing the
