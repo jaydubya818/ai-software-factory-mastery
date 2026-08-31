@@ -16,7 +16,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { StatusBadge } from "../../components/StatusBadge";
 
 type PageProps = { params: Promise<{ slug: string[] }>; searchParams: Promise<{ mode?: string }> };
-const validModes = new Set(["read", "architecture", "study", "interview"]);
+const validModes = new Set(["read", "architecture", "study"]);
 
 function requestedMode(value: unknown) {
   if (!value || typeof value !== "object") return "read";
@@ -41,7 +41,6 @@ const modeDescriptions = {
   read: "Complete source chapter",
   architecture: "A focused view of boundaries, contracts, state, authority, failure paths, and tradeoffs drawn from this chapter.",
   study: "A rapid review of the chapter’s existing Quick Read, principles, definitions, lessons, and review material.",
-  interview: "Question framing, tradeoffs, whiteboard material, and supporting concepts drawn from the curriculum.",
 };
 
 export default async function DocumentPage({ params, searchParams }: PageProps) {
@@ -59,7 +58,6 @@ export default async function DocumentPage({ params, searchParams }: PageProps) 
   const isCaseStudy = String(document.sectionKey) === "09-mission-control-case-studies";
   const sourceSections = markdownSections(document.content);
   const whiteboardSection = sourceSections.find((section) => /whiteboard/i.test(section.title));
-  const interviewSection = sourceSections.find((section) => /interview|discussion questions/i.test(section.title));
   const activityContent = (section?: { content: string }) => section?.content.replace(/^##\s+.+$/m, "").trim();
   const activityMeta = [...document.architectureLayers.slice(0, 3).map((layer) => layer.replaceAll("-", " ")), `${document.readingMinutes} min chapter`];
 
@@ -82,7 +80,6 @@ export default async function DocumentPage({ params, searchParams }: PageProps) 
           {quickRead && (mode === "read" || mode === "study") && <QuickRead content={quickRead} sourcePath={document.sourcePath} readingMinutes={document.readingMinutes} />}
           {document.hasLab && <ChapterActivityCard slug={currentSlug} description={document.description} kind="lab" meta={activityMeta} validationAnchor={validationHeading?.id} />}
           {document.hasWhiteboardExercise && <ChapterActivityCard slug={currentSlug} description="Reconstruct and defend this chapter’s architecture." kind="whiteboard" meta={activityMeta} validationAnchor={validationHeading?.id}>{activityContent(whiteboardSection) && <Markdown content={activityContent(whiteboardSection) ?? ""} sourcePath={document.sourcePath} />}</ChapterActivityCard>}
-          {(mode === "interview" || document.hasInterviewQuestions) && <ChapterActivityCard slug={currentSlug} description="Explain the chapter’s thesis, boundaries, tradeoffs, and failure behavior." kind="interview" meta={activityMeta}>{activityContent(interviewSection) && <Markdown content={activityContent(interviewSection) ?? ""} sourcePath={document.sourcePath} />}</ChapterActivityCard>}
           <div className="markdown-body"><Markdown content={bodyContent} sourcePath={document.sourcePath} /></div>
           {(document.hasImplementationEvidence || isCaseStudy) && <EvidenceCard status={document.status} isCaseStudy={isCaseStudy} />}
           <ChapterReviewCard slug={currentSlug} title={document.title} />

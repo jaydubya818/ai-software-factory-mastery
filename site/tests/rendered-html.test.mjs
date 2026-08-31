@@ -112,7 +112,7 @@ test("renders Markdown chapters with document-specific metadata", async () => {
 
   assert.match(html, /<title>Software Factory Stack Boundaries · AI Software Factory Mastery<\/title>/i);
   assert.match(html, /Quick Read/);
-  assert.match(html, /Complete chapter/);
+  assert.match(html, /Full chapter/);
   assert.match(html, /Mark chapter complete/);
   assert.match(html, /Content reviewed/);
   assert.match(html, /Maturity guide/);
@@ -151,13 +151,14 @@ test("renders the review-ready agent architecture chapter as a self-contained re
 test("renders focused chapter modes from the same canonical source", async () => {
   const architecture = await htmlFor("/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory");
   const study = await htmlFor("/docs/00-overview/05-software-factory-stack-boundaries");
-  const interview = await htmlFor("/docs/11-interview-mastery/01-executive-and-interview-mastery");
+  const legacyInterviewUrl = await htmlFor("/docs/00-overview/02-canonical-glossary?mode=interview");
 
   assert.match(architecture, /\?mode=architecture/);
-  assert.match(architecture, /Boundaries and contracts/);
+  assert.match(architecture, /System boundaries/);
   assert.match(study, /The chapter in one pass\./);
-  assert.match(interview, /Interview practice/);
-  assert.match(interview, /Explain the chapter’s thesis/);
+  assert.doesNotMatch(architecture, /\?mode=interview/);
+  assert.match(legacyInterviewUrl, /Complete source chapter/);
+  assert.doesNotMatch(legacyInterviewUrl, /Interview practice|Mark interview complete|Questions and framing/);
 });
 
 test("renders the learning, topic, and coverage product surfaces", async () => {

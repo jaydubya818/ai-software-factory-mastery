@@ -91,7 +91,6 @@ export function contentForMode(content: string, mode: string) {
   const patterns = {
     architecture: /architecture|boundary|contract|flow|state|control|authority|failure|tradeoff|diagram|model/i,
     study: /quick read|principle|definition|lesson|distinction|summary|review|glossary|question/i,
-    interview: /interview|whiteboard|question|tradeoff|objection|explain|lesson|principle|architecture|boundary|failure/i,
   } as const;
   const pattern = patterns[mode as keyof typeof patterns];
   if (!pattern) return content;
