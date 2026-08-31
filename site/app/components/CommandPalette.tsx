@@ -12,6 +12,7 @@ const utilityItems: PaletteItem[] = [
   { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map" },
   { id: "topics", label: "Browse topics", meta: "Curriculum", href: "/topics", text: "topics curriculum filters" },
   { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence" },
+  { id: "review", label: "Review the curriculum", meta: "External reviewer guide", href: "/docs/00-overview/09-reviewer-guide", text: "review feedback claims architecture usability terminology sources" },
   { id: "interview", label: "Interview mastery", meta: "Practice", href: "/docs/11-interview-mastery/01-executive-and-interview-mastery?mode=interview", text: "interview questions whiteboard practice" },
   { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics?type=lab", text: "labs exercises hands on" },
 ];

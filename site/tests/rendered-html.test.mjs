@@ -99,6 +99,9 @@ test("renders the expanded autonomous-factory discovery and maturity system", as
   assert.match(topics, /Risk/);
   assert.match(coverage, /What is covered\. What is not proven\./);
   assert.match(coverage, /Operationally proven/);
+  assert.match(coverage, /href="\/topics\?status=review-ready"/);
+  assert.match(coverage, /href="\/topics\?section=Agent%20Factory"/);
+  assert.match(coverage, /Inspect source material/);
   assert.match(capability, /registry is an authority surface/i);
   assert.match(capability, /Status:\s*(?:<!-- -->)?review ready/i);
   assert.match(delivery, /deployment is a state transition, not success/i);
@@ -111,6 +114,11 @@ test("renders Markdown chapters with document-specific metadata", async () => {
   assert.match(html, /Quick Read/);
   assert.match(html, /Complete chapter/);
   assert.match(html, /Mark chapter complete/);
+  assert.match(html, /Content reviewed/);
+  assert.match(html, /Maturity guide/);
+  assert.match(html, /Claim boundary/);
+  assert.match(html, /Review this chapter/);
+  assert.match(html, /Report feedback/);
   assert.match(html, /Name a layer by the responsibility it owns/);
   assert.match(html, /Independent quality and evidence path/);
   assert.equal((html.match(/<h1>Software Factory Stack Boundaries<\/h1>/g) ?? []).length, 1);

@@ -1,6 +1,6 @@
 const labels: Record<string, string> = {
-  "canonical-navigation": "Canonical",
-  "canonical-overview": "Canonical",
+  "canonical-navigation": "Canonical navigation",
+  "canonical-overview": "Canonical overview",
   "current-assessment": "Current assessment",
   "current-case-study": "Current case study",
   "draft-for-study": "Draft for study",
@@ -17,11 +17,16 @@ const labels: Record<string, string> = {
 const definitions: Record<string, string> = {
   "canonical-navigation": "Canonical curriculum navigation or terminology.",
   "canonical-overview": "Canonical curriculum overview.",
+  "current-assessment": "A point-in-time assessment tied to the sources and dates named in the chapter.",
+  "current-case-study": "A current, scoped implementation case study; not proof of the complete factory.",
   "draft-for-study": "Useful working material awaiting full technical and editorial review.",
   "draft-for-review": "Prepared for focused review but not yet review ready.",
+  "execution-blocked": "The exercise cannot currently produce its required evidence; inspect the documented blocker.",
+  "historical-assessment": "A retained point-in-time assessment that must not be treated as current implementation truth.",
   "review-ready": "Complete enough for external scrutiny; this does not prove an implementation is operational.",
   validated: "Defined review and evidence checks are complete for the stated scope.",
   "operationally-proven": "Repeatable evidence exists for an exact implementation and operating scope.",
+  active: "An actively maintained navigation, journal, or operating record.",
   reference: "Reference material supporting the curriculum.",
 };
 

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { adjacentDocuments, contentForMode, documents, getDocument, markdownSections, quickReadContent, relatedDocuments, sections, withoutQuickRead } from "../../../lib/content";
 import { ChapterActivityCard } from "../../components/ChapterActivityCard";
 import { ChapterProgress } from "../../components/ChapterProgress";
+import { ChapterReviewCard } from "../../components/ChapterReviewCard";
 import { ChapterTOC } from "../../components/ChapterTOC";
 import { DocumentNav } from "../../components/DocumentNav";
 import { EvidenceCard } from "../../components/EvidenceCard";
@@ -73,7 +74,8 @@ export default async function DocumentPage({ params, searchParams }: PageProps) 
           <header className="document-header">
             <div className="document-labels"><span>{document.section}</span><span>{document.readingMinutes} min read</span><span>{document.contentType}</span>{document.hasQuickRead && <span>Quick Read</span>}{document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}</div>
             <h1>{document.title}</h1><p>{document.description}</p>
-            <div className="document-status"><StatusBadge status={document.status} prefix /><span>Risk: {document.risk.replaceAll("-", " ")}</span>{document.lifecycle.length > 0 && <span>Lifecycle: {document.lifecycle.join(" · ")}</span>}{document.lastVerified && <span>Verified {document.lastVerified}</span>}</div>
+            <div className="document-status"><StatusBadge status={document.status} prefix /><span>Risk: {document.risk.replaceAll("-", " ")}</span>{document.lifecycle.length > 0 && <span>Lifecycle: {document.lifecycle.join(" · ")}</span>}{document.lastVerified && <span>Content reviewed {document.lastVerified}</span>}<a href="/coverage#maturity-title">Maturity guide →</a></div>
+            <div className="document-scope-note"><strong>Claim boundary</strong><span>{isCaseStudy ? "This case study carries scoped implementation evidence. Follow its pinned sources, dates, and stated gaps." : document.hasImplementationEvidence ? "This chapter references implementation evidence. Inspect its evidence boundary before treating a claim as proven." : "This is curriculum guidance. It does not by itself prove a production implementation."}</span></div>
           </header>
           <ModeSwitcher slug={currentSlug} active={mode} />
           {mode !== "read" && <div className="mode-context"><span>{mode} mode</span><p>{modeDescriptions[mode]}</p></div>}
@@ -83,6 +85,7 @@ export default async function DocumentPage({ params, searchParams }: PageProps) 
           {(mode === "interview" || document.hasInterviewQuestions) && <ChapterActivityCard slug={currentSlug} description="Explain the chapter’s thesis, boundaries, tradeoffs, and failure behavior." kind="interview" meta={activityMeta}>{activityContent(interviewSection) && <Markdown content={activityContent(interviewSection) ?? ""} sourcePath={document.sourcePath} />}</ChapterActivityCard>}
           <div className="markdown-body"><Markdown content={bodyContent} sourcePath={document.sourcePath} /></div>
           {(document.hasImplementationEvidence || isCaseStudy) && <EvidenceCard status={document.status} isCaseStudy={isCaseStudy} />}
+          <ChapterReviewCard slug={currentSlug} title={document.title} />
           <RelatedContent documents={related} />
           <nav className="document-pagination" aria-label="Adjacent documents">{previous ? <a href={`/docs/${previous.slug}`}><span>Previous</span><strong>{previous.title}</strong></a> : <span />}{next ? <a className="next-document" href={`/docs/${next.slug}`}><span>Next</span><strong>{next.title}</strong></a> : <span />}</nav>
         </article>

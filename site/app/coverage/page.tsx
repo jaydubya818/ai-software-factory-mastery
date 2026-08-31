@@ -21,16 +21,16 @@ const maturity = [
 ];
 
 const areas = [
-  ["Reference architecture", "Lifecycle, logical components, trust boundaries, authority, evidence, inventory, and minimum-sufficient autonomy.", "Review-ready architecture; full implementation conformance remains unproven."],
-  ["Agent Factory", "Capability identity, registries, packaging, dependency resolution, certification, promotion, and revocation.", "Review-ready architecture; unified production registry remains unproven."],
-  ["Repository intelligence", "Onboarding, owner validation, instructions, architecture, dependencies, build, tests, data, and readiness.", "Review-ready architecture; end-to-end onboarding evidence remains unproven."],
-  ["Autonomous workflows", "Feature, defect, test, dependency, security, incident, production, modernization, and knowledge work.", "Catalog and contracts are review ready; only the first bounded workflow has partial evidence."],
-  ["Verification & delivery", "Testing, artifacts, CI/CD, migrations, compatibility, progressive release, rollback, and production outcomes.", "Architecture is review ready; the complete production path remains unproven."],
-  ["Factory platform", "Portal, catalog, golden paths, scheduling, cost, fairness, resilience, disaster recovery, and operator experience.", "Architecture is review ready; fleet-scale and recovery proof remains unproven."],
-  ["Security & governance", "Agentic threats, policy, identity, secrets, privacy, provenance, licensing, and compliance.", "Core controls and review-ready additions exist; full adversarial evidence remains unproven."],
-  ["Control & operations", "Emergency control, decision rights, SLOs, cost, continuity, drift, triage, response, and verified closure.", "Review-ready contracts; exercised fleet-scale operating proof remains unproven."],
-  ["Evaluation & learning", "Datasets, graders, uncertainty, experiments, optimization, regression control, and human promotion.", "Architecture is review ready; production optimization and rollback remain unproven."],
-  ["Hands-on mastery", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited."],
+  ["Reference architecture", "Lifecycle, logical components, trust boundaries, authority, evidence, inventory, and minimum-sufficient autonomy.", "Review-ready architecture; full implementation conformance remains unproven.", "/architecture"],
+  ["Agent Factory", "Capability identity, registries, packaging, dependency resolution, certification, promotion, and revocation.", "Review-ready architecture; unified production registry remains unproven.", "/topics?section=Agent%20Factory"],
+  ["Repository intelligence", "Onboarding, owner validation, instructions, architecture, dependencies, build, tests, data, and readiness.", "Review-ready architecture; end-to-end onboarding evidence remains unproven.", "/docs/autonomous-workflows/01-repository-onboarding-and-codebase-intelligence"],
+  ["Autonomous workflows", "Feature, defect, test, dependency, security, incident, production, modernization, and knowledge work.", "Catalog and contracts are review ready; only the first bounded workflow has partial evidence.", "/topics?section=Autonomous%20Workflows"],
+  ["Verification & delivery", "Testing, artifacts, CI/CD, migrations, compatibility, progressive release, rollback, and production outcomes.", "Architecture is review ready; the complete production path remains unproven.", "/topics?section=Verification%20%26%20Delivery"],
+  ["Factory platform", "Portal, catalog, golden paths, scheduling, cost, fairness, resilience, disaster recovery, and operator experience.", "Architecture is review ready; fleet-scale and recovery proof remains unproven.", "/topics?section=Factory%20Platform"],
+  ["Security & governance", "Agentic threats, policy, identity, secrets, privacy, provenance, licensing, and compliance.", "Core controls and review-ready additions exist; full adversarial evidence remains unproven.", "/topics?section=Security%20%26%20Governance"],
+  ["Control & operations", "Emergency control, decision rights, SLOs, cost, continuity, drift, triage, response, and verified closure.", "Review-ready contracts; exercised fleet-scale operating proof remains unproven.", "/topics?q=operations"],
+  ["Evaluation & learning", "Datasets, graders, uncertainty, experiments, optimization, regression control, and human promotion.", "Architecture is review ready; production optimization and rollback remain unproven.", "/topics?q=evaluation"],
+  ["Hands-on mastery", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited.", "/topics?type=lab"],
 ];
 
 export default function CoveragePage() {
@@ -79,7 +79,7 @@ export default function CoveragePage() {
             <p>A review-ready chapter is ready for external scrutiny. It does not imply that the described implementation is operationally proven.</p>
           </div>
           <div className="status-counts">
-            {statusCounts.map(([status, count]) => <div key={status}><StatusBadge status={status} /><strong>{count}</strong></div>)}
+            {statusCounts.map(([status, count]) => <Link href={`/topics?status=${encodeURIComponent(status)}`} key={status}><StatusBadge status={status} /><span><strong>{count}</strong><small>Open →</small></span></Link>)}
           </div>
         </section>
 
@@ -96,13 +96,14 @@ export default function CoveragePage() {
         <section className="coverage-areas" aria-labelledby="coverage-areas-title">
           <div className="section-heading"><div><span className="section-kicker">Capability map</span><h2 id="coverage-areas-title">What is covered. What is not proven.</h2></div></div>
           <div className="coverage-area-grid">
-            {areas.map(([title, coverage, boundary], index) => (
-              <article key={title}>
+            {areas.map(([title, coverage, boundary, href], index) => (
+              <Link href={href} key={title}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <h3>{title}</h3>
                 <p>{coverage}</p>
                 <small>{boundary}</small>
-              </article>
+                <em>Inspect source material →</em>
+              </Link>
             ))}
           </div>
         </section>
@@ -116,7 +117,7 @@ export default function CoveragePage() {
           <span className="section-kicker">For external reviewers</span>
           <h2>Challenge the boundary, claim, failure, or evidence.</h2>
           <p>Use the reviewer guide for focused architecture, builder, operations, security, or curriculum feedback.</p>
-          <div><Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Open reviewer guide</Link><Link className="button button-secondary" href="/docs/00-overview/10-changelog">See the changelog</Link></div>
+          <div><Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Open reviewer guide</Link><Link className="button button-secondary" href="/docs/00-overview/10-changelog">See the changelog</Link><a className="button button-secondary" href="https://github.com/jaydubya818/ai-software-factory-mastery/issues/new" target="_blank" rel="noreferrer">Report feedback ↗</a></div>
         </section>
       </main>
       <SiteFooter />
