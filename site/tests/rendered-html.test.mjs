@@ -40,6 +40,9 @@ test("renders the finished reader-first landing page", async () => {
   assert.match(html, /How work moves through the factory\./);
   assert.match(html, /The agent executes\./);
   assert.match(html, /Agent Factory/);
+  assert.match(html, /href="\/docs\/agent-factory\/01-capability-supply-chain-and-registries"[^>]*>[\s\S]*?Agent Factory/);
+  assert.match(html, /href="\/docs\/01-vision\/01-what-is-an-ai-software-factory"[^>]*>[\s\S]*?AI Software Factory/);
+  assert.match(html, /href="\/docs\/09-mission-control-case-studies\/03-capability-workflow-and-admission-map"[^>]*>[\s\S]*?Mission Control/);
   assert.match(html, /Reliable autonomy comes from a trustworthy system/);
   assert.match(html, /property="og:image" content="http:\/\/localhost:3000\/og-v2\.png"/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);

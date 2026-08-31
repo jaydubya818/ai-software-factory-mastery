@@ -801,7 +801,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .factory-supply-heading strong { color: #edf2ee; font-family: Georgia, serif; font-size: 22px; font-weight: 500; }
 .factory-supply .factory-node:first-of-type { grid-column: 1 / -1; }
 .factory-supply-context { grid-column: 1 / -1; display: grid; gap: 7px; margin-top: 8px; }
-.factory-supply-context article { padding: 10px; border: 1px solid #304139; border-radius: 5px; background: #121c18; }
+.factory-supply-context a { position: relative; display: block; padding: 10px 30px 10px 10px; border: 1px solid #304139; border-radius: 5px; background: #121c18; text-decoration: none; transition: border-color 150ms ease, background 150ms ease, transform 150ms ease; }
+.factory-supply-context a::after { position: absolute; top: 9px; right: 10px; color: #86a194; content: "↗"; font-size: 11px; }
+.factory-supply-context a:hover { border-color: #6f8b7e; background: #18251f; transform: translateY(-1px); }
+.factory-supply-context a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .factory-supply-context span { color: #dfe9e4; font-size: 9px; font-weight: 650; }
 .factory-supply-context p { margin: 4px 0 0; color: #82978d; font-size: 8px; line-height: 1.45; }
 .factory-inspector { min-height: 100%; display: flex; flex-direction: column; padding: 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }

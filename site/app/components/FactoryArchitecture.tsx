@@ -35,6 +35,24 @@ const relationships: [NodeId, NodeId][] = [
   ["agents", "control"], ["skills", "control"], ["tools", "control"], ["models", "control"], ["evals", "verification"],
 ];
 
+const factoryContexts = [
+  {
+    label: "Agent Factory",
+    description: "Creates, versions, evaluates, publishes, and governs reusable capabilities.",
+    href: "/docs/agent-factory/01-capability-supply-chain-and-registries",
+  },
+  {
+    label: "AI Software Factory",
+    description: "Composes people, policy, capabilities, execution, verification, delivery, production, and learning.",
+    href: "/docs/01-vision/01-what-is-an-ai-software-factory",
+  },
+  {
+    label: "Mission Control",
+    description: "Implements control-plane responsibilities as a scoped case study—not the complete factory definition.",
+    href: "/docs/09-mission-control-case-studies/03-capability-workflow-and-admission-map",
+  },
+] as const;
+
 function related(active: NodeId, candidate: NodeId) {
   return active === candidate || relationships.some(([from, to]) => (from === active && to === candidate) || (to === active && from === candidate));
 }
@@ -76,9 +94,12 @@ export function FactoryArchitecture() {
             <div className="factory-supply-heading"><span>Capability supply</span><strong>Agent Factory</strong></div>
             {supply.map(nodeButton)}
             <div className="factory-supply-context">
-              <article><span>Agent Factory</span><p>Creates, versions, evaluates, publishes, and governs reusable capabilities.</p></article>
-              <article><span>AI Software Factory</span><p>Composes people, policy, capabilities, execution, verification, delivery, production, and learning.</p></article>
-              <article><span>Mission Control</span><p>Implements control-plane responsibilities as a scoped case study—not the complete factory definition.</p></article>
+              {factoryContexts.map((context) => (
+                <Link href={context.href} key={context.label}>
+                  <span>{context.label}</span>
+                  <p>{context.description}</p>
+                </Link>
+              ))}
             </div>
           </aside>
         </div>
