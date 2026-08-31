@@ -18,7 +18,16 @@ outside contributions are welcome.
 2. Keep the change focused. One concern per pull request.
 3. Describe what changed and why in the PR body. If it changes behavior,
    say what a user will notice.
-4. Make sure the project still builds and any existing tests pass.
+4. Make sure the project still builds and the existing tests pass. Everything
+   runnable lives in `site/` and needs Node.js 22.13 or newer:
+
+   ```bash
+   cd site && npm install
+   npm run links && npm run lint && npm run build && npm test
+   ```
+
+   Run `npm run build` before `npm test`; the suite renders the built output
+   from `site/dist/` rather than starting a dev server.
 
 Pull requests are reviewed on a best-effort basis, usually within a few days.
 

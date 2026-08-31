@@ -99,6 +99,43 @@ factory.
 7. Complete the [golden-path lab](./guide/10-labs/01-governed-issue-to-validated-pull-request.md)
    before claiming practical mastery.
 
+## Repository layout
+
+| Path | What it holds |
+| --- | --- |
+| `guide/` | The curriculum. Markdown here is the authoritative source. |
+| `site/` | A Next.js application that publishes `guide/` as a reading experience. |
+| `source-material/` | Raw inputs the chapters were written from. |
+| `docs/` | Working records for the repository itself. |
+
+The curriculum is written in Markdown, but the repository is not documentation
+only. `site/` is a deployable Next.js 16 application with its own dependencies,
+lint configuration, test suite, and build — and it is what readers actually see.
+Editing a chapter changes the site, because `site/scripts/generate-content.mjs`
+indexes `guide/` into the site's content and search data before every
+development server start, lint run, and build.
+
+Requires Node.js 22.13 or newer.
+
+```bash
+cd site
+npm install
+npm run dev     # http://localhost:3000
+```
+
+Before publishing a change, run the full sequence from `site/`:
+
+```bash
+npm run links   # relative Markdown links in README.md and guide/ resolve
+npm run lint    # ESLint, including the React, hooks, and jsx-a11y rules
+npm run build   # production build
+npm test        # renders the built worker and asserts on the HTML
+```
+
+`npm test` renders pages from `site/dist/`, so run `npm run build` first — the
+suite has no dev server and will fail against a missing or stale build.
+See [the site README](./site/README.md) for the content flow in detail.
+
 ## Governing principles
 
 1. Humans own intent, judgment, material risk, and irreversible decisions.
