@@ -4,10 +4,14 @@ import path from "node:path";
 const outputRoot = path.resolve(".next/static");
 const requiredSelectors = [
   ".site-header",
-  ".lifecycle-nav",
-  ".premium-hero",
+  ".guide-home-hero",
+  ".home-pipeline",
+  ".pipeline-node",
+  ".thesis",
+  ".atlas-index",
+  ".shelf-row",
   ".docs-layout",
-  ".factory-architecture",
+  ".document-article",
 ];
 
 async function cssFiles(directory) {
