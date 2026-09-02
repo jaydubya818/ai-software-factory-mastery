@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { appendixGroups, chapters, chaptersForPart, getChapter } from "../../lib/content";
+import { appendixGroups, chapters, chaptersForPart, getChapter, stages } from "../../lib/content";
 import { guideParts } from "../../lib/guide";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -50,6 +50,25 @@ export default function GuidePage() {
                 <li key={document.slug}>
                   <Link href={`/docs/${document.slug}`}>
                     <span>0</span>
+                    <div><strong>{document.title}</strong><small>{document.summary}</small></div>
+                    <b aria-hidden="true">→</b>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="guide-part toc-part" id="stages">
+            <header>
+              <span>→</span>
+              <div><small>The factory in one line</small><h2>Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</h2><p>Eight stage pages: click any stage for the technical deep dive on how it works, what it produces, and who decides.</p></div>
+              <strong>{stages.length} stages</strong>
+            </header>
+            <ol className="toc-list">
+              {stages.map((document) => (
+                <li key={document.slug}>
+                  <Link href={`/docs/${document.slug}`}>
+                    <span>S{document.stage}</span>
                     <div><strong>{document.title}</strong><small>{document.summary}</small></div>
                     <b aria-hidden="true">→</b>
                   </Link>

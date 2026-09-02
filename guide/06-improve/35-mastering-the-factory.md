@@ -2,9 +2,9 @@
 title: "Mastering the factory: explaining, defending, and building it"
 part: improve
 chapter: 35
-summary: A mastery program for the person who has to build an AI Software Factory and also explain it, defend it, and lead the organization around it — four fluency levels, five audiences, the objections, a twelve-month build, and a weekly rhythm.
+summary: A mastery program for the person who has to build an AI Software Factory and also explain it, defend it, and lead the organization around it — four fluency levels, five audiences, the objections, the leader's three axes, a twelve-month build, a 30/60/90 for standing one up inside an organization, and a weekly rhythm.
 absorbs: [11-interview-mastery/01-executive-and-interview-mastery.md]
-infographics: [mastery-levels, twelve-month-plan, five-audiences]
+infographics: [mastery-levels, three-axes, twelve-month-plan, ninety-day-plan, three-release-clocks, five-audiences]
 ---
 
 # 35. Mastering the factory: explaining, defending, and building it
@@ -154,6 +154,43 @@ an engineering operating model, a governance system, a measurement system,
 and an organizational transformation playbook. A leader who only builds the
 first is building a tool.
 
+### The leader's three axes
+
+<!-- infographic: three-axes -->
+> **Infographic — The leader's three axes.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart TB
+    YOU(("You"))
+    YOU --> ST["Strategy<br/>product vision · roadmap · adoption · metrics · build/buy"]
+    YOU --> AR["Architecture<br/>harness · skills · evals · runtime · learning"]
+    YOU --> OR["Organization<br/>hiring · coaching · teams · leadership · execution"]
+    ST -. "what the factory should become" .-> AR
+    AR -. "what it takes to deliver it" .-> OR
+    OR -. "whether it works" .-> ST
+```
+
+The five capability sets above are what you must know. The three axes are
+what you must do, and the job is to hold all three at once. On the
+**strategy** axis: product vision, roadmap, adoption, metrics, and
+build-versus-buy. On the **architecture** axis: the harness, the skills
+framework, evaluations, the runtime, and the learning system. On the
+**organization** axis: hiring, coaching, team structure, leadership, and
+execution. A senior engineering leader standing up a factory is expected to
+help determine what the factory should become, build the organization,
+architect the platform, deliver it, drive adoption, and measure whether it
+works — and to notice that those six verbs are the three axes read twice.
+
+What the leader personally owns is narrower than the axes suggest and
+broader than any one team: the architecture principles and platform
+boundaries, the harness and runtime strategy, the Agent Definition model, the
+skills framework, the evaluation strategy, the self-improvement architecture,
+build-versus-buy, production-readiness standards, team structure, and
+cross-organization adoption. Everything else is delegated.
+
+> I own the coherence of the system, not every line of implementation.
+
 ### Five audiences, one system
 
 <!-- infographic: five-audiences -->
@@ -279,6 +316,25 @@ control plane decides what work should happen, which agent performs it, what
 tools it may use, what evidence is required, which human must approve,
 whether the outcome is safe, what it cost, what happened in production, and
 what the system should learn. That is a larger and more defensible position.
+
+### The CI/CD analogy
+
+The most useful comparison you can offer a room that has lived through the
+last twenty years is CI/CD. Developers still build and test locally; nobody
+took that away. But as organizations grew, shared build, test, artifact, and
+deployment infrastructure meant that one improvement to the pipeline
+benefited every team at once, and delivery became something you could
+measure and improve rather than something each developer did their own way.
+Agentic engineering is going the same direction. Interactive coding agents
+in the IDE will remain, the way local builds remained. Work that is
+repeatable and delegable, though, benefits from a common factory that
+manages workflow, models, skills, evaluation, security, and telemetry for
+everyone. Repeatability gives you measurement; measurement gives you
+continuous improvement. The control plane manages the work and the workers
+execute it, and an improvement made once benefits everyone.
+
+> Do for agentic engineering what CI/CD did for build and delivery: turn
+> individual practices into shared engineering infrastructure.
 
 ### Objections, answered through architecture
 
@@ -412,6 +468,45 @@ deployment, runaway token spend. The security thesis behind every answer: an
 agent receives the minimum context, tools, permissions, time, and budget the
 task requires, and every consequential action produces evidence.
 
+### Five lessons from enterprise scale
+
+Large enterprise platform teams that have run agentic engineering across
+many product organizations keep arriving at the same five lessons, and each
+one is a sentence you should be able to defend with a story.
+
+1. **The platform owns the workflow, not the model.** Models are swapped;
+   the lifecycle, the contracts, and the evidence stay.
+2. **The paved road must beat the workaround.** Adoption cannot be
+   mandated. If the governed path is slower or clumsier than the ungoverned
+   one, builders take the ungoverned one and the governance is fiction.
+3. **Trust becomes the bottleneck as generation scales.** Once code is
+   cheap, the constraint is how much of it anyone can trust, and that
+   constraint does not yield to more generation.
+4. **Enterprise context and tools get complicated fast.** Retrieval turns
+   out to be a permissions, provenance, freshness, and relevance problem;
+   tools turn out to be the point where intelligence becomes authority.
+5. **Agent platforms become infrastructure earlier than expected.** Durable
+   state, retries, idempotency, SLOs, rollback, and production ownership
+   arrive long before anyone planned for them.
+
+> Don't just scale agents. Scale the system that makes their work
+> trustworthy.
+
+### Six technical themes
+
+If the whole guide had to be compressed to six phrases that a technical
+audience will test you on, they are these: intent before execution; the
+platform owns the workflow; durable execution, with state, authority,
+retries, and evidence kept outside the model; trust at scale; risk-based
+autonomy; and continuous intelligence — evaluation that starts before
+promotion and never stops after deployment. Every architectural answer in
+this chapter is one of the six applied to a specific question.
+
+The line to close on, whatever the room: the first generation of AI
+developer tooling made code generation faster. The next generation will be
+judged by how much trustworthy change a platform can move from human intent
+to production without scaling human effort linearly with it.
+
 ## How to build it
 
 ### The twelve-month build
@@ -470,6 +565,155 @@ Read [Chapter 34](./34-mission-control-as-a-living-case-study.md) against this
 plan and you can place Mission Control on it exactly: core and validation
 built, pilot evidence retained for deterministic workloads, hardening under
 way, commercialization not started.
+
+### Standing up a factory inside an organization: 30/60/90
+
+The twelve-month plan assumes you are building a product. The other common
+situation is joining an organization that already has agents, harnesses,
+scripts, and opinions scattered across teams, and being asked to turn them
+into a factory. That calls for a different first ninety days, and the
+governing rule is to understand before you reorganize.
+
+<!-- infographic: ninety-day-plan -->
+> **Infographic — The first ninety days inside an organization.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    A["Days 1–30<br/>Understand"] --> B["Days 30–60<br/>Align and prove"]
+    B --> C["Days 60–90<br/>Harden and open"]
+    A -. "map, baseline, first partners" .-> B
+    B -. "durable contracts, one end-to-end path, golden set" .-> C
+    C -. "self-service, contribution model, SLOs" .-> D["Beyond: earned abstractions"]
+```
+
+**Days 1–30, understand.** Map what exists: agents, harnesses, tooling,
+CI/CD integration points, evaluation approaches, model usage, security
+boundaries, design partners, and where the expertise sits. Meet every team
+that already runs an agentic workflow. Baseline reliability, cost, adoption,
+evaluation coverage, and builder friction. The output is a document, not a
+platform: what exists, what belongs centrally, the biggest risks, and the
+first design-partner workflows.
+
+**Days 30–60, align and prove.** Align the founding team on a small number
+of durable contracts — the Agent Definition, the execution contract, the
+tool-authorization boundary, the context contract, the evaluation interface,
+versioning, and observability lineage. Pick the design-partner workflows and
+prove one end-to-end path through them. Build the golden evaluation set and
+the cost baseline. One complete workflow that exposes real weaknesses is
+worth more than ten disconnected demonstrations.
+
+**Days 60–90, harden and open.** Harden the proven workflows and move them
+toward self-service. Define the contribution model. Put evaluation and
+production-readiness gates in place, with initial SLOs and operating
+ownership. Send forward-deployed engineers to find friction. Make
+build-versus-buy decisions from evidence rather than preference.
+
+**What not to do in the first ninety days.** Do not arrive with a prebuilt
+architecture. Do not migrate existing agents. Do not scale the team around
+boundaries you have not yet proven. Do not add adaptive routing before you
+have evaluation data to route on. Do not start recursive self-improvement
+before there is a trustworthy baseline to improve against.
+
+> The patterns transfer. The implementation has to be yours.
+
+### What to build first, and what not to build first
+
+Resist building everything. Choose a few high-value workflows with design
+partners and prove one end-to-end path. The minimum early architecture is
+small: builder intent and a Plan; a versioned Agent Definition; a harness
+with an execution loop; governed tool access; basic context management; an
+evaluation baseline; traceability and observability; and a safe path into
+the existing CI/CD. While building the minimum, protect the seams that will
+matter later even when they are trivial now — identity, interfaces, policy,
+evidence, evaluation, versioning — so that the next proof point does not
+paint you into the next architecture.
+
+What not to build first is a longer list, and every item on it is
+attractive: sophisticated autonomous learning; highly dynamic multi-agent
+swarms; machine-learned model routing; a large universal memory layer;
+hundreds of generic skills; complex organizational structures. Each is a
+hypothesis until production evidence exists.
+
+> Don't generalize before you've earned the abstraction.
+
+### The contribution model
+
+A factory that serves many product organizations needs a clear answer to
+who builds what. The central team owns the contracts and the paved road: the
+Agent Definition format, the skills framework, tool contracts, identity,
+policy, evaluation interfaces, observability, and the runtime. Product
+organizations contribute domain-specific intelligence inside those
+boundaries.
+
+- **Centralize:** identity and authorization; the model gateway and routing;
+  the harness and runtime; tool governance; the skills framework; evaluation
+  infrastructure; observability; cost attribution; evidence interfaces;
+  security controls.
+- **Federate:** domain skills; product knowledge; specialized agents;
+  product-specific acceptance criteria; differentiated workflows.
+
+> Centralize undifferentiated complexity. Federate differentiated expertise.
+
+Existing agents get no migration mandate. Understand what already works,
+then offer incremental value in the order teams will accept it: the model
+gateway first, then common evaluation, then observability, then governed
+tools, then more of the runtime. The platform should be a gravity well that
+teams fall into because each step is worth it, not a migration mandate they
+resent.
+
+### Forward-deployed engineering
+
+For an early platform, engineers who sit with adopting teams are the right
+investment. They see where onboarding breaks, where the abstractions do not
+fit, which capabilities are missing, and the moment trust is lost, and none
+of that shows up in a dashboard. The failure mode is that forward
+deployment becomes a permanent consulting layer that hides platform
+weaknesses instead of fixing them. The guard is a rule: discoveries flow
+back into the platform, and the same integration solved three times by
+hand is a missing platform capability, not a service to keep providing.
+
+> Forward deployment accelerates the path to self-service; it does not
+> replace it.
+
+### Platform metrics
+
+The metrics that are easy to collect — lines of code, prompts, agent count,
+PR count, tokens — measure activity. The factory is measured on four
+families:
+
+- **Builder:** intent to prototype; intent to accepted PR; intent to trusted
+  production; self-service onboarding; repeat usage.
+- **Trust:** accepted-task success; human edit rate; defect escape; rollback
+  rate; false-positive review rate; policy violations.
+- **Economics:** cost per trusted outcome; model cost; CI cost; human review
+  cost; rework.
+- **Platform:** completion rate; reliability; latency; retry rate; tool
+  failure rate; recovery time.
+
+> Generation volume is an activity metric. Trusted outcomes are the product
+> metric.
+
+### Three release clocks
+
+<!-- infographic: three-release-clocks -->
+> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    F["Fast clock<br/>models · prompts · routing config"] -->|"eval-gated, instantly reversible"| P["Production"]
+    M["Medium clock<br/>skills · Agent Definitions"] -->|"artifact lifecycle, versioned"| P
+    S["Slow clock<br/>runtime · APIs · durable contracts"] -->|"compatibility discipline"| P
+```
+
+A factory is not one release train. Models, prompts, and routing
+configuration move fast, gated by evaluation and reversible in minutes.
+Skills and Agent Definitions move on a slower artifact lifecycle with
+versions, owners, and deprecation. The runtime, its APIs, and the durable
+contracts move slowest of all, under compatibility discipline, because
+everything else depends on them. Trying to move all three on one clock
+either freezes the fast layer or destabilizes the slow one.
 
 ### The first thirty days
 
@@ -641,6 +885,31 @@ governable.
   customer, architecture, quality, business, reflection.
 - Position the product as the control plane for AI Software Factories, and
   adopt through progressive proof from one repository and one workflow.
+- Three axes — strategy, architecture, organization — and the leader owns
+  the coherence of the system, not every line.
+- Inside an organization: understand (30), align and prove one path (60),
+  harden and open to contribution (90); no prebuilt architecture, no
+  migration mandate, no adaptive routing or self-improvement before a
+  baseline. Centralize undifferentiated complexity; federate differentiated
+  expertise. Three release clocks, not one train. Trusted outcomes, not
+  generation volume.
+- The platform principles to have cold:
+  1. The model is a component. The factory is the system.
+  2. The model doesn't own the workflow. The platform does.
+  3. Planning converts ambiguous human intent into an executable contract.
+  4. An enterprise agent needs a contract, not just a prompt.
+  5. The model reasons. The harness controls.
+  6. Model context is not durable workflow state.
+  7. Agent count is an architectural cost, not a feature.
+  8. Models are capabilities, not architecture.
+  9. MCP standardizes connectivity. It doesn't outsource governance.
+  10. Reason where reasoning creates value. Automate where behavior becomes
+      deterministic.
+  11. Generation is cheap. Evidence is what creates trust.
+  12. Scale trust, not human review.
+  13. Autonomy should scale with reversibility, not confidence.
+  14. Learning can be autonomous. Promotion should be governed.
+  15. The prototype shouldn't need to be rewritten to become trustworthy.
 
 ## Go deeper
 
@@ -671,7 +940,15 @@ governable.
 - Sources: Jay West, "AI Software Factory Mission" — capabilities to master,
   the twelve-month plan, the thirty-day plan, the weekly rhythm, market
   positioning, the executive narrative, and the five proofs; Jay West, "AI
-  Software Factory interview study guide" — audiences (ch. 11), expected
+  Software Factory study guide" — audiences (ch. 11), expected
   objections (ch. 16), fluency levels (ch. 18), daily practice (ch. 20),
   executive language (ch. 21), the whiteboard (ch. 24), mistakes (ch. 25),
-  and the scorecard (ch. 26).
+  and the scorecard (ch. 26); Jay West, factory notes — the leader's three
+  axes and what the leader owns, the 30/60/90 inside an organization, what to
+  build first, the contribution model, forward-deployed engineering,
+  platform metrics, the three release clocks, the CI/CD analogy, the five
+  lessons from enterprise scale, the six themes, and the fifteen platform
+  principles.
+- [Chapter 27 — The factory as a platform](../05-operate/27-the-factory-as-a-platform.md)
+  for the adoption operating model the contribution model and forward
+  deployment sit inside.

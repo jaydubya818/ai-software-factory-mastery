@@ -4,7 +4,7 @@ part: improve
 chapter: 33
 summary: How the factory turns failures, corrections, and successful strategies into evaluated, human-promoted improvements to its own prompts, skills, tools, tests, and policies — learning autonomously without authorizing itself.
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [learning-loop, correction-to-skill, promotion-gate]
+infographics: [learning-loop, signal-diagnosis, recursive-loop, correction-to-skill, promotion-gate, autonomy-by-action-class]
 ---
 
 # 33. Governed learning and compounding engineering
@@ -152,6 +152,91 @@ that makes recursive improvement safe: a factory retooling its own line files
 the same work order, passes the same inspection, and ships under the same
 release process as the products it makes. The recursive object changes;
 accountability does not.
+
+### Signals and source diagnosis
+
+A thumbs-up is not a learning signal; it is one bit of one person's mood at
+one moment. The signals worth collecting connect execution behaviour to
+outcomes, and the full list is longer than most teams instrument on day one:
+
+- accepted and rejected outputs;
+- human edits, and specifically **how much** was changed (a one-line tweak
+  and a rewrite are different verdicts on the same output);
+- reviewer feedback on findings (useful, wrong, correct but irrelevant);
+- evaluation failures;
+- tool failures;
+- **unnecessary tool calls** (the run succeeded, but took nine calls where
+  three would do);
+- expensive trajectories (success at a cost that would not survive a budget);
+- production defects and rollbacks traced back to the change that caused them;
+- model performance by task class;
+- retrieval quality, and in particular **which retrieved context actually
+  contributed** to the output versus which was ignored; and
+- direct builder feedback.
+
+A signal is only useful once it is attributed to a source, and the sources are
+the components in the execution lineage of
+[Chapter 28](../05-operate/28-observability-telemetry-and-forensics.md):
+the Agent Definition, the skill, the model route, the prompt, the context
+retrieval, the tool's behaviour, or the evaluation coverage. Diagnosis is the
+step that turns a complaint into engineering data.
+
+<!-- infographic: signal-diagnosis -->
+> **Infographic — From signal to source.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Signal | Sources it usually points at |
+| --- | --- |
+| Large human edits on accepted output | Prompt or Agent Definition instructions; missing context |
+| Repeated rejection on one task class | Model route; skill fit; evaluation coverage that let it through |
+| Unnecessary tool calls or expensive trajectories | Skill design; tool schema clarity; stopping conditions in the definition |
+| Tool failures | Tool contract; argument validation; environment |
+| Retrieved context that never contributed | Retrieval ranking, chunking, or freshness; context policy |
+| Evaluation failures that reviewers disagree with | Evaluator calibration; dataset drift |
+| Production defect after a clean pass | Evaluation coverage; verification strength; risk classification |
+
+The table is a starting hypothesis in each row, not a verdict, which is why
+the causal-diagnosis step below tests it before anything is proposed.
+
+### Discovery versus promotion: the recursive loop
+
+The learning loop above can be drawn with one more distinction made explicit,
+and it is the distinction the rest of the chapter depends on. **Discovery** is
+the part that may run on its own: analysing failures, edits, rejections,
+expensive trajectories, and outcomes, and proposing a better Agent Definition,
+skill, model route, retrieval configuration, missing evaluation, or a piece of
+deterministic automation to replace a reasoning step. **Promotion** is the part
+that may not: baseline comparison, regression evaluation, security and policy
+checks, a controlled experiment or rollout, measurement, and only then promote,
+reject, or roll back.
+
+<!-- infographic: recursive-loop -->
+> **Infographic — The recursive improvement loop.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph Discovery["Discovery (may be autonomous)"]
+        O["Observe"] --> ID["Identify failure or opportunity"] --> PR["Propose"]
+    end
+    subgraph Promotion["Promotion (governed)"]
+        BE["Evaluate against baseline"] --> SP["Security / policy check"] --> CE["Controlled experiment"] --> ME["Measure"]
+        ME --> D{"Promote / reject / rollback"}
+    end
+    PR --> BE
+    D -->|"promote: new Factory Version"| O
+    D -->|"reject or rollback"| O
+```
+
+Mission Control names the same stages in its own vocabulary, and the naming is
+useful because each stage is a record: **Research → Verify → Recommend →
+Approve → Implement → Validate → Measure → Iterate**. Evidence produces
+signals; signals cluster into recurring patterns; patterns become
+**Improvement Candidates**; candidates run as experiments; experiments produce
+recommendations (a better skill, route, prompt, verifier, workflow, or policy);
+and an accepted recommendation returns to the factory through a new Mission
+and a governed Plan, the same door every other change uses. The line that
+summarises both drawings: *autonomous discovery, not autonomous authority.*
 
 ### Compounding engineering: harvesting corrections
 
@@ -356,15 +441,79 @@ autonomy, while critical violations, fabricated evidence, security escapes, or
 repeated failure should demote or quarantine it automatically. Demotion can be
 automatic; promotion stays with a person.
 
+### Asymmetric autonomy per action class
+
+"Promotion stays with a person" is the safe default, and it is also too coarse
+to hold for long, because it makes a one-point change to a retrieval parameter
+wait in the same queue as a change to tool permissions. The refinement is
+**asymmetric autonomy**: the level of autonomy is defined per action class,
+by reversibility and blast radius, not as one setting for the system. The
+question that sets the level is never "how confident is the model?" It is
+*"what happens if this is wrong, and how easily can we reverse it?"*
+
+<!-- infographic: autonomy-by-action-class -->
+> **Infographic — Autonomy by action class.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Action class | Examples | If wrong | Autonomy |
+| --- | --- | --- | --- |
+| Bounded tuning | A prompt refinement inside a fixed template; a retrieval parameter; a routing weight between two qualified models | Quality dips on a slice; instantly reversible | May auto-promote after repeatedly beating baseline, if low-risk and under a risk stop |
+| Capability change | A new skill version; an Agent Definition instruction change; a new evaluator | Behaviour changes across a workflow; reversible by version | Human promotion with the full packet; canary |
+| Authority change | Permissions, security boundaries, tool authority, destructive operations, deployment authority | Blast radius outside the factory; may not be reversible | Never autonomous; separate risk class, separate approvers, step-up authorization |
+
+The first row is where autonomy is earned back cheaply, and it should be, or
+the learning loop spends its human budget on trivia. The third row does not
+move with confidence, evidence, or track record; a routing weight that has
+beaten baseline a thousand times still says nothing about whether the system
+should be allowed to widen its own permissions.
+
+### The boundary with reward modeling
+
+Everything in this chapter is learning in the engineering sense: production
+feedback and evaluation signals (acceptance, edits, preferences, evaluation
+outcomes, production behaviour) used to improve routing, prompts, skills, and
+evaluators. A team that runs it well will eventually be tempted by the next
+step: preference pairs, a reward model, fine-tuning against the factory's own
+outcomes. Those techniques are real, and the people running the loop should
+understand them, including their failure modes of reward hacking and
+distribution shift. But the upstream problem comes first, and it is the one
+this chapter is about: generating trustworthy learning signals from real
+workflows, with attribution good enough that the signal means what it appears
+to mean. Sophisticated optimization against noisy or poorly attributed
+feedback does not fail gracefully; *it learns the wrong thing faster.* A
+factory whose edit-size signal is polluted by reformatting, or whose acceptance
+signal is polluted by deadline approvals, should fix the signal before it
+fine-tunes anything on it.
+
+### What not to build first
+
+The loop described here is the last thing a factory should build, not the
+first. Sophisticated autonomous learning before a trustworthy baseline exists
+optimizes against noise; ML-based routing before evaluation data exists routes
+on folklore; a universal memory layer before context governance exists is a
+stale-truth generator; hundreds of generic skills before one workflow runs end
+to end are hypotheses wearing version numbers. The order that works is the one
+the promotion gate implies: first a representative **golden evaluation set**
+(real tasks, known failures, adversarial and high-risk cases, previously
+escaped defects), because *without a stable baseline, improvement becomes
+anecdotal*; then observability and lineage good enough to attribute a signal
+to a source; then the discovery half of the loop, proposing to humans; and only
+then, per action class, the autonomy of the first table row. *Do not
+generalize before you have earned the abstraction.*
+
 ## How to build it
 
 Build the meta loop as ordinary governed engineering pointed at the factory.
 
+0. **Build the golden evaluation set first**, and the lineage that attributes
+   a signal to a source. No autonomous learning before both exist.
 1. **Define the learning-signal schema** using the mission's eight questions
    plus source, subject, severity, attribution, evidence, and uncertainty.
    Ingest from workflow failures, validator disagreement, review findings,
-   human edits to agent output, incidents, cost anomalies, and low-attention
-   successes.
+   human edits to agent output (with edit size), unnecessary tool calls,
+   expensive trajectories, tool failures, retrieval contribution, production
+   defects and rollbacks, incidents, cost anomalies, builder feedback, and
+   low-attention successes.
 2. **Register sources.** Every research or memory input gets identity,
    retrieval time, content hash, classification, license, sensitivity, and
    provenance; adapters are read-only; content never carries instructions.
@@ -391,6 +540,9 @@ Build the meta loop as ordinary governed engineering pointed at the factory.
    as customer software.
 10. **Promote by human decision** into a new immutable capability and Factory
     Version; never mutate historical runs or live configuration in place.
+    Define autonomy per action class: bounded tuning may auto-promote under a
+    risk stop; capability changes need a human; authority changes never
+    self-promote.
 11. **Canary with a risk stop and observation window**; roll back or demote
     automatically on regression; retain, revise, or roll back at the end.
 12. **Measure the loop itself**: which corrections recur, how much human time
@@ -432,6 +584,9 @@ threshold.
 | Surveillance instead of learning | Corrections captured without purpose or consent | Capture minimally; consent and retention policy; user inspection |
 | Learning debt | Same correction cluster recurring across teams for weeks | Measure recurrence and human cost; prioritize harvest by cost |
 | Autonomy never earned or never lost | Trust level static despite outcomes | Calibrate from validated outcomes; automatic demotion, human promotion |
+| One autonomy level for the whole system | Routing tweaks queue behind permission changes, or permission changes ride a tuning fast-path | Define autonomy per action class by reversibility and blast radius |
+| Optimizing against noisy signals | Fine-tuning or reward modeling on unattributed acceptance and edit data; behaviour drifts confidently | Fix attribution and signal quality upstream; learn the wrong thing slower, not faster |
+| Autonomous learning before a baseline | Improvements are anecdotal; no golden set; regressions undetectable | Build the golden evaluation set and lineage first; propose to humans before automating anything |
 
 ## In Mission Control
 
@@ -459,7 +614,13 @@ learning signals, failure clusters, improvement candidates, datasets,
 experiments, skills, context evaluations, canaries, human promotion boundaries,
 recursive-improvement boundaries, trust changes, and versioned configuration,
 and identifies prompts, skills, tools, context, routing, evaluators, and
-deterministic controls as improvement targets.
+deterministic controls as improvement targets. The Research → Verify →
+Recommend → Approve → Implement → Validate → Measure → Iterate sequence is
+Mission Control's stated design for the loop, with the improvement-candidate,
+experiment, and human-promotion records above as its implemented substrate;
+the full sequence running unattended end to end is not demonstrated, and
+per-action-class auto-promotion of bounded tuning is a design position rather
+than a shipped control.
 
 What the evidence does not establish: a production correction-harvesting
 pipeline, scoped Human Workflow Profiles, anti-pattern extraction, automatic
@@ -482,7 +643,23 @@ a self-operating learning factory.
 - Compounding engineering harvests repeated corrections, with provenance and
   scope, and promotes each to the narrowest durable mechanism. A test, schema,
   or policy usually beats more prompt text.
+- Signals connect behaviour to outcomes: acceptance and rejection, edit size,
+  reviewer feedback, evaluation and tool failures, unnecessary tool calls,
+  expensive trajectories, defects and rollbacks, which context contributed,
+  builder feedback. Each is diagnosed to a source: Agent Definition, skill,
+  model route, prompt, retrieval, tool behaviour, or evaluation coverage.
+- Discovery may be autonomous (observe, identify, propose); promotion is
+  governed (baseline evaluation, security and policy check, controlled
+  experiment, measure, promote or reject or roll back). Autonomous discovery,
+  not autonomous authority.
 - Diagnose before optimizing; the prompt is the last suspect, not the first.
+- Autonomy is set per action class by reversibility and blast radius, never by
+  model confidence: bounded tuning may auto-promote; capability changes need a
+  human; authority changes never self-promote.
+- Trustworthy, attributed signals come before any reward modeling. Sophisticated
+  optimization against noisy feedback learns the wrong thing faster.
+- Build the golden evaluation set and lineage before any autonomous learning.
+  Without a stable baseline, improvement is anecdotal.
 - Every candidate is evaluated against a baseline, on a development set and an
   untouched holdout, with a quality floor and full regression suites; promotion
   creates a new immutable Factory Version; canaries carry a risk stop.
@@ -523,6 +700,9 @@ a self-operating learning factory.
   software factory" (inner, outer, and meta loops; "only make a mistake once";
   no local configuration); IndyDevDan, "Software factories give leverage on
   your prompt" (if you cannot measure it, you cannot improve it); "The 12-layer
-  production AI agent stack" (Continual Learning definition).
+  production AI agent stack" (Continual Learning definition); Jay West, factory
+  architecture notes and Mission Control walkthrough, on the feedback signal
+  list and source diagnosis, discovery versus promotion, asymmetric autonomy by
+  action class, the reward-modeling boundary, and what not to build first.
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
   referenced in the research canon.

@@ -2,9 +2,9 @@
 title: The human–agent operating model
 part: design
 chapter: 4
-summary: How people and agents divide decisions, execution, oversight, and accountability — through explicit roles, decision rights, a governed lifecycle with durable handoffs, and escalation that presents a decision rather than a transcript.
+summary: How people, agents, and deterministic systems divide decisions, execution, oversight, and accountability — through explicit roles, decision rights, a governed lifecycle with durable handoffs, escalation that presents a decision rather than a transcript, and a paved road fast enough that builders of every kind choose it.
 absorbs: [03-operating-model/01-human-agent-operating-model.md, 03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md]
-infographics: [responsibility-split, governed-lifecycle, decision-rights]
+infographics: [responsibility-split, governed-lifecycle, decision-rights, builder-entry-points]
 ---
 
 # 4. The human–agent operating model
@@ -47,6 +47,30 @@ flowchart LR
     Owner --> Planner --> Approver --> Orchestrator --> Worker --> Validator --> Reviewer
     Validator -->|"failure or uncertainty"| Orchestrator
     Orchestrator -->|"exception requiring judgment"| Approver
+```
+
+### Three parties, not two: the responsibility model
+
+The humans-own / agents-perform split leaves out the party that does most of the governing. A factory has three kinds of actor, and the third is the one people forget when they draw "human in the loop" as a person watching an agent.
+
+| Party | Owns | Never owns |
+| --- | --- | --- |
+| Humans | Intent; Plan approval; consequential recommendations; acceptance; merge; release; risk decisions | Routine execution; re-checking what a deterministic gate already proved |
+| Agents and harnesses | Planning support; investigation; code changes; bounded engineering work; candidate production; structured handoff | Authority over their own output; scope, budget, or permission changes |
+| Deterministic systems | Admission; scope; budgets; verification checks; digests and lineage; currentness; security boundaries; authority gates | Business judgment; risk acceptance; the meaning of an outcome |
+
+*Agents propose and execute. Deterministic systems validate and govern. Humans retain decisions whose consequences require judgment or authority.* The sentence does real work. Every time a human is asked to check something a deterministic system could have checked (was the diff inside scope? did the tests run against this commit? is the budget exhausted?), the operating model has leaked a machine job onto a person, and that leak is what eventually produces approval theater. Every time an agent is allowed to decide something a deterministic system should decide (may I call this tool? is my work current?), authority has leaked into a probabilistic component. The design goal is to route each decision to the party that can be held to it: code for facts, people for judgment, agents for work.
+
+```mermaid
+flowchart LR
+    H["Humans<br/>intent · approval · acceptance · risk"]
+    A["Agents and harnesses<br/>investigate · plan · change · hand off"]
+    D["Deterministic systems<br/>admit · scope · budget · verify · gate"]
+    H -->|"approved Plan, bounded authority"| D
+    D -->|"admitted WorkOrder, frozen manifest"| A
+    A -->|"candidate + structured handoff"| D
+    D -->|"evidence, currentness, gate decision"| H
+    D -.->|"denial, budget stop, stale evidence"| A
 ```
 
 ### The daily rhythm: business hours and overnight
@@ -218,6 +242,47 @@ At Level 1, humans initiate and review nearly every action. At Level 2, humans d
 
 The transformation is a set of shifts rather than a reorganization chart: from human execution to human supervision; from static roles to human–agent teams; from manual testing to continuous validation; from individual tools to orchestrated workflows; from activity measurement to outcome measurement; and from centralized decisions to policy-based autonomy. Engineers become more focused on intent, architecture, judgment, and review. Managers shift from coordinating task execution toward designing systems, managing risk, developing talent, and improving decision quality. Quality moves from a downstream testing function to a continuous validation capability embedded through the lifecycle.
 
+### Builders beyond developers
+
+Developers are the first persona, and the word **builder** is chosen deliberately to be wider than that. A builder is anyone who can express intent clearly enough for the factory to translate it into executable work: product managers, quality engineers, designers, security engineers, and other agents. They do not arrive through the same door.
+
+<!-- infographic: builder-entry-points -->
+> **Infographic — Five doors, one factory.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    Dev["Developer<br/>IDE / CLI"] --> F
+    PM["Product manager<br/>PRD"] --> F
+    QA["Quality engineer<br/>acceptance scenarios"] --> F
+    Des["Designer<br/>prototype"] --> F
+    Ag["Another agent<br/>API"] --> F
+    F["One factory<br/>identity · context · tools · policy<br/>environments · evaluation · signals · delivery"]
+    F --> Out["Governed, verified change"]
+```
+
+A developer enters through the IDE or CLI, a product manager through a product requirements document, a quality engineer through acceptance scenarios, a designer through a prototype, and another agent through an API. Behind every door are the same capabilities: identity, context, tools, policy, environments, evaluation, signals, and delivery. What differs is what the builder brings and what they lack. A non-developer has product intent, often sharper than the engineer's, but does not carry repository boundaries, deployment risk, testing discipline, or architectural constraints in their head. The factory compensates rather than excludes: it clarifies intent, generates acceptance criteria for review, surfaces risk, applies repository and organisational context, and enforces guardrails automatically, so the product manager's request lands as a governed WorkOrder rather than as an unbounded prompt. The responsibility model above does not change for these builders; the deterministic systems simply do more of the translation.
+
+### The paved road must be the fastest road
+
+Adoption cannot be mandated, and it does not follow from governance being correct. Builders take whichever path gets them to a working result soonest. If the governed path is slower than pasting code into a chat window, the chat window wins and the factory governs nothing. So the design constraint on every control in this chapter is that *the safest paved road also needs to be the fastest paved road*: guardrails built into the environment, identity and policy already attached to the ephemeral workspace a builder gets in minutes, verification that runs without being asked. The same constraint explains why prototype-to-production continuity matters. A prototype that already sits on the platform's identity, policy, secure tools, evaluation, and deployment interfaces becomes production-ready by raising the evidence and operational bar, not by being rebuilt; a product manager who can prototype in fifteen minutes while engineers need two weeks to reconstruct the result has moved the bottleneck, not removed it. [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) cover the platform side.
+
+### Junior engineers: tools that educate while they execute
+
+The reflex with less experienced engineers is to restrict their tools. The better design is tools that teach. When the factory's review finds a problem in a junior engineer's change, the finding should explain which architectural boundary was crossed, why that risk matters, what evidence supports the finding, what to inspect next, and the organisational context a senior colleague would have supplied in a hallway conversation. The same decision packet that lets a principal engineer decide quickly is, for a junior engineer, a lesson attached to real work. That does not replace mentoring; it makes each mentoring conversation start further along. The measure is whether *the platform increases engineering capability, not merely coding throughput*: an organisation whose juniors ship more but understand less has borrowed against its own future.
+
+### Developer trust, adoption, and escape hatches
+
+Trust in the factory is existential and asymmetric. One destructive change, or one reviewer agent that is noisy and wrong, undoes months of careful adoption, and *the technical system may recover from a failure faster than developer trust does*. Treat trust as a measured product outcome rather than a hoped-for side effect:
+
+- **Repeat usage.** Builders come back without being told to.
+- **Accepted outcomes.** The share of factory-produced work that is accepted rather than rewritten.
+- **Reduced rework.** Less human editing per accepted change over time.
+- **Self-service onboarding.** A new team reaches its first accepted outcome without a platform engineer in the room.
+- **Time saved.** Measured against a baseline, not asserted.
+- **Continued use after support leaves.** The forward-deployed engineer moves on and usage holds.
+
+Trust also needs escape hatches, because a builder who cannot see why the factory did something will assume the worst. Recommendations explain themselves; policy decisions are visible, including the denials; there is a feedback channel that visibly changes behaviour; and errors are recoverable rather than terminal. None of these lowers a gate. They make the gate legible, which is what turns a control from an obstacle into a reason to keep using the system.
+
 ## How to build it
 
 1. **Write the responsibility split down.** Publish the humans-own / agents-perform / shared lists for your organization and treat them as policy.
@@ -248,6 +313,9 @@ Proportional control answers the cost objections. Strong role separation adds ha
 | Unsafe autonomy | Agent acts outside granted scope or converts execution success into acceptance | Quarantine the scope | Restore role prohibitions; re-earn the level |
 | Structurally incomplete handoff accepted | Next role starts with unknowns silently filled | Reject the handoff | Return to producer; unknown stays unknown |
 | Disagreement widens authority | Ceiling rises while dispute is open | Hold existing ceiling | Tie-break owner decides on record |
+| Human compensating for missing automation | Reviewers re-check scope, currentness, or budgets by hand | Route the check to a deterministic gate | Add the gate; remove the manual step from the packet |
+| Paved road slower than the workaround | Builders bypass the factory for a chat window; governed usage flat | Measure time-to-result on both paths | Remove friction from the governed path; never add friction to the workaround |
+| Trust collapse | One destructive change or noisy reviewer; repeat usage drops | Pause the offending capability; explain publicly | Visible fix, regression case, and re-earned usage before wider rollout |
 
 Failed validation is not one of these. It is a normal feedback path, and a model in which validators never fail is more suspicious than one in which they sometimes do.
 
@@ -281,6 +349,11 @@ No fresh browser journey was performed. The operating model becomes proven only 
 - Approval authorizes; acceptance confirms. Disagreement never widens authority.
 - Review burden is a metric. If agents add review time, there is no leverage yet.
 - Autonomy changes how often a human decides, never who owns the outcome.
+- Three parties: agents propose and execute; deterministic systems validate and govern; humans retain decisions whose consequences require judgment or authority. Facts go to code, judgment to people, work to agents.
+- A builder is anyone who can express intent clearly enough to be translated into governed work; the factory compensates for what non-developers lack rather than excluding them.
+- The safest paved road must also be the fastest, and a prototype should become trustworthy by raising its evidence bar, not by being rewritten.
+- Tools should educate while they execute; the platform should increase engineering capability, not just coding throughput.
+- Trust is measured (repeat usage, accepted outcomes, reduced rework, self-service onboarding, time saved, use after support leaves) and protected with escape hatches: explained recommendations, visible policy decisions, feedback, recoverable errors.
 
 ## Go deeper
 
@@ -288,4 +361,4 @@ No fresh browser journey was performed. The operating model becomes proven only 
 - [Chapter 7, Governance, policy, and risk-proportional approval](./07-governance-policy-and-risk-proportional-approval.md); [Chapter 8, Economics, metrics, and human attention](./08-economics-metrics-and-human-attention.md); [Chapter 12, Durable execution](../03-build/12-durable-execution.md); [Chapter 29, Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 31, Enterprise adoption](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md).
 - Labs: [Governed Issue to Validated Pull Request](../appendix/labs/01-governed-issue-to-validated-pull-request.md); [Authority containment and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md); [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md) for the high-risk-release-then-incident tabletop.
 - [Glossary](../appendix/glossary.md): handoff, attention item, decision packet, Orchestrator, Worker, Validator, governed work order.
-- Sources: Jay West, *Mission Control North Star* (business-hours/overnight model, review package, governed work order); Jay West, *AI Software Factory Mission* (humans own / agents perform / shared, governed lifecycle, transformation shifts); Jay West, *AI Software Factory Interview Study Guide* chapters 3 and 16; NIST [AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) and [Generative AI Profile](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf); Mission Control at the studied commit: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [`convex/missions.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/missions.ts), [`missionGovernance.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [`missionExecution.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionExecution.ts), [MissionDetailView](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionDetailView.tsx), [MissionPlanWorkspace](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx).
+- Sources: Jay West, *Mission Control North Star* (business-hours/overnight model, review package, governed work order); Jay West, *AI Software Factory Mission* (humans own / agents perform / shared, governed lifecycle, transformation shifts); Jay West, factory architecture notes (three-party responsibility model, builders beyond developers, paved road, junior engineers, developer trust and adoption metrics, escape hatches); Jay West, *AI Software Factory Study Guide* chapters 3 and 16; NIST [AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) and [Generative AI Profile](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf); Mission Control at the studied commit: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [`convex/missions.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/missions.ts), [`missionGovernance.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [`missionExecution.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionExecution.ts), [MissionDetailView](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionDetailView.tsx), [MissionPlanWorkspace](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx).

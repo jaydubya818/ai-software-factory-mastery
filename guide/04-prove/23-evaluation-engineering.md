@@ -4,7 +4,7 @@ part: prove
 chapter: 23
 summary: How to turn representative work into comparable evidence about an agent configuration — datasets, graders, trials, trace capture and replay, baseline-versus-candidate comparison, and controlled experiments that support a promotion decision.
 absorbs: [06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison.md, 06-ai-engineering/06-evaluation-science-and-controlled-experimentation.md]
-infographics: [eval-pipeline, trace-replay-comparison, grader-types]
+infographics: [eval-pipeline, trace-replay-comparison, grader-types, evaluation-windows]
 ---
 
 # 23. Evaluation engineering
@@ -68,7 +68,29 @@ A dataset is not a folder of old prompts. It is a product with owners, versions,
 
 Build the dataset from a task taxonomy so that it represents the workflow's real distribution and its important failure boundaries. A **dataset slice** (or **cohort**) is a subset defined by a property — task type, repository, language, risk, change size, environment, tool dependency, context size, ambiguity, failure mode, required human intervention — and slices are what let you see that a gain on easy documentation tasks is hiding a regression on high-risk migrations. Include normal cases that reflect production frequency; boundary and adversarial cases that reflect consequence; historical incidents and human corrections; negative cases in which the right answer is to stop or escalate; recovery cases involving timeouts, unavailable tools, stale state, or partial effects; and held-out cases that were never used to tune the candidate.
 
-Two named subsets matter most. A **golden set** is a curated collection of tasks with trusted expected results, used as a stable reference for regression checks; it is small, well understood, and easy to over-fit to. A **holdout set** is a hidden collection that is never used during development or tuning, so that a score on it estimates performance on work the candidate has not seen. The full set of splits a mature program keeps apart is development, regression, certification, adversarial, and holdout, each with a distinct purpose and a rule about who may see it.
+Two named subsets matter most. A **golden set** is a curated collection of tasks with trusted expected results, used as a stable reference for regression checks; it is well understood, and because it is stable it is easy to over-fit to. A **holdout set** is a hidden collection that is never used during development or tuning, so that a score on it estimates performance on work the candidate has not seen. The full set of splits a mature program keeps apart is development, regression, certification, adversarial, and holdout, each with a distinct purpose and a rule about who may see it.
+
+### The golden evaluation set comes first
+
+If a factory builds one evaluation asset before any other, it should be the golden set, because everything else — changing a model, a prompt, a skill, a routing rule, the runtime — is measured against it. Build it from representative work, not synthetic toys. A set of tidy examples an engineer wrote in an afternoon measures the engineer's imagination; a set drawn from what product teams actually ask the factory to do measures the factory.
+
+Collect it with the product organizations that will use the factory, across the task classes they care about:
+
+| Task class | Example |
+| --- | --- |
+| Code generation | Implement a bounded feature against acceptance criteria |
+| Debugging | Locate and fix a reported defect from its symptoms |
+| Refactoring | Restructure without changing observable behavior |
+| Repository understanding | Answer a question about how a subsystem works, with citations |
+| Testing | Write tests that fail red first and assert outcomes |
+| Documentation | Produce or update docs from code and decisions |
+| Dependency changes | Upgrade a library across its call sites |
+| Tool usage | Complete a task that needs the right tool at the right step |
+| Security-sensitive changes | Modify authorization or data handling under constraints |
+
+Then deliberately include the cases that make the set worth something: known failures, difficult cases, adversarial scenarios, high-risk changes, and defects that previously escaped to production. A golden set made only of successes is a set the current configuration already passes, which tells you nothing about the next one. Own it, version it, and grow it from observed gaps.
+
+*Without a stable baseline, improvement becomes anecdotal.*
 
 **Dataset contamination** is the leak that breaks all of this: a task or its expected answer appears in the model's training data, in a prompt, in an example, in a skill, in memory, or in a previous optimization loop, so that the candidate is being tested on something it has effectively already seen. Reusing traces for development, tuning, and final evaluation is the most common way it happens inside a factory. Track it explicitly and deduplicate semantically, not only by text hash — two tasks that differ in wording and share an answer are one task. **Eval drift** is the slower decay: production tasks change over time, the dataset does not, and the score stays high while its relevance falls. Dataset growth should follow observed gaps rather than accumulate unreviewed production exhaust.
 
@@ -105,6 +127,18 @@ A **human grader** handles meaning, risk, unresolved disagreement, and — most 
 The graders have to be evaluated themselves. **Grader calibration** is the measurement of a grader against a trusted reference — for a model grader, a human-reviewed set with expert labels. Think of calibrating an instrument: you do not trust a scale because it prints numbers, you trust it because it reads 1.000 kg when you put a reference kilogram on it. Calibration produces a **false-positive / false-negative analysis** (how often the grader passes what should fail, and fails what should pass), disagreement by slice, sensitivity to presentation, and stability across repeated grading of the same item. **Inter-rater agreement** measures how consistently different graders — human or model — reach the same verdict on the same item; low agreement means the rubric, not the candidate, is the problem. Model graders additionally need versioned prompts, position- and verbosity-bias tests (does the judge prefer the first answer, or the longer one?), adversarial cases, and periodic re-evaluation as models change. Blind the grader to irrelevant candidate identity and to the candidate's self-justification; a candidate that argues for its own correctness should not get credit for the argument.
 
 Combine graders without converting them into voters. Deterministic hard gates block regardless of what the judge thinks. Model and human findings inform; they do not average away a failure.
+
+### Who evaluates the evaluator
+
+Every grader is itself a system that can be wrong, so each kind needs its own proof of fitness before its verdicts count.
+
+A **deterministic evaluator** is validated with known-positive and known-negative scenarios: cases that must pass and cases that must fail, run against the evaluator itself. A security scanner that has never been shown a vulnerable file has never been shown to work. A **model grader** is validated against a human-labeled calibration set, and then re-validated on a schedule by comparing its verdicts with human verdicts on fresh items. The measures are agreement rate, false positives (the grader passes what a human would fail), false negatives (the grader fails what a human would pass), and how each of those moves by task class.
+
+Never report one composite score. A global number can rise while security-sensitive tasks regress, because the easy classes outnumber the hard ones. Segment grader performance by task class, risk tier, model, skill, agent definition, and release, and treat a regression in any high-consequence segment as a finding in its own right.
+
+The last rule closes the loop with production: every meaningful production failure becomes a permanent regression scenario in the dataset, with its expected behavior approved through the intake gate described below. The set of things the factory has already gotten wrong is the most valuable evaluation content it will ever own.
+
+*Never optimize against a judge you haven't validated.*
 
 ### What to measure, and how many times
 
@@ -155,6 +189,71 @@ flowchart LR
 A **trajectory diff** compares two runs' paths, not just their results: changes in context, prompts, tools, route, permissions, environment, tool-call sequence, retries, files touched, tests, latency, cost, policy decisions, human intervention, artifact, and evidence. Trajectory diffs are diagnostic and they are not verdicts. A shorter sequence may mean efficiency or may mean skipped investigation; the diff tells you *what* changed and the criteria tell you whether it mattered.
 
 **Baseline-versus-candidate run comparison** is the paired comparison from the previous section applied with trajectories attached: same tasks, same fixtures, two configurations, outcomes and paths side by side with uncertainty. **Eval lineage and reproducibility** is the property that makes any of this reviewable later — every evaluation run records its dataset version, fixture hashes, grader versions, candidate and baseline digests, and trial records, so that a decision made today can be reconstructed next quarter.
+
+### Observability is not evaluation
+
+Two disciplines share the same telemetry and answer different questions. **Observability** tells you what happened: which model ran with which configuration, what context was retrieved, which tools were called, how state moved, how long it took, what it cost in time and tokens, how many retries occurred, which policies fired, and what the outcome was. **Evaluation** tells you whether what happened was good enough. Confusing them produces two failure modes: dashboards full of numbers nobody can act on, and verdicts nobody can explain.
+
+What binds them is lineage. A finding is only debuggable if you can walk the chain from the builder who asked to the outcome that resulted:
+
+```mermaid
+flowchart LR
+    B["Builder"] --> I["Intent"] --> P["Plan"] --> T["Task"]
+    T --> AD["Agent definition"] --> M["Model + config"] --> C["Context"]
+    C --> TC["Tool calls"] --> A["Artifact"] --> E["Evaluation"]
+    E --> R["Review / approval"] --> D["Deployment"] --> O["Outcome"]
+```
+
+Every link is a versioned record, and every evaluation finding points at the exact link it concerns. [Chapter 28](../05-operate/28-observability-telemetry-and-forensics.md) builds the telemetry side; this chapter needs it to exist.
+
+*Without observability, evaluation isn't debuggable. Without evaluation, observability is just telemetry.*
+
+### Drift has more than one source
+
+An agent that passed every pre-release test can degrade without anyone touching it. **Drift** is usually discussed as model drift — the provider updates a model and behavior shifts — but in a factory it has at least five sources, and they move independently:
+
+| What moved | How it shows up |
+| --- | --- |
+| Model | Same prompt, different reasoning, tool-calling, or failure modes |
+| Retrieved knowledge source | The docs changed, went stale, or were reorganized; grounded answers are now grounded in the wrong thing |
+| Tool contract | An API or MCP server changed its schema or semantics; calls succeed with different effects |
+| Skill | A skill version was promoted and behaves differently on an edge case |
+| Environment | Dependencies, runners, or data changed underneath the run |
+
+Continuous evaluation detects that *something* moved. Attributing *what* moved requires the lineage above: versioned agent definitions, model configuration, skill versions, context provenance, and tool traces. If any of those is unversioned, a drift alert becomes an argument instead of a diagnosis.
+
+*Continuous evaluation is only useful if you can attribute what changed.*
+
+### Three evaluation windows: continuous intelligence
+
+Evaluation is not one gate. It runs in three windows, each checking what the previous one could not, and together they form what this guide calls **continuous intelligence** — the practice of measuring trust continuously rather than certifying it once.
+
+<!-- infographic: evaluation-windows -->
+> **Infographic — The three evaluation windows.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph Off["Offline / CI (before promotion)"]
+        O1["Golden set + regression"]
+        O2["Safety + capability suites"]
+    end
+    subgraph In["Inline (deployed agent)"]
+        I1["Sampled production outputs"]
+        I2["Quality checks + guardrails"]
+    end
+    subgraph Op["Operational (over time)"]
+        P1["Drift, reliability, safety"]
+        P2["Cost, user outcomes"]
+    end
+    Cand["Candidate config"] --> Off
+    Off -->|"promote"| In
+    In --> Op
+    Op -->|"failures become regression scenarios"| Off
+```
+
+The **offline window** runs in CI before a configuration is promoted: golden-set and regression comparison against the baseline, plus safety and capability suites. It is reproducible, safe, and blind to anything it did not anticipate. The **inline window** evaluates the deployed agent on real work: sample production outputs, run quality checks against them, and enforce guardrails that stop a bad output before it has an effect. The **operational window** watches the population over time: drift, safety, reliability, cost, and whether users are getting the outcomes they came for. Each window feeds the one before it — an operational failure becomes an inline check, and an inline failure becomes an offline regression case.
+
+*Trust isn't certified once; it's continuously measured.*
 
 ### From offline to production: the promotion ladder
 
@@ -216,6 +315,12 @@ The predeclared experiment plan:
 
 **Postdeclared success.** The threshold is chosen after the numbers are in. Detect it by the absence of a registered plan. Fix by predeclaring.
 
+**One composite score.** The global number improves while security-sensitive tasks regress. Detect it by segmenting grader and candidate results by task class and risk. Fix by reporting segments and blocking on high-consequence regressions.
+
+**Certified once.** The configuration passed before release and nobody looked again; the model, a knowledge source, or a tool contract moved and the agent quietly degraded. Detect it by the absence of inline and operational evaluation. Fix with the three windows and versioned lineage so the drift can be attributed.
+
+**Telemetry mistaken for evaluation.** The dashboard shows tokens, latency, and tool calls, and the team reads it as quality. Detect it by asking which finding a given metric supports. Fix by binding evaluation findings to lineage rather than reading trends as verdicts.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control has context evaluations, deterministic learning signals, dataset and experiment records, baseline/candidate comparison, independent Verification Subjects and Plans, verifier Attempts, criterion-linked evidence, exact-currentness checks, and Quality Gate Decisions. Run events, traces, artifacts, model/token/cost fields, and inspector views provide the raw material for trajectory analysis.
@@ -234,6 +339,11 @@ The intended direction is for Mission Control to compile versioned Eval Tasks an
 - Inspection, recorded replay, mocked-tool replay, and execution replay are four different things. Execution replay is a new observation, and its divergences are data.
 - Promotion climbs a ladder — offline, holdout, adversarial, shadow, canary, controlled comparison — with the experiment plan declared before the first run.
 - Reproducible inputs improve comparison; they do not make model output deterministic.
+- Build the golden set first, from representative work collected with product teams, and include known failures, adversarial cases, and escaped defects. Without a stable baseline, improvement becomes anecdotal.
+- Validate the evaluator: known positives and negatives for deterministic checks, a human-labeled calibration set for model graders, agreement and false-positive/false-negative rates by segment. Never optimize against a judge you haven't validated.
+- Observability says what happened; evaluation says whether it was good enough. The lineage chain from builder to outcome is what connects them.
+- Drift comes from the model, the knowledge source, the tool contract, the skill, and the environment. Continuous evaluation is only useful if you can attribute what changed.
+- Evaluate in three windows — offline in CI, inline on the deployed agent, operationally over time. Trust is continuously measured, never certified once.
 
 ## Go deeper
 

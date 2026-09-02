@@ -10,6 +10,7 @@ const outputRoot = path.join(siteRoot, "lib");
 
 const sectionNames = {
   "00-front-matter": "Front matter",
+  stages: "The factory in one line",
   "01-understand": "Part I — Understand",
   "02-design": "Part II — Design",
   "03-build": "Part III — Build",
@@ -21,6 +22,7 @@ const sectionNames = {
 
 const sectionOrder = [
   "00-front-matter",
+  "stages",
   "01-understand",
   "02-design",
   "03-build",
@@ -127,6 +129,7 @@ function contentType(sectionKey, group, sourcePath) {
   if (group === "Labs") return "lab";
   if (group === "Mission Control case studies") return "case study";
   if (sectionKey === "appendix") return "appendix";
+  if (sectionKey === "stages") return "stage";
   return "chapter";
 }
 
@@ -201,6 +204,7 @@ for (const file of files) {
     group,
     part: parsed.data.part ? String(parsed.data.part) : null,
     chapter,
+    stage: typeof parsed.data.stage === "number" ? parsed.data.stage : null,
     summary,
     infographics: stringList(parsed.data.infographics),
     infographicAssets: Object.fromEntries(
@@ -239,6 +243,7 @@ const searchIndex = documents.map((document) => ({
   section: document.section,
   group: document.group,
   chapter: document.chapter,
+  stage: document.stage,
   contentType: document.contentType,
   description: document.description,
   headings: document.headings.map((heading) => heading.text),
@@ -252,6 +257,7 @@ const paletteIndex = documents.map((document) => ({
   sectionKey: document.sectionKey,
   group: document.group,
   chapter: document.chapter,
+  stage: document.stage,
   contentType: document.contentType,
   description: document.description,
   headings: document.headings.map((heading) => heading.text),

@@ -4,7 +4,7 @@ part: build
 chapter: 12
 summary: Keep the Task stable, append immutable Attempts, own execution through leases and fencing, make every side effect idempotent, and recover by classification rather than blind retry.
 absorbs: [05-runtime-architecture/03-tasks-attempts-leases-idempotency-and-recovery.md]
-infographics: [attempt-lifecycle, lease-and-recovery, retry-backoff-escalate]
+infographics: [attempt-lifecycle, lease-and-recovery, retry-backoff-escalate, mid-workflow-recovery]
 ---
 
 # 12. Durable execution: tasks, attempts, leases, and recovery
@@ -35,6 +35,28 @@ flowchart TD
 ```
 
 The value of this split is that the Task's lifecycle (Ready, In Progress, Review, Done) can be reasoned about independently of how many tries it took, while every try stays available for cost accounting, forensics, and learning. When the operator asks "what happened?", the answer is a list of Attempts, each with its own frozen inputs and its own outcome, not a status field that has been overwritten three times.
+
+### The durable state machine
+
+The rule behind all of this is simple to state: never let a multi-hour workflow live only in model context or process memory. A model's context window is a working buffer that will be compacted, truncated, or lost when the process dies; process memory dies with the process. Neither can answer, after a crash, what was authorized, what completed, or what side effects landed. Workflow state has to live in a **durable state machine**: a persisted record whose transitions are the only way the workflow moves.
+
+*Model context is not durable workflow state.* And its corollary, which is the one people forget: *model context is not a transaction log.* A transcript records what the model said and saw; it does not record, authoritatively, what the platform did.
+
+The record persists, per task:
+
+- task state;
+- inputs and outputs;
+- owner (the worker holding the lease);
+- attempt number;
+- last checkpoint;
+- retry policy;
+- timeout;
+- budget; and
+- evidence produced so far.
+
+Five behaviors follow from the record. Workers claim tasks through **leases**, so ownership is explicit and expires. Retries are **bounded** by the retry policy and the budget, never by the model's persistence. State transitions are **idempotent**: applying the same transition twice, because a message was delivered twice, produces the same state once. Side effects carry **replay protection**, so that the second delivery of "create the PR" finds the first one rather than creating another. And pause and cancel are **first-class transitions** with their own semantics, not flags a worker may or may not notice.
+
+When a worker disappears, the state machine is what lets the platform answer four questions without asking the model anything: what completed? what side effects occurred? what was the last safe checkpoint? what can safely resume? An agent runtime that can answer those is distributed-systems infrastructure. One that cannot is an LLM wrapper with a database attached.
 
 <!-- infographic: attempt-lifecycle -->
 > **Infographic — The attempt lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -99,6 +121,14 @@ An **idempotency key** must be stable across transport retries and unique across
 
 Idempotency belongs at every side-effect boundary: dispatch, event ingestion, commit, push, PR creation, approval, receipt, and webhook processing. On replay, the recorded result is returned rather than the operation repeated. One limit must be understood clearly: a key in the factory's database cannot by itself deduplicate a provider call. If the factory timed out after GitHub accepted the request, the database has no record of the result. Reconciliation must therefore use provider identity as well, querying GitHub for the PR that matches the key before deciding whether to retry.
 
+Who mints the key matters as much as what it contains. The orchestration layer owns it, because the key belongs to the logical operation, and the logical operation belongs to the task, not to whichever worker happens to be attempting it. The sequence is fixed: before any externally visible operation, the orchestrator creates the key tied to that logical operation, persists it, and only then hands it through the tool boundary to the worker and on to the provider. If the operation succeeded but the worker crashed before recording completion, the next worker presents the same key and receives the existing result. If the downstream system has no idempotency support at all, substitute a **durable execution receipt** (the orchestrator records the intent to act, then the provider's returned identity) or a reconciliation query, so that a retry can find what already happened. Design retries and side effects together; a retry policy written without reference to the effects it will repeat is a duplicate-PR generator.
+
+*Retry the intent. Don't blindly repeat the side effect.*
+
+*Attempt identity may change. Logical-operation identity should not.*
+
+That second line is why the key is `create-pr:{attemptId}:{headSha}` only when the Attempt is the unit that owns the operation. Where a logical operation may span a retry into a new Attempt, the key must be built from the Task and the content, so that Attempt N+1 finding Attempt N's PR is a match rather than a collision.
+
 ### Recovery requires classification and a changed hypothesis
 
 Retry is appropriate only when the failure is transient or when a concrete input, environment, plan, or implementation has changed. Repeating the same action without new evidence wastes budget and can compound damage: a worker that failed validation because it misunderstood the spec will misunderstand it again. Policy, not the worker, controls retry by failure class.
@@ -139,9 +169,40 @@ flowchart TD
 
 Retry budgets are multidimensional. Bound attempts, elapsed time, cost, tokens, repeated failure signatures, and human interruptions. Exhaustion of any one of them is a stop, and a model cannot negotiate its way past a stop. Extension is a new human or policy decision.
 
+### When a worker fails mid-workflow
+
+Put the lease, the key, and the state machine together and the recovery procedure for a vanished worker writes itself. The wrong move is to restart everything, which repeats side effects and burns budget. The right move is to inspect persisted state and resume from it.
+
+<!-- infographic: mid-workflow-recovery -->
+> **Infographic — Recovery from durable state.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TD
+    Gone["Worker disappears<br/>lease expires"] --> Inspect["Inspect persisted state:<br/>completed? side effects? last checkpoint? retryable?"]
+    Inspect --> Claim["Another worker claims via lease"]
+    Claim --> Key["Check idempotency record /<br/>execution receipt before any side effect"]
+    Key -->|"effect already happened"| Reuse["Reuse recorded result"]
+    Key -->|"effect did not happen"| Perform["Perform it once, under the same key"]
+    Reuse --> Resume["Resume from last safe checkpoint"]
+    Perform --> Resume
+    Inspect -->|"unsafe to continue"| Blocked["Truthful blocked / failed state<br/>evidence preserved, escalate"]
+```
+
+The steps, in order: read what the state machine says completed; read which side effects were recorded as started and which as finished; find the last safe checkpoint; decide whether the remaining work is retryable under policy. A replacement worker claims through the lease and resumes from durable state, checking the idempotency record or execution receipt before repeating any side effect. If continuation is unsafe (the evidence is contradictory, a side effect is half-applied with no way to tell which half), the Attempt moves to a truthful blocked or failed state with its evidence preserved, and a human is escalated to.
+
+Nothing in that procedure asks the model what it remembers. *The platform should know.* And when it does not know enough to continue safely, *a truthful blocked state is better than a false success.*
+
 ### Cancellation is a protocol
 
 Cancellation is not a flag. It is a sequence: first prevent new work (no new claims, no new tool grants), then signal the executor, then record acknowledgement or timeout, then reconcile external effects, then terminate the Attempt. It cannot guarantee that already-issued provider calls vanish; a PR creation that was in flight may still land. Late events remain in history, but they cannot reopen authority, and the reconciliation step exists to find anything the cancelled worker left behind.
+
+### Reliability dimensions, and model failure versus platform failure
+
+Agent platforms become infrastructure earlier than anyone expects. The first workflow that saves a team an afternoon becomes the workflow they schedule nightly, and from then on its outages are production outages. The dimensions to design for are the ordinary ones: durable state, retries, idempotency, timeouts, cancellation, worker recovery, backpressure, rate limiting, service-level objectives, rollback, and named production ownership. Each is defined below and pinned to its place in the lifecycle.
+
+Before that, one distinction keeps the whole discussion honest. A **model failure** is a poor answer: wrong code, a misread spec, a hallucinated API. A **platform failure** is the factory losing track of what happened. The first is expected and is what evaluation, verification, and bounded retry exist to catch. The second is not acceptable, and the model's fallibility is no excuse for it. Whatever the model did, the platform must remain deterministic about what happened, what authority existed, what state changed, and how to recover.
+
+*Probabilistic intelligence doesn't justify probabilistic infrastructure.*
 
 ### The production reliability vocabulary, placed in the lifecycle
 
@@ -211,7 +272,7 @@ An Attempt that can survive worker failure carries at least the following fields
 ### Build sequence
 
 1. Separate Task and Attempt in the schema before anything else; give Attempts an immutable append-only history.
-2. Define idempotency keys for every side-effect boundary using stable operation identity, never timestamps.
+2. Define idempotency keys for every side-effect boundary using stable operation identity, never timestamps. Mint them in the orchestrator, persist before execution, propagate through the tool boundary.
 3. Implement the atomic claim with fencing, then heartbeat and renewal, then expiry to Suspect.
 4. Implement reconciliation against provider truth before implementing automatic retry.
 5. Implement the failure classification table and bind the retry policy to it.
@@ -243,6 +304,14 @@ Resuming a process can save work but requires trustworthy checkpoints and an exa
 
 **Budget burn.** A loop or hostile input drains tokens and money without producing anything. Detect: spend per Attempt against ceiling; cost with no evaluator improvement. Fix: hard budgets at admission and stop conditions the model cannot negotiate.
 
+**Workflow state in the context window.** The only record of which steps completed is the model transcript; the process dies and recovery means asking a fresh model to guess. Detect: no persisted task state, checkpoint, or side-effect record independent of the transcript. Fix: the durable state machine, with model context treated as a working buffer.
+
+**Worker-minted keys.** Each worker invents its own idempotency key at call time, so a replacement worker cannot find its predecessor's effect. Detect: keys that differ between Attempt N and Attempt N+1 for the same logical operation. Fix: orchestrator-owned keys tied to the logical operation, persisted before execution.
+
+**Restart from scratch.** A crashed workflow is rerun from step one, repeating every side effect. Detect: duplicate provider effects after a recovery. Fix: inspect persisted state, reclaim via lease, check the idempotency record, resume from checkpoint.
+
+**Platform failure excused as model failure.** The factory cannot say what a run did, and the explanation offered is "models are nondeterministic." Detect: any post-incident question about authority, state, or side effects answered from a transcript. Fix: deterministic records for everything that is not the model's answer.
+
 ## In Mission Control
 
 At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) (studied 2026-08-09), Mission Control models Task Attempts as WorkflowRuns linked by `parentTaskId`.
@@ -263,6 +332,10 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - After every attempt: verify, correct, retry, stop, or escalate. Budgets are multidimensional and not negotiable by a model.
 - Cancellation is a protocol ending in reconciliation, not a flag.
 - Timeouts, backoff, rate limits, circuit breakers, bulkheads, backpressure, load shedding, and dead-lettering each have a fixed place in the attempt lifecycle; queue age and spend per Attempt are the earliest warnings.
+- Model context is not durable workflow state, and it is not a transaction log. Workflow state lives in a persisted state machine with leases, bounded retries, idempotent transitions, replay-protected side effects, and first-class pause and cancel.
+- The orchestrator mints the idempotency key, tied to the logical operation, persisted before execution. Retry the intent; don't blindly repeat the side effect. Attempt identity may change; logical-operation identity should not.
+- Recovery never depends on what the model remembers. The platform should know, and a truthful blocked state is better than a false success.
+- A poor answer is a model failure; losing track of what happened is a platform failure. Probabilistic intelligence doesn't justify probabilistic infrastructure.
 
 ## Go deeper
 
@@ -270,5 +343,5 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - Related: [Chapter 5, Authoritative records](../02-design/05-authoritative-records.md); [Chapter 8, Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) for budgets and attention items; [Chapter 18, Agent and loop engineering](./18-agent-and-loop-engineering.md); [Chapter 19, The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [Chapter 25, CI/CD and progressive delivery](../04-prove/25-cicd-progressive-delivery-and-production-verification.md); [Chapter 29, Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 30, Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md).
 - Labs: [Lab 11, Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md) (a timeout after an external mutation, the stale-worker race, and the `claimAttempt` / `renewLease` / `completeAttempt` specification); [Lab 9, Factory disaster recovery](../appendix/labs/09-factory-disaster-recovery-lab.md).
 - Glossary: [Appendix A](../appendix/glossary.md).
-- Sources: the 12-layer production AI agent stack notes (Loop Engineering, Infrastructure Engineering, and the production reliability vocabulary in the coverage audit).
+- Sources: the 12-layer production AI agent stack notes (Loop Engineering, Infrastructure Engineering, and the production reliability vocabulary in the coverage audit); Jay West, factory architecture notes (durable execution, retries and idempotency, mid-workflow failure, reliability dimensions).
 - Mission Control at `b31e275`: [Task Attempt Scheduler architecture](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/architecture/task-attempt-scheduler-pr2.md), [Task–WorkOrder linkage](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/architecture/task-workorder-linkage-pr1.md), [Attempt scheduler rules](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/taskAttemptScheduler.ts), [Task workflow rules](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/taskWorkflowState.ts), [Tasks](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/tasks.ts), [scheduler test results](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/testing/task-attempt-scheduler-results.md).

@@ -68,6 +68,39 @@ Retrieval combines several methods, and none is universally best. **BM25** and o
 
 Two properties are not optional. **Permission-aware retrieval** filters by requester, tenant, purpose, lifecycle, and freshness before content reaches ranking or generation, so that an unauthorized document can never be "very relevant." **Citation and source attribution** tie every excerpt to its artifact, source version, and permission; a citation without source identity, version, and permission is decoration.
 
+### The enterprise retrieval pipeline, end to end
+
+Seen from the agent's side, the whole apparatus above collapses into one path from raw sources to a grounded, cited context. It is worth drawing that path on its own, because it is the shape a platform team actually builds and operates, and because every stage on it exists for a reason a plain vector store does not have.
+
+```mermaid
+flowchart LR
+    Src["Sources: issue tracker, wiki, chat, docs, code"] --> Ing["Ingest / ETL"]
+    Ing --> Norm["Normalize + chunk"] --> Idx["Index + embed"]
+    Idx --> Hyb["Hybrid retrieval: BM25 + vector"] --> Rr["Rerank"]
+    Rr --> Perm["Permission filter"] --> Ground["Grounded context"]
+    Ground --> Cite["Citations + provenance"] --> Agent["Agent"]
+    Orch["Ingestion orchestration"] -.-> Ing
+    Tr["Retrieval tracing + evals"] -.-> Hyb
+    Tr -.-> Rr
+    Tr -.-> Perm
+```
+
+Two details of the drawing matter. The dotted boxes are not optional extras: ingestion orchestration (scheduling, checkpoints, reprocessing) and retrieval tracing with evaluations are part of the platform, not a later add-on, because without them nobody can say why a document was or was not retrieved. And the permission filter appears late in this operator's view only because it is drawn as the last gate before the agent; in the contract that follows in "How to build it" it also runs *before* ranking, so that unauthorized material never competes for a rank at all. Filter early to keep it out of the ranking; filter late to prove nothing slipped through.
+
+Enterprise retrieval is more than vector search: lexical plus semantic candidates, reranking, repository-aware retrieval, metadata filtering, and where it earns its cost, graph relationships. But the mechanics are the easy half. The hard questions are the ones a consumer search engine never has to answer.
+
+| Question | Why a consumer search engine can skip it | Why the factory cannot |
+|---|---|---|
+| Is this builder authorized to see this? | Everything indexed is public | A relevant answer built on unauthorized data is a leak with a citation |
+| Where did it come from? | Nobody audits a web result | Evidence and review depend on knowing the source |
+| How fresh is it? | Stale pages are an annoyance | An agent acts on it; stale means wrong |
+| Which version applies? | One page, one version | Architecture docs, APIs, and policies have revisions that conflict |
+| Can the output be traced back to what influenced it? | Not required | Required to explain, debug, and revoke |
+
+> *Enterprise context is relevant + authoritative + fresh + permission-aware + attributable.*
+
+Two failures show why all five properties have to hold at once. In the first, an agent produces a well-grounded, fully cited plan from the architecture documents it retrieved, and the documents describe a service that was decommissioned last quarter. Every citation is real; the answer is still wrong, because grounding on obsolete material is grounding on the wrong world. In the second, an agent finds exactly the document that answers the question, and the builder who asked was never permitted to read it. That answer is worse than wrong: it is a policy violation dressed as helpfulness. Relevance was satisfied in both cases. Freshness failed in the first; permission failed in the second. Retrieval is a permissions, provenance, freshness, and evaluation problem at least as much as it is a search problem, and a retrieval team that measures only ranking quality will ship both failures.
+
 ### Semantic engineering: executable meaning
 
 <!-- infographic: semantic-layer -->
@@ -212,6 +245,8 @@ Centralizing knowledge simplifies governance and discovery but can create a stal
 | Silent alias mapping | Semantic evaluation | Term stays ambiguous; escalate | Contract updated and versioned |
 | Obsolete document ranks first | Authority tier and lifecycle filter | Excluded before compilation | Retrieval evaluation case added |
 
+Two rows deserve a second look because they are the ones that pass every ranking metric. "Obsolete document ranks first" is the grounded-but-stale failure: the citations are real and the answer is wrong. "Permission mismatch" is the relevant-but-unauthorized failure: the answer is right and the builder was never allowed to have it. Neither shows up in Recall@k. Both show up in production.
+
 The diagnostic habit is the one from the evaluation section: "the model missed it" is not a root cause until the source, ingestion, semantic, and retrieval layers have been ruled out in that order.
 
 ## In Mission Control
@@ -227,6 +262,8 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - The pipeline is register → profile → ingest → normalize → index → retrieve → permission-filter → rank → compile → freeze → evaluate → revoke, and every handoff keeps source, version, authority, sensitivity, tenant, lineage, and selection reason.
 - Permission and tenant filters run before ranking or model exposure; a citation without source identity, version, and permission is decoration.
 - No retrieval method wins everywhere: lexical for identifiers, vectors for concepts, graphs for relationships, hybrid only when measured.
+- Enterprise context is relevant + authoritative + fresh + permission-aware + attributable. A grounded answer on obsolete documents is still wrong; a relevant answer on unauthorized information is worse. Retrieval is a permissions, provenance, freshness, and evaluation problem as much as a search problem.
+- The operating pipeline is sources → ingest → normalize and chunk → index and embed → hybrid retrieval → rerank → permission filter → grounded context → citations and provenance → agent, with ingestion orchestration and retrieval tracing as part of the platform.
 - The semantic layer is as small as possible and as explicit as necessary; unresolved terms stay ambiguous.
 - Retrieved text is an Attempt input, not authority; it cannot change intent, policy, tool grants, or acceptance criteria.
 - Evaluate each layer separately with its own measures (Recall@k, MRR, NDCG, groundedness among them); end-to-end success is necessary but not diagnostic.
@@ -237,5 +274,5 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the compiler and the five trust categories; [19. The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [26. Security](../04-prove/26-security.md) for poisoning and injection; [28. Observability](../05-operate/28-observability-telemetry-and-forensics.md) for lineage; [5. Authoritative records](../02-design/05-authoritative-records.md) for the systems of record this pipeline must not shadow.
 - Lab: [Knowledge poisoning, revocation, and retrieval](../appendix/labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md), which proves permission denial before ranking, poisoning detection, reverse-lineage impact analysis, revocation, clean rebuild, and reproducible packages on a synthetic corpus.
 - Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
-- Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness).
+- Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline and the five properties of enterprise context).
 - [Glossary](../appendix/glossary.md).

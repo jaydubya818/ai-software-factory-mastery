@@ -214,6 +214,24 @@ Every MCP server is three things at once: a software supply-chain dependency, an
 
 Authorization over HTTP has its own rules. Access tokens must be **audience-bound** to the intended MCP server, requested with explicit **scopes**, and, following the specification's use of **resource indicators**, issued for that specific resource. **Token passthrough**, where a server forwards the client's token to unrelated downstream services, collapses trust boundaries and must not be treated as a shortcut. A scope increase should require fresh consent, not a silent renegotiation.
 
+### MCP solves interoperability, not governance
+
+Be precise about the problem MCP actually solves. Before a shared protocol, every agent host had to integrate with every capability separately: N hosts times M tools, each with its own discovery, schema, invocation, and response format. MCP collapses that **N×M integration problem** into one contract for discovery, tool schemas, invocation, and responses. That is valuable, and it is all it does. Identity, authorization, scope, argument validation, policy, and auditability stay with the factory, exactly where they were before the protocol arrived.
+
+> *MCP standardizes connectivity. It doesn't outsource governance.*
+
+It follows that MCP is not mandatory for every capability. Putting a service behind MCP buys reuse, discovery, consistent contracts, and portability across hosts; it costs another abstraction and another network hop. A high-throughput, stable, internal service that one runtime calls thousands of times an hour may be better served by a direct API adapter behind the same gateway. Decide per capability on reuse, interoperability, governance, latency, and operational cost, and record the decision.
+
+| Question | Favors MCP | Favors a direct service call |
+|---|---|---|
+| Who else calls it? | Several hosts, harnesses, or providers | One runtime, one team |
+| How stable is the contract? | Evolving; discovery and schema negotiation pay off | Frozen; a typed client is simpler |
+| What does the hop cost? | Latency is tolerable for the task | High throughput or tight latency budget |
+| Where is governance enforced? | At the gateway either way | At the gateway either way |
+| Operational burden | Shared server, shared lifecycle | Owned adapter, owned lifecycle |
+
+*MCP is an interoperability decision, not a religion.* Either path passes through the same registry and gateway described below.
+
 ### Tools are behavioral contracts
 
 A tool is not safe because its arguments satisfy a JSON Schema. Its contract has to define behavior under success, failure, retry, cancellation, and partial completion.
@@ -235,6 +253,44 @@ A tool is not safe because its arguments satisfy a JSON Schema. Its contract has
 
 Keep two error classes apart. A **protocol error** (malformed request, unknown method, invalid parameters) is not the same as a **tool-execution error**, where a well-formed request ran and the business operation failed. Structured failures let the model correct an input without hiding an operational or policy failure. The official tools specification covers validation, execution errors, access control, rate limiting, timeouts, and audit logging for exactly this reason. Output schemas matter as much as input schemas: a result the runtime cannot parse cannot be validated, and a result the runtime cannot validate should not become an observation the model trusts.
 
+### The governed tool registry: where intelligence becomes authority
+
+A model with no tools can only be wrong on paper. A model with a tool can be wrong in a repository, a ticket queue, or a production environment.
+
+> *The moment a model gets a tool, intelligence becomes authority.*
+
+That is why capabilities do not reach an agent directly, whether they arrive over MCP or a direct adapter. They sit behind a **governed tool registry** and **tool gateway**. The registry is the catalog of capabilities the factory knows about; the gateway is the enforcement point every call passes through. Registering a tool means answering eight questions before any agent can see it.
+
+| Question | What the registry records |
+|---|---|
+| What capability is this? | Purpose, side-effect class, the systems it touches |
+| Who can invoke it? | Eligible agent definitions, roles, and workflows |
+| On whose behalf? | The acting principal the call is attributed to: user, service, or workload identity |
+| Which resources? | Repositories, paths, records, environments, tenants it may reach |
+| What are valid arguments? | Typed input schema and validation rules |
+| What is its risk class? | Read-only, reversible, consequential, or prohibited by default |
+| Is approval required? | Whether a human or policy must admit the call, and whether approval can be pre-granted by risk class |
+| What is logged as evidence? | The request, response, decision, and artifact receipts retained per call |
+
+Alongside those answers the registry carries the operational contract from the previous section: typed schema, timeout, rate limit, and audit behavior. Grants are then scoped to the task, not to the agent in general. A repository-analysis agent gets read access to one repository; it does not get deployment credentials because they happened to be available on the host. The same agent definition can hold different grants in different WorkOrders.
+
+The controls that matter most at the tool boundary are enforced outside the model, in this order of precedence: identity, authorization, argument validation, resource scope, rate limits, timeouts, auditability, and approval requirements. None of them depends on the model's cooperation. A prompt cannot loosen a schema, and a persuasive retrieved document cannot widen a scope.
+
+```mermaid
+flowchart LR
+    Reg[("Governed tool registry")] -->|"grants scoped to task"| Manifest["Execution manifest"]
+    Model["Model proposes call"] --> GW["Tool gateway"]
+    Manifest --> GW
+    GW --> I["Identity"] --> Au["Authorization"] --> V["Argument validation"] --> Sc["Resource scope"]
+    Sc --> RL["Rate limit + timeout"] --> Ap{"Approval needed?"}
+    Ap -->|no| Exec["Execute via MCP or direct adapter"]
+    Ap -->|yes| Human["Human or policy admission"] --> Exec
+    Exec --> Audit["Audit receipt"]
+    GW -->|"any check fails"| Deny["Recorded denial"]
+```
+
+> *The model proposes the action. The platform decides whether it is allowed.*
+
 ### Context engineering is controlled compilation
 
 **Context engineering** is the discipline of supplying an agent with the right information, instructions, tools, history, policies, and constraints at the right time. In a factory it is a compilation step, not a copy-paste. The **context compiler** selects the smallest sufficient set of trusted directives and relevant observations for one decision. More context is not automatically better: irrelevant material burns tokens, adds conflicting cues, and can bury the governing constraint. Think of it as packing a briefing folder for one meeting rather than wheeling in the whole filing cabinet.
@@ -255,6 +311,23 @@ flowchart TB
 ```
 
 Good context architecture keeps five categories visibly separate: **instructions** (trusted runtime directives), **authoritative context** (approved contracts, policy, identity, exact source state), **reference context** (documentation and retrieved knowledge), **working context** (transient hypotheses and scratch state), and **evidence** (observations tied to exact actions and artifacts). Retrieved text lives in the reference tier and can never promote itself into instructions or authority. [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) covers the pipeline that feeds step four and the full retrieval contract.
+
+### Four kinds of context, one governed input
+
+The five trust categories say how much authority a piece of context carries. A second cut says where it comes from and how long it should live. Every item the compiler considers belongs to one of four types, and mixing them is how context windows fill with material nobody chose.
+
+| Context type | What it holds | Lifetime | Who admits it |
+|---|---|---|---|
+| **Task/run context** | What this execution needs now: objective, acceptance criteria, scope, the files in play | The current step or Attempt | The compiler, from the manifest |
+| **Working state** | Intermediate artifacts, hypotheses, tool results, scratch notes | The current Attempt; cleared or compacted at its end | The runtime, outside the model |
+| **Enterprise retrieval** | Authoritative organizational knowledge: code, docs, tickets, decisions, policy | As fresh as the source and its permission | The retrieval pipeline, after permission and provenance checks |
+| **Durable memory** | Knowledge intentionally retained across executions | Until corrected, expired, or revoked | An explicit promotion decision |
+
+The goal for every step is the minimum high-quality set that is relevant, permission-aware, and attributable. A larger window is a larger budget, not an instruction to spend it.
+
+> *Context is a governed input, not everything we can fit into the window.*
+
+The fourth row is the one teams get wrong. Durable memory must be *deliberately promoted*: something enters it because an owner or a governed process decided it should, with provenance attached. If every previous model output silently becomes permanent truth, memory turns into one more source of stale and incorrect context, and a bad hypothesis from last month is retrieved next month as a fact. The admission flow in the next section is what "deliberate" means in practice.
 
 ### Memory is governed, typed, and revisable
 
@@ -343,6 +416,9 @@ The recurring anti-patterns are granting every discovered MCP tool, treating too
 | Injected instruction in reference context | Gateway denial, trust-class audit | Record the attempt and denial; the content never gains authority |
 | Tool retry duplicates a side effect | Receipt mismatch | Idempotency key per consequential call; mark the tool non-retryable until fixed |
 | Memory contradiction | Contradiction link | Surface both claims with provenance; owner resolves; never auto-merge |
+| Tool grant wider than the task | Registry audit; call to a resource outside WorkOrder scope | Scope grants per WorkOrder; deny at the gateway; review the agent definition |
+| Silent memory promotion | Prior outputs retrieved as fact with no promotion record | Require an explicit promotion decision with provenance; quarantine the unpromoted entries |
+| MCP adopted where a direct call was cheaper | Latency and hop cost dominate a stable internal service | Re-decide on reuse, interoperability, governance, latency, and cost; keep the gateway either way |
 
 Catch these before production by evaluating complete configurations (model, prompt, tools, context, harness, environment, policy, evaluator) with representative cases, deterministic checks, calibrated graders, repeated trials, confidence intervals, adversarial cases, and outcome slices. A high average can hide a catastrophic failure in a critical slice; no single score establishes truth, so retain disagreements, uncertainty, and counterevidence, and promote only on predefined improvement and non-regression criteria. When something does go wrong, the incident framework in [chapter 29](../05-operate/29-resilience-incidents-and-the-control-tower.md) asks which layer failed: intent, context, model, tool, state, policy, or evaluation. The separation of components in this chapter is what makes that question answerable.
 
@@ -364,6 +440,9 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - Freeze an execution manifest before the first model call; every event and piece of evidence points back to it.
 - MCP standardizes host, client, server, session, transport, and six primitives. Capability negotiation proves compatibility, never trust, safety, or authorization. Govern the connection: identity, audience-bound tokens, scopes, allowlist, egress, receipts, revocation.
 - A tool contract covers schemas, identity, scope, side-effect class, idempotency, timeout, retry, rate limit, approval behavior, result envelope, receipt, and version. Protocol errors and execution errors stay distinct.
+- MCP solves the N×M interoperability problem and nothing else: it standardizes connectivity and does not outsource governance. Choosing MCP over a direct call is an interoperability decision, not a religion.
+- The moment a model gets a tool, intelligence becomes authority. Every capability sits behind a governed registry that answers what, who, on whose behalf, which resources, valid arguments, risk class, approval, and evidence; grants are scoped to the task; identity, authorization, validation, scope, rate limits, timeouts, audit, and approval are enforced outside the model.
+- Context is a governed input, not everything we can fit into the window. Keep task/run context, working state, enterprise retrieval, and durable memory distinct, and promote to durable memory deliberately.
 - Context is compiled in eight steps into five separate trust categories; memory is admitted through quarantine, evaluation, and approval, and corrected, expired, or revoked as first-class events.
 - Add agents only for a measurable gain, and evaluate the whole configuration, never the model alone.
 - Traceability works only when records share stable Attempt, manifest, artifact, and policy identifiers; a small governed agent is safer and easier to improve than one whose tools, memory, and context keep expanding.
@@ -374,5 +453,5 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - Labs: [Agentic security attack and containment](../appendix/labs/05-agentic-security-attack-and-containment-lab.md) (the malicious-README, denied-call, safe-retry, quarantined-memory exercise); [Authority, containment, and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md).
 - MCP `2025-11-25` baseline: [specification](https://modelcontextprotocol.io/specification/2025-11-25), [architecture](https://modelcontextprotocol.io/specification/2025-11-25/architecture), [lifecycle and capability negotiation](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports), [authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), [tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools), [resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), [prompts](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts), [sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling), [elicitation](https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation), [tasks (experimental)](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks), [changelog](https://modelcontextprotocol.io/specification/2025-11-25/changelog).
 - Mission Control at `b31e275`: [agent identities](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentIdentities.ts), [agent versions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentVersions.ts), [context manifests](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/manifests.ts), [context activation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/activation.ts), [context router](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/context-router/src/router.ts), [memory lifecycle](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/memoryLifecycle.ts), [graph-assisted memory proposal](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/plans/memory-graphrag-architecture.md), [plugin and MCP guidance](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/CREATING_PLUGINS.md).
-- Sources: Jay West, "Key terms and definitions" capability taxonomy (execution loop, agent definitions, harness terms); the AI Software Factory interview study guide, chapter 6 terminology; the agent platform technology glossary (MCP, FastMCP, durable context patterns); the "Factory in one line" notes on harness ownership and the incident layer list.
+- Sources: Jay West, "Key terms and definitions" capability taxonomy (execution loop, agent definitions, harness terms); Jay West, factory architecture notes (the four context types, the governed tool registry, MCP versus direct calls); the AI Software Factory study guide, chapter 6 terminology; the agent platform technology glossary (MCP, FastMCP, durable context patterns); the "Factory in one line" notes on harness ownership and the incident layer list.
 - [Glossary](../appendix/glossary.md).

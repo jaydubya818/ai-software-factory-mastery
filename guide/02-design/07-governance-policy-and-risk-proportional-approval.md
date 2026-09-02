@@ -2,9 +2,9 @@
 title: Governance, policy, and risk-proportional approval
 part: design
 chapter: 7
-summary: How organizational intent becomes bounded machine authority — versioned policy, authorization envelopes, risk bands, decision rights, separation of duties, exceptions, trust ceilings, ten control families, and the emergency controls that revoke authority when a run turns unsafe.
+summary: How organizational intent becomes bounded machine authority — versioned policy, authorization envelopes, risk bands and risk-tiered review, decision rights, separation of duties, human-in-the-loop done right, waivers as product data, trust ceilings, autonomy per action class, ten control families, and the emergency controls that revoke authority when a run turns unsafe.
 absorbs: [08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md, 08-security-and-governance/06-agentic-governance-control-framework.md, 08-security-and-governance/07-authority-autonomy-and-emergency-control.md]
-infographics: [policy-decision-flow, autonomy-matrix, emergency-control]
+infographics: [policy-decision-flow, risk-tier-review, autonomy-matrix, emergency-control]
 ---
 
 # 7. Governance, policy, and risk-proportional approval
@@ -85,6 +85,21 @@ A practical first model uses three bands:
 
 The label should be policy-derived and explainable. A useful classifier considers `risk = impact × likelihood × exposure × irreversibility × uncertainty`. Detection strength and recovery quality reduce *residual* risk; they do not erase the hazard. Retain the factors, not only the colour.
 
+### Risk-tiered review
+
+Turning the bands into a review policy starts with the dimensions the classifier actually reads. For a proposed change they are blast radius, reversibility, security sensitivity, data sensitivity, dependency impact, architecture impact, production criticality, novelty, and verification strength. Against those the factory aggregates the evidence it already has: test results, static analysis, security findings, dependency risk, architectural impact, evaluation results, ownership context, and the history of failures in the same area. The classification is then a function of both, and the review path follows from the classification:
+
+<!-- infographic: risk-tier-review -->
+> **Infographic — Risk-tiered review.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Tier | Typical changes | Review path | Band |
+| --- | --- | --- | --- |
+| Low | Documentation, mechanical configuration, deterministic transformations, generated boilerplate with strong tests | Automated verification; potentially autonomous promotion; sampled after the fact | Green |
+| Medium | Known dependency update, bounded feature inside an existing module, test additions with production-code contact | Lightweight human review with summarised evidence, not a line-by-line read | Yellow |
+| High | Architecture change, authentication and authorization, sensitive data, large blast radius, novel territory, weak verification | Senior or principal review, stronger controls, additional domain owners | Red |
+
+The principle the table encodes is that *review depth should be proportional to risk, not to the fact that AI generated the change*. Agents produce more pull requests and more quality signals than humans can read, and the answer cannot be "more analysis" or "review everything": human review cannot scale linearly with generated code, so the factory has to *scale trust, not human review*. The classifier is itself a learning system. When a reviewer overrides a tier, or a low-tier change later fails in production, that feedback improves both the classification and the evaluation that fed it; a tier that never moves is a tier nobody is checking. The signal-aggregation side, deciding which of a hundred findings a reviewer should actually see, is in [Chapter 8](./08-economics-metrics-and-human-attention.md); the merge-queue mechanics are in [Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md).
+
 Risk bands pair with **autonomy tiers**, which describe how much authority an agent holds at all. Tier assignment follows potential impact, not model confidence:
 
 | Tier | Typical authority | Human decision | Prohibited escalation |
@@ -158,9 +173,17 @@ When validators conflict, majority voting can suppress the one signal that matte
 
 Approval fatigue is what happens when reviewers keep receiving low-information requests. The fix is not fewer approvals; it is better decisions and better policy. Routine work inside policy proceeds without asking a human to re-affirm the same boundary. Surprises escalate: new risk, missing authority, conflicting evidence, exhausted recovery, or a policy breach. What reaches a human is a **decision packet**, not a notification. Its required contents are under "How to build it". Sampling routine Green work is a legitimate way to detect drift without fatigue — but only after policy has established bounded scope, complete evidence, and a safe rollback path, and never as a substitute for mandatory approval on material risk.
 
+### Human-in-the-loop done right
+
+"Human in the loop" is often implemented as approval after every action, which produces rubber-stamping within a week: the human learns that the answer is always yes and stops reading. Done right, it is risk-based authority. Low-risk, deterministic, reversible work gets high autonomy; the evidence bar and the approval bar rise together with blast radius, uncertainty, and irreversibility. *Autonomy should scale with reversibility, not confidence.* A model's confidence is a property of the model; reversibility is a property of the action, and only the second one tells you what a mistake will cost.
+
+When a human is brought in, what they receive determines whether the decision is real. A reviewer given only an approve button is being asked to lend their name, not their judgment. The decision packet below gives them the Plan, the diff, the risk class, the tests, the evaluation results, the policy decisions that fired, and the evidence, organised so that the surprise is at the top. One more rule keeps the loop honest: the human should never be compensating for missing automation. If reviewers are routinely checking that the diff stayed in scope or that tests ran on the current commit, those checks belong in a deterministic gate, and their presence in the packet is a defect in the platform, not diligence on the reviewer's part.
+
 ### Exceptions are governed objects
 
 An exception names the rule being bypassed, its scope, owner, approver, reason, start, expiry, affected artifact, compensating controls, exit criteria, and review requirement. It is auditable and revocable, cannot silently renew, and returns the system to the normal rule automatically on expiry. Re-labelling data from "confidential" to "public," marking a failed test as passed, or widening an authorization envelope are not exception mechanisms. They are evidence or policy tampering.
+
+Policy will sometimes block legitimate work, and a governance model with no answer for that moment trains people to route around it. The answer is an explicit **waiver**: time-boxed and auditable, with an owner, a reason, a scope, an expiration, and the evidence that justified it. The important design choice is what happens to waivers afterwards. Treat them as product data. The same waiver requested repeatedly is not a stream of special cases; it is a signal that the policy is wrong or that the platform is missing a capability people need, and the fix is a policy change or a feature, not a faster waiver process. And the path to a waiver must be the same for everyone: an exception that depends on knowing which manager to ask is not governance. *Governance cannot become a relationship business.*
 
 ### Trust sets a ceiling, never a grant
 
@@ -177,6 +200,19 @@ Autonomy is earned. A **Trust Score** may reduce the maximum autonomy a workflow
 Promotion requires sustained evidence and an explicit human decision. A defensible Level 2 to Level 3 default is at least 100 successful WorkOrders, 30 days of stable operation, at least 99 percent independent-validation success, zero critical security or policy violations, zero unauthorized actions, and human approval. Demotion can be automatic: a security or policy violation, unauthorized action, evidence tampering, fabricated results, a high-risk validation failure, a customer-impacting regression, repeated boundary violations, or suspected tool compromise should immediately lower authority or quarantine execution pending review. Old failures may lose weight in a rolling scoring window; they never leave the audit history. Trust calibration is developed further in [Chapter 3](../01-understand/03-first-principles-trust-evidence-and-authority.md).
 
 The same rule applies to the factory learning about itself. Outcomes, failures, and metrics may be collected automatically, but any change to prompts, policies, workflows, evaluation criteria, model routing, or authority changes system behavior and requires human review and promotion. Continuous observation is compatible with governed learning; unreviewed self-modification is not ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)).
+
+### Autonomy per action class
+
+The trust ceiling answers how much autonomy a workflow may request. It does not answer the more useful question, which is how much autonomy each *kind of action* should get, because the answer is asymmetric. Autonomy should follow reversibility and blast radius, and those vary far more between actions than between workflows. A bounded prompt refinement, a retrieval parameter, or a routing weight can reasonably auto-promote when it has repeatedly beaten the baseline, is low-risk, and can be reverted instantly. Anything touching permissions, security boundaries, tool authority, destructive operations, or deployment authority is a different risk class no matter how good the evidence looks, because a wrong change there is not instantly reversible and its blast radius is the whole factory.
+
+| Action class | Examples | Autonomy | Why |
+| --- | --- | --- | --- |
+| Instantly reversible, bounded | Prompt wording, retrieval top-k, routing weight within an approved set, cache policy | May auto-promote after repeated baseline wins | Wrong is cheap and undone in one step |
+| Reversible with cost | Skill version, agent definition, evaluator threshold, Factory Configuration version | Governed promotion with canary and rollback | Wrong is recoverable but affects every subsequent run |
+| Hard to reverse | Schema migrations, public contracts, data classification changes | Named approval and rehearsed rollback | Undo requires new work and may lose data |
+| Authority-changing | Permissions, security boundaries, tool grants, deployment authority, policy | Explicit exception, dual control, never autonomous | Wrong changes what every other control can trust |
+
+So the design instruction is to define autonomy per action class rather than to set one autonomy level for the system, and to ask of every class the question that matters: *what happens if this is wrong, and how easily can we reverse it?* The question the system must not ask is "how confident is the model?" Confidence is not a control.
 
 ### Ten control families
 
@@ -214,6 +250,8 @@ flowchart LR
   Effect --> Evidence["Independent evidence"]
   Evidence --> Decision["Acceptance or escalation"]
 ```
+
+The chain also settles where the model sits. *The model proposes; policy authorizes.* The moment a model is given a tool, its intelligence becomes authority unless something outside it decides whether each call is allowed, so every link after the policy decision is enforced by deterministic code the model cannot reach. Probabilistic reasoning must never imply probabilistic authorization: a model may reason about authority, recommend an action, and explain its confidence, but it cannot grant itself the permission to act, and nothing it reads, including a document that instructs it to, can widen the grant it holds.
 
 Each link records delegator, recipient, subject, purpose, scope, constraints, policy version, issue and expiry times, and a revocation handle. The narrowest applicable ceiling wins. An agent cannot delegate authority it does not hold, change policy, approve its own high-risk result, or convert telemetry into acceptance evidence. Human login establishes the decision actor; a policy decision creates a purpose-bound grant; a workload identity system delivers short-lived credentials to the exact runtime; tool gateways verify identity, grant, resource, tenant, action, and policy version. Credential exchange never turns a broad service credential into wider agent authority, and revocation propagates to issuers, caches, gateways, active leases, and queued work. The SPIFFE Workload API is one published pattern for delivering workload identity; it does not define the factory's business authorization model.
 
@@ -347,6 +385,11 @@ Control evidence binds the exact control version, subject, environment, identity
 | Control operator unavailable | Escalation unanswered by deadline | Delegated backup assumes authority under policy | On-call transfer and signed decision |
 | Recovery resumes into changed context | Context or version differs from the paused manifest | Resume denied; new manifest or explicit replan | Context and version comparison |
 | Approval fatigue | Rising click-through speed, falling rejection rate | Move routine Green work to policy; sample instead | Raise packet quality; tighten policy |
+| Review depth set by origin, not risk | Every AI-generated change gets full review; human review time scales with PR count | Classify by blast radius, reversibility, sensitivity, novelty, verification strength | Risk-tiered review; reviewer overrides feed the classifier |
+| Confidence used as autonomy signal | Grants widen because the model reported high confidence | Deny; autonomy follows reversibility per action class | Define autonomy per action class |
+| Repeated waiver | Same exception requested by many teams | Grant time-boxed waivers with owner, reason, scope, expiry, evidence | Fix the policy or add the missing capability |
+| Exception by relationship | Waivers depend on knowing which manager to ask | One documented exception path for everyone | Audit exception provenance; remove informal routes |
+| Human compensating for missing automation | Reviewers check scope, currentness, or budgets by hand | Move the check into a deterministic gate | Remove the manual step from the packet |
 
 ## In Mission Control
 
@@ -383,13 +426,18 @@ flowchart TD
 - Trust is a ceiling on eligibility; policy is the upper bound. Promotion needs sustained evidence and a human; demotion can be automatic.
 - Controls are records with owners, enforcement points, evidence, and tests — ten families, each exercised on a cadence.
 - Pause, cancel, revoke, quarantine, rollback, failover, and shutdown mean different things. Acknowledged is not enforced; enforced is not verified.
+- Classify by blast radius, reversibility, security and data sensitivity, dependency and architecture impact, production criticality, novelty, and verification strength; Low is automated, Medium is lightweight review with summarised evidence, High is senior review. Review depth follows risk, not the fact that AI wrote it. Scale trust, not human review.
+- Human-in-the-loop is risk-based authority with a decision packet (Plan, diff, risk class, tests, evaluations, policy decisions, evidence), never approval after every action. Autonomy scales with reversibility, not confidence. Humans never compensate for missing automation.
+- Define autonomy per action class: instantly reversible changes may auto-promote on baseline wins; anything touching permissions, security boundaries, tool authority, destructive operations, or deployment authority never does. Ask "what if this is wrong, and how easily can we reverse it?"
+- Waivers carry owner, reason, scope, expiration, and evidence; a repeated waiver is bad policy or a missing capability; governance cannot become a relationship business.
+- The model proposes; policy authorizes. Probabilistic reasoning never implies probabilistic authorization, and nothing a model reads can widen its grant.
 
 ## Go deeper
 
 - [Chapter 3 — First principles: trust, evidence, and authority](../01-understand/03-first-principles-trust-evidence-and-authority.md), [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md), [Chapter 5 — Authoritative records](../02-design/05-authoritative-records.md)
 - [Chapter 12 — Durable execution](../03-build/12-durable-execution.md) for leases and attempt manifests; [Chapter 26 — Security](../04-prove/26-security.md); [Chapter 29 — Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 30 — Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md); [Chapter 33 — Governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md)
 - Labs: [10 — Authority, containment, and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md); [01 — Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md); [13 — External capability intake and recertification](../appendix/labs/13-external-capability-intake-and-recertification-lab.md)
-- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Interview Study Guide* (weeks 5–6 autonomy matrix); Mission Control North Star and V1 Product Strategy docs at `8014d5af`
+- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Study Guide* (weeks 5–6 autonomy matrix); Jay West, factory architecture notes (risk-classification dimensions, risk-tiered review, human-in-the-loop done right, autonomy per action class, waivers as product data, the model proposes and policy authorizes); Mission Control North Star and V1 Product Strategy docs at `8014d5af`
 - Mission Control code at `8014d5af`: `convex/factory/configuration.ts`, `convex/governance/policyEnvelopes.ts`, `convex/lib/armPolicy.ts`, `convex/governance/approvalRecords.ts`, `convex/approvals.ts`, `convex/governance/permissions.ts`, `convex/governance/roles.ts`, `convex/governance/roleAssignments.ts`, `convex/lib/githubAppReadiness.ts`, `convex/githubAppConnections.ts`, `apps/mission-control-ui/src/ApprovalsModal.tsx`
 - Standards: [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf); [NIST Generative AI Profile](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf); [NIST SSDF](https://csrc.nist.gov/Projects/ssdf/publications); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); [SLSA 1.2](https://slsa.dev/spec/v1.2/); [SPIFFE Workload API](https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/)
 - [Glossary](../appendix/glossary.md)

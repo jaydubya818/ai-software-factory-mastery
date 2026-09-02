@@ -4,7 +4,7 @@ part: build
 chapter: 10
 summary: How agents, skills, tools, prompts, model profiles, and evaluators become governed, versioned, resolvable, certified, and revocable capabilities that the Software Factory consumes but never authors on the fly.
 absorbs: [agent-factory/01-capability-supply-chain-and-registries.md, agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md, agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md, agent-factory/04-tool-skill-and-integration-contract-reference.md]
-infographics: [capability-supply-chain, capability-lifecycle, skill-anatomy]
+infographics: [capability-supply-chain, agent-factory-architecture, capability-lifecycle, skill-anatomy, skill-maturity-lifecycle]
 ---
 
 # 10. The Agent Factory: reusable capabilities
@@ -54,7 +54,7 @@ flowchart LR
 
 The Agent Factory manages several capability types that share one envelope and keep type-specific contracts:
 
-- **Agent definitions**: versioned descriptions of an agent's role, instructions, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, and success criteria. An agent definition composes several other capabilities.
+- **Agent definitions**: versioned descriptions of an agent's role, instructions, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, and success criteria. An agent definition composes several other capabilities; the next subsection treats it in full.
 - **Skills**: reusable instructions and capabilities for a specific task. Coding, testing, debugging, deployment, security, repository, organization-specific, and workflow skills are the common families. A skill may compose tools (**tool composition**), carries decision criteria and examples, and is found by **skill discovery**, the process of determining which skill a task should use.
 - **Tools**: APIs and capabilities agents call to act, commonly exposed through MCP. A tool needs executable schemas and side-effect declarations.
 - **Prompts**: parameterized instruction fragments with parameter and output contracts.
@@ -76,13 +76,77 @@ Every registered capability, whatever its type, carries the same identity model:
 
 One universal schema is tempting and would flatten real differences between a tool and an agent. Use the shared envelope plus type-specific manifests, and avoid a single quality score: eligibility is multidimensional and risk-specific.
 
+### The Agent Definition is a contract, not a prompt
+
+Most teams' first "agent" is a system prompt plus a model name. That is enough for a demo and not enough for anything an enterprise has to operate, because neither half tells you what the agent is for, what it may touch, when it must stop, or how you would know it had regressed. An **Agent Definition** is a versioned capability contract. The model may change underneath it; the contract stays stable, which is what lets you swap a provider without renegotiating what the agent is allowed to do.
+
+*An enterprise agent needs a contract, not just a prompt.*
+
+The full field list:
+
+| Field | What it fixes |
+|---|---|
+| Purpose and supported task classes | What the agent is for, and what it is not for |
+| Model capability requirements | The reasoning, coding, context, and tool-use level needed, never a vendor name ([Chapter 17](./17-models-routing-and-capability-selection.md)) |
+| Instructions | The behavioral guidance, versioned like code |
+| Available skills | Which reusable behaviors it may invoke |
+| Allowed tools | What it may act with, and therefore what authority it can ever exercise |
+| Context requirements | What it needs to see, and from where |
+| Data and security eligibility | Which classifications and boundaries it is approved for |
+| Budgets and stopping conditions | Tokens, spend, tool calls, time, retries, and the objective conditions that end a run |
+| Evaluation suite | How its behavior is measured and regression-tested |
+| Observability requirements | What must be traced for the run to be debuggable |
+| Owner and version | Who answers for it, and which exact revision ran |
+
+Read the table against the capability envelope above and you will see that the Agent Definition is simply the envelope filled in for the agent type, with instructions and skills as its distinctive content. What matters is that every row is explicit. An agent whose allowed tools are "whatever the harness exposes" has no contract; an agent whose stopping conditions are "until the model thinks it is done" has no budget.
+
+### Agent, skill, tool, model, harness, factory
+
+Six words get used interchangeably and mean different things. The distinction is worth pinning because each one is owned, versioned, and governed differently.
+
+| Term | What it does | Owned by |
+|---|---|---|
+| **Model** | Provides reasoning and generation | Model layer, behind the gateway and router |
+| **Agent** | Combines reasoning with an objective, instructions, context, tools, skills, policy, and evaluation | Agent Factory, as a versioned Agent Definition |
+| **Skill** | Packages reusable behavior or expertise that an agent invokes | Agent Factory, as a versioned package |
+| **Tool** | Performs an action or retrieves information | Tool registry and gateway |
+| **Harness** | Controls execution: the loop, state, budgets, permissions, recovery ([Chapter 13](./13-coding-harnesses-and-agent-protocols.md)) | Runtime |
+| **Factory** | Governs how all of the above compose into trusted work | Control plane |
+
+*The model thinks. The tool acts. The skill packages reusable behavior. The harness controls execution.* And the factory decides what any of them is permitted to do.
+
+### The Agent Factory's generic architecture
+
+Strip away product names and every Agent Factory has the same shape. Authors produce agent definitions, skills, and tools. Those are bound to model configurations, evaluated against suites and checked against policy, assigned explicit versions, published to a capability registry that supports discovery and deprecation, and consumed by a runtime that resolves exact versions before it executes. Feedback from the runtime flows back to the authors.
+
+<!-- infographic: agent-factory-architecture -->
+> **Infographic — The Agent Factory's architecture.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Author["Authoring"]
+        AD["Agent Definitions"]
+        SK["Skills"]
+        TL["Tools / MCP servers"]
+    end
+    Author --> MC["Model configurations + context requirements"]
+    MC --> EV["Evaluation suites + policy checks"]
+    EV --> VER["Versioning + ownership"]
+    VER --> REG["Capability registry<br/>publish, discover, deprecate"]
+    REG --> RT["Runtime resolves exact versions"]
+    RT --> FB["Outcome feedback"]
+    FB --> Author
+```
+
+The registry in the middle is the authority surface, and the rest of this chapter is about making each arrow a contract rather than a convention.
+
 ### Catalog versus registry
 
 A searchable list is a **catalog**. It is optimized for people and agents to find things, using natural language, tags, domains, and examples. A **registry** is optimized for authoritative resolution: it owns canonical identity, immutable versions, provenance, dependencies, eligibility, lifecycle status, and policy-enforced resolution. The word "registry" gets applied too early. If it cannot tell you the exact digest that will run, whether it is still certified, and who can revoke it, it is a catalog.
 
 In practice the registry is several type-specific registries behind one publication contract. The **Skill Registry** holds reusable, evaluated task methods with their versions, dependencies, required tools, compatibility, ownership, and lifecycle; publication there does not grant permission to use a skill for a particular WorkOrder. The **Prompt Registry** holds parameterized prompt and instruction artifacts, including source, immutable versions, variables, expected outputs, dependencies, evaluation, and promotion status, so that runtime composition remains attributable to exact versions. The **Evaluator Registry** holds deterministic checks, human rubrics, model graders, datasets, calibration evidence, eligible claims, and lifecycle, with one standing rule: a registered evaluator cannot certify its own reliability.
 
-A central registry improves consistency and revocation and can become a bottleneck. Federated authoring with centrally enforced publication contracts usually preserves team autonomy while keeping common controls. Small organizations can begin with signed manifests in source control, provided runtime resolution and lifecycle state remain authoritative; a shared Git repository of skills, which is where both Dru Knox and David Andre started, is a fine catalog and becomes a registry only when it gains those properties.
+A central registry improves consistency and revocation and can become a bottleneck. Federated authoring with centrally enforced publication contracts usually preserves team autonomy while keeping common controls; the contribution model under "How to build it" says which side of the line each responsibility falls on. Small organizations can begin with signed manifests in source control, provided runtime resolution and lifecycle state remain authoritative; a shared Git repository of skills, which is where both Dru Knox and David Andre started, is a fine catalog and becomes a registry only when it gains those properties.
 
 ### Packaging and the manifest
 
@@ -100,6 +164,8 @@ Bundling everything into one artifact improves reproducibility and creates large
 ### Versioning on behavior, not filenames
 
 An agent run is not reproducible when its "version" identifies only a prompt or a model name. Behavior depends on instructions, tool schemas, skill content, context policy, harness features, runtime image, model route, permissions, and evaluator. Reproducibility is a graph property: pinning the model while leaving tools, prompt fragments, skills, or runtime images mutable produces a precise-looking identifier for an imprecise system.
+
+The pieces that change independently, and therefore each need an explicit version, are the Agent Definition, the skill, the model configuration, the tool contract, the evaluation set, the context policy, and the runtime itself. None of them may mutate silently. The reason goes beyond reproducibility: a factory is a learning system, and it improves by proposing changes to exactly these pieces. *You can't operate a learning system safely if you can't reconstruct which version learned what.*
 
 Version on material behavior. A **major** change breaks consumers or widens authority. A **minor** change adds backward-compatible behavior or eligibility. A **patch** corrects behavior without changing the declared contract. Because prompts and models are behavioral dependencies, a seemingly small text or provider change may require new evaluation and a new digest. Input widening may be compatible; changed defaults, permissions, side effects, destinations, or error meaning are breaking changes even when the JSON schema is unchanged. Semantic versioning is useful only when compatibility is tested.
 
@@ -196,6 +262,29 @@ flowchart TB
 ```
 
 The taxonomy says a skill is reusable instructions and capabilities for a specific task. The contract reference says a skill additionally declares instructions, prerequisites, allowed tool dependencies, context needs, model profile compatibility, expected outputs, evaluation cases, and prohibited delegation. The practitioners fill in what that looks like when it works.
+
+Put more plainly, a skill is a versioned reusable capability, not a prompt file. The package contains its purpose, instructions, required context, allowed tools, inputs and outputs, examples, policy, validation, an evaluation suite, an owner, and a version. The difference shows up the first time something goes wrong. Take a repository-migration skill: it has an owner who answers for it, a version that ran, known inputs and outputs, an explicit list of tools it may use, an evaluation history that shows how it has behaved across releases, and measurable behavior that can be compared against that history. A prompt file called `migrate.md` in someone's home directory has none of those, and when it drifts nobody finds out until a migration fails.
+
+*A skill is a versioned capability, not just a prompt.*
+
+### The maturity lifecycle: reason, package, automate
+
+Skills are also where reasoning gets progressively retired. When a team first meets a problem, the right tool is open-ended reasoning: nobody yet knows the pattern, so a strong model explores. As the pattern stabilizes, it gets captured as a reusable skill, so the next agent does not rediscover it. And once parts of the behavior become deterministic, those parts move out of the model entirely into conventional automation: a script, a service, a check. The skill shrinks to the residue that still needs judgment.
+
+*Reason where reasoning creates value. Automate where behavior becomes deterministic.*
+
+<!-- infographic: skill-maturity-lifecycle -->
+> **Infographic — The maturity lifecycle of a capability.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    R["Open-ended reasoning<br/>pattern unknown"] -->|"pattern stabilizes"| S["Reusable skill<br/>versioned, evaluated"]
+    S -->|"portions become deterministic"| A["Conventional automation<br/>script, service, check"]
+    A -.->|"residue still needs judgment"| S
+    S -.->|"new variant appears"| R
+```
+
+This is the opposite of what most teams expect from an AI platform. A mature skills framework does not maximize how much the model does; it progressively reduces unnecessary reasoning. The best factory is not the one with the most AI in it. It is the one that keeps removing uncertainty from work that no longer needs it, and spends its reasoning budget where uncertainty remains. The maturity lifecycle also explains why the Agent Factory and the routing layer are so tightly coupled ([Chapter 17](./17-models-routing-and-capability-selection.md)): one valid routing answer for a task is "no model at all, run the skill's script."
 
 David Andre's lessons from running one skill set across four harnesses are concrete. Skills are written for agents, not for humans; they should be human-readable, but the agent is the primary user, and a strong model can review a skill for whether it is written well for agents. A skill loads only when the task is relevant, which is the point: it keeps the main system prompt small and the context window clean. Length is not quality; two of his most-used skills are the shortest in the repository, one being a single paragraph that asks the agent to list only the decisions it is unsure about, because reviewing decisions scales where reviewing thousands of lines does not. Ship scripts with the skill so the agent runs a tested script instead of regenerating it every time, which saves tokens and makes behavior predictable; his anti-sleep skill is a shell script plus instructions on how to verify it is running. When the skill guides a multi-step process, have it restate the remaining steps on every turn so a question about step three does not lose steps four through nine. And the lesson that matters most for governance: guardrails belong in a pre-tool-call hook that blocks dangerous patterns programmatically, with explicit lists of what must be blocked and what must be allowed, because putting them in the prompt and hoping is not strong enough.
 
@@ -313,6 +402,39 @@ The certification suite for a tool tests schemas, authorization negatives, tenan
 7. Attach evaluation cases and a baseline before publication.
 8. Register it, version it, and route its improvements through the meta loop, never by editing in place.
 
+### The contribution model
+
+An Agent Factory serving one team can be run by that team. One serving an engineering organization needs a rule for who owns what, or it becomes either a bottleneck (everything goes through the platform team) or a bazaar (every team rebuilds identity, evaluation, and tool governance its own way). The rule that holds is that the central team owns the contracts and the paved road, and product organizations contribute domain intelligence inside those boundaries.
+
+*Centralize undifferentiated complexity. Federate differentiated expertise.*
+
+Centralize:
+
+- identity and authorization;
+- the model gateway and routing;
+- the harness and runtime;
+- tool governance;
+- the skills framework (the format, the lifecycle, the publication contract, not every skill);
+- evaluation infrastructure;
+- observability;
+- cost attribution;
+- evidence interfaces; and
+- security controls.
+
+Federate:
+
+- domain skills;
+- product knowledge and context sources;
+- specialized agents;
+- product-specific acceptance criteria; and
+- differentiated workflows.
+
+The test for each item is whether every team would otherwise rebuild it, badly and differently. Identity, evaluation plumbing, and tool governance are expensive, risky, and undifferentiated; nobody's product is better because their team wrote its own authorization layer. A migration skill for one product's data model is the opposite: the platform team could not write it well, and the product team should not need permission to.
+
+This is the same move that shared build and delivery infrastructure made a decade ago. Developers still build and test locally, but once organizations scaled, one pipeline improvement benefited everyone who used the pipeline. The Agent Factory does the same for agentic work: when one team discovers a better skill, context strategy, evaluation method, or execution pattern, the factory turns it into a reusable capability for every other builder. *Improve once, benefit everyone.* That compounding is the strategic value of the platform. Models change constantly; the durable asset is the system around them.
+
+Two practical corollaries. First, teams with existing agents should be pulled in by gravity, not migration mandate: adopt the model gateway first, then common evaluation, then observability, then governed tools, then more of the runtime, each step because it is better than what the team had. Second, forward-deployed engineers who help teams onboard are the right early investment, provided their discoveries flow back into the platform; the same integration solved three times is a missing platform capability, not a consulting opportunity ([Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)).
+
 ### Review checklist
 
 - Can an operator traverse from any Attempt to the resolved graph, source, owner, policy, evaluations, vulnerabilities, compatibility results, and later revocations?
@@ -321,6 +443,9 @@ The certification suite for a tool tests schemas, authorization negatives, tenan
 - Is every certification scoped, dated, and expiring?
 - Does every consequential tool have an idempotency key, a receipt, a reversibility declaration, and a tested rollback?
 - Are guardrails enforced programmatically?
+- Does every Agent Definition fill in all eleven contract fields, with stopping conditions and allowed tools stated rather than inherited?
+- Is each of the seven independently changing pieces (definition, skill, model configuration, tool contract, evaluation set, context policy, runtime) versioned explicitly?
+- Can a product team publish a domain skill without a platform-team ticket, and can the platform team revoke it without a product-team ticket?
 
 ## Failure modes
 
@@ -350,11 +475,19 @@ The certification suite for a tool tests schemas, authorization negatives, tenan
 
 **The skill nobody can find or everybody must load.** Either discovery is so weak that skills are unused, or every skill is loaded into every prompt. Detect it in context size and skill-use telemetry. Fix with trigger criteria in the skill and relevance-based loading.
 
+**The prompt that calls itself an agent.** A system prompt and a model name are registered as an "agent" with no stated task classes, tool list, budget, stopping conditions, or evaluation suite. Detect it by asking what the agent may not do. Fix by filling in the Agent Definition contract before publication.
+
+**Reasoning that never retires.** A pattern the organization has solved a hundred times is still solved by a strong model from scratch every run, at full cost and full variance. Detect it in evaluation history that shows stable behavior alongside stable spend. Fix by capturing the pattern as a skill and moving its deterministic parts into scripts.
+
+**The platform team that owns every skill.** Every domain capability waits on the central team, and the registry becomes a queue. Detect it in skill-publication lead time. Fix with the contribution model: central contracts, federated content.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control contains versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, canaries, policy gates, promotion and demotion concepts, model-route lifecycle, and Factory Version bindings that freeze many material bindings in Factory Versions and Execution Manifests. Those are real components of an Agent Factory: **implemented**.
 
 It does not yet demonstrate one canonical registry boundary with unified publication, dependency resolution, compatibility qualification, deprecation, quarantine, and revocation across every capability type; a single package format; a complete transitive lock; a universal compatibility suite; a migration mechanism spanning agents, skills, prompts, tools, and evaluators; a uniform certification object; or end-to-end revocation propagation. Exact skill-version binding and a complete promotion path are **partial**. Runtime substitutions therefore need explicit scrutiny rather than an assumption of parity.
+
+The intended boundary between the two systems is the one this chapter describes: the Agent Factory creates and manages reusable agents, skills, tools, model configurations, and evaluations, and plugs into Mission Control as a capability source, while Mission Control owns the Mission, Plan, WorkOrders, execution authority, verification, evidence, acceptance, and delivery. In Jay's words, the Agent Factory creates reusable intelligence; Mission Control governs how that intelligence becomes production work. That division is the design intent, not a claim that the two are separately deployed today.
 
 The intended direction is a registry that continuously calculates certification freshness and affected-use inventory; that turns vulnerabilities, policy changes, drift, and incidents into bounded reevaluation or quarantine events; that lets operators preview blast radius, approve migrations, canary a new graph, and roll back instantly to the prior one; and that lets any Attempt be traversed to its full resolved graph. Promotion to "implemented" requires registry APIs, signed immutable manifests, policy tests, dependency-resolution tests, revocation propagation, tenant isolation, and evidence from live resolution and rollback drills: **future**. This chapter defines the operating contract; it does not claim the full registry exists in production, and it does not certify any particular tool, protocol server, supplier, or registry product.
 
@@ -369,6 +502,11 @@ The intended direction is a registry that continuously calculates certification 
 - Deprecate with migration, quarantine on doubt, revoke to block resolution, retire without erasing history.
 - A tool schema describes shape; a complete contract adds authority, side effects, failure, cost, evidence, and lifecycle. Classify by highest-consequence effect; prefer atomic primitives with receipts.
 - Skills are written for agents, load only when relevant, ship their scripts, enforce hard limits with hooks, and are where the factory's learning is stored.
+- An enterprise agent needs a contract, not just a prompt: purpose, model requirements, instructions, skills, tools, context, eligibility, budgets, evaluation, observability, owner, version.
+- The model thinks, the tool acts, the skill packages reusable behavior, the harness controls execution, and the factory governs how they compose.
+- Reason where reasoning creates value; automate where behavior becomes deterministic. A mature skills framework removes unnecessary reasoning rather than maximizing it.
+- Centralize undifferentiated complexity; federate differentiated expertise. Improve once, benefit everyone.
+- You cannot operate a learning system safely if you cannot reconstruct which version learned what.
 
 ## Go deeper
 
@@ -387,4 +525,6 @@ The intended direction is a registry that continuously calculates certification 
 - Dru Knox (Tessl), AI Engineer SF talk on harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
 - David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, Pi, and Hermes.
 - Jay West, "Key terms and definitions" capability taxonomy: Agent Definitions, Skills Framework, and Agent Harness tool terms.
+- Jay West, factory architecture notes: the Agent Definition contract, the agent/skill/tool/model/harness/factory distinction, the skill maturity lifecycle, versioning, and the contribution model.
+- [Chapter 31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) for the gravity-well adoption path and forward-deployed engineering.
 - [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf); [SLSA specification](https://slsa.dev/spec/); [OCI Image Format](https://github.com/opencontainers/image-spec); [NIST AI Risk Management Framework resources](https://airc.nist.gov/).

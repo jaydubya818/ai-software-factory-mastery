@@ -13,8 +13,17 @@ export const chapters = documents.filter((document) => document.chapter !== null
 /** Everything that is reference material: appendices, labs, case studies, research. */
 export const appendices = documents.filter((document) => document.sectionKey === "appendix" && document.contentType !== "overview");
 
-/** Reading sequence for previous/next: front matter → chapters 1..36 → appendices. */
-export const readingSequence = [...chapters, ...appendices];
+/** The eight stage pages of the factory's one-line value stream. */
+export const stages = documents.filter((document) => document.sectionKey === "stages").slice().sort((a, b) => (a.stage ?? 0) - (b.stage ?? 0));
+
+export function getStage(number: number) {
+  return stages.find((document) => document.stage === number);
+}
+
+/** Reading sequence for previous/next: front matter → stages 1..8 → chapters 1..36 → appendices. */
+const frontMatter = chapters.filter((document) => document.chapter === 0);
+const numberedChapters = chapters.filter((document) => document.chapter !== 0);
+export const readingSequence = [...frontMatter, ...stages, ...numberedChapters, ...appendices];
 
 export const sections = Array.from(
   documents

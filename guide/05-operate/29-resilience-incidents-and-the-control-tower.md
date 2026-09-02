@@ -4,7 +4,7 @@ part: operate
 chapter: 29
 summary: How to keep a factory that has authority over other systems safe when it fails — failure domains, RTO/RPO by capability, authority-preserving failover, SLOs and error budgets, FinOps, the control tower's observe-to-improve loop, drift detection, and an incident framework that finds which layer failed and proves recovery before closing.
 absorbs: [factory-platform-engineering/03-resilience-disaster-recovery-and-factory-sre.md, factory-platform-engineering/07-enterprise-operations-reliability-and-finops-reference.md, factory-platform-engineering/08-control-tower-monitoring-detection-and-response.md]
-infographics: [incident-framework, control-tower, slo-and-dr]
+infographics: [reliability-dimensions, incident-framework, incident-procedure, control-tower, slo-and-dr]
 ---
 
 # 29. Resilience, incidents, and the control tower
@@ -18,6 +18,27 @@ Control-plane loss, corrupted state, an unavailable model provider, stale leases
 The second problem is sight. Individual dashboards show calls, latency, cost, test results, policy events, or incidents, each in its own tool. An operator needs to know which governed system, release, autonomy grant, owner, and outcome are affected; what response is active; when it is due; and whether recovery has been independently verified. Without that spine, signals become noise and changes get made outside governance in the rush to fix things.
 
 ## How it works
+
+### Agent platforms become infrastructure earlier than expected
+
+A team that stands up an agent runtime for one workflow tends to treat it as a tool. Within a few months other teams depend on it, a scheduled job runs through it at night, and someone's release now waits on its queue. At that point it is infrastructure, whether or not anyone planned for it, and it is held to infrastructure standards: it has to be predictable about what it did, even when the model inside it was not.
+
+That distinction, model failure versus platform failure, is the one to keep. A poor answer, a wrong plan, a tool called with bad arguments: those are model failures, expected, and the reason evaluation exists. What the platform owes in every one of those cases is determinism about the surrounding facts: what happened, what authority existed, what state changed, and how to recover. *Probabilistic intelligence does not justify probabilistic infrastructure.* The reliability dimensions below are the same ones any distributed workflow engine needs; the difference is that an agent platform reaches the point of needing them earlier than its builders expect.
+
+<!-- infographic: reliability-dimensions -->
+> **Infographic — The reliability dimensions of an agent platform.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Dimension | What it guarantees | Where this guide covers it |
+| --- | --- | --- |
+| Durable state | Workflow state lives outside model context and process memory | [Chapter 12](../03-build/12-durable-execution.md) |
+| Retries | Bounded, classified, and designed together with side effects | This chapter; [Chapter 12](../03-build/12-durable-execution.md) |
+| Idempotency | A retried intent does not repeat an external effect | [Chapter 12](../03-build/12-durable-execution.md) |
+| Timeouts and cancellation | Work stops when told to, at a safe checkpoint | [Chapter 27](./27-the-factory-as-a-platform.md) |
+| Worker recovery | A dead worker's work resumes from durable state under a new lease | [Chapter 12](../03-build/12-durable-execution.md) |
+| Backpressure and rate limiting | Load is shed deliberately, not discovered by outage | [Chapter 27](./27-the-factory-as-a-platform.md) |
+| SLOs | The platform's promises are stated and measured | This chapter |
+| Rollback | A known-safe version can be restored and verified | [Chapter 25](../04-prove/25-cicd-progressive-delivery-and-production-verification.md) |
+| Production ownership | A named team answers for the platform at 3 a.m. | This chapter |
 
 ### Failure domains, criticality, and recovery objectives
 
@@ -216,9 +237,45 @@ finding:
 
 Closure records detection quality, the response, the affected scope, verified recovery, residual risk, notifications, the postmortem, and the improvement disposition. Service restoration alone is not closure.
 
+### When an agent fails mid-workflow
+
+Before an incident, there is the ordinary case: a worker disappears three hours into a WorkOrder. The wrong response is to restart everything, and the worse response is to ask the model what it remembers. The right response reads persisted state and answers four questions: what completed, which side effects occurred, what the last safe checkpoint was, and what can safely resume. Another worker claims the task through a lease and continues from durable state; before repeating any external effect it checks the idempotency record or execution receipt; and if resumption cannot be made safe, the task moves to a truthful blocked or failed state, evidence preserved, and a person is told. Recovery never depends on the model's recollection. *The platform should know.*
+
+### The production-incident procedure
+
+When a finding becomes an incident, the tower's loop needs a human procedure inside it. The procedure has one governing tension: reduce the blast radius without destroying the evidence. Every step below is ordered by that tension.
+
+1. **Pause the smallest thing that stops the harm.** The unit of containment is chosen deliberately: one capability, one Agent Definition, one model route, or one execution class. Pausing the whole platform is sometimes right and often a reflex that costs every other team their afternoon.
+2. **Preserve before repairing.** State, traces, tool-call history, artifacts, and the policy decisions that fired are frozen into the forensic bundle of [Chapter 28](./28-observability-telemetry-and-forensics.md) before anyone touches the system. Repair that overwrites the evidence turns one incident into an unsolvable one.
+3. **Name an incident owner.** One person holds the timeline, the decisions, and the communication.
+4. **Classify the failure.** Nine classes cover what actually breaks in an agent platform: model, context, tool execution, orchestration, idempotency, permissions, policy, evaluation, and infrastructure. The class decides who fixes it and what the permanent fix looks like.
+5. **Recover from the last safe state.** Use the mechanism whose safety precondition holds (retry, replay, resume, reconcile, failover, or restore, from the table above), never the one that is fastest.
+6. **Make it permanent.** Every incident ends by changing the platform: a regression case in the evaluation suite, a stronger evaluator, a better policy, a tool restriction, an improved signal, or an architecture fix.
+
+Two lines govern the procedure. *A truthful blocked state is better than a false success*: a WorkOrder that stops and says why is a recoverable situation; a WorkOrder that reports done when it is not has converted a platform failure into a trust failure, and trust recovers more slowly than systems do. And *a production failure should make the platform harder to fail the same way twice*: step six is not optional paperwork; it is the reason the other five were worth doing.
+
+<!-- infographic: incident-procedure -->
+> **Infographic — Contain without destroying evidence.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TD
+    F["Finding becomes incident"] --> P["Pause: capability / definition / route / class"]
+    P --> PR["Preserve: state, traces, tool history, artifacts, policy decisions"]
+    PR --> OWN["Incident owner named"]
+    OWN --> CLS{"Classify"}
+    CLS --> C1["model · context · tool execution"]
+    CLS --> C2["orchestration · idempotency · permissions"]
+    CLS --> C3["policy · evaluation · infrastructure"]
+    C1 & C2 & C3 --> REC["Recover from last safe state"]
+    REC --> PERM["Make it permanent: regression case, evaluator, policy, tool restriction, signal, architecture"]
+    PERM -.->|"harder to fail this way again"| F
+```
+
+The nine classes and the seven-layer isolation step in the framework below are two views of one diagnosis. The layers (intent, context, model, tool, state, policy, evaluation) say *where in the lineage* the failure entered; the classes add the platform-side causes (orchestration, idempotency, permissions, infrastructure) that live between the layers and are the ones an application-minded team forgets to look for.
+
 ### The incident framework
 
-When a finding becomes an incident, the tower's loop needs a human procedure inside it. The framework Jay uses is eight steps:
+The framework wraps the procedure above in the eight steps Jay runs every incident through:
 
 **Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure**
 
@@ -306,7 +363,7 @@ The tower is used by tired people at bad hours. Colour never carries state alone
 | Response command not enforced | Acknowledgement without observed change | Separate acknowledgement and verification deadlines | Observed enforcement recorded |
 | Recovery causes regression | Post-recovery quality and outcome checks | Roll back the recovery | Independent re-verification |
 
-Two failure modes deserve prose. **Availability over containment**: the system cannot prove its current authority, configuration, or evidence and keeps running because stopping looks worse. When the factory cannot prove those three things, availability yields to containment. **Silent self-repair**: an anomaly detector adjusts a prompt, threshold, or route to make the alert go away. That is governance bypass wearing an automation badge; every change goes through the Improve stage and [governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md).
+Two failure modes deserve prose. **Availability over containment**: the system cannot prove its current authority, configuration, or evidence and keeps running because stopping looks worse. When the factory cannot prove those three things, availability yields to containment. **Silent self-repair**: an anomaly detector adjusts a prompt, threshold, or route to make the alert go away. That is governance bypass wearing an automation badge; every change goes through the Improve stage and [governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md). **False success**: a worker crashes after the side effect and before recording completion, a retry reports done, and the WorkOrder shows green over a duplicated effect or a half-finished one. The truthful blocked state was available and the system chose the reassuring one. Detect by reconciling reported completions against execution receipts; fix by making blocked and failed first-class terminal states that the UI shows without apology. **Repair that destroys evidence**: the responder restarts the worker, clears the queue, and reruns, and the forensic bundle is empty when the postmortem starts. Preserve first; the checklist order is the control.
 
 ## In Mission Control
 
@@ -323,6 +380,10 @@ Not implemented or proven: complete disaster recovery, regional failover, backup
 - Recovery is unproven until exercised. Autonomy promotion needs recent recovery evidence.
 - SLOs cover the factory's promises: admission, dispatch, durability, enforcement, verification, accepted outcomes, recovery, and cost. Error-budget burn restricts change and autonomy; safety and security incidents never draw on the budget.
 - The control tower is a projection, not a source of truth. Its loop is Observe → Evaluate → Detect → Triage → Respond → Verify → Improve, and it never silently rewrites prompts, policies, models, evaluators, or capabilities.
+- Agent platforms become infrastructure earlier than expected. A poor answer is a model failure; the platform must still be deterministic about what happened, what authority existed, what state changed, and how to recover. Probabilistic intelligence does not justify probabilistic infrastructure.
+- Mid-workflow recovery reads persisted state, never the model's memory: what completed, what side effects occurred, last safe checkpoint, what can resume. If resumption is unsafe, block truthfully and preserve evidence. The platform should know.
+- The incident procedure reduces blast radius without destroying evidence: pause the smallest unit (capability, definition, route, class); preserve state, traces, tool history, artifacts, policy decisions; name an owner; classify (model, context, tool execution, orchestration, idempotency, permissions, policy, evaluation, infrastructure); recover from the last safe state; make it permanent.
+- A truthful blocked state is better than a false success. A production failure should make the platform harder to fail the same way twice.
 - Incidents run Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure, and *Isolate* means naming which layer failed: intent, context, model, tool, state, policy, or evaluation. Closure requires independent verification, full reconciliation, a sealed bundle, and a change-controlled improvement.
 
 ## Go deeper
@@ -337,4 +398,4 @@ Not implemented or proven: complete disaster recovery, regional failover, backup
 - [Chapter 33, Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for the Improve stage.
 - Labs: [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md); [Factory disaster recovery](../appendix/labs/09-factory-disaster-recovery-lab.md); [Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md).
 - Primary references: NIST SP 800-34 Rev. 1, Contingency Planning Guide for Federal Information Systems (accessed 2026-08-30); Google SRE guidance on SLOs and error budgets.
-- Sources: Jay West, reliability and security round notes, the Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure framework, layer isolation, the incident scenario list, and production controls; Jay West, AI Software Factory mission, Workflow 5 (incident triage and RCA) and the task split between agents and humans.
+- Sources: Jay West, reliability and security round notes, the Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure framework, layer isolation, the incident scenario list, and production controls; Jay West, AI Software Factory mission, Workflow 5 (incident triage and RCA) and the task split between agents and humans; Jay West, factory architecture notes, on the production-incident procedure, mid-workflow recovery, reliability dimensions, and the model-failure versus platform-failure distinction.

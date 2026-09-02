@@ -2,9 +2,9 @@
 title: The factory in one view
 part: understand
 chapter: 2
-summary: The whole factory on one page — three definitions, the one-line value stream, the canonical layered stack from compute to control plane, the seven layers of Mission Control, the stage-by-stage lifecycle contract, the five platform commitments, and the capability model the rest of the book expands.
+summary: The whole factory on one page — three definitions and the five systems around them, the one-line value stream, the master whiteboard with its cross-cutting controls, the six architectural areas and the layer-ownership table, the canonical layered stack from compute to control plane, the seven layers of Mission Control, the stage-by-stage lifecycle contract, the five platform commitments, and the capability model the rest of the book expands.
 absorbs: [00-overview/01-ai-software-factory-and-mission-control.md, 00-overview/03-platform-blueprint-and-operating-playbook.md, 00-overview/04-intent-to-delivery-lifecycle.md, 00-overview/05-software-factory-stack-boundaries.md]
-infographics: [three-definitions, factory-in-one-line, layered-stack, seven-layers, lifecycle]
+infographics: [three-definitions, five-systems, factory-in-one-line, master-whiteboard, six-areas, layered-stack, seven-layers, lifecycle]
 ---
 
 # 2. The factory in one view
@@ -36,9 +36,26 @@ flowchart LR
     SF -->|"validated production value"| Out["Customer outcome"]
 ```
 
-The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities such as agents, skills, tools, model profiles, and configurations. The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value. **Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority; it is not the definition of the complete factory and should not absorb every execution or delivery responsibility into one service. The Agent Factory supplies parts; the software factory uses them to turn governed intent into value; Mission Control is one concrete control plane, studied with its gaps visible.
+The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities such as agents, skills, tools, model profiles, and configurations. The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value. **Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority; it is not the definition of the complete factory and should not absorb every execution or delivery responsibility into one service. The Agent Factory supplies parts; the software factory uses them to turn governed intent into value; Mission Control is one concrete control plane, studied with its gaps visible. Seen from Mission Control's side, the same three things stack as layers: a coding agent or harness performs bounded engineering work; the Software Factory is the production system around that work (workflow, execution environment, policies, budgets, verification, recovery, delivery contract) that repeatedly produces trusted change; and the control plane above coordinates missions and factories across projects, preserves durable state and authority, and routes scarce human attention. *The harness performs the work. The factory produces trusted change. The control plane governs authority and attention.* Harnesses stay replaceable execution backends; the governed delivery contract is what is not replaceable.
 
 Chapter 1's table separated assistant, agent, platform, and factory: an assistant leaves the governed lifecycle and outcome ownership outside its boundary; a coding agent leaves portfolio control, durable governance, and complete delivery lineage outside; an agent platform may still need a delivery operating model designed around it; a factory governs the path from intent to validated value while humans keep accountability and material risk decisions. Multi-agent orchestration must be available, but a simple job should use the simplest executor that satisfies its contract.
+
+### Five systems, five verbs
+
+Zoom out one step further and the three definitions sit inside five systems that any enterprise ends up running, whatever it calls them. Keeping them apart is the single most useful thing you can do before an architecture review, because each has a different owner, a different release clock, and a different failure signature.
+
+<!-- infographic: five-systems -->
+> **Infographic — Creates, executes, grounds, delivers, governs.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| System | One-word job | What it owns | Typical shape |
+| --- | --- | --- | --- |
+| Agent runtime (execution platform) | Executes | Model invocation, agent lifecycle, context assembly, state, tool discovery and execution, permissions, the loop, budgets, timeouts, checkpoints, recovery, observability, evaluation hooks, human intervention | Harness plus runtime; workflow engine for explicit-state or branching work; sandboxed workers; tracing and evals wired in |
+| Enterprise knowledge layer | Grounds | Ingestion and ETL with orchestration, normalise and chunk, hybrid lexical and vector retrieval, reranking, permission filtering, citations and provenance, freshness, retrieval evaluation, tracing | A retrieval service with its own pipeline, evals, and access control |
+| Agent Factory | Creates | Agent definitions, skills, tools and their registry, model configurations, context requirements, versioning, ownership, capability registry, publishing and discovery, deprecation, evaluation suites, policy, feedback | A catalogue with a lifecycle, not a folder of prompts |
+| Software Factory | Delivers | Builder intent → plan → task graph → capability routing → runtime → models, skills, tools → knowledge → generated change → verification and evaluation → evidence → human review → Git → CI/CD → production → observe → learn | The value stream this chapter draws |
+| Control plane (Mission Control) | Governs | Missions, Plans, WorkOrders, execution authority, verification, evidence, acceptance, delivery, and the routing of scarce human attention | The durable authority layer above harnesses and factories |
+
+*The Agent Factory creates. The runtime executes. Knowledge grounds. The Software Factory delivers. The control plane governs.* The Agent Factory can plug into the control plane as a capability source; the control plane never becomes the place where agents are authored, and the runtime never becomes the place where authority is decided. Two design rules follow. Use the lightest orchestration model that satisfies the workflow: a single-agent loop for most bounded work, an explicit-state workflow engine only where branching, waiting, and parallelism make state a first-class problem. And choose implementation language per subsystem, not by ideology: the retrieval pipeline, the runtime, and the control plane have different ecosystems, and a factory that forces one language on all five systems pays for the purity in every one of them.
 
 ### The factory in one line
 
@@ -62,6 +79,92 @@ flowchart LR
 ```
 
 The line is a value-stream mnemonic, not a call graph. Skills are selected and frozen before execution, then applied inside the harnessed loop. Improvement consumes evaluation and production evidence to create governed candidates for future runs; it cannot self-promote or mutate the active Attempt. *Define Agent* means binding an approved, versioned Agent Definition to the work, not inventing an agent per task. *Deliver Software* begins with an authorized delivery decision and ends with observed technical and customer outcomes. A slogan hides feedback and concurrency; a full state machine is too complex as an entry point; so use the mnemonic for orientation and the lifecycle contract below for design and operations. The factory is not an AI coding assistant. It is the platform and control system that makes agentic software engineering repeatable, governed, measurable, and scalable across thousands of engineers.
+
+Each stage has its own page with the full contract, records, and failure modes. Click a stage: [1. Builder intent](../stages/01-builder-intent.md) · [2. Plan](../stages/02-plan.md) · [3. Define agent](../stages/03-define-agent.md) · [4. Execute through harness](../stages/04-execute-through-harness.md) · [5. Apply skills](../stages/05-apply-skills.md) · [6. Evaluate](../stages/06-evaluate.md) · [7. Improve](../stages/07-improve.md) · [8. Deliver software](../stages/08-deliver-software.md).
+
+Two shorter hooks carry the same stream when you need it from memory. The seven-verb form is **Intent → Plan → Route → Execute → Verify → Deliver → Learn**, which adds the routing decision the eight-stage line folds into *Define Agent*. The ten-verb form, **Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale**, is organised by capability rather than by sequence: understand intent, plan it, execute through a harness, equip the agent with skills and tools, ground it in governed context, route to the right model, verify with evidence, learn from outcomes, protect the whole thing with security and reliability, and scale it across builders. The whole factory in one sentence: it understands intent, creates a governed plan, executes it through a durable harness using the right models, skills, tools, and context, verifies the outcome with evidence, delivers it according to risk, and learns from production, while keeping authority outside the model.
+
+### The master whiteboard
+
+Before the layered stack, here is the version you would draw top to bottom on a whiteboard if someone asked what the factory actually does to a piece of work. It is longer than the one-line mnemonic because it shows where risk, evidence, and delivery sit, and it puts the controls where they belong: alongside everything, not in a box at the end.
+
+<!-- infographic: master-whiteboard -->
+> **Infographic — The master whiteboard.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Top["Understand and structure the work"]
+        B["Builders<br/>developer · PM · QA · designer · agent"] --> BI["Builder intent"]
+        BI --> OC["Objective + constraints"]
+        OC --> PA["Plan + acceptance criteria"]
+        PA --> TG["Task / dependency graph"]
+        TG --> RT["Capability, agent, and model routing"]
+    end
+    subgraph Middle["Intelligence and execution"]
+        RT --> H["Agent harness<br/>durable execution and state"]
+        H --> MTS["Models · tools and MCP · skills"]
+        MTS --> CK["Context and knowledge (RAG)"]
+        CK --> CAND["Candidate: generated change or action"]
+    end
+    subgraph Bottom["Trust and delivery"]
+        CAND --> RC["Risk classification"]
+        RC --> QS["Quality-signal aggregation"]
+        QS --> EV["Evaluation and independent verification"]
+        EV --> AP["Evidence + review / approval"]
+        AP --> SCM["SCM · CI/CD · artifacts"]
+        SCM --> PD["Progressive delivery"]
+        PD --> PE["Production evals + drift monitoring"]
+    end
+    PE --> OUT["Outcomes + feedback"]
+    OUT --> LI["Learning / improvement"]
+    LI -.->|"governed promotion"| RT
+    LI -.->|"new criteria, controls"| PA
+    X["Cross-cutting: identity · authorization · policy · security · cost · reliability · observability · evidence"]
+    X -. constrains every box .-> Top
+    X -. constrains every box .-> Middle
+    X -. constrains every box .-> Bottom
+```
+
+Read it in four bands. The top understands and structures the work: a builder's intent becomes an explicit objective with constraints, then a plan with acceptance criteria, then a task graph, then a routing decision about which capability should do each piece. The middle provides intelligence and execution: a harness that owns durable state runs models, tools, and skills against governed context and produces a candidate. The bottom establishes trust and delivers: the candidate is risk-classified, its quality signals are aggregated, it is independently verified, the evidence goes to review or approval, and only then does it flow into the ordinary supply chain of source control, CI/CD, artifacts, and progressive delivery, followed by production evaluation and drift monitoring. The loop at the end improves the next run. Identity, authorization, policy, security, economics, reliability, observability, and evidence are cross-cutting controls; a whiteboard that draws them as the last box has already lost the argument, because a control applied only at the end cannot stop an unauthorised tool call in the middle.
+
+The compact version fits on one line and is worth being able to reproduce: builder intent → specification and plan → agent harness → context, memory, and state → model routing → agents, skills, and tools → isolated execution → verification and evaluation → evidence → human and policy gates → delivery → outcome signals → feedback and improvement, and around again. Two principles fall out of the picture. *The model is a component; the factory is the system.* And *the model does not own the workflow; the platform does.* Models change constantly, and the strategic value is never any one of them; the durable asset is the system around them: harness, context, skills, tools, evaluation, security, observability, execution, and learning. That is also the compounding argument for building a factory at all: when one team discovers a better skill, context strategy, evaluation method, or execution pattern, the factory turns it into a reusable capability for every builder, so the whole engineering organisation gets better with every cycle.
+
+### Six architectural areas and who owns each layer
+
+The whiteboard is a flow. The same system cut by responsibility gives six architectural areas, which is the cut to use when assigning teams, because each area has a distinct kind of expertise and a distinct failure signature.
+
+<!-- infographic: six-areas -->
+> **Infographic — The six architectural areas.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Area | What it covers | Fails as |
+| --- | --- | --- |
+| Intent layer | Goal understanding; requirements through spec-driven and test-driven development; acceptance criteria; planning; task decomposition | An agent efficiently solving the wrong problem |
+| Harness | Execution loop, agent lifecycle, tool orchestration, state, checkpointing, recovery | Work that lives only in model context and cannot resume |
+| Capability layer | Agent definitions, skills, tools, MCP, context services | Prompts without contracts; tools without governance |
+| Model layer | Model abstraction, capability matching, routing, cost, latency, and quality tradeoffs | Vendor names in the architecture; no re-evaluation on switch |
+| Trust layer | Evaluation, verification, policy, security, observability, human oversight | Agents certifying their own work; review that cannot scale |
+| Learning layer | Outcome signals, failure taxonomy, experimentation, baseline comparison, controlled improvement | Learning that silently promotes itself |
+
+The thesis under all six is *trust the system, not the model*. The durable value is the harness, context, tools, skills, execution, state, identity, permissions, evaluation, verification, observability, recovery, feedback, and governance; a stronger model improves every one of those without replacing any of them. Zoom in once more and the areas resolve into fourteen layers, each with an owner:
+
+| Layer | Owns |
+| --- | --- |
+| Experience | CLI, IDE, APIs, developer workflows; every surface converges on one execution contract |
+| Intent | Goals, specifications, acceptance criteria |
+| Harness | Execution loop, state, orchestration |
+| Agents | Definitions, roles, capabilities |
+| Context | Retrieval, memory, state, provenance |
+| Models | Abstraction and routing |
+| Tools | MCP, APIs, Git, engineering systems |
+| Skills | Reusable, bounded capabilities |
+| Execution | Sandboxing, isolation, checkpoints |
+| Governance | Identity, permissions, policies |
+| Evaluation | Evals, graders, regression |
+| Observability | Traces, telemetry, costs |
+| Recovery | Retry, resume, rollback |
+| Improvement | Outcome-driven feedback loops |
+
+The ownership rule for the whole table is the one that keeps a platform team from drowning: domain teams own their business workflows, and the platform centralises the expensive, risky, undifferentiated capabilities every team would otherwise rebuild. Identity, the model gateway, the harness, tool governance, the skills framework, evaluation infrastructure, observability, cost attribution, and evidence interfaces are central; domain skills, product knowledge, specialised agents, product-specific acceptance criteria, and differentiated workflows are federated. [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) turns that rule into an operating model.
 
 ### The system map
 
@@ -307,11 +410,16 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Mission Control's seven layers are intent, planning, execution, validation, governance, human decision, and learning; the whiteboard version is five bands with humans at five decision points.
 - Every stage has a contract, every transition has a record, and lower-level completion never accepts a higher-level outcome.
 - The five commitments: builder intent is the interface; models are interchangeable; the harness makes reliability; agents do not certify their own work; learning is automated and promotion is governed.
+- Five systems, five verbs: the Agent Factory creates, the runtime executes, knowledge grounds, the Software Factory delivers, the control plane governs. Use the lightest orchestration that satisfies the workflow; choose language per subsystem.
+- The master whiteboard has four bands (understand and structure; intelligence and execution; trust and delivery; learn) and its controls are cross-cutting, never a final box.
+- The model is a component; the factory is the system. The model does not own the workflow; the platform does. Trust the system, not the model.
+- Six architectural areas (intent, harness, capability, model, trust, learning) and fourteen owned layers; the platform centralises undifferentiated, risky capability and domain teams federate their workflows.
+- Memory hooks: Intent → Plan → Route → Execute → Verify → Deliver → Learn; Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale.
 
 ## Go deeper
 
 - [Chapter 3](./03-first-principles-trust-evidence-and-authority.md) for autonomy levels and trust; [Chapter 5](../02-design/05-authoritative-records.md) for the record spine in full; [Chapter 10](../03-build/10-the-agent-factory.md), [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md), [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md), and [Chapter 14](../03-build/14-development-environments-sandboxes-and-compute.md) for each layer of the stack; [Chapter 19](../03-build/19-the-12-layer-production-ai-agent-stack.md) for the AI-engineering cut of the same system.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), [implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), and [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md); [Appendix F](../appendix/architecture-communication.md) for executive versions of this chapter's diagrams; the [glossary](../appendix/glossary.md) for the canonical terms (AI Software Factory, Agentic Builders Experience, model-independent, Agent Harness, Agent Definition, Execution Loop, Tool Integration, Context Management, Control Mechanism, Execution Environment, Evaluation System, Feedback System, Self-improvement, Skills Framework, Autonomous Agent, Builder Intent, Task Decomposition, Build vs. Buy, Agentic Standards).
 - Labs: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md) exercises the golden path; [Capstone architecture and executive defense](../appendix/labs/02-capstone-architecture-and-executive-defense.md) has you draw a composed stack, mark every identity, contract, event stream, credential, policy decision, fallback, and failure owner, replace the inner harness without changing acceptance authority, and produce one intent record, Plan, binding, manifest, completion report, evaluation contract, delivery decision, observation plan, and Improvement Proposal for a single bounded change.
-- Sources: Jay West, *AI Software Factory Mission* (seven layers, twelve-state lifecycle); *AI Software Factory Interview Study Guide*, chapter 24 (five-layer whiteboard); Jay West, "Key terms and definitions" and "Factory in one line" notes (five commitments, capability taxonomy, canonical terms); HumanLayer × BAML livestream, "Software factory design patterns" (five-layer stack, build versus buy, composition over inheritance, the dev-environment argument, the underserved control plane).
+- Sources: Jay West, *AI Software Factory Mission* (seven layers, twelve-state lifecycle); *AI Software Factory Study Guide*, chapter 24 (five-layer whiteboard); Jay West, "Key terms and definitions" and "Factory in one line" notes (five commitments, capability taxonomy, canonical terms); Jay West, factory architecture notes (master whiteboard, six architectural areas, layer-ownership table, five-system distinction, memory hooks); HumanLayer × BAML livestream, "Software factory design patterns" (five-layer stack, build versus buy, composition over inheritance, the dev-environment argument, the underserved control plane).
 - Primary references carried from v1: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [domain contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [orchestration architecture decision](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/001-orchestration-architecture.md), [React entry point](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/main.tsx), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Hono orchestration service](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/index.ts); [Anthropic, Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic, Trustworthy Agents in Practice](https://www.anthropic.com/research/trustworthy-agents); [OpenAI, A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/); [OpenAI, Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/); [OpenAI, Harness Engineering](https://openai.com/index/harness-engineering/); [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28); [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework); [NIST SSDF](https://csrc.nist.gov/projects/ssdf); [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/initiatives/agentic-security-initiative/); [SLSA Provenance 1.2](https://slsa.dev/spec/v1.2/provenance).

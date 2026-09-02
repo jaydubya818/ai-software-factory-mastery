@@ -33,15 +33,15 @@ Jay's security thesis compresses the whole response into one sentence:
 
 Start with what must be protected: source, secrets, customer data, credentials, artifacts, evidence, policy, registry entries, memory, and human attention. Then mark the trust boundaries the agent crosses: user input, repository content, retrieved knowledge, MCP servers, agent peers, models, sandboxes, the control plane, and external systems.
 
-The threats a factory must prepare for, merging Jay's list with the agentic abuse cases:
+Security design starts with the threat model, not with a control catalog, because a control that does not map to a threat is either decoration or friction. The threats a factory must prepare for, merging Jay's list with the agentic abuse cases:
 
 - **Prompt injection**: goal or instruction hijacking through direct or indirect injected text.
-- **Malicious repository content**: files, issues, or documentation crafted to steer the agent.
-- **Secret exfiltration**: credentials leaving through prompts, logs, outputs, artifacts, encoded channels, or side channels.
-- **MCP tool poisoning**: malicious tool descriptions, schema manipulation, or poisoned tool output.
+- **Malicious repository content** and **poisoned context**: files, issues, documentation, or retrieved knowledge crafted to steer the agent.
+- **Data and secret exfiltration**: credentials or sensitive data leaving through prompts, logs, outputs, artifacts, encoded channels, or side channels.
+- **Tool abuse** and **MCP tool poisoning**: a legitimate tool driven to an illegitimate end; malicious tool descriptions, schema manipulation, or poisoned tool output.
 - **Privilege escalation**: identity, credential, or tenant-boundary abuse; excessive agency and unsafe action composition.
-- **Unauthorized file changes**: edits outside the WorkOrder's path scope, including to tests, CI, or policy.
-- **Sandbox escape**: unexpected code execution reaching the host or network.
+- **Unauthorized file changes** and **cross-repository access**: edits outside the WorkOrder's path scope, including to tests, CI, or policy; reads or writes to repositories the task was never scoped to.
+- **Unsafe code execution** and **sandbox escape**: generated or retrieved code run without containment; unexpected execution reaching the host or network.
 - **Human-approval bypass**: approval deception, evaluator manipulation, or evidence tampering that makes a gate look satisfied.
 - **Supply-chain compromise**: of agents, skills, prompts, models, packages, tools, builders, or registries.
 - **Cross-organization data leakage**: context, memory, or retrieval crossing tenant or product-line boundaries.
@@ -79,6 +79,28 @@ flowchart LR
 ```
 
 Prompt injection is not merely a text-filtering problem. It is an authority-confusion problem whose impact depends on the tools, identity, memory, and control system surrounding the model. The variant that matters most in a factory is **indirect prompt injection**: adversarial instructions embedded in content the agent retrieves or observes (a README, an issue comment, a web page, a tool result) rather than supplied as the direct user request. Untrusted content cannot grant authority or alter policy, however imperative its phrasing, and the runtime is what enforces that.
+
+### Controls that live outside the model
+
+The threat model shares one assumption across every entry: the model will sometimes be wrong, and what it reads will sometimes be hostile. The design response is to place every control that matters where the model cannot reach it. Enforced outside the model, per run:
+
+| Control | What it guarantees |
+| --- | --- |
+| Workload identity per run | Every action is attributable to one Attempt, not to "the agent" |
+| Least-privilege tools | The tool profile grants only the capabilities this task needs |
+| Scoped repository and resource access | The run can touch these repositories, paths, and resources and no others |
+| Isolated execution environment | Mistakes and escapes are contained |
+| Short-lived credentials | A leaked token is worthless minutes later |
+| Controlled network egress | Exfiltration has nowhere to go |
+| Typed, validated tool calls | Arguments are checked before any effect |
+| Retrieved content treated as untrusted | Data cannot become instruction |
+| Policy gates | Consequential actions are authorized deterministically |
+| Evidence and audit | Every consequential action leaves a record |
+| Risk-based human authority | Blast radius, not confidence, decides when a person must approve |
+
+None of these depends on the model behaving well. That is the point. A model reasons probabilistically, and a reasoning process that is right most of the time is still the wrong place to put an authorization decision. *Probabilistic reasoning should never imply probabilistic authorization.* The model may want to run a command, open a file, or call an API; whether that happens is decided by identity, scope, and policy in a system that does not reason at all. *The model proposes. Policy authorizes.*
+
+Security, in other words, cannot be a review that happens after the work is done. By then the run has already had whatever access it had. *Security can't be an approval meeting at the end; it's part of the execution contract.*
 
 ### Authenticate the principal, authorize the action, attest the execution
 
@@ -133,6 +155,14 @@ Repository files, issues, web pages, MCP resources, tool results, logs, and memo
 
 The runtime should label external content as data, constrain its size and format, strip active content where possible, scan it for secrets, and prevent it from changing system instructions or tool policy. Tool responses are validated before they enter context or authoritative state.
 
+### Prompt injection is contained, not solved
+
+No prompt wording solves injection. The working assumption is that anything the agent retrieves — tickets, documentation, source code, comments, web pages — may be hostile, and the design goal is to make a successful injection cheap rather than to make injection impossible. That follows from one rule: **content cannot grant authority.** A malicious document can influence what the model *wants* to do. It cannot expand the tool permissions, the repository scope, the credentials, the identity, or the network access of the run, because none of those live inside the model where the document can reach them.
+
+Four practices make the rule hold in practice. Separate instructions from retrieved data, so the model can tell which channel it is reading from and the runtime can enforce precedence. Annotate provenance on every piece of content so its trust level travels with it. Constrain the tools a run may call to what its task needs. Validate high-risk actions deterministically before they execute, regardless of how confident the model sounds about them.
+
+The measure of success is what an injection costs the organization. In a factory built this way, an injected instruction that the model follows produces a failed or wasted run — the agent tried to do something out of scope, the runtime refused, the Attempt is marked and the evidence retained. It does not produce a security incident, because the agent never held the authority to cause one. *The agent's permissions should never expand because of something it reads.*
+
 The trust level of an input should decide the isolation level of what runs on it. The HumanLayer and BAML teams describe the reasoning plainly in their software-factory discussion: raw feedback from a user is completely untrustworthy, so it is never executed; their own prompts turn that feedback into a reproduction case, and the reproduction is something they trust, so it can run directly on their machines without a hardened container. Whether you accept that specific choice or not, the method is right. Ask where the bytes came from, what transformed them, and who vouches for the transformation, and set the sandbox accordingly. [Chapter 14](../03-build/14-development-environments-sandboxes-and-compute.md) covers the isolation options; [Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) covers the feedback-to-repro pipeline.
 
 ### Constrain tools at execution time
@@ -142,6 +172,30 @@ Tools are privilege boundaries. Use typed schemas, allowlists, resource scoping,
 Around the model's decisions, add defense in depth: content provenance, trust labeling, context segmentation, instruction precedence, least privilege, sandboxing, policy checks, budgets, anomaly detection, independent verification, and human authority. A model-based guardrail may add signal; it is never the sole enforcement boundary.
 
 Memory changes incident scope. An injected instruction that lands in durable memory or a retrieval index persists beyond the run that introduced it and can affect every future run that reads it. Memory writes need the same provenance labeling as any other content, and quarantine must be able to reach them. [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) covers the knowledge side.
+
+### The execution environment is a security boundary
+
+Where a run executes matters as much as what it may call. Each run gets a bounded, reproducible environment whose properties are frozen in the execution manifest before the worker starts:
+
+| Field | What it fixes |
+| --- | --- |
+| Repository revision | The exact commit the run operates on |
+| Approved tools | The tool set admitted for this run |
+| Scoped credentials | Attempt-scoped tokens naming exact resources |
+| Filesystem boundaries | Which paths may be read and which written |
+| Network policy | Which egress, if any, is allowed |
+| Dependencies | Pinned versions the run may install or use |
+| Resource limits | CPU, memory, disk, and concurrency caps |
+| Timeouts | When the run is stopped regardless of progress |
+| Auditing | What is recorded and where it goes |
+
+The environment does four jobs at once. Isolation is the security job. Reproducibility is what lets a verifier or an investigator rerun what happened. Containment limits what a mistake can reach. Consistency with downstream delivery means the run's environment matches the one the change will be built and deployed in, so "works in the sandbox" is evidence rather than folklore. The discipline is to treat autonomous execution like running untrusted code, because that is what it is: no ambient laptop access, no inherited developer credentials, no reaching whatever the host can reach.
+
+The environment also has to be fast. If provisioning takes long enough that the safe path feels bureaucratic, people route around it, and the unsafe path becomes the real one. *Fast prototyping and strong guardrails aren't opposites if the guardrails are built into the environment.* More autonomy should mean narrower execution boundaries, not broader ambient access. [Chapter 14](../03-build/14-development-environments-sandboxes-and-compute.md) covers the mechanics.
+
+### Data classification is frozen into the contract
+
+Not all data a run touches carries the same consequence, and the run should know which kind it is holding before it starts. Classify at four levels — **PUBLIC**, **INTERNAL**, **CONFIDENTIAL**, **RESTRICTED** — and freeze the classification of the run's inputs and permitted outputs into the execution contract alongside its repository scope, capability set, policy, and budget. The classification then governs which models are eligible (a provider approved for INTERNAL data may not see CONFIDENTIAL), which retrieval sources may be assembled into context, where logs and artifacts may be stored, and what egress is allowed. A run bound to RESTRICTED data does not get to discover, halfway through, that a convenient tool would send that data somewhere else; the binding was decided before the model reasoned about anything. Model eligibility by data class is one input to routing in [Chapter 17](../03-build/17-models-routing-and-capability-selection.md).
 
 ### Secrets stay out of context and evidence
 
@@ -320,6 +374,12 @@ Use the incident frame from [Chapter 29](../05-operate/29-resilience-incidents-a
 
 **Policy-as-code without owners.** Rules run, but no one can explain the exception or produce the audit artifact. Control ownership stays explicit.
 
+**Authorization inside the model.** The prompt tells the agent which actions are allowed and the runtime trusts it to comply. Detect it by asking what stops a disallowed tool call if the model decides to make one. Fix by moving identity, scope, and policy enforcement outside the model.
+
+**Security as the last meeting.** The security review happens after the run, when the access has already been exercised. Detect it by runs whose scope, credentials, and data class were not fixed before dispatch. Fix by freezing them into the execution contract.
+
+**Ambient access.** The worker runs on a developer machine or with inherited credentials because provisioning an isolated environment was slow. Detect it by comparing the run's actual reach with its manifest. Fix by making the isolated environment fast enough to be the default.
+
 **Configuration documents mistaken for evidence.** A security design that exists on paper is not an enforced control. Promotion requires negative tests and runtime proof.
 
 ## In Mission Control
@@ -337,7 +397,11 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - Minimum context, tools, permissions, time, and budget for the task; evidence for every consequential action.
 - Authenticate the principal, authorize the action, attest the execution. Five principal types, none of them a shared "system" user.
 - Identity is not authority. Authority is a short-lived, attempt-scoped credential minted after policy, and the identity chain says who delegated it.
-- Content is not authority. Repository text, tool output, web pages, and memory are data; the deterministic control plane computes what is allowed. Prompt injection is an authority-confusion problem.
+- Content is not authority. Repository text, tool output, web pages, and memory are data; the deterministic control plane computes what is allowed. Prompt injection is an authority-confusion problem, and in a well-built factory a successful injection is a wasted run, not an incident.
+- Start with the threat model; place every control outside the model. Probabilistic reasoning should never imply probabilistic authorization. The model proposes; policy authorizes.
+- The execution environment is a frozen security boundary: revision, tools, credentials, filesystem, network, dependencies, limits, timeouts, auditing. Autonomy comes with narrower boundaries, not broader ambient access.
+- Data classification — PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED — is frozen into the execution contract and governs model eligibility, retrieval, storage, and egress.
+- Security can't be an approval meeting at the end; it's part of the execution contract.
 - The trust level of an input decides the isolation level of what runs on it: raw feedback is untrusted; a generated, vouched-for repro can be trusted.
 - Tools are privilege boundaries; memory can persist an attack beyond one run.
 - Secrets go to the process, never to the prompt, the log, or the evidence. Audit the secret's version, not its value. Audit denials.

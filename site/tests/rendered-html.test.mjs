@@ -131,6 +131,12 @@ test("reading sequence runs front matter → chapters → appendices", async () 
   assert.match(frontMatter, /Front matter/);
   assert.match(frontMatter, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "front matter links forward to chapter 1");
 
+  const stageOne = await htmlFor("/docs/stages/01-builder-intent");
+  assert.match(stageOne, /Stage 1/);
+  assert.match(stageOne, /href="\/docs\/stages\/02-plan"/, "stage 1 links forward to stage 2");
+  const stageEight = await htmlFor("/docs/stages/08-deliver-software");
+  assert.match(stageEight, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "stage 8 links forward to chapter 1");
+
   const last = await htmlFor(`/docs/${chapterSlugs[36]}`);
   assert.match(last, /Chapter 36/);
   assert.match(last, /href="\/docs\/appendix\//, "chapter 36 links forward into the appendix");
@@ -201,4 +207,14 @@ test("keeps requested exclusions out of public routes", async () => {
   const excluded = new RegExp(`\\b(?:${terms.join("|")})\\b`, "i");
 
   for (const route of routes) assert.doesNotMatch(await htmlFor(route), excluded);
+});
+
+test("home and TOC expose the eight clickable stages", async () => {
+  const home = await htmlFor("/");
+  for (const slug of ["01-builder-intent", "02-plan", "03-define-agent", "04-execute-through-harness", "05-apply-skills", "06-evaluate", "07-improve", "08-deliver-software"]) {
+    assert.match(home, new RegExp(`href="/docs/stages/${slug}"`), `home links to stage ${slug}`);
+  }
+  const toc = await htmlFor("/guide");
+  assert.match(toc, /8 stages/);
+  assert.match(toc, /href="\/docs\/stages\/06-evaluate"/);
 });

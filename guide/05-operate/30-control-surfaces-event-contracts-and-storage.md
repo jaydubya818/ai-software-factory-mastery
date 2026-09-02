@@ -4,7 +4,7 @@ part: operate
 chapter: 30
 summary: How operators see, direct, interrupt, and judge autonomous work through decision-oriented surfaces, and how the factory's triggers, events, workflow versions, and stores are contracted so that what the operator sees is true.
 absorbs: [factory-platform-engineering/04-human-agent-control-surfaces-and-operator-experience.md, factory-platform-engineering/05-workflow-event-contracts-and-factory-storage.md]
-infographics: [operator-surface, event-contract, decision-packet]
+infographics: [operator-surface, command-center, decision-packet, execution-contract, event-contract]
 ---
 
 # 30. Control surfaces, event contracts, and storage
@@ -28,6 +28,8 @@ The second half of the problem is quieter. A factory integrates issue trackers, 
 The first principle of a control surface is that it renders records; it does not become one. Authority lives in the control plane's durable state (chapter [11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)): the approved Plan version, the policy decision, the lease, the approval record. The interface computes, from those records, what is true right now, what is fresh, and which actions are safe, and shows that calmly. An agent may explain its own contract and uncertainty on screen, and that is useful, but the interface calculates authority, evidence freshness, and the set of safe actions from the records, not from what the agent says about itself.
 
 The analogy is an aircraft cockpit rather than a chat log. A pilot does not read the engine's raw telemetry; the instruments summarise it into a handful of authoritative states and a small number of decisions. The instruments do not fly the aircraft. They make the state legible enough that the accountable person can.
+
+The same rule applies to the numbers on the instruments. Observability and evaluation are diagnostic: a dashboard score, an evaluation pass rate, or a trend line can tell a person that a WorkOrder is probably fine, and it can inform the policy that decides how much evidence a risk class requires. What it must never do is accept the WorkOrder by itself. A score of 0.94 is not an approval record, and the moment a threshold on a chart starts advancing work without a validator and a decision record behind it, the chart has become an unaudited authority. *Metrics can inform authority; they should not quietly become authority.* [Chapter 28](./28-observability-telemetry-and-forensics.md) draws the same line from the telemetry side.
 
 ### Design around decisions and state
 
@@ -65,6 +67,44 @@ The **evidence review** surface maps each acceptance criterion to fresh proof. I
 
 The **recovery view** appears when something has failed. It names the failure class, the retained state, whether a retry is eligible under the retry budget, whether the hypothesis behind the work has changed, what cleanup is needed, and who owns the next step, in the incident vocabulary of chapter [29](./29-resilience-incidents-and-the-control-tower.md).
 
+### The exception-first Command Center
+
+The seven surfaces answer "what is this run doing?" The **Command Center** answers a different question, the one an operator with forty WorkOrders in flight actually has: "what needs me?" It is the home screen, and it is deliberately not an activity feed. Activity feeds are what you build when you assume the operator wants to watch agents work. Nobody supervising forty of them wants that; they want the short list of things that cannot proceed without a person.
+
+So the Command Center is **exception-first**. It surfaces exactly seven conditions and hides the rest:
+
+| Condition | Why a person is needed |
+| --- | --- |
+| Blocked | A run has stopped at a gate it cannot pass on its own |
+| Failed verification | The candidate exists and the evidence says no |
+| Over budget | Spend, time, or retries exceeded the reservation |
+| Changed from the approved Plan | Execution diverged from the revision a human approved |
+| Stale evidence | The subject moved and the proof no longer binds to it |
+| Ready for acceptance | Verification passed; only authority is missing |
+| Consequential decision needed | An action whose blast radius policy reserves for a human |
+
+Everything else (runs executing normally, tools being called, tokens being spent) is available one click down, and is not on the home screen. *The scarce resource is not agents; it is human attention.* A hundred agents and one operator is a fine ratio if the operator only ever sees the seven conditions above; it is an impossible ratio if the operator is expected to watch. The shift is from supervising activity to managing exceptions and authority, and the screen has to enforce it, because an operator offered a feed will read the feed.
+
+<!-- infographic: command-center -->
+> **Infographic — The exception-first Command Center.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+  RUNS["All WorkOrders and Attempts"] --> FILTER{"Exception filter"}
+  FILTER -->|"blocked"| CC["Command Center"]
+  FILTER -->|"failed verification"| CC
+  FILTER -->|"over budget"| CC
+  FILTER -->|"changed from Plan"| CC
+  FILTER -->|"stale evidence"| CC
+  FILTER -->|"ready for acceptance"| CC
+  FILTER -->|"consequential decision"| CC
+  FILTER -.->|"executing normally"| BG["Available on demand, not shown"]
+  CC -->|"each item is a decision packet"| H(("Operator"))
+```
+
+The Command Center is also where the sequence of states the factory insists on becomes visible as separate rows rather than one green tick. *Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified.* "Ready for acceptance" and "failed verification" are different exceptions because they are different states with different owners, and a home screen that merged them would be lying by summary.
+
 ### Make status precise
 
 Status words are contracts. A run is *awaiting plan approval*, *queued for capacity*, *executing*, *awaiting input*, *independently verifying*, *blocked by stale evidence*, *eligible for release*, *observing outcome*, or *quarantined*. Each of those is a state in the durable state machine of chapter [12](../03-build/12-durable-execution.md), and each tells the operator both what is happening and who, if anyone, is on the hook. "Thinking" is not an operational status. It tells the operator nothing about authority, blockers, or what comes next, and it invites the false urgency of watching a spinner.
@@ -97,6 +137,8 @@ flowchart TB
   H -->|"recorded decision"| CP[("Approval / decision record")]
 ```
 
+What goes in the packet is not negotiable downward. A reviewer asked to approve a change gets the Plan it was executed against, the diff, the risk class, the tests and their results, the evaluation results, the policy decisions that fired, and the evidence bound to the exact candidate; not an approve button with a summary sentence above it. The reason is the one chapter [7](../02-design/07-governance-policy-and-risk-proportional-approval.md) gives for risk-based authority: a human asked to approve after every action without evidence will rubber-stamp, and rubber-stamping is worse than no gate because it looks like one. The corollary is that the human should never be compensating for missing automation. If the packet cannot show the test results because nothing ran the tests, the fix is to run the tests, not to ask a person to imagine them.
+
 A decision packet also enforces the distinction between rejecting and requesting a revision. Rejection ends the proposal and records why. Request-revision keeps the Plan alive and sends it back with a specific ask. Collapsing the two loses the record of what the human actually wanted, and it is exactly the kind of loss that chapter [33](../06-improve/33-governed-learning-and-compounding-engineering.md) later needs to mine.
 
 ### Preserve safe human control
@@ -116,6 +158,35 @@ Chapter [8](../02-design/08-economics-metrics-and-human-attention.md) argued tha
 ### Tradeoffs: detail, chat, and structure
 
 More detail means more transparency and more cognitive load; the resolution is progressive disclosure, decision summary first, trace and artifacts on demand. Chat is flexible and good for clarification but poor at showing parallel state and evidence lineage; structured interfaces are clear and can feel rigid. The workable combination is a structured surface that permits conversational clarification, with the rule that a conversation never bypasses the records. When a chat exchange changes the plan materially, it creates a new Plan revision, exactly as an intervention would.
+
+### One execution contract, many interfaces
+
+Operators are not the only people who reach the factory, and the screen is not the only door. A developer arrives through the CLI or an IDE plugin; a product manager through a web form; a platform team through an SDK; a scheduled job through the API; another agent through an agent-to-agent call. The temptation is to build each door as its own small product with its own notion of a run. The rule that prevents that is: be opinionated about the contract and flexible about the interface. Every door, whatever it looks like, produces the same durable concepts, and the control plane recognises nothing else:
+
+- an **identity** (who or what is asking, and on whose behalf);
+- an **intent** (the Mission or Spec being pursued);
+- an **Agent Definition** (which versioned capability contract will run);
+- an **execution** (the Attempt, with its manifest and lease);
+- a **tool authorization** (what the run may touch);
+- **evidence** and **evaluation** (what proved the result); and
+- a **trace** (the lineage that makes the run debuggable).
+
+<!-- infographic: execution-contract -->
+> **Infographic — Many interfaces, one execution contract.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+  CLI["CLI"] --> XC
+  IDE["IDE plugin"] --> XC
+  UI["Web UI"] --> XC
+  SDK["SDK"] --> XC
+  API["API / cron / webhook"] --> XC
+  A2A["Agent-to-agent"] --> XC
+  XC["One execution contract:<br/>identity · intent · Agent Definition · execution · tool authorization · evidence · evaluation · trace"] --> CP[("Control plane")]
+```
+
+*Multiple experiences should converge on one execution contract.* The practical test is that a run started from the CLI and a run started from the UI are indistinguishable in the control plane's records, and that a policy written once governs both. When that holds, adding a new interface is a week's work; when it does not, every interface is a new place for authority to leak.
 
 ### Underneath the surface: triggers are intake, not authority
 
@@ -239,6 +310,12 @@ A single database simplifies transactions and becomes a scaling and retention bo
 
 **Status theatre.** The screen shows "in progress" for a run that is blocked on a stale-evidence check nobody has been told about. Detect it by comparing displayed status against the state machine; fix it by forbidding any status word that is not an authoritative state.
 
+**The activity feed as home screen.** The default view streams everything every agent is doing, the operator learns to skim, and the one blocked run scrolls past. Measure how many home-screen items required no action; make the Command Center exception-first and move activity one click down.
+
+**The dashboard that approves.** A threshold on an evaluation score advances WorkOrders with no validator and no decision record. Audit what each transition consumed as input; anything that is a metric rather than an evidence receipt is an unaudited authority.
+
+**The interface that owns a concept.** The CLI has its own idea of a run that the UI cannot see, or a scheduled job bypasses the Agent Definition. Check that every entry point produces the same seven records; a door that produces fewer is a hole.
+
 **The undifferentiated approve button.** A reviewer approves a plan, an exception, and a release through the same control, and the audit record cannot say which. Split decision types at the record level, not the button label.
 
 **Notification storms.** Retries and duplicate events each page the shepherd, who mutes the channel. The attention metrics (unnecessary interrupts, false urgency) show it; envelope-based deduplication and severity-aware routing fix it.
@@ -257,7 +334,7 @@ A single database simplifies transactions and becomes a scaling and retention bo
 
 ## In Mission Control
 
-At the studied commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), a React/Vite application provides the operator surfaces, Convex owns authoritative durable state and server-side transitions, and a Hono orchestration service hosts execution adapters and provider boundaries. Product doctrine favours an exception-first operator experience over agent activity feeds, which is the right instinct for this chapter.
+At the studied commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), a React/Vite application provides the operator surfaces, Convex owns authoritative durable state and server-side transitions, and a Hono orchestration service hosts execution adapters and provider boundaries. Product doctrine favours an exception-first operator experience over agent activity feeds, which is the right instinct for this chapter; the seven-condition Command Center described above is that doctrine stated precisely, and the studied evidence shows exception queues as a defined surface rather than a verified single home screen implementing all seven conditions. Harness contracts for several coding agents share one execution path, which is the execution-contract convergence this chapter asks for, at the harness boundary; a CLI and SDK producing the same records is a design intent rather than a demonstrated parity.
 
 Implemented: operator screens for Missions, Plans, Attempts, evidence, approval, review, release, health, and learning; run events, traces, observations, model/token/cost fields, and inspector views; Tasks, immutable Attempts, leases, heartbeats, retry budgets, events, artifacts, and pause/drain/kill controls; approval records with separation of duties; a GitHub App connection boundary; a workflow compatibility contract with structured completion. Human workflow preferences are distinguished from authority, so a presentation mode never changes what a user may do.
 
@@ -269,8 +346,11 @@ Future: a canonical event envelope, workflow migration protocol, compensation mo
 
 - Interfaces display authority; they do not create it. Every action on a control surface is a server-side transition over a durable record.
 - Design around decision types and authoritative states, across seven surfaces: intent composer, plan preview, execution view, intervention, review inbox, evidence review, recovery view.
+- The home screen is an exception-first Command Center: blocked, failed verification, over budget, changed from the approved Plan, stale evidence, ready for acceptance, consequential decision needed. The scarce resource is not agents; it is human attention. Manage exceptions and authority, not activity.
+- Metrics can inform authority; they should not quietly become authority. A dashboard score never accepts a WorkOrder.
+- Many interfaces, one execution contract: CLI, IDE, UI, SDK, API, and agent-to-agent calls all produce the same identity, intent, Agent Definition, execution, tool authorization, evidence, evaluation, and trace.
 - "Thinking" is not a status. Progress events summarise decisions, discoveries, scope changes, evidence, budget, and the next transition; token streams are diagnostics.
-- Interrupt humans with a decision packet: decision, deadline, risk, recommendation, evidence with counterevidence, alternatives, links. A Slack ping carries the same packet.
+- Interrupt humans with a decision packet: decision, deadline, risk, recommendation, evidence with counterevidence, alternatives, links. A reviewer gets the Plan, diff, risk class, tests, evaluations, and policy decisions, not an approve button. A Slack ping carries the same packet. The human never compensates for missing automation.
 - Completion is not acceptance; the run explorer should show a run that finished and failed verification.
 - Triggers are intake, not authority; admission decides. Events carry a typed envelope; consumers deduplicate, tolerate defined ordering, and fail visibly on unknown versions. Delivery is not acceptance.
 - Running work binds to its approved workflow version; migration and compensation are new decisions with their own authority.
@@ -282,5 +362,5 @@ Future: a canonical event envelope, workflow migration protocol, compensation mo
 - Glossary: [Agent–User Interaction Protocol, decision packet, event envelope, saga, truth boundary](../appendix/glossary.md)
 - Labs: [10. Authority containment and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md) · [11. Orchestration failure recovery and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md)
 - Case study: [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on the control plane as the underserved layer and the Slack shepherd packet; Jay West, "Use the factory run to teach failure" (Factory Run Explorer product notes)
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on the control plane as the underserved layer and the Slack shepherd packet; Jay West, "Use the factory run to teach failure" (Factory Run Explorer product notes); Jay West, factory architecture notes and Mission Control walkthrough, on the exception-first Command Center, reviewer packets, metrics versus authority, and the single execution contract across interfaces
 - Primary references: [CloudEvents specification](https://cloudevents.io/) · [OpenAI Agents SDK human-in-the-loop guide](https://openai.github.io/openai-agents-python/human_in_the_loop/) · [Web Content Accessibility Guidelines 2.2](https://www.w3.org/TR/WCAG22/)

@@ -78,6 +78,41 @@ A prompt is a sentence. A loop is a cycle. A harness is the floor the agent stan
 
 The lesson underneath the roadmap is the one this guide keeps returning to: coordination should be code, not conversation. When orchestration is a script, it costs no model tokens, it runs the same way every time, and the agent's own context never has to hold nine sources at once.
 
+### Decomposition produces a task graph, not a pile of prompts
+
+The graph above describes how data flows. The Plan the human approved ([chapter 6](../02-design/06-intent-and-specification-engineering.md)) has to be decomposed into the same shape, and the unit of decomposition is a **task** with a contract, not a prompt with a name. Each task in the graph carries the fields the runtime needs to schedule, protect, verify, and recover it.
+
+| Task field | What it fixes |
+|---|---|
+| Bounded objective | One outcome, stated so that its completion is checkable |
+| Inputs | Exactly what the task receives, passed explicitly |
+| Expected outputs | The typed artifact or result the next task consumes |
+| Dependencies | Which tasks must finish first, and which may not run concurrently |
+| Context requirements | What the compiler must supply for this step alone |
+| Capability requirements | Reasoning depth, tools, environment, data eligibility |
+| Risk | Blast radius and reversibility of what this task may change |
+| Verification | The check that proves this task's output, independent of the producer |
+| Retry and timeout semantics | What a retry is allowed to repeat, and when the task is abandoned |
+
+Once the tasks are drawn, the decomposition has to answer the coordination questions that turn a graph into a schedule: what runs sequentially and what runs concurrently; which tasks modify shared state; which are reversible; which require approval; what happens when one branch fails; and what evidence each task produces. Those are workflow-engineering questions, and they are answered by the orchestrator in code, not by the model at run time.
+
+```mermaid
+flowchart LR
+    T1["T1 Analyze impact<br/>risk: read-only<br/>verify: coverage report"] --> T2["T2 Change module A<br/>shared state: repo<br/>verify: unit tests"]
+    T1 --> T3["T3 Change module B<br/>shared state: repo<br/>verify: unit tests"]
+    T2 --> J{"Barrier: both merged?"}
+    T3 --> J
+    J --> T4["T4 Integration tests<br/>risk: none<br/>verify: suite green"]
+    T4 --> T5["T5 Open PR<br/>risk: consequential<br/>approval: required"]
+    T2 -. "concurrency key: repo" .- T3
+```
+
+The dotted line between T2 and T3 is the part people underestimate. Two agents modifying the same repository is a distributed-systems coordination problem (ownership, ordering, conflict, partial failure) and not a reasoning problem. No amount of model quality resolves a merge conflict that the graph allowed to happen; the concurrency key, the worktree per writer, and the barrier are what resolve it.
+
+Decomposition is also not a way to maximize agents. It exposes the work so the platform can choose the cheapest reliable capability for each piece: a strong model for T1's judgment, a smaller model or a skill for T2 and T3, deterministic automation for T4, a human for T5. A well-decomposed graph usually has fewer agents in it than the naive version, not more.
+
+> *Use the lightest orchestration model that satisfies the workflow.*
+
 ### Task-specific agent profiles and conditional routing
 
 A **Task-Specific Agent Profile** records what a class of work needs: reasoning depth, context window, tool use, structured output, repository scale, environment, latency, cost, security, privacy, availability, and historical evaluation. It binds an eligible model route, instructions, skills, tools, context policy, harness capabilities, budgets, and verifier requirements. Profiles reflect task roles such as classification, planning, implementation, review, recovery, or summarization. They are eligibility templates, not permanent assignments to one provider; Chapter 17 covers how routes are qualified.
@@ -85,6 +120,24 @@ A **Task-Specific Agent Profile** records what a class of work needs: reasoning 
 Luke's team calls the skill of placing models "droid whispering": planning benefits from slow, careful reasoning; implementation from fast code fluency; validation from precise instruction-following. No single model or provider is best at all three, and a model-agnostic architecture is only as strong as its weakest seat. A validator on a different model family is not only cheaper insurance against correlated error; it is a way to avoid being biased by the same training data as the builder.
 
 **Conditional routing** selects a permitted next node from observable state: task type, risk, complexity, repository, and required capability; confidence or ambiguity calibrated on representative cases; tool, provider, environment, and capacity availability; cost, latency, retry, and attention budgets; prior failures and changed hypotheses; and required independence or human authority. Deterministic routing handles known rules. A model may propose a route for ambiguous input, but the orchestrator filters the proposal through eligibility and records the alternatives, reason, uncertainty, and fallback. The best router usually filters with deterministic policy first and only then asks a model to rank the eligible choices.
+
+### One agent, until a boundary demands a second
+
+The default is one agent. Keep it until specialization creates value you can measure. Every additional agent adds coordination cost, latency, tokens, shared-state problems, new failure modes, and debugging difficulty, and it adds them whether or not the second agent contributes anything. So the question is never "would another agent be nice here?" It is "what architectural boundary am I crossing that one agent cannot straddle?" There are five honest answers.
+
+| Boundary | Why one agent cannot straddle it | Example |
+|---|---|---|
+| Different permission domains | One identity would need the union of both grants | A reader of the production database and a writer to the repository |
+| Different context requirements | One window would carry two unrelated corpora | Deep repository knowledge versus a vendor API specification |
+| Different capabilities | The profiles that qualify are different | Long-context planning versus fast code fluency |
+| Meaningful parallelism | Independent units finish sooner side by side | Twenty modules migrated under a shared contract |
+| Deliberate independence | The verifier must not share the producer's assumptions | Producer and verifier with separate context, tools, and model family |
+
+The last row is the one that most often justifies a second agent, and it is the reason the creator-verifier primitive below is so common. What does not justify one is a job title. Teams that build a planner agent, an architect agent, a coder agent, a critic agent, a reviewer agent, and a manager agent have built a **virtual org chart**: six prompts on one model, sharing one set of blind spots, passing context to each other at a cost, and producing an outcome no better than one well-equipped agent with a deterministic verifier. Roles that exist because humans have them are not architectural boundaries.
+
+> *Agent count is an architectural cost, not a feature.*
+>
+> *Multi-agent is a means, not the product.*
 
 ### Topologies: when several agents earn their cost
 
@@ -226,6 +279,9 @@ IndyDevDan's phrasing for the division of labor is the one to keep: **agents pro
 | Stale plan | Executor invents requirements the plan never held | Approved plan baseline; executor cannot self-expand |
 | Approval fatigue | Trivial uncertainty escalated; queue grows | Better decision packets; calibrated escalation thresholds; deterministic policy for the trivial cases |
 | Non-converging cycle | Rounds keep rediscovering rejected findings | Dedupe against everything seen; loop-until-dry with K empty rounds |
+| Virtual org chart | Planner, architect, coder, critic, reviewer, and manager agents on one model with one context | Collapse to one agent plus an independent verifier; add an agent only at a permission, context, capability, parallelism, or independence boundary |
+| Two agents in one repository without coordination | Merge conflicts, overwritten work, inconsistent decisions | Treat it as a distributed-systems problem: concurrency keys, a worktree per writer, a barrier before integration |
+| Task defined as a prompt | No inputs, outputs, dependencies, risk, or verification recorded | Give every task the nine-field contract before it is scheduled |
 
 Each step up the ladder adds a dominant new failure and its required containment: prompt assistance adds hallucinated or misleading proposals (advisory boundary, human review); retrieval adds unauthorized, stale, poisoned, or contradictory sources (pre-ranking permission, lineage, revocation); a single agent adds tool misuse, nonconvergence, and hidden state (scoped gateway, durable attempt, hard stops); multi-agent adds correlated error, delegation drift, and fan-out cost (collaboration contract, independence tests, parent budget); durable workflows add duplicate and partial effects and orphaned work (idempotency, leases, reconciliation, emergency control; see Chapter 12); enterprise integration adds cross-tenant impact and governance and supplier failure (inventory, identity, policy, control tower, continuity, recertification). Design the containment before adopting the level, not after the first incident.
 
@@ -241,6 +297,8 @@ What the studied evidence does not establish: a canonical library of orchestrati
 - Draw the work as a graph. Nodes do the thinking; edges carry data and are code. Fan out where work is independent, barrier only where a stage needs the whole set, gate edges with verifiers where confidence matters, tier models where judgment does not live.
 - Agents propose, code disposes. Coordination in code costs no tokens and runs the same way every time.
 - Multi-agent designs are justified only by measurable independence, parallelism, specialization, or context isolation. Several prompts on one model with one context are not independent verification.
+- Default to one agent. Add a second only at a real boundary: different permission domains, context requirements, or capabilities; meaningful parallelism; or deliberate producer/verifier independence. Never build a virtual org chart. Agent count is an architectural cost, not a feature; multi-agent is a means, not the product.
+- Decomposition produces a task graph. Every task carries objective, inputs, outputs, dependencies, context and capability requirements, risk, verification, and retry semantics, and the graph answers what runs concurrently, what shares state, what is reversible, what needs approval, what happens on branch failure, and what evidence each task yields. Use the lightest orchestration model that satisfies the workflow.
 - Every handoff is a typed contract; conversational memory is not one. Delegates cannot widen scope, re-delegate without permission, or claim acceptance.
 - The loop is Generate → Verify → Diagnose → Repair or Replan → Retry → Escalate or Stop. A retry without a changed hypothesis is repeated cost, not recovery.
 - Retry, repair, replan, fallback, escalation, and stop are different actions with different records. Convergence belongs to the runtime contract, not the model's confidence.
@@ -257,5 +315,5 @@ What the studied evidence does not establish: a canonical library of orchestrati
 - [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for the meta loop.
 - Lab: [Orchestration failure recovery and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md); [Authority containment and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md).
 - Appendix: [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`; [Glossary](../appendix/glossary.md).
-- Sources: Luke (Goose / Factory), "Multi-agent systems and the bottleneck of human attention"; 0xCodez, "Graph engineering: the 14-step roadmap from linear chains to routed, branching, parallel graphs"; Dru Knox (Tessl), AI Engineer SF talk on harness engineering and the inner, outer, and meta loops; IndyDevDan, "Software factories give leverage on your prompt"; the 12-layer production AI agent stack definitions of Agent Engineering and Loop Engineering.
+- Sources: Luke (Goose / Factory), "Multi-agent systems and the bottleneck of human attention"; 0xCodez, "Graph engineering: the 14-step roadmap from linear chains to routed, branching, parallel graphs"; Dru Knox (Tessl), AI Engineer SF talk on harness engineering and the inner, outer, and meta loops; IndyDevDan, "Software factories give leverage on your prompt"; the 12-layer production AI agent stack definitions of Agent Engineering and Loop Engineering; Jay West, factory architecture notes (one agent versus multi-agent, task decomposition, orchestration).
 - Primary references: Anthropic, "Building Effective Agents"; OpenAI, "A Practical Guide to Building Agents"; LangGraph documentation (all accessed 2026-08-30).

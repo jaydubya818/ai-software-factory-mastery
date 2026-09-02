@@ -4,7 +4,7 @@ part: operate
 chapter: 31
 summary: How an organization measures factory maturity by evidence rather than enthusiasm, advances one corridor at a time, chooses what to buy, build, and host, and satisfies the enterprise controls that decide whether a factory can run at all.
 absorbs: [03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md]
-infographics: [maturity-model, deployment-topologies, adoption-path]
+infographics: [maturity-model, adoption-path, build-vs-buy, gravity-well, contribution-model, release-clocks, deployment-topologies]
 ---
 
 # 31. Enterprise adoption and the infrastructure landscape
@@ -92,7 +92,7 @@ A factory changes what each role is for. Product owners improve intent and accep
 
 Adoption therefore needs training, role clarity, psychological safety for reporting failures (a factory whose operators hide escapes will never earn Level 3), and explicit accountability. Approval fatigue, the most common reason a Level 2 programme stalls, is reduced by evidence-centered reviews and exception routing, not by deleting accountability. The decision packet from chapter [30](./30-control-surfaces-event-contracts-and-storage.md) is the unit of that reduction.
 
-Jay's platform-adoption notes describe the operating model that supports this: product-line design partners, builder interviews, forward-deployed engineers, internal champions, weekly usage reviews, release experiments, paved paths, migration support, a deprecation strategy, and adoption and reliability dashboards. The twelve adoption metrics on those dashboards are time to first successful workflow, task success, PR acceptance rate, human correction rate, model-routing quality, token cost per accepted outcome, reliability, repeat usage, time to onboard a new team, bespoke capabilities retired, builder satisfaction, and adoption across product organizations. They complement the delivery metrics of chapter [8](../02-design/08-economics-metrics-and-human-attention.md) by measuring whether the factory is used, not only whether it works.
+Jay's platform-adoption notes describe the operating model that supports this: product-line design partners, builder listening sessions, forward-deployed engineers, internal champions, weekly usage reviews, release experiments, paved paths, migration support, a deprecation strategy, and adoption and reliability dashboards. The twelve adoption metrics on those dashboards are time to first successful workflow, task success, PR acceptance rate, human correction rate, model-routing quality, token cost per accepted outcome, reliability, repeat usage, time to onboard a new team, bespoke capabilities retired, builder satisfaction, and adoption across product organizations. They complement the delivery metrics of chapter [8](../02-design/08-economics-metrics-and-human-attention.md) by measuring whether the factory is used, not only whether it works.
 
 ### Tradeoffs: theater, uniformity, and hidden cost
 
@@ -107,6 +107,103 @@ Their own choices illustrate it. The BAML team picked the two layers they care a
 Two observations from that conversation matter for enterprises. First, enterprises want to bring the compute and probably parts of the development environment, and the largest will run the whole thing on-premises; a vendor that cannot separate harness from compute cannot sell to them. Second, on why there is no widely adopted open-source control plane: code is now so cheap to write that nobody wants someone else's control plane unless it arrives with the integrations built; the integrations (Slack, GitHub issues, a CLI, Linear) are the value; every company's working style has a different definition of what an issue even is; and the people building control planes want to sell products. The open-source options that exist tend to be another full stack that asks you to bring compute. So the control plane is the layer an enterprise is most likely to build or heavily adapt, and the harness is the layer to treat as replaceable.
 
 The same conversation predicts that a LAMP-stack equivalent will eventually emerge for the factory stack. Until it does, the enterprise's protection is **extensibility**: an API surface into which Slack, the issue tracker, the CLI, and the company's own definitions can be plugged, and, since agents now write code, software that its users can extend. Chapter [36](../06-improve/36-where-this-is-going.md) follows that thread.
+
+### Six questions per layer
+
+Composition tells you that each layer is a separate decision. It does not tell you how to make it. For every layer, ask six questions, and write the answers down, because the answers change and the reasoning should be inspectable when they do.
+
+<!-- infographic: build-vs-buy -->
+> **Infographic — The six build-versus-buy questions.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Question | What it is really asking | Points toward |
+| --- | --- | --- |
+| Differentiation | Does owning this create leverage no one else can give us? | Build if yes |
+| Control | Do security, data, latency, or roadmap require us to hold it? | Build if yes |
+| Maturity of the external option | Is there a stable, well-run solution, or a demo with a logo? | Adopt if mature |
+| Switching cost | If we adopt and it goes wrong, how hard is leaving? | Adopt if an abstraction keeps exit cheap |
+| Total cost of ownership | Build cost plus operate cost plus the opportunity cost of the team's attention | Adopt if the running cost dominates |
+| Speed of learning | Which choice teaches us faster what the factory needs? | Whichever gets a real workflow running sooner |
+
+The bias that falls out of those questions is consistent: build the durable control plane and the differentiating intelligence; adopt commodity infrastructure wherever an abstraction preserves optionality. In practice that means adopting an orchestration engine, an observability backend, and model providers, and owning the Agent Definition format, the evaluation contracts, the policy model, the builder experience, the capability interfaces, and the learning signals. The adopted pieces are replaceable behind a contract; the owned pieces *are* the contract. *Build where you need durable leverage; adopt where abstraction preserves optionality.*
+
+### Existing agents: a gravity well, not a migration mandate
+
+No enterprise starts from zero. By the time a platform team forms, product teams already have agents: a support bot, a test-generation script, a release helper, each with its own model calls, prompts, and half-built guardrails, each solving a real problem for the team that built it. The platform's first instinct, to mandate migration, is wrong twice over. It ignores what those agents got right, and it makes the platform the enemy of every team that has something working.
+
+The better posture is a **gravity well**: make the platform the easiest place to be, one capability at a time, so that existing agents drift toward it because each step is worth taking on its own. The order matters, because each step has to pay for itself before the next is offered.
+
+<!-- infographic: gravity-well -->
+> **Infographic — Incremental adoption for existing agents.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+  EX["Existing agent<br/>(own prompts, own model calls)"] --> G1["1. Model gateway<br/>routing, cost, eligibility"]
+  G1 --> G2["2. Common evaluation<br/>golden set, regression"]
+  G2 --> G3["3. Observability<br/>lineage, cost attribution"]
+  G3 --> G4["4. Governed tools<br/>registry, authorization"]
+  G4 --> G5["5. More of the runtime<br/>harness, durable state, policy"]
+  G5 --> PLAT["On the paved road"]
+```
+
+The model gateway comes first because it is the cheapest step for the adopting team (change one endpoint) and the most valuable for the platform (cost attribution and model eligibility for everything that passes through it). Common evaluation comes second because a team that can see its agent's regression rate wants the next step. Observability, governed tools, and finally the runtime follow as trust accumulates. At no point is the team told to rewrite; at every point it is offered something that makes its existing agent better. *A gravity well, not a migration mandate.*
+
+### The contribution model: centralize complexity, federate expertise
+
+Once teams are on the platform, the question becomes who builds what. The answer that scales is a split along one line: the central platform team owns the contracts and the paved road; product organizations contribute domain intelligence inside those contracts.
+
+<!-- infographic: contribution-model -->
+> **Infographic — Centralize and federate.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Centralized (platform team owns) | Federated (product organizations contribute) |
+| --- | --- |
+| Identity and authorization | Domain-specific skills |
+| Model gateway and routing | Product knowledge and context sources |
+| Harness and runtime | Specialized agents for a product's workflows |
+| Tool governance (registry, contracts, policy) | Product-specific acceptance criteria |
+| Skills framework (format, versioning, evaluation interface) | Differentiated workflows |
+| Evaluation infrastructure | Evaluation cases for their domain |
+| Observability and cost attribution | |
+| Evidence interfaces and security controls | |
+
+The left column is everything every team would otherwise rebuild badly; the right column is everything the platform team could never know well enough to build. *Centralize undifferentiated complexity; federate differentiated expertise.* Domain teams own their business workflows. The platform centralizes the expensive, risky, undifferentiated capabilities that would otherwise be reimplemented, with different bugs, in every organization.
+
+### Forward-deployed engineering and its failure mode
+
+An early platform needs engineers embedded with the teams adopting it. They see, in a way no dashboard shows, where onboarding breaks, where an abstraction does not fit the team's work, which capability is missing, and the exact moment a builder stops trusting the system. That is the right investment for the first year.
+
+It has one failure mode, and it is common enough to plan against: the forward-deployed team becomes a permanent consulting layer whose skill at working around the platform hides the platform's weaknesses. The guard is a rule about where discoveries go. Every integration a forward-deployed engineer builds is a finding; the same integration built three times for three teams is a missing platform capability, and the third build is the one that should have been a platform ticket instead. The measure of the forward-deployed function is how quickly teams stop needing it. *Forward deployment accelerates the path to self-service; it does not replace it.*
+
+### Multi-tenancy, layer by layer
+
+A shared platform serving many product organizations is multi-tenant whether or not the word is used, and tenancy has to be designed at four layers, because each one leaks differently.
+
+| Layer | What must be separated | Mechanism |
+| --- | --- | --- |
+| Identity | Who is asking, and which run is acting for them | Authenticated user plus a workload identity per run |
+| Data | What context a run may see | Authorization applied *before* context reaches the model, not filtered from its output |
+| Resources | Whose work runs when | Quotas, concurrency limits, and queue fairness against noisy neighbours |
+| Memory | What the factory remembers across runs | Scoped by organization or domain unless deliberately promoted |
+
+The data row is the one most often built wrong: filtering a model's *output* for things the user should not see is far weaker than never retrieving them, because the model's reasoning has already been shaped by what it read. The memory row is the one most often forgotten, because a shared memory that quietly learns one organization's conventions and applies them to another is a leak with no log entry. The aim is *a common platform with differentiated product behaviour*: shared rails, separate lanes.
+
+### Three release clocks
+
+A platform that ships everything on one release train is either too slow for its models or too fast for its contracts. Three clocks run at once.
+
+<!-- infographic: release-clocks -->
+> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Clock | What moves on it | Cadence and control |
+| --- | --- | --- |
+| Fast | Models, prompts, routing configuration | Continuous; evaluation-gated and instantly reversible |
+| Medium | Skills and Agent Definitions | An artifact lifecycle: versioned, evaluated, promoted, deprecated |
+| Slow | Runtime, APIs, durable contracts (execution manifest, evidence, event envelope) | Compatibility discipline, windows, and migration protocols (chapter [30](./30-control-surfaces-event-contracts-and-storage.md)) |
+
+The fast clock exists because model quality and price change monthly and the factory should benefit without a release ceremony; the slow clock exists because running work is bound to the contracts and a change there is a migration. Versioning is what makes three clocks safe: Agent Definitions, skills, model configurations, tool contracts, evaluation sets, context policies, and runtime versions are all explicit, and nothing mutates silently. *You cannot operate a learning system safely if you cannot reconstruct which version learned what.*
 
 ### Deployment topologies
 
@@ -183,7 +280,33 @@ The stack a factory runs on changes quickly, so any list is a snapshot. The tabl
 | Delivery | Git and GitHub; CI/CD; progressive delivery; production evaluation | Independent verification before merge; rollback proof (ch. [25](../04-prove/25-cicd-progressive-delivery-and-production-verification.md)) |
 | Developer tooling | Cursor; VS Code; Postman | Builder convenience; never a source of authority |
 
-The same glossary places these technologies in a four-part enterprise composition: a **Workbench** where agents execute, a knowledge layer (**Hopper**) where agents get trusted, permission-aware enterprise context, an **Agent Factory** where reusable capabilities are built and managed (chapter [10](../03-build/10-the-agent-factory.md)), and the **Software Factory** that composes them with the existing supply chain into a governed path from builder intent to trusted production. Mission Control is the control plane for the last of those. Chapter [19](../03-build/19-the-12-layer-production-ai-agent-stack.md) gives the twelve-layer view of the same landscape from the agent's side.
+The same glossary places these technologies in a five-part enterprise composition: an **agent runtime** (harness plus execution platform) where agents execute; an **enterprise knowledge layer** where agents get trusted, permission-aware enterprise context; an **Agent Factory** where reusable capabilities are built and managed (chapter [10](../03-build/10-the-agent-factory.md)); the **Software Factory** that composes them with the existing supply chain into a governed path from builder intent to trusted production; and **Mission Control**, the control plane that governs the delivery. The one-line version: *the Agent Factory creates, the runtime executes, knowledge grounds, the Software Factory delivers, and Mission Control governs.* Language and framework choices are made per subsystem (Python where the model and retrieval work lives, TypeScript where the platform services and builder experiences live), not ideologically, and the lightest orchestration model that satisfies the workflow wins. Chapter [19](../03-build/19-the-12-layer-production-ai-agent-stack.md) gives the twelve-layer view of the same landscape from the agent's side.
+
+### What breaks first at scale
+
+The bottleneck in an agentic organization does not stay where it started. At the beginning it is generation: can the agents produce useful change at all? That constraint is gone within months, and four others take its place, usually in this order.
+
+**Cost** breaks first, because experimentation outpaces attribution. Teams discover what agents can do faster than finance discovers what it cost, and the first sign is a bill nobody can explain by workflow. The cure is the cost-per-trusted-outcome ledger of chapter [28](./28-observability-telemetry-and-forensics.md), in place before the experiments, not after.
+
+**Context** breaks second. Enterprise repositories are enormous, knowledge sources are scattered across wikis and trackers and chat, permission boundaries cut through all of them, and a meaningful fraction of the documentation is stale. Retrieval that worked for one team's repository fails for the organization, and it fails quietly, by grounding confident answers in obsolete documents.
+
+**Supply-chain capacity** breaks third. Pull requests, CI minutes, security scans, artifact storage, and review demand were all sized for human-speed generation. A factory that produces ten times the pull requests produces ten times the CI load and ten times the review requests, and the review side cannot scale linearly, which is the argument of chapter [32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md).
+
+**Trust** breaks last and worst. One visible autonomous mistake undoes months of adoption, and the technical system recovers from it faster than the developers do. Everything in Parts IV and V exists to keep that mistake from being visible, or from happening.
+
+*The bottleneck will keep moving; design the factory to see where it moves next.* That is why the four kinds of health in chapter [28](./28-observability-telemetry-and-forensics.md) are all on the same dashboard.
+
+### Five lessons from enterprise scale
+
+Large platform organizations that have run agentic delivery across many product teams converge on the same lessons, and they are worth stating before the roadmap because the roadmap assumes them.
+
+1. **The platform owns the workflow, not the model.** Models change under you; the harness, context, evaluation, and authority around them are what you keep.
+2. **The paved road must beat the workaround.** Adoption cannot be mandated. If the governed path is slower than a laptop and a personal API key, the laptop wins, and the platform learns about it in an incident.
+3. **Trust becomes the bottleneck as generation scales.** Producing change stops being hard long before proving it is safe does.
+4. **Enterprise context and tools get complicated fast.** Retrieval is a permissions, provenance, freshness, and relevance problem before it is a search problem; and the moment a model gets a tool, intelligence becomes authority.
+5. **Agent platforms become infrastructure earlier than expected.** The reliability dimensions of chapter [29](./29-resilience-incidents-and-the-control-tower.md) are needed months before anyone plans to need them.
+
+The sentence that holds the five together: *do not just scale agents; scale the system that makes their work trustworthy.*
 
 ### The first year and the next five
 
@@ -201,6 +324,18 @@ The mission plan behind this guide lays out a twelve-month path that follows the
 The pilot phase is the Observe-through-Delegate stretch of the adoption path, run on purpose; hardening is where the enterprise checklist gets filled in.
 
 The five-year roadmap extends the same shape. Year one proves the model: an MVP, one repeatable workflow, measurable results, design partners, a category narrative. Year two proves repeatability across workflows, repositories, and teams, improves governance, establishes ROI, builds a small expert team, and earns early revenue or a major internal mandate. Year three proves enterprise scale: multiple business units, enterprise system integration, strong security and compliance, organization-level productivity evidence, public recognition for the operating model. Year four leads the category, expanding beyond development into operations, incidents, security, and platform work, building an ecosystem of agents, models, tools, and workflow templates, and publishing the definitive playbook. Year five is the operating standard: the control plane becomes an enterprise control plane and the human-agent software factory a recognized field. Each year's claims rest on the previous year's retained evidence, which is the maturity model applied to the roadmap itself.
+
+### The first ninety days, in outline
+
+For the leader who inherits an organization already using agents, the twelve-month plan starts with a ninety-day stretch whose shape is the same in every enterprise. Chapter [35](../06-improve/35-mastering-the-factory.md) carries the full version; the outline here is enough to see how it connects to the adoption path above.
+
+| Days | Emphasis | Output |
+| --- | --- | --- |
+| 1–30 | Understand before reorganizing: map existing agents, harnesses, tooling, CI/CD integration points, evaluation approaches, model usage, security boundaries, design partners, and expertise; baseline reliability, cost, adoption, evaluation coverage, and builder friction | What exists, what belongs centrally, the biggest risks, the first design-partner workflows |
+| 30–60 | Align the founding team on a few durable contracts (Agent Definition, execution contract, tool-authorization boundary, context contract, evaluation interface, versioning, observability lineage); prove one end-to-end path with the design partners | A working workflow, a golden evaluation set, a cost baseline |
+| 60–90 | Harden: move proven workflows toward self-service; stand up the contribution model, evaluation and production-readiness gates, initial SLOs, and operating ownership; put forward-deployed engineers where the friction is; make build-versus-buy decisions on evidence | A platform other teams can join without the founding team in the room |
+
+Two things are deliberately absent from the first ninety days: a prebuilt architecture carried in from elsewhere, and a migration of existing agents. Also absent: scaling the team around speculative boundaries, adaptive model routing before evaluation data exists, and recursive self-improvement before a trustworthy baseline. *One complete workflow exposing real weaknesses beats ten disconnected demos.* And the closing caution: *the patterns transfer; the implementation has to be yours.*
 
 ### Explaining it to eight audiences
 
@@ -237,16 +372,20 @@ To a **board**, it is an engineering-leverage strategy with a governance model: 
 2. Baseline it: lead time, change failure rate, human effort, wait time, satisfaction, control escapes.
 3. Walk the seven steps in order; in shadow, record disagreement and calibration.
 4. Write the promotion rule and the immediate-demotion triggers before the first run.
-5. Stand up the adoption operating model (design partners, builder interviews, forward-deployed engineers, champions, weekly usage reviews, paved paths, migration support, deprecation strategy) and the dashboard carrying the twelve adoption metrics.
+5. Stand up the adoption operating model (design partners, builder listening sessions, forward-deployed engineers, champions, weekly usage reviews, paved paths, migration support, deprecation strategy) and the dashboard carrying the twelve adoption metrics.
 6. Change roles explicitly, train for them, and protect the reporting of escapes.
 
 **Choose infrastructure**
 
-1. Decide layer by layer whether to buy, build, or compose. Treat the harness as replaceable and the control plane as the layer you will most likely adapt.
-2. Choose the deployment topology from residency, networking, and key-custody requirements, not convenience.
-3. Fill the enterprise control checklist before the questionnaire arrives; for each row name the mechanism and the retained evidence.
-4. For every vendor and open-source dependency record licensing model, project-health signals, upgrade policy, support terms, and vendor-exit criteria (exportable records, replaceable harness, API surface, readable evidence store).
-5. Date the landscape table and revisit it quarterly.
+1. Decide layer by layer whether to buy, build, or compose, answering the six questions (differentiation, control, external maturity, switching cost, total cost of ownership, speed of learning) in writing. Treat the harness as replaceable and the control plane as the layer you will most likely adapt.
+2. Bring existing agents in through the gravity-well order: model gateway, common evaluation, observability, governed tools, runtime. No migration mandate.
+3. Publish the contribution model (centralized contracts and paved road; federated domain skills, knowledge, agents, acceptance criteria) and the three release clocks with their controls.
+4. Design tenancy at all four layers: identity, data, resources, memory.
+5. Fund forward-deployed engineers with an explicit rule that a third repeated integration becomes a platform capability, and measure how quickly teams stop needing them.
+6. Choose the deployment topology from residency, networking, and key-custody requirements, not convenience.
+7. Fill the enterprise control checklist before the questionnaire arrives; for each row name the mechanism and the retained evidence.
+8. For every vendor and open-source dependency record licensing model, project-health signals, upgrade policy, support terms, and vendor-exit criteria (exportable records, replaceable harness, API surface, readable evidence store).
+9. Date the landscape table and revisit it quarterly.
 
 **Communicate**
 
@@ -269,6 +408,14 @@ To a **board**, it is an engineering-leverage strategy with a governance model: 
 
 **Buying the whole stack by accident, or a vendor without an exit.** A team buys orchestration and discovers it has also bought the harness, the compute, and a residency problem; or records live only in the vendor's UI. Check each layer against the exit criteria at contract time and attempt an export before signing.
 
+**The migration mandate.** Existing agents are ordered onto the platform, the teams that own them dig in, and the platform's first year is spent in negotiations instead of on workflows. Offer the model gateway first and let the value pull.
+
+**The permanent consulting layer.** Forward-deployed engineers become the way anything gets done, each integration is bespoke, and the platform never learns what it is missing. Count repeated integrations; the third one is a platform ticket. Measure teams that no longer need help.
+
+**One release train.** Model updates wait for a quarterly runtime release, or a runtime contract changes on a model's cadence and breaks running work. Separate the three clocks and give each its own control.
+
+**Building everything first.** The platform team ships a universal memory layer, adaptive routing, a multi-agent orchestrator, and a hundred generic skills before a single workflow runs end to end. Each is a hypothesis without production evidence. Prove one path with design partners; protect the seams (identity, interfaces, policy, evidence, evaluation, versioning); do not generalize before the abstraction is earned.
+
 **Unmaintained dependency.** The harness or framework the factory depends on stops releasing. Review project-health signals quarterly; keep the harness replaceable.
 
 **Questionnaire surprise.** The security review arrives and the factory has no answer for SCIM, tenant isolation, or legal hold. Fill the control checklist before the pilot and treat each row as a factory requirement, not a sales obstacle.
@@ -277,7 +424,7 @@ To a **board**, it is an engineering-leverage strategy with a governance model: 
 
 The v1 assessment was pinned at [`a490648`](https://github.com/jaydubya818/MissionControl/tree/a49064875d0711253d74029e3066cc74c7c1c2a5), with staged-only work excluded from any maturity claim. At that commit Mission Control expressed several Level 2 foundations: governed Missions, Plans, and WorkOrders; Tasks and Attempts; leases; execution manifests; receipts; approval records; policy concepts; model routing; and operator views, with study branches adding stronger sandbox and publication controls. It had not earned a product-wide Level 3 claim: QC adapters were mocked, release automation ran in shadow mode, policy configuration had blocked the golden path, and the complete browser-initiated flow lacked accepted retained evidence. The honest rating was capability-specific: architecture and domain model approached Level 2/3 design; the supported end-to-end operating proof remained below that.
 
-The later study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6) adds material for the enterprise checklist: company, workspace, and repository boundaries with membership authorization, scoped records, and cross-scope tests (tenant isolation); server-side permissions, risk classes, policy envelopes, approval records, and separation of duties (RBAC and governance); feature flags, immutable versions, and migration guidance (upgrade policy); presentation modes that do not alter authority. Fleet-scale and cross-organization load are not established by repository tests, broad adoption remains a future operating proof, and the production admission packet remained blocked by operator configuration.
+The later study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6) adds material for the enterprise checklist: company, workspace, and repository boundaries with membership authorization, scoped records, and cross-scope tests (tenant isolation); server-side permissions, risk classes, policy envelopes, approval records, and separation of duties (RBAC and governance); feature flags, immutable versions, and migration guidance (upgrade policy); presentation modes that do not alter authority. Fleet-scale and cross-organization load are not established by repository tests, broad adoption remains a future operating proof, and the production admission packet remained blocked by operator configuration. Against the four tenancy layers, identity and data scoping are the layers with evidence; resource fairness across organizations and organization-scoped memory promotion are not demonstrated. Mission Control is an active personal project with the control-plane architecture and substantial deterministic qualification implemented; it is not positioned as fleet-scale production running hundreds of live agents, and no contribution model, forward-deployed function, or three-clock release process exists around it.
 
 Future: a maturity evidence dashboard by repository and workflow (prerequisites, last accepted proof, incidents, exceptions, autonomy ceiling, next gate). The first promotion target remains governed issue to validated pull request; deployment autonomy waits for signed artifact identity, production observation, and rollback proof. SSO/SCIM federation, BYOK, residency controls, DLP and egress policy, and chargeback are not claimed.
 
@@ -288,7 +435,14 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - Advance through one corridor at a time along seven steps: Observe, Assist, Delegate, Shadow govern, Enforce, Conditionally automate, Scale. Shadow mode counts only when disagreement and calibration are measured.
 - Write the promotion rule and the demotion triggers before the first run. Failures decay in scores and never leave the audit.
 - Change roles, not only tools; reduce approval fatigue with evidence-centered review and exception routing, never by deleting accountability.
-- Build, buy, and compose layer by layer. The harness is replaceable; the control plane is the layer you will most likely adapt; enterprises bring their own compute and parts of the dev environment.
+- Build, buy, and compose layer by layer, on six questions: differentiation, control, external maturity, switching cost, total cost of ownership, speed of learning. Build where you need durable leverage; adopt where abstraction preserves optionality. The harness is replaceable; the control plane is the layer you will most likely adapt; enterprises bring their own compute and parts of the dev environment.
+- Existing agents are a gravity well, not a migration mandate: model gateway, then common evaluation, then observability, then governed tools, then the runtime.
+- Centralize undifferentiated complexity (identity, gateway, runtime, tool governance, skills framework, evaluation, observability, cost, evidence, security); federate differentiated expertise (domain skills, knowledge, specialized agents, acceptance criteria, workflows).
+- Forward deployment accelerates self-service; it does not replace it. The same integration built three times is a missing platform capability.
+- Tenancy has four layers (identity, data, resources, memory); authorize before context reaches the model. Three release clocks (models and routing; skills and definitions; runtime and contracts), all explicitly versioned.
+- What breaks first at scale: cost, then context, then supply-chain capacity, then trust. The bottleneck keeps moving; build the factory to see where it moves next.
+- Five lessons: the platform owns the workflow; the paved road must beat the workaround; trust becomes the bottleneck; context and tools get complicated fast; agent platforms become infrastructure early. Scale the system that makes agents' work trustworthy, not just the agents.
+- The first ninety days: understand, then align on a few durable contracts and prove one workflow, then harden toward self-service. No imported architecture, no migration mandate, no self-improvement before a baseline.
 - Choose topology (managed, BYOC, VPC, self-hosted, on-premises) from residency, networking, and key custody. Fill the enterprise control checklist before it is sent to you, and write vendor-exit criteria before signing.
 - The credible executive message is "we expand proven corridors."
 
@@ -298,5 +452,5 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - Glossary: [maturity level, corridor, shadow governance, BYOC, vendor-exit criteria](../appendix/glossary.md)
 - Labs: [2. Capstone architecture and executive defense](../appendix/labs/02-capstone-architecture-and-executive-defense.md) · [4. Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md)
 - Case studies: [Mission Control implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) · [Capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) · [Coverage and maturity](../appendix/coverage-and-maturity.md)
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on composition over inheritance, outposts, and why there is no open-source control plane; Jay West, "The 12-layer production AI agent stack" coverage audit, section 13 (enterprise and open-source infrastructure); Jay West, agent platform and runtime technology glossary; Jay West, AI Software Factory mission (twelve-month plan, five-year roadmap, adoption metrics); Jay West, interview study guide, chapter 11 (audiences)
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on composition over inheritance, outposts, and why there is no open-source control plane; Jay West, "The 12-layer production AI agent stack" coverage audit, section 13 (enterprise and open-source infrastructure); Jay West, agent platform and runtime technology glossary; Jay West, AI Software Factory mission (twelve-month plan, five-year roadmap, adoption metrics); Jay West, audience-framing notes (the eight audiences); Jay West, factory architecture notes, on build versus buy, the contribution model, existing agents, forward-deployed engineering, multi-tenancy, release clocks, scale bottlenecks, the five lessons, and the first ninety days
 - External canon: [DORA delivery metrics](https://dora.dev/) · [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf) · Team Topologies (Skelton and Pais) · Google SRE

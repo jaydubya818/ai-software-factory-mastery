@@ -4,7 +4,7 @@ part: prove
 chapter: 25
 summary: How a validated commit becomes an immutable artifact, moves through compatibility and migration controls, is exposed progressively, is verified against real traffic, and is rolled back or corrected when production disagrees with the evidence that released it.
 absorbs: [verification-delivery-engineering/02-cicd-artifacts-migrations-and-api-compatibility.md, verification-delivery-engineering/03-progressive-delivery-production-verification-and-rollback.md, 07-quality-engineering/02-release-production-feedback-and-factory-sre.md]
-infographics: [delivery-pipeline, progressive-rollout, rollback-decision]
+infographics: [delivery-pipeline, post-merge-chain, progressive-rollout, rollback-decision]
 ---
 
 # 25. CI/CD, progressive delivery, and production verification
@@ -28,6 +28,16 @@ The factory has one more exposure: it is itself a production system. If its queu
 The factory does not need to *perform* deployment to *govern* it. It may delegate execution to GitHub Actions, Argo CD, Jenkins, Azure DevOps, or whatever the organization already runs. What it keeps is the decision, the policy, the required evidence, the approval, the lineage, and the reconciliation that connect the release back to the governed Mission. CI systems execute build and test jobs. Deployment systems apply an approved artifact. The factory authorizes a build or release candidate, defines the evidence it expects back, and reconciles what actually happened.
 
 The rule that makes this safe: no external provider callback advances authoritative state without identity, subject digest, policy evaluation, and reconciliation. A webhook saying "deployment succeeded" is a claim from an external system, and it is treated like every other claim in this book.
+
+### Not a parallel universe
+
+The temptation, when building a factory, is to give it its own delivery path: its own runners, its own artifact store, its own deploy mechanism, tuned for agent-produced change. Resist it. The organization already has a software supply chain — source control, CI, artifact registries, security scanning, deployment systems — and every generated change should flow through that chain, not around it. A second delivery universe doubles the surface to secure, splits the evidence in two places, and guarantees that the agent path and the human path diverge until one of them is quietly less governed than the other.
+
+What the factory adds is intelligence on top of the existing chain. CI results become verification evidence bound to the exact candidate instead of a status icon. Findings from scanners and analyzers are aggregated and summarized ([Chapter 21](./21-quality-and-evidence-architecture.md)) rather than dumped. Each change is risk-classified and routed to the review path its risk warrants. Production results flow back into learning rather than stopping at a deploy log. The pipeline the organization already trusts keeps executing; the factory makes it aware of who asked for the change, what evidence supports it, and what happened after it shipped.
+
+*The factory shouldn't replace CI/CD. It should make CI/CD agent-aware and outcome-aware.*
+
+Seen this way, the trajectory of CI/CD is clear. Continuous integration made builds continuous; continuous delivery made deployment continuous; the next step makes proof continuous. **Continuous evidence** is a pipeline whose output at every stage is not just an artifact or a green check but a bound, attributable record of what was verified, on what, by whom, and whether it is still current.
 
 ### The subject gets more precise as it moves
 
@@ -81,6 +91,26 @@ eligible -> approved -> deploying -> deployed -> technically verified
 
 Merge, deployed, technically verified, and outcome confirmed must have distinct owners, timestamps, artifacts, and evidence. In the operating model this guide describes, the merge decision stays human-owned.
 
+The **state-machine principle** underneath this is worth stating once, plainly: *execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified.* Each of those is a distinct state, each transition needs its own evidence and its own authority, and no earlier state implies a later one. An agent's completion is an event. A verifier's pass is evidence about a subject. Acceptance is a human decision. Merge is an action in source control. Production verification is an observation about running software. Collapsing any two of them is how a factory ends up believing something it never checked.
+
+The post-merge chain deserves the same discipline, because it is where "done" is most often declared early. After merge, the change still has to be **deployed** — the artifact actually placed into an environment; then **activated** — the code path actually reached by traffic, which for a flagged feature or a dark launch may happen days later; and only then **production verified** — observed to behave correctly under real conditions and, beyond that, to produce the outcome the Mission was created for. A merged change that was never deployed, or deployed but never activated, or activated but never verified, has not finished anything.
+
+<!-- infographic: post-merge-chain -->
+> **Infographic — The post-merge chain.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    Merge["MERGE"] -->|"artifact placed"| Deploy["DEPLOYMENT"]
+    Deploy -->|"code path reached by traffic"| Act["ACTIVATION"]
+    Act -->|"health + outcome observed"| PV["PRODUCTION VERIFICATION"]
+    PV -->|"evidence appended to Mission"| Done["Factory complete"]
+    Deploy -.->|"fails"| Recover["Contain / roll back / correct"]
+    Act -.->|"fails"| Recover
+    PV -.->|"fails"| Recover
+```
+
+*Code complete is not factory complete.*
+
 ```mermaid
 flowchart LR
     PR["Review-ready PR"] --> Merge["Human merge decision"]
@@ -111,6 +141,21 @@ flowchart LR
     Region -.->|"stop condition"| Stop
     Full -.->|"stop condition"| Stop
 ```
+
+Stripped to its loop, progressive delivery is four steps and one question. Qualify the change (the contract is satisfied, the artifact is signed, the release plan exists). Release it to a limited cohort. Run inline evaluations against that cohort — the same sampled-output checks and guardrails from [Chapter 23](./23-evaluation-engineering.md), now applied to real traffic. Ask whether it is healthy. If yes, expand exposure and ask again; if no, roll back or contain, and the failure becomes a regression scenario.
+
+```mermaid
+flowchart LR
+    Q["Qualify"] --> L["Limited release"]
+    L --> E["Inline evals"]
+    E --> H{"Healthy?"}
+    H -->|"yes"| X["Expand exposure"]
+    X --> E
+    H -->|"no"| R["Rollback / contain"]
+    R --> Learn["Regression scenario"]
+```
+
+The reason this is fast rather than slow is worth being explicit about, because the instinct is that controls cost speed. They do, when the control is a meeting. A control that is an observable signal and a reversible step costs almost nothing per iteration, and it is what makes a team willing to ship the next change an hour later instead of a week later. *Speed comes from making changes observable and reversible, not from eliminating controls.*
 
 ### Production verification
 
@@ -262,6 +307,10 @@ Exercise rollback, data restore, kill switches, and communication on a schedule,
 
 **Centralizing all deployment in the factory.** It tightens control and creates coupling and a single point of failure. Delegate execution and keep correlation and reconciliation strong.
 
+**The parallel delivery universe.** Agent-produced changes get their own runners, registry, and deploy path, and within months it is the less-governed one. Detect it by asking whether a generated change and a hand-written change flow through the same CI, scanning, and deployment systems. Fix by routing through the existing supply chain and adding evidence, aggregation, and risk routing on top.
+
+**Merged means done.** The change merged, nobody checked whether it deployed, whether the flag was ever turned on, or whether production behaved. Detect it by Missions whose last recorded state is merge. Fix by treating deployment, activation, and production verification as distinct states with their own evidence.
+
 ## In Mission Control
 
 Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) and study branch `9d5f8e3`, reviewed 2026-08-11 and 2026-08-30.
@@ -279,6 +328,9 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - A syntactically compatible schema can be semantically incompatible. Test against real consumer versions.
 - CI execution is not delivery authority. The factory decides, delegates execution, and reconciles; no callback advances state without identity, digest, policy, and reconciliation.
 - Deployment is a state transition, not success. Merge, deployed, technically verified, and outcome confirmed have separate owners, evidence, and clocks.
+- Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified. After merge come deployment, activation, and production verification as distinct stages. Code complete is not factory complete.
+- Do not build a parallel delivery universe. Route generated change through the existing SCM, CI/CD, and artifact chain, and make that chain agent-aware and outcome-aware. The next generation of CI/CD is continuous evidence.
+- Progressive delivery is qualify, limited release, inline evals, healthy?, expand or roll back. Speed comes from making changes observable and reversible, not from eliminating controls.
 - Production validation is a workflow: deployment, telemetry analysis, synthetic validation, anomaly detection, rollback or escalation. Segment signals; aggregates hide harm.
 - Rollback is pre-engineered and drilled; when reversal is unsafe, contain and correct forward with human risk acceptance.
 - Production evidence can supersede a certificate. Preserve the original decision, append the fact, and open corrective work.

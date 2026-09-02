@@ -2,9 +2,9 @@
 title: Intent and specification engineering
 part: design
 chapter: 6
-summary: How business intent becomes a governed, versioned, testable specification before any agent is given implementation authority, from the Business Understanding layer through Mission, Plan, and WorkOrder to the prototype-as-spec workflow.
+summary: How business intent becomes a governed, versioned, testable specification before any agent is given implementation authority — the five things to extract from intent, the Plan as an executable contract, the task graph, approval semantics — from the Business Understanding layer through Mission, Plan, and WorkOrder to the prototype-as-spec workflow.
 absorbs: [04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md]
-infographics: [intent-to-plan, spec-contract, prototype-to-pr]
+infographics: [intent-to-plan, spec-contract, task-graph, prototype-to-pr]
 ---
 
 # 6. Intent and specification engineering
@@ -68,6 +68,20 @@ flowchart LR
     Review -->|revision required| Plan
     Review -->|exception required| Human["Human decision owner"]
 ```
+
+### Five things to extract from intent
+
+Intent understanding and planning are different jobs, and the first design decision is to keep them apart. The builder states the outcome they want; the factory's first move is not to plan but to translate that statement into five explicit things, each of which is a question the builder can confirm or correct:
+
+| Extract | The question it answers | Why the factory needs it before planning |
+| --- | --- | --- |
+| Objective | What should be different when this is done? | Without it, the agent optimises the literal request |
+| Constraints | What must not change? | Without it, the cheapest route is through something that mattered |
+| Context | Which repositories, systems, standards, and prior decisions apply? | Without it, the agent rediscovers or contradicts decisions already made |
+| Acceptance criteria | How will we objectively know it worked? | Without it, "done" is invented downstream |
+| Risk | What is the blast radius if this is wrong? | Without it, every change gets the same review |
+
+The translation must surface **material ambiguity** rather than resolve it silently. "Improve checkout performance" is a good example because it sounds specific. Which path: the cart, the payment call, the confirmation page? Which percentile: median, p95, p99? What target: a number, or "faster than last quarter"? What regression tolerance: may error rate rise by a basis point to gain latency? Each answer changes the implementation and the risk. The rule for when to interrupt the builder is proportionate: ask when the ambiguity materially affects implementation or risk, and otherwise record the assumption with provenance and proceed. The failure the rule prevents is the most expensive one a factory can produce, an agent efficiently solving the wrong problem, because every downstream stage then does its job well on the wrong thing. Intent says *what outcome*; the Plan says *how*. Keeping those two records apart is what lets a change of mind about the outcome invalidate the plan instead of quietly surviving inside it.
 
 ### From intent to a governed Mission
 
@@ -141,9 +155,40 @@ LLMs are good ambiguity critics and bad requirement authors, because they invent
 
 Once a Mission exists, agents investigate the environment and propose a **Plan**. A plan that is fit for review contains: current-state understanding; the relevant code and architecture; the proposed changes; dependencies; risks; the test strategy; the rollback strategy; estimated cost and complexity; and the questions that require human judgment. That last item is the one most often missing, and it is the most valuable, because a plan that raises no questions is either trivial or hiding its assumptions.
 
+Stated as a contract rather than a document, the Plan carries the objective, the acceptance criteria, the task breakdown, the dependencies, the affected systems, the required context, the required capabilities, the risk, the verification strategy, and the human checkpoints. A reader should be able to answer seven questions from it without asking the planner: what will be done, why, in what sequence, what can run concurrently, which resources will change, which capabilities are required, and what evidence will prove success. *Planning converts ambiguous human intent into an executable contract.* That is why the Plan is a versioned artifact and not transient chain-of-thought: a plan that lives only in the model's context cannot be reviewed, approved, diffed against its successor, or held against the work that claims to implement it.
+
+Two separations follow. The first is between the planner and the Plan: the planner, whether a model, a deterministic workflow, or a person, is replaceable, while the Plan, once approved, is governed. Swap the planner and the approved contract does not change; change the contract and a new revision is required regardless of who wrote it. The second is between approval and dispatch. A human approves one exact Plan revision, bound to the exact Mission Spec and Project Constitution it was written against. If intent changes, a new revision is created; the approved one is never edited. And approval does not start anything: it authorises the release of governed WorkOrders, each of which still passes its own policy and capability preflight before an agent runs. *Intelligence can recommend. Authority is granted separately.*
+
 **Plan assurance** happens before any code is mutated. A reviewer separate from the plan's producer evaluates requirement coverage, architecture alignment, dependency and supply-chain impact, threat implications, test strategy, rollout, migration, rollback, observability, cost, and unresolved assumptions. The reviewer may be a human, a differently configured agent, or both, depending on risk; what matters is independence from the producer.
 
 The output is not "looks good". It is a coverage matrix showing which requirements each plan decision addresses, a list of findings, and one of three decisions: approved, revision required, or exception required. Approval freezes the Plan version, as Chapter 5 described. When validators disagree, governance increases, meaning a human decision owner is brought in; disagreement never triggers blind majority voting or random regeneration until something passes.
+
+### The task graph
+
+Decomposition produces a **task graph**, not a collection of prompts. The difference is that a graph carries the relationships an orchestrator needs and a prompt list hides them. Each task in the graph declares a bounded objective, its inputs, its expected outputs, its dependencies, its context requirements, its capability requirements, its risk, its verification, and its retry and timeout semantics. With those fields present, the questions that decide whether the plan is safe to run become answerable from the graph itself:
+
+- Which tasks are sequential, and which can run concurrently?
+- Which tasks modify shared state, and which only read?
+- Which are reversible, and which are not?
+- Which require approval before they start?
+- What happens to the rest of the graph when one branch fails?
+- What evidence does each task produce, and which criterion does it serve?
+
+<!-- infographic: task-graph -->
+> **Infographic — A task graph with its fields.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    T1["T1 Investigate<br/>read-only · low risk · no approval"] --> T2
+    T1 --> T3
+    T2["T2 Schema migration<br/>writes shared state · irreversible · approval"] --> T4
+    T3["T3 Service change<br/>writes repo · reversible · deterministic tests"] --> T4
+    T4["T4 Integration verification<br/>independent · produces evidence for AC-3, AC-5"]
+    T2 -. "on failure: block T4, preserve evidence, escalate" .-> X["Blocked state"]
+    T3 -. "on failure: retry ≤ 2 with new hypothesis" .-> T3
+```
+
+Two consequences are easy to miss. The first is that when two tasks modify the same repository, the problem is coordination of shared mutable state, which is a distributed-systems problem with leases, ordering, and conflict semantics, not a reasoning problem that a smarter model will solve ([Chapter 12](../03-build/12-durable-execution.md)). The second is that decomposition is not a way of maximising the number of agents. Its purpose is to expose the shape of the work so that the platform can choose the cheapest reliable capability for each piece: a strong reasoning model for the ambiguous task, a small model for the mechanical one, a deterministic script for the transformation, a skill for the repeated pattern, and a human for the decision. A graph whose every node says "agent" has not been decomposed; it has been duplicated.
 
 ### Decompose without losing lineage
 
@@ -236,6 +281,12 @@ A minimal specification package for a small feature, the kind used in the lab, i
 
 **False precision.** A low-risk, reversible change buried under a heavyweight process. Scale depth with risk; the process should be lighter than the change.
 
+**Efficiently solving the wrong problem.** Material ambiguity ("which percentile? what regression tolerance?") is resolved silently and every downstream stage does good work on the wrong target. Detect it as rework whose root cause is "that is not what I meant"; correct it by extracting objective, constraints, context, criteria, and risk before planning and interrupting the builder when ambiguity changes implementation or risk.
+
+**The Plan as chain-of-thought.** The plan exists only in the model's context, so nothing can be approved, diffed, or held against the work. Make the Plan a versioned record with the ten contract fields, and separate the replaceable planner from the governed Plan.
+
+**Decomposition that maximises agents.** Every node in the task graph is an agent; coordination cost, tokens, and shared-state conflicts rise while quality does not. Use the graph to pick the cheapest reliable capability per node, including scripts and humans.
+
 ## In Mission Control
 
 Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl/tree/a49064875d0711253d74029e3066cc74c7c1c2a5) against the `main` evidence boundary [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) (2026-08-11).
@@ -258,6 +309,10 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 - Specify failure and recovery first; run the nine-item ambiguity pass; keep provenance on every line; humans decide meaning and risk.
 - Plan review is independent and produces a coverage matrix, findings, and approved / revision required / exception required. Approval freezes a baseline; material change creates a revision and computes what it invalidates.
 - For large experimental work, a prototype can be the spec: mocks, overnight implement-and-review loop, slop PR as specification, sliced into 1–3k-line PRs with ordered migrations.
+- Separate intent understanding from planning. Extract five things first: objective, constraints, context, acceptance criteria, risk. Interrupt the builder only when ambiguity changes implementation or risk; an agent efficiently solving the wrong problem is the most expensive failure.
+- Planning converts ambiguous human intent into an executable contract. The Plan is a versioned artifact with objective, criteria, tasks, dependencies, affected systems, context, capabilities, risk, verification strategy, and human checkpoints; the planner is replaceable, the Plan is governed.
+- Approval binds one exact Plan revision to one exact Mission Spec and Constitution, never mutates, and authorises release of WorkOrders rather than dispatching execution. Intelligence recommends; authority is granted separately.
+- Decompose into a task graph whose nodes carry objective, inputs, outputs, dependencies, context, capabilities, risk, verification, retry and timeout semantics; two agents on one repository is a distributed-systems problem; decomposition exposes work so the cheapest reliable capability can take each piece.
 
 ## Go deeper
 
@@ -269,4 +324,4 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 - [Glossary](../appendix/glossary.md).
 - External canon: NASA Systems Engineering Handbook, Appendix C and Product Realization; NASA SWE-055 Requirements Validation; NIST SSDF 1.1.
 - Mission Control sources at the pinned commits: `convex/missions.ts`, `convex/schema.ts`, `apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx`, `docs/software-factory/domain-contracts.md`, `docs/plans/2026-08-11-feat-continuous-quality-proof-plan.md`.
-- Source notes: "The 12-layer production AI agent stack" (Business Understanding layer); Jay West, "Key terms and definitions" capability taxonomy (Intent & Planning); Jay West, "AI Software Factory mission" (Intent layer and Planning layer); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter of HumanLayer on the prototype-to-sliced-PR workflow).
+- Source notes: "The 12-layer production AI agent stack" (Business Understanding layer); Jay West, "Key terms and definitions" capability taxonomy (Intent & Planning); Jay West, "AI Software Factory mission" (Intent layer and Planning layer); Jay West, factory architecture notes (five extractions from intent, the checkout-performance ambiguity example, plan contract and questions, task-graph fields, planner versus Plan, approval semantics); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter of HumanLayer on the prototype-to-sliced-PR workflow).

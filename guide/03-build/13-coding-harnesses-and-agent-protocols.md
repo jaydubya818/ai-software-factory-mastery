@@ -4,7 +4,7 @@ part: build
 chapter: 13
 summary: How to wrap an interactive coding agent so it can be leased, observed, cancelled, resumed, and substituted inside a factory, and which protocol belongs at which boundary.
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, harness-adapter-contract, protocol-boundaries]
+infographics: [inner-outer-harness, execution-loop, harness-adapter-contract, protocol-boundaries]
 ---
 
 # 13. Coding harnesses and agent protocols
@@ -48,6 +48,74 @@ flowchart LR
     Outer -->|"normalized events, artifacts, completion"| CP
     CP --> Verify["Independent verification"]
 ```
+
+### What the harness owns
+
+Inner and outer together, the harness is where probabilistic reasoning meets deterministic control. The model reasons about the task. The harness controls which model runs, what context it receives, which tools it can invoke, what state persists, how much budget remains, how many retries are left, which execution environment it stands in, when it must stop, and what evidence gets recorded. That is not a loop around an LLM. It is the execution boundary that turns an LLM into an operable enterprise capability.
+
+*The model reasons. The harness controls.*
+
+The full list of harness responsibilities, with the side of the seam each usually lands on:
+
+| Responsibility | Typically owned by |
+|---|---|
+| Model invocation | Inner |
+| Agent lifecycle (start, resume, pause, cancel, terminate) | Outer, driving the inner |
+| Context assembly | Inner, from a package the outer freezes |
+| State (what persists between steps and across crashes) | Outer, in the durable state machine ([Chapter 12](./12-durable-execution.md)) |
+| Tool discovery | Inner, from a registry the outer scopes |
+| Tool execution | Inner, behind a gateway the outer authorizes |
+| Permissions | Outer, through the control plane; the inner harness's own permission model is a convenience, not the boundary |
+| The execution loop | Inner runs it; outer bounds it |
+| Budget and timeouts | Outer |
+| Checkpoints | Outer records; inner may create |
+| Recovery | Outer |
+| Observability | Both; the outer normalizes what the inner emits |
+| Evaluation hooks | Outer |
+| Human intervention | Outer, surfacing structured decision requests |
+
+Where a vendor harness already covers a row, the outer harness's job is to verify that it does so truthfully and to keep an independent record. Where it does not, the outer harness supplies it. Either way the rows that touch authority (permissions, budget, stopping, evidence) belong outside the model and outside any component the model can talk into changing.
+
+*The harness turns probabilistic intelligence into bounded execution.*
+
+### The execution loop
+
+Every harness runs the same loop underneath its product surface. Making it explicit is the fastest way to see where control lives.
+
+<!-- infographic: execution-loop -->
+> **Infographic — The execution loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TD
+    Load["Load task + state"] --> Ctx["Assemble context<br/>(only what this step needs)"]
+    Ctx --> Route["Select model / route"]
+    Route --> Reason["Model reasons and plans"]
+    Reason --> Act["Select next action"]
+    Act --> Need{"Action needed?"}
+    Need -->|no| Out["Emit output"]
+    Need -->|yes| Policy["Policy check / authorize"]
+    Policy -->|denied| Update
+    Policy -->|allowed| Tool["Execute tool"]
+    Tool --> Observe["Observe result"]
+    Observe --> Update["Update state<br/>(outside the model)"]
+    Out --> Update
+    Update --> Eval["Evaluate progress"]
+    Eval --> Decide{"Next?"}
+    Decide -->|continue| Ctx
+    Decide -->|retry| Ctx
+    Decide -->|checkpoint| Load
+    Decide -->|escalate| Human["Human decision"]
+    Decide -->|pause| Wait["Wait state"]
+    Decide -->|"stop / complete"| Done["Structured completion"]
+```
+
+Read it as the heartbeat of the agent. Each beat loads the task and its current state, assembles only the context this step needs, selects a model, lets the model reason and propose an action, and then does the thing that separates a harness from a chat client: a policy check before any tool runs. The tool executes, its result is observed, and state is updated outside the model, in the durable record, not in the transcript. Then the runtime evaluates progress and picks one of continue, retry, checkpoint, escalate, pause, stop, or complete.
+
+Two properties of the loop carry the whole design. The model proposes the next action; the runtime decides whether that action is permitted and whether the loop continues. And every input to the next beat comes from persisted state, so a beat that starts on a different worker after a crash sees the same world.
+
+### A harness is not a software factory
+
+It is tempting to look at the loop above, note that it already has budgets and policy checks and checkpoints, and conclude that the harness is the factory. It is not. A harness executes an agent; a software factory governs the work. The harness knows about one run: its task, its state, its tools, its budget. The factory knows about intent, plans, WorkOrders, acceptance criteria, independent verification, evidence, review, delivery, and what to learn afterwards, none of which a run can see or decide. The harness's structured completion is the factory's input, not its conclusion. That is why the harness does not own approval, verification, merge, or release, and why the control plane in [Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md) sits above it rather than inside it.
 
 ### Where the seam sits: thin or thick
 
@@ -231,6 +299,12 @@ These are drawn from teams running factories today and apply to whichever harnes
 
 **Protocol identity mistaken for authority.** An A2A peer or an MCP tool is trusted because it speaks the protocol. Detect by tracing any UI event, editor session, remote delegation, tool call, or native event back to one authorized Attempt; if the trace fails, so does the trust.
 
+**State updated inside the model.** The only place "step three is done" exists is the model's context; a compaction or crash loses it and the loop repeats step three. Detect by asking where the loop reads state from at the start of each beat. Fix by updating state outside the model and loading it back in.
+
+**Tool before policy.** The inner harness executes a tool call and the policy check happens, if at all, in a log review afterwards. Detect by tracing one consequential tool call and looking for the authorization decision that preceded it. Fix by putting the policy check between action selection and tool execution, in the outer harness or gateway.
+
+**The harness that thinks it is the factory.** Budgets and checkpoints inside the loop are mistaken for governance, and the harness's "complete" flows straight to merge. Detect by asking who verified the result independently of the process that produced it. Fix by treating structured completion as an input to the control plane.
+
 **Vendor drift.** Hooks, instruction files, or event schemas change under you. Detect with version-upgrade tests in the suite. Mitigate with pinned versions, dual instruction files, and a second qualified adapter.
 
 ## In Mission Control
@@ -251,6 +325,9 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - MCP joins agents to tools, ACP joins agents to editors, AG-UI joins agents to UIs, A2A joins agents to agents. None confers authority or trust.
 - Bound every autonomous loop; hand off to a human when the bound is hit.
 - Vendors are betting on owning the harness. Keep your exit: dual instruction files, archived raw traces, and a second qualified adapter.
+- The model reasons; the harness controls. The harness owns model invocation, lifecycle, context assembly, state, tool discovery and execution, permissions, the loop, budget, timeouts, checkpoints, recovery, observability, evaluation hooks, and human intervention.
+- The loop is the heartbeat: load state, assemble context, route, reason, propose, policy-check, execute, observe, update state outside the model, evaluate, then continue, retry, checkpoint, escalate, pause, or stop. The model proposes; the runtime permits.
+- The harness turns probabilistic intelligence into bounded execution. A harness executes an agent; a software factory governs the work.
 
 ## Go deeper
 
@@ -264,5 +341,5 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - [Glossary](../appendix/glossary.md) — inner harness, outer harness, adapter, capability manifest, ACP, AG-UI, A2A, MCP.
 - Lab: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md) and [External capability intake and recertification](../appendix/labs/13-external-capability-intake-and-recertification-lab.md). The original v1 exercise, building read-only adapters around two pinned harnesses and comparing native and normalized traces, is the right first project.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF interview and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces.
+- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory.
 - Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.

@@ -9,6 +9,19 @@ validate, and recover — and independent evidence decides what advances.
 
 Read it front to back, or enter at the part that matches your question.
 
+## The factory in one line, stage by stage
+
+Click a stage for the technical deep dive on how it works.
+
+1. [Stage 1 · Builder Intent](./stages/01-builder-intent.md)
+2. [Stage 2 · Plan](./stages/02-plan.md)
+3. [Stage 3 · Define Agent](./stages/03-define-agent.md)
+4. [Stage 4 · Execute through Harness](./stages/04-execute-through-harness.md)
+5. [Stage 5 · Apply Skills](./stages/05-apply-skills.md)
+6. [Stage 6 · Evaluate](./stages/06-evaluate.md)
+7. [Stage 7 · Improve](./stages/07-improve.md)
+8. [Stage 8 · Deliver Software](./stages/08-deliver-software.md)
+
 ## Front matter
 
 - [How to read this guide](./00-front-matter/00-how-to-read-this-guide.md)
@@ -75,6 +88,7 @@ Read it front to back, or enter at the part that matches your question.
 - [D. Research canon](./appendix/research/initial-canon.md)
 - [E. Coverage and maturity](./appendix/coverage-and-maturity.md) · [Changelog](./appendix/changelog.md) · [Reviewer guide](./appendix/reviewer-guide.md)
 - [F. Architecture communication](./appendix/architecture-communication.md)
+- [G. Principles to have cold](./appendix/principles.md)
 
 The v1 curriculum chapters are preserved unchanged in
 [`archive/guide-v1/`](../archive/guide-v1/README.md).

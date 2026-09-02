@@ -4,7 +4,7 @@ part: build
 chapter: 14
 summary: How to give every Attempt a reproducible place to work, contain what it can do there, decide where that place runs, and make sure it cannot publish its own result.
 absorbs: [05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md, 05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md]
-infographics: [environment-vs-compute, pets-vs-cattle, sandbox-isolation-and-publication]
+infographics: [environment-vs-compute, pets-vs-cattle, prototype-to-production, sandbox-isolation-and-publication]
 ---
 
 # 14. Development environments, sandboxes, and compute
@@ -68,6 +68,35 @@ Treat the environment exactly as you treat a library version: declared, pinned, 
 
 The Execution Manifest from [Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md) binds an exact environment version, by image digest and toolchain digest, to each Attempt. A floating "latest" image or mutable workstation state makes reproduction meaningless, because you can never again stand in the room the agent stood in.
 
+### The execution environment is a first-class object
+
+The contract above is long because the environment is not incidental to the run; it is one of the run's governing inputs, on the same footing as the model route and the policy version. Each run gets a bounded, reproducible environment that fixes:
+
+- the exact repository revision;
+- the approved tools;
+- scoped credentials;
+- filesystem boundaries;
+- network policy;
+- dependencies;
+- resource limits;
+- timeouts; and
+- auditing.
+
+Those bindings buy four properties, and it helps to name which property each control serves, because teams tend to optimize for one and forget the others.
+
+| Property | What it means | Served mostly by |
+|---|---|---|
+| **Isolation** | A compromised or confused run cannot reach beyond its box | Credentials, network policy, filesystem boundaries, resource limits |
+| **Reproducibility** | The same inputs can be stood up again for debugging and verification | Exact revision, pinned dependencies and toolchain, attestation |
+| **Containment** | Blast radius, cost, and time are bounded before the run starts | Resource limits, timeouts, budgets, auditing |
+| **Consistency with downstream delivery** | What passed here will behave the same in CI and production | Same image lineage, same dependency pins, same service contracts |
+
+The security framing is the one to keep. Treat autonomous execution like running untrusted code, because from the platform's point of view that is what it is: generated actions against valuable source with package managers, credentials, and networks in reach. The consequence is that an autonomous run gets no ambient access to a laptop, a developer's credentials, or a broadly scoped service account. As the run becomes more autonomous, its boundaries get narrower, not wider.
+
+*Autonomy should come with narrower execution boundaries, not broader ambient access.*
+
+The environment also has to be fast. If provisioning a governed sandbox takes twenty minutes and running on a laptop takes twenty seconds, engineers will run on the laptop and the guardrails will be theoretical. The safe path has to be quick enough that it never feels bureaucratic, which is why startup time is treated below as a product metric. *Fast prototyping and strong guardrails aren't opposites if the guardrails are built into the environment.*
+
 ### Why this is the most controversial layer
 
 On the HumanLayer and BAML livestream, Dexter calls the development environment the most controversial part of the stack, and the reason is that it has so many layers of its own. First, which runtimes do I need to compile and test? Second, how do I test from the outside: for a verifiable language toolchain like BAML's, tests suffice, but for a web app you need to send work to the machine *and* look at what the agent built through a preview. Third, and hardest, what does the application need that lives elsewhere? Large teams run four layers of the stack locally while the real app depends on fifty-plus shared services in a shared "dev cloud," and a company with a hundred repositories does not want all of them running in the sandbox.
@@ -110,6 +139,28 @@ flowchart LR
 Cold-start time is a product metric because it lands directly on validated lead time and on whether humans trust the factory to be quick. Measure the stages separately: queue wait, allocation, checkout, dependency restore, service startup, readiness, and first useful tool call. Then attack them with **golden images** (prebuilt base images with the toolchain baked in), **content-addressed caches**, partial clones, **warm pools** of pre-provisioned workers, and preflight checks, but only when each one's invalidation rule is explicit. A prebuilt image is fast and goes stale or oversized; building from source is transparent and slow. Like a pit stop, the goal is a fast, repeatable sequence, not a heroic one.
 
 For user-facing software, a reviewable **preview** is part of the result. It should have a stable Attempt identity, authenticated access, bounded lifetime, environment and commit labels, health state, logs, and deterministic teardown. A preview URL is not evidence of correctness; it is an interface through which humans and validators gather evidence.
+
+### Prototype-to-production continuity
+
+The environment layer is also where the factory decides whether prototypes are disposable or promotable. The pattern large enterprise platform teams have converged on is that a builder goes from idea to a working ephemeral environment in minutes, and that environment already sits on the platform's identity, policy, secure tools, collaboration surfaces, evaluation, observability, and deployment interfaces. Nothing about it is a toy. When the prototype proves worth keeping, productionizing it means raising the evidence and operational bar: adding the tests, the review tier, the SLOs, the rollback plan. It does not mean rebuilding it on different rails.
+
+The failure this prevents is easy to picture. A product manager prototypes a feature in fifteen minutes on an ungoverned sandbox, and the engineering team then spends two weeks reconstructing it inside the real identity model, the real environment, and the real delivery pipeline. Nothing was accelerated; the bottleneck moved. *If a PM can prototype in fifteen minutes but engineers need two weeks to reconstruct everything, we've only moved the bottleneck.*
+
+<!-- infographic: prototype-to-production -->
+> **Infographic — Prototype-to-production continuity.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    Idea["Builder intent"] --> Eph["Ephemeral environment<br/>minutes to provision"]
+    subgraph Rails["Same rails from day one"]
+        Eph --> Proto["Working prototype"]
+        Proto --> Raise["Raise the bar:<br/>tests, evals, review tier, SLOs, rollback"]
+        Raise --> Prod["Production"]
+    end
+    Rails -.- ID["Identity · policy · governed tools · environments · evaluation · observability · delivery"]
+```
+
+Continuity is what makes the paved road the fastest road rather than the slowest. Builders who are not developers (product managers arriving with a requirements document, QA with acceptance scenarios, designers with a prototype) have product intent but not repository boundaries, deployment risk, or architecture constraints in their heads; the environment compensates by applying context, generating acceptance criteria, surfacing risk, and enforcing guardrails automatically, so the fifteen-minute prototype is already a candidate rather than a sketch. *The prototype shouldn't need to be rewritten to become trustworthy.*
 
 ### Where it runs: local, remote, or in a box
 
@@ -182,6 +233,19 @@ Once more than a handful of Attempts run at once, the fleet needs the same contr
 
 Backoff and retry never authorize another external effect. Idempotency and reconciliation, from [Chapter 12](./12-durable-execution.md), remain required whenever allocation, publication, or teardown may have succeeded before the response was lost.
 
+### Multi-tenancy
+
+A fleet that serves more than one team, product, or organization is multi-tenant whether or not anyone designed it to be, and the environment layer is where most of the tenancy boundaries are enforced. Four of them matter.
+
+| Boundary | What it isolates | Mechanism |
+|---|---|---|
+| **Identity** | Who a run acts as | An authenticated user plus a workload identity minted per run, so every effect is attributable to both the person and the specific execution |
+| **Data** | What context a run may see | Authorization applied before any content reaches the model, not after retrieval; a tenant's documents never enter another tenant's context window ([Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md)) |
+| **Resources** | Who gets capacity | Quotas, concurrency limits, and queue fairness so one tenant's burst does not starve another; the noisy-neighbor problem is a scheduling problem, not a model problem |
+| **Memory** | What is learned, and for whom | Durable memory scoped by organization or domain, promoted to shared only deliberately, so one team's retained context does not become another's stale truth |
+
+The design goal is a common platform with differentiated product behavior: the same identity, environment, evaluation, and delivery machinery under every tenant, with each tenant's skills, knowledge, and acceptance criteria kept its own. Cross-tenant leakage through any of the four boundaries is a security incident, and a cross-tenant isolation test belongs in the promotion evidence below.
+
 ### Compose the stack one layer at a time
 
 Evaluate build, buy, or bring-your-own separately for each layer:
@@ -244,6 +308,14 @@ Before a compute or environment arrangement is trusted for production Attempts, 
 
 **Retry as authorization.** A retried allocation or publication produced a duplicate VM or a duplicate PR. Detect by idempotency-key collisions. Fix by making every external effect idempotent and reconciled.
 
+**Ambient access.** The autonomous run inherits the developer's laptop, shell environment, and cached credentials because that was the quickest way to make it work. Detect by listing what the run can reach that its manifest did not grant. Fix by treating autonomous execution as untrusted code: per-run workload identity, scoped credentials, explicit network policy.
+
+**The prototype that must be rebuilt.** Prototyping happens on an ungoverned path, so every promising prototype is reconstructed from scratch on the real rails. Detect by measuring intent-to-prototype against prototype-to-accepted-PR; a large gap is the moved bottleneck. Fix by putting prototypes on the same identity, environment, and delivery rails from the first minute and raising the bar rather than rebuilding.
+
+**Slow safe path.** The governed environment takes long enough to provision that engineers route around it. Detect by comparing sandbox usage with laptop usage for the same workflow. Fix by treating startup time as a product metric and building the guardrails into a fast environment.
+
+**Noisy neighbor.** One tenant's burst of Attempts starves another's queue, or one team's retained memory surfaces in another's context. Detect with per-tenant queue age and cross-tenant isolation tests. Fix with quotas, queue fairness, data authorization before retrieval, and scoped memory.
+
 **Vendor kernel surprises.** A build fails in the provider's sandbox because its lightweight kernel lacks a syscall. Detect by running the qualification suite on the provider before admission. Mitigate by owning the environment layer or choosing a BYOC provider that runs real VMs in your account.
 
 ## In Mission Control
@@ -266,6 +338,10 @@ Future: compile repository manifests and environment contracts into attested, po
 - Isolation is layered; no single boundary proves the others, and disposable is not the same as safe.
 - The sandbox never holds publication credentials. Validate in quarantine, then mint the shortest-lived token outside, then let a human merge.
 - Own the environment before you own the compute; evaluate each layer's build, buy, or BYOC on its own terms and keep the exit.
+- The execution environment is a first-class object binding exact revision, approved tools, scoped credentials, filesystem and network boundaries, dependencies, limits, timeouts, and auditing, for isolation, reproducibility, containment, and consistency with delivery.
+- Treat autonomous execution like running untrusted code. Autonomy should come with narrower execution boundaries, not broader ambient access.
+- Prototypes sit on production rails from the first minute; productionizing raises the evidence bar rather than rebuilding. A fifteen-minute prototype that takes two weeks to reconstruct has only moved the bottleneck.
+- Multi-tenancy is enforced on four boundaries: identity per run, data authorization before the model, resource quotas and queue fairness, and scoped memory. Common platform, differentiated product behavior.
 
 ## Go deeper
 
@@ -278,5 +354,5 @@ Future: compile repository manifests and environment contracts into attested, po
 - [Glossary](../appendix/glossary.md) — development environment contract, sandbox profile, golden image, warm pool, orphan, publication boundary.
 - Labs: [Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md), [Factory disaster recovery](../appendix/labs/09-factory-disaster-recovery-lab.md), [Orchestration failure recovery and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md). The v1 exercises are still the right ones: define a manifest and provision it cold and warm with a full teardown proof; trace the local Attempt worker at `9d5f8e3` through path deviation, expired lease, token expiry, duplicate PR, and cancellation, then threat-model the remote version without provisioning it.
 - Mission Control sources at `9d5f8e3`: [Factory Attempt worker](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryAttemptWorker.ts), [Git worktree runtime](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryGitRuntime.ts), [Path-scope enforcement](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryPathScope.ts), [GitHub App runtime](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/githubAppRuntime.ts), [Factory Attempt lease](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/factory/attempts.ts), [Todo 024](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/024-ready-p1-real-codex-github-pr-golden-path.md), [PR #61](https://github.com/jaydubya818/MissionControl/pull/61); [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`. Local uncommitted documents studied 2026-08-11: `docs/architecture/remote-sandbox-execution.md` (SHA-256 `ba4891ac…36f7c`), `docs/security/remote-sandbox-threat-model.md` (SHA-256 `9facf5d5…70c8c`), `docs/validation/2026-08-10-remote-sandbox-provider-proof.md` (SHA-256 `6ab6a560…50053`).
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — MacBook pool, trusted versus untrusted execution, the dev-environment layer, cloudtop, pets versus cattle, BYOC, identity in the environment; IndyDevDan, "Where should your software factory run" — agent sandboxes for isolation, scale, and autonomy, best-of-N, provisioned keys, in-box and out-of-box orchestrators; Dru Knox (Tessl) — the credentials incident and GitHub Actions limits for long-running agents.
+- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — MacBook pool, trusted versus untrusted execution, the dev-environment layer, cloudtop, pets versus cattle, BYOC, identity in the environment; IndyDevDan, "Where should your software factory run" — agent sandboxes for isolation, scale, and autonomy, best-of-N, provisioned keys, in-box and out-of-box orchestrators; Dru Knox (Tessl) — the credentials incident and GitHub Actions limits for long-running agents; Jay West, factory architecture notes — execution environments as first-class, prototype-to-production continuity, multi-tenancy.
 - Primary references: [Devfile schema 2.3.0](https://devfile.io/docs/2.3.0/devfile-schema), accessed 2026-08-30; [Google Site Reliability Engineering books](https://sre.google/books/), accessed 2026-08-30.

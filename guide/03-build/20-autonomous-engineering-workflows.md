@@ -90,6 +90,47 @@ Two practitioners describe what this wedge looks like when it is actually runnin
 
 IndyDevDan's "super simple software factory" shows the same wedge from inside the code. An **AI developer workflow** is a script with named phases (request, plan, commit plan, build, test, fix, review, revise, document, commit docs), each either an agent call or deterministic code, with the two clearly delineated. Every agent has its "core four" (context, model, prompt, tools) in a configuration file. Every phase ends with a deterministic gate that validates typed JSON output before the next phase begins; the plan is handed to the builder as an envelope with a note for the next agent. Tests run in code, and only failures go back to the agent. The design principles are observable (every phase, prompt, tool call, and cost is visible in a swim-lane view), customizable (any model, harness, or tool in any seat), and reusable (installed into a new repository as a skill with a cookbook). His summary is worth carrying into every workflow in this chapter: agents propose, code disposes; and the test of a workflow is the thousandth run, not the first.
 
+### What to build first, and what to leave alone
+
+The wedge tells you which workflow to prove. It does not tell you how much factory that proof needs, and the temptation is to build all of it. Resist that. Pick a few high-value workflows with design partners who will use them, and build only the architecture that one end-to-end path requires. That minimum is still substantial, because each piece exists to stop a specific way the path would otherwise be untrustworthy.
+
+| Build first | What it is for |
+|---|---|
+| Builder intent and a versioned Plan | So the system solves the stated problem, and a human approved the approach |
+| A versioned agent definition | So "the agent" is a contract that can be changed, evaluated, and rolled back |
+| A harness with an execution loop | So the model reasons inside bounded, recoverable execution |
+| Governed tool access | So intelligence does not become authority the moment a tool is attached |
+| Basic context management | So each step gets what it needs and nothing it should not see |
+| An evaluation baseline | So "better" means something before anything is changed |
+| Traceability and observability | So a failure can be explained by lineage instead of memory |
+| A safe path into existing CI/CD | So the output lands in the delivery system the organization already trusts |
+
+Build those, and build them behind the seams that will matter later even if their first implementation is thin: identity, interfaces, policy, evidence, evaluation, versioning. A thin identity layer that every call passes through can be deepened; a missing one has to be retrofitted into every call.
+
+> *Build for the next proof point without painting yourself into the next architecture.*
+
+What not to build first is just as specific: sophisticated autonomous learning, highly dynamic multi-agent swarms, ML-based model routing, a large universal memory layer, hundreds of generic skills, and elaborate agent organizational structures. Every one of those is a hypothesis about what the factory will need, and none of them can be designed well until production evidence says which parts of the simple version broke. Adaptive routing before evaluation data amplifies noise; a universal memory layer before a promotion policy is a stale-context generator; a skills library before the workflows that would use it is inventory.
+
+> *Don't generalize before you've earned the abstraction.*
+
+```mermaid
+flowchart LR
+    Intent["Builder intent + Plan"] --> Def["Versioned agent definition"]
+    Def --> Harness["Harness + execution loop"]
+    Harness --> Tools["Governed tool access"]
+    Harness --> Ctx["Basic context management"]
+    Harness --> CI["Existing CI/CD"]
+    Eval["Evaluation baseline"] -.-> Harness
+    Obs["Traceability + observability"] -.-> Harness
+    CI --> Proof["One complete workflow"]
+    Proof -->|"real weaknesses found"| Next["Next proof point"]
+    Seams["Seams protected: identity, interfaces, policy, evidence, evaluation, versioning"] -.- Harness
+```
+
+The output of this phase is one workflow that runs end to end and shows you where it is weak. That is more valuable than breadth, because a weakness in a complete path is a fact about the architecture, while a demo that stops at the pull request is a fact about the demo.
+
+> *One complete workflow exposing real weaknesses beats ten disconnected demos.*
+
 ### The workflow catalog
 
 Once the wedge is reliable, expand in order. The catalog turns "use agents for engineering" into a portfolio of explicit, governable **workflow products**, each of which declares:
@@ -173,6 +214,25 @@ Every operational workflow preserves an **operational evidence bundle**: signal 
 
 Dru Knox's inner, outer, and meta loops (Chapter 18) are the frame that ties the catalog together. The inner loop is what the agent runs while working on a change: the fast checks, skills, and test suite that make it land correctly more often, which raises **autonomy**, how little a human has to correct. The outer loop runs at the pull-request boundary: agent QA that exercises the product, deeper review, mutation testing, and **verifiers**, which are small, fast, cheap model-powered lint rules that check one invariant each ("every front-end component has an accessibility attribute," "every log call uses the internal logger") across a glob of files, and which now succeed nearly every time because the question is so narrow. The outer loop raises **automation**, how much can be accepted without a human reading every line. The meta loop watches both and codifies every correction so that a mistake is made once. Progress toward a factory is visible in three numbers: manual takeovers falling, human pull-request comments falling, and pull requests initiated without human input rising, all while quality is held constant and then pushed up. The adoption pattern is the same everywhere: bottlenecks move outward. First the agent cannot put up a good PR; then the PR is fine but nobody trusts it without review; then the question becomes how large a task can run to completion, which only a meta loop answers. Do not attempt this as one monolithic lift. Find a workflow everyone can agree on, put a box around it, automate it, and add the next.
 
+### What CI/CD did for delivery, the factory does for agentic engineering
+
+There is a precedent for all of this, and it is the one every engineering leader already lived through. Developers have always built and tested on their own machines, and they still do. As organizations grew, the build, test, artifact, and deploy steps moved into shared infrastructure, and the payoff was not only speed. It was that one improvement to the pipeline (a faster test runner, a new security scan, a better rollback) benefited every team at once. The individual practice became shared engineering infrastructure.
+
+Agentic engineering is following the same path. Interactive coding agents stay on the developer's machine, the way local builds did. But the repeatable, delegable work, the kind that starts as an issue and should end as a verified change, benefits from a common factory that manages workflow, models, skills, evaluation, security, and telemetry for everyone. A **software factory** is to agentic development what a CI/CD system is to build and delivery: the shared infrastructure that makes it repeatable, measurable, and scalable, in that order, because each property enables the next.
+
+```mermaid
+flowchart LR
+    Rep["Repeatable: same workflow, same contracts, every run"] --> Meas["Measurable: outcomes, cost, rework, trust per workflow"]
+    Meas --> Imp["Improvable: one fix to the pipeline, every team benefits"]
+    Imp -->|"promoted change"| Rep
+    CP["Control plane manages the work"] --- Rep
+    W["Workers execute the work"] --- Rep
+```
+
+Repeatability is what makes measurement possible: you cannot compare run 400 to run 40 unless they went through the same path. Measurement is what makes improvement real rather than anecdotal. And improvement in shared infrastructure compounds: fix the verifier once and every workflow inherits it. The division of labor is the same one CI systems settled on years ago. *The control plane manages the work. Workers execute the work.* Neither should hold the other's state.
+
+> *Do for agentic engineering what CI/CD did for build and delivery: turn individual practices into shared engineering infrastructure. Improve once, benefit everyone.*
+
 ## How to build it
 
 1. **Onboard the repository.** Run a read-only discovery workflow that produces an explainable readiness packet across the eight dimensions. Owners approve material facts and choose eligible workflow classes. Record source commit, method, coverage, confidence, and expiry on every derived index. Wire drift detection so later commits trigger targeted refresh, and make preflight check readiness freshness for the affected scope before each WorkOrder.
@@ -206,6 +266,9 @@ Dru Knox's inner, outer, and meta loops (Chapter 18) are the frame that ties the
 | Autonomy declared for the repository | Migration runs at the autonomy level earned by test maintenance | Autonomy attached to exact workflow, risk class, environment, capability graph |
 | Illegible workflow | Corrections live in chat logs and local configs | Issue and PR as the ledger; no local configuration; everything in the repository |
 | Learning by mutation | Postmortem edits factory behavior directly | Proposals enter the governed improvement path only |
+| Building everything first | Months in, no workflow runs end to end; ten demos, no production evidence | Build the eight-item minimum behind protected seams; prove one complete path |
+| Generalizing before the abstraction is earned | Swarms, learned routing, universal memory, or hundreds of skills built on no production data | Treat them as hypotheses; build each only when a proven workflow shows the need |
+| Parallel delivery universe | Generated changes bypass the organization's SCM, CI, and deployment systems | Route every change through the existing supply chain; make it agent-aware rather than replacing it |
 
 ## In Mission Control
 
@@ -223,6 +286,9 @@ Repository registration, configuration, workspace manifests, multi-repository co
 - Operational workflows separate observation, diagnosis, containment, and correction. Hypotheses are not findings; contain before optimizing; learn without mutating.
 - Work selection is an authority decision; autonomy is earned per workflow, not per agent or repository.
 - Agents propose, code disposes. Make every touchpoint legible, outlaw local configuration, and judge the workflow by the thousandth run.
+- Build first: intent and Plan, a versioned agent definition, harness and loop, governed tools, basic context, an evaluation baseline, traceability, and a safe path into existing CI/CD, behind protected seams. Do not build swarms, learned routing, universal memory, or hundreds of skills until production evidence asks for them. Build for the next proof point without painting yourself into the next architecture.
+- One complete workflow exposing real weaknesses beats ten disconnected demos.
+- The factory is to agentic engineering what CI/CD is to delivery: repeatability enables measurement, measurement enables improvement, and an improvement to shared infrastructure benefits everyone. The control plane manages the work; workers execute it.
 
 ## Go deeper
 
@@ -236,5 +302,5 @@ Repository registration, configuration, workspace manifests, multi-repository co
 - [32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) and [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for the meta loop.
 - Labs: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md); [Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md); [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md); [Progressive delivery and rollback](../appendix/labs/06-progressive-delivery-and-rollback-lab.md).
 - Appendix: [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) and [implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), assessed at `d902fae`; [Glossary](../appendix/glossary.md).
-- Sources: Jay West, "AI Software Factory Mission" (the wedge, the eight workflows, the lifecycle) and the interview study guide, chapter 9 (the thirteen-step version and "what not to claim"); Dru Knox (Tessl), AI Engineer SF interview and talk on getting to a software factory, harness engineering, and why the backlog disappears; IndyDevDan, "Software factories give leverage on your prompt" (AI developer workflows, agents propose and code disposes).
+- Sources: Jay West, "AI Software Factory Mission" (the wedge, the eight workflows, the lifecycle), the AI Software Factory study guide, chapter 9 (the thirteen-step version and "what not to claim"), and the factory architecture notes (what to build first, what not to build first, the CI/CD analogy); Dru Knox (Tessl), AI Engineer SF conversation and talk on getting to a software factory, harness engineering, and why the backlog disappears; IndyDevDan, "Software factories give leverage on your prompt" (AI developer workflows, agents propose and code disposes).
 - Primary references: Backstage Software Catalog; Development Containers specification; DORA capability catalog and user-centric focus; NIST Cybersecurity Framework (all accessed 2026-08-30).

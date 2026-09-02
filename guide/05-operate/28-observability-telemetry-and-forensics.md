@@ -4,7 +4,7 @@ part: operate
 chapter: 28
 summary: How to see what the factory is doing without mistaking what it observed for what it decided — a correlation spine from intent to outcome, shared trace and span semantics for agent runtimes, four kinds of health, cost attribution that rolls up without double counting, and forensic bundles that survive an incident.
 absorbs: [05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md, factory-platform-engineering/06-observability-semantics-cost-and-forensics.md]
-infographics: [telemetry-model, cost-attribution]
+infographics: [telemetry-model, execution-lineage, cost-attribution]
 ---
 
 # 28. Observability, telemetry, and forensics
@@ -29,9 +29,37 @@ Every signal also carries its scope (tenant, workspace, repository), the relevan
 
 Correlation must not grant access. The fact that a signal carries a Mission ID does not mean every viewer of that Mission may see the signal; authorisation still filters what each person retrieves.
 
+### The execution lineage: what is recorded per run
+
+The spine names the records; **execution lineage** is the causal chain that runs through them, from the person who wanted something to the outcome they got. Written out, it is longer than the spine because it includes the components that shaped each step:
+
+`builder → intent → Plan → Task → Agent Definition → model + configuration → context → tool calls → artifact → evaluation → review and approval → deployment → outcome`
+
+Each link is a question an operator will eventually need answered. Who asked for this, and what did they mean? Which Plan revision and which Task? Which Agent Definition version ran, on which model with which configuration? What context did it receive, and where did that context come from? Which tools did it call, with what arguments and results? What did it produce? What evaluated the artifact, and what did the evaluator say? Who approved it, and against what evidence? Where was it deployed? What happened next?
+
+To answer those questions later, every run records a fixed set of facts as it happens: the model and its configuration, the retrieved context and its provenance, the tools called, the state transitions, elapsed time, cost, tokens, retries, the policies that fired (and what they decided), and the outcome. None of that is optional detail. It is the minimum that lets a failure be traced to the component that caused it.
+
+<!-- infographic: execution-lineage -->
+> **Infographic — The execution lineage chain.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    B["Builder"] --> I["Intent"] --> PL["Plan rev"] --> TK["Task"] --> AD["Agent Definition v"]
+    AD --> MC["Model + config"] --> CX["Context + provenance"] --> TCL["Tool calls"] --> ART["Artifact digest"]
+    ART --> EVL["Evaluation"] --> RV["Review / approval"] --> DEP["Deployment"] --> OUT["Outcome"]
+    REC["Per run: model/config, context, tools, transitions, time, cost, tokens, retries, policies fired, outcome"] -.-> AD & MC & CX & TCL & ART & EVL
+```
+
+The lineage is also the boundary between two disciplines that are often confused. *Observability tells you what happened; evaluation tells you whether it was good enough.* An observability system that says a run took four minutes, called nine tools, and cost eleven cents is describing behaviour. An evaluation that says the artifact met seven of eight acceptance criteria is judging it. Both are needed, and each is weak alone: *without observability, evaluation is not debuggable; without evaluation, observability is just telemetry.* An evaluation failure with no lineage behind it is a verdict with no case file; a perfect trace with no evaluation is a very detailed account of something that may or may not have been worth doing. [Chapter 23](../04-prove/23-evaluation-engineering.md) owns the judging side; this chapter owns the record that makes the judgment debuggable.
+
+### Attributing drift through lineage
+
+Lineage earns its cost the first time behaviour changes and nobody changed the code. **Drift** in an agent system has more dimensions than model drift: the model can change under a stable name, a retrieved knowledge source can be edited, a tool contract can shift its response shape, a skill version can move, the execution environment can pick up a new dependency. Each of those is a link in the lineage chain, and when every run records the versioned Agent Definition, the model configuration, the skill versions, the context provenance, and the tool traces, the question "which component moved?" becomes a diff between two runs rather than an investigation. *Continuous evaluation is only useful if you can attribute what changed.* [Chapter 29](./29-resilience-incidents-and-the-control-tower.md) catalogues the kinds of drift the control tower watches for; the lineage described here is what lets it name a culprit.
+
 ### Four kinds of record, one of which decides
 
-The boundary that keeps the factory honest is a table worth memorising.
+The boundary that keeps the factory honest is a four-row table.
 
 | Record | Primary purpose | May be sampled? | Controls advancement? |
 | --- | --- | --- | --- |
@@ -161,6 +189,12 @@ flowchart BT
 
 The views practitioners actually keep open are simpler than the model behind them. In the HumanLayer and BAML conversation, the host pulled up two: token usage over time, and cost by model. What the cost-by-model view revealed was a routing pattern, heavy use of a cheaper execution model for engineering work with a more expensive model reserved deliberately for UI and writing, and that pattern is the thing a cost view exists to make visible. The same conversation listed what the control plane needs to show alongside spend: session traces, the plans and architecture documents a run produced, and budgeting per team. Cost by model is only useful once it can be sliced by workflow and by accepted outcome; otherwise it is a bill, not a decision aid.
 
+### Cost per trusted outcome
+
+The slicing matters because the cheapest model is not the cheapest system. A cheaper model that needs three attempts and then forty minutes of a senior engineer's rework costs more than one successful run on a stronger model, and a ledger that only shows tokens will recommend the wrong one every time. So the ledger attributes cost along four axes at once, **team, workflow, model, and outcome**, and the number that gets reported upward is *cost per trusted outcome, not cost per token*. Human rework is a cost line, measured, not a footnote.
+
+Budget data is also feedback for the architecture, not only a control on spend. If one skill costs five times what another costs for the same accepted outcome, that difference should reach the routing table and the improvement queue of [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md), because the structural levers that bring cost down (smaller models for simpler work, strong models only where reasoning creates value, deterministic automation, targeted retrieval, caching, bounded loops, explicit budgets and stopping conditions, fewer coordinating agents) are all design decisions. *Economics should influence architecture continuously, not arrive as a surprise on the monthly bill.*
+
 ### Forensic bundles
 
 For a material incident, diagnosis is not enough; the factory must be able to prove, later and to a sceptic, what happened. A **forensic bundle** freezes, for one case: the execution manifest and exact versions; identities, grants, and policy decisions; the ordered domain and audit events; the selected trace and log segments; context and source lineage; tool calls and side-effect receipts; artifacts and their digests; evaluator and proof records; human decisions; cost; the incident control actions taken; and the known gaps. Prompts appear either in full or as redacted hashes depending on classification. Network records and provider responses are included where retained.
@@ -199,6 +233,10 @@ A bundle is immutable, access-controlled, redacted by policy, and bound to a cas
 
 **Cost double-counted or averaged.** Retries appear twice in the rollup, or wasted cost disappears into a platform average. Detect by reconciling the ledger against provider invoices. Preserve the five amounts.
 
+**Unattributable drift.** Quality drops across a workflow and nobody can say whether the model, a knowledge source, a tool contract, a skill version, or the environment moved. Detect by asking, for any two runs, which lineage links differ; if the answer is "we don't record that", the lineage is incomplete. Fix by versioning every link and recording it per run.
+
+**Telemetry without judgment, or judgment without telemetry.** Dashboards are full and nobody can say whether the work was good; or evaluation fails and nobody can say why. Pair every evaluation result with the lineage of the run it judged.
+
 **Missing forensic data.** An incident arrives and the bundle has holes. Preserve the remaining sources, record the gap, fix the instrumentation, and repeat the exercise.
 
 **Convention drift.** An OpenTelemetry attribute changes meaning and dashboards silently break. Pin versions, test exporters, keep the adapter.
@@ -212,12 +250,15 @@ Not yet implemented or demonstrated: an end-to-end OpenTelemetry architecture wi
 ## Retain this
 
 - Every signal carries the correlation spine: Mission → Plan → WorkOrder → Task → Attempt → trace → span → artifact → PR → release, plus scope, manifest digest, SHA, identity, and time. Correlation never grants access.
+- Execution lineage runs builder → intent → Plan → Task → Agent Definition → model + config → context → tool calls → artifact → evaluation → review → deployment → outcome. Each run records model and configuration, retrieved context, tools called, state transitions, time, cost, tokens, retries, policies fired, and outcome.
+- Observability tells you what happened; evaluation tells you whether it was good enough. Without observability, evaluation is not debuggable; without evaluation, observability is just telemetry.
+- Drift has many sources (model, knowledge source, tool contract, skill, environment); lineage is what lets you attribute which one moved.
 - Four record kinds: domain state decides, audit says who, evidence proves, telemetry describes. Telemetry becomes evidence only through a validator with a method, policy, and subject digest.
 - Use links, not parent–child, for retries, CI, fan-out, pauses, and replays. Keep attempt number and idempotency key on everything.
 - Shared semantics (a stable envelope with provider fields namespaced) are what make runs, providers, and workflows comparable. Export via OpenTelemetry behind an adapter with pinned conventions.
 - Four kinds of health: outcome, control, runtime, AI economics and quality. Token volume is diagnostic, not productivity.
 - Default posture is metadata-first and content-off; capture full runs deliberately, for replay and comparison, under classification and retention rules. Never sample away domain, audit, evidence, or error records.
-- Cost rolls up from model call to Attempt to WorkOrder to accepted outcome once, with a recorded allocation rule; the practitioner views are usage over time and cost by model, sliceable by workflow.
+- Cost rolls up from model call to Attempt to WorkOrder to accepted outcome once, with a recorded allocation rule; the practitioner views are usage over time and cost by model, sliceable by workflow. Attribute by team, workflow, model, and outcome, and report cost per trusted outcome, not cost per token; the cheapest model is not the cheapest system once rework is counted.
 - A forensic bundle freezes manifests, identities, decisions, events, traces, lineage, receipts, artifacts, proofs, human decisions, cost, controls, and known gaps, immutably and under access control.
 
 ## Go deeper
@@ -232,4 +273,4 @@ Not yet implemented or demonstrated: an end-to-end OpenTelemetry architecture wi
 - Labs: [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md); [Authority containment and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md).
 - Primary references: OpenTelemetry Semantic Conventions (version 1.43.0 at time of study; CI/CD conventions release-candidate) and the OpenTelemetry Generative AI attribute registry (accessed 2026-08-30); W3C Trace Context; Google SRE guidance on monitoring and canaries.
 - Mission Control product sources studied: `convex/factory/attempts.ts`, `convex/schema.ts`, `apps/mission-control-ui/src/MonitoringDashboard.tsx`, `apps/mission-control-ui/src/eos/views/ExecutionInspectorView.tsx`, `packages/model-router/src/types.ts`.
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on token-usage and cost-by-model dashboards and the control plane's need for session traces and budgeting; "The 12-layer production AI agent stack" notes, Harness Engineering layer and trace-replay vocabulary.
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on token-usage and cost-by-model dashboards and the control plane's need for session traces and budgeting; "The 12-layer production AI agent stack" notes, Harness Engineering layer and trace-replay vocabulary; Jay West, factory architecture notes, on execution lineage, the observability-versus-evaluation boundary, drift attribution, and token economics.

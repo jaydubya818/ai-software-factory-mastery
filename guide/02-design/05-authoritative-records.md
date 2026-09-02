@@ -2,14 +2,14 @@
 title: "Authoritative records: from company to release"
 part: design
 chapter: 5
-summary: The twelve records that carry intent, authority, causality, evidence, and acceptance through an AI Software Factory, why each one exists, and how a factory keeps a lower-level fact from silently rewriting a higher-level decision.
+summary: The twelve records that carry intent, authority, causality, evidence, and acceptance through an AI Software Factory, the companion records (Constitution, Mission Spec, Quality Contract, Factory Version, manifest, Context Package, Candidate, Verification Subject) that pin down what the spine would otherwise carry loosely, the traceability chain that joins them, and how a factory keeps a lower-level fact from silently rewriting a higher-level decision.
 absorbs: [04-domain-model/01-authoritative-delivery-hierarchy.md, 04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md, 04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md]
-infographics: [delivery-hierarchy, record-lifecycles, factory-configuration]
+infographics: [delivery-hierarchy, record-lifecycles, factory-configuration, traceability-chain]
 ---
 
 # 5. Authoritative records: from company to release
 
-An AI Software Factory produces an enormous amount of activity: conversations, plans, tasks, tool calls, commits, test runs, pull requests, deployments. If those things are stored as interchangeable "items with a status", the factory cannot answer the questions a governed system must answer. This chapter lays out the twelve records that hold the answers, explains the decision each one owns, and shows why the boundaries between them are the thing that makes the factory trustworthy. After reading it you should be able to draw the hierarchy from memory, defend every split in it, and diagnose a design in which two records have quietly collapsed into one.
+An AI Software Factory produces an enormous amount of activity: conversations, plans, tasks, tool calls, commits, test runs, pull requests, deployments. If those things are stored as interchangeable "items with a status", the factory cannot answer the questions a governed system must answer. This chapter lays out the twelve records that hold the answers, the companion records a control plane grows around them once it has been operated for a while, the decision each one owns, and why the boundaries between them are the thing that makes the factory trustworthy. After reading it you should be able to draw the hierarchy from memory, defend every split in it, and diagnose a design in which two records have quietly collapsed into one.
 
 ## The problem
 
@@ -115,6 +115,64 @@ The table below compresses each record into the five facts worth memorising: wha
 | Evidence | Method, result, provenance, freshness, artifact hashes, source commit, validity | The requirement itself | Known verifier against an exact artifact | Valid, Stale, Invalidated, Waived | It is the evidence |
 | Pull Request | Comparison, branch, head SHA, checks, review state, merge result, review package links | WorkOrder acceptance, customer value | Control plane on agent recommendation | Merged, Closed | Head-SHA-specific checks and receipts |
 | Release | Merge, deployment, activation, observation, rollback readiness, production verification | Review of the change | Release policy and human release authority | Verified in production, Rolled back | Per-stage gate evidence |
+
+### The companion records
+
+The twelve records are the spine. A control plane that has been operated for a while grows a second set of records around them, each created because a specific failure kept happening when the fact it holds was left implicit. In its fullest form the chain reads:
+
+`Company → Workspace → Repository → Project Constitution → Mission → Mission Spec → Plan (versioned) → Plan approval → Quality Contract → WorkOrder → Task → Attempt → Execution Manifest (frozen) → Context Package (frozen) → Worker admission + fenced lease → Execution → Candidate → Verification Subject → Verification Plan (frozen) → Independent verifier → Evidence + receipt + Quality Gate → Pull Request (exact-current) → Human acceptance → Merge → Deployment → Activation → Production verification → Learning`
+
+None of these companions replaces a spine record; each pins down a fact that a spine record would otherwise be tempted to carry loosely.
+
+The **Project Constitution** holds the durable architecture principles, governance expectations, repository rules, quality expectations, and constraints that agents may not reinterpret. It exists before any planner or agent reasons about a Mission, and it is attached to the Plan rather than recalled by the model. *Intent and policy exist before intelligence is applied*, and important system rules should never depend on model memory.
+
+The **Mission Spec** is the immutable statement of what the Mission means: requirements with stable identifiers, measurable outcomes, explicit non-goals, recorded clarifications, acceptance expectations, and repository scope. It is separate from the Mission record because the Mission's operational state (owner, budget, blockers, active WorkOrder) changes constantly while its meaning must not. Before planning starts, deterministic spec-quality checks run against it: are the requirements identifiable? are the outcomes measurable? are there contradictions? are clarifications unresolved? is the scope explicit? is acceptance testable? A failed check blocks planning; it does not ask the planner to guess. *An agent can help clarify intent. It cannot silently redefine intent.*
+
+The **Quality Contract** is the machine-readable projection of the approved Plan: requirements, assertions, invariants, assurance expectations, evidence requirements, and approval policy. It freezes how success will be determined before any execution starts, which is the only way to prevent the definition of success from drifting toward whatever was produced. *Quality is not inferred after generation; it is part of the execution contract.* [Chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) gives it a full treatment.
+
+The **Factory Version** is the reproducible execution configuration of the factory itself: runtime configuration, model configuration, tools, policies, data classification, verification configuration, and execution constraints. It is the same idea as the versioned Factory Configuration described above, named from the runtime's side; every Attempt records the exact Factory Version it ran under, because *if you cannot reconstruct what ran, you cannot reliably explain what failed*.
+
+The **frozen execution manifest** was introduced earlier as the dispatch release for one Attempt. As a record it names repository, revision, harness, capability set, policy, budget, data classification, and verifier, all frozen before execution and never mutated underneath a running worker. Data classification (public, internal, confidential, restricted) is part of the frozen contract rather than a runtime lookup. *Reproducibility requires freezing the execution environment, not saving the prompt.*
+
+The **Context Package** is the minimal, frozen, attributable set of context an Attempt receives. It is distinct from **Factory Memory**, the advisory retrieval store the platform maintains: memory is consulted, the package is what actually reached the model, and every item in it carries provenance. The rule that makes the distinction worth a record is that retrieved context cannot change the approved Mission or Plan; *context should inform execution, not rewrite the contract*. A document that reads like an instruction is still data ([Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) and [Chapter 26](../04-prove/26-security.md)).
+
+The **Candidate** is exactly what execution produced, immutably identified by digest. It is not correct, not verified, and not accepted; *a Candidate is an output, not a success declaration*, and the harness saying "I'm done" is an event, not evidence. Separating the Candidate from the Attempt stops a completed run from being read as a completed WorkOrder, and separating it from the Pull Request stops a review artifact from being created before anything has been verified.
+
+The **Verification Subject** binds a Candidate to the frozen Verification Plan that will be applied to it, so that a separate verifier Attempt produces evidence and a receipt tied to that exact artifact. This is the record that makes currentness enforceable: if commit A was verified and the branch has moved to commit B, the Verification Subject for A does not cover B, its evidence is stale, and *passing verification on commit A does not authorise merge of commit B*. Because evidence belongs to the artifact rather than to the agent's confidence, an agent cannot change the Candidate and inherit the old receipt. Evidence comes from the system performing the check, never from the system being checked.
+
+| Record | Owns | Does not own | Created by | Terminal states | Evidence attached |
+| --- | --- | --- | --- | --- | --- |
+| Project Constitution | Architecture principles, governance expectations, repository rules, quality expectations, non-reinterpretable constraints | The outcome of any Mission | Repository or workspace owners, before any Mission | Superseded by a new version | Version history; Plans bind an exact version |
+| Mission Spec | Requirement IDs, measurable outcomes, non-goals, clarifications, acceptance expectations, repository scope | Operational Mission state; the Plan | Human owner with agent clarification; immutable once accepted | Superseded by a new Spec revision | Deterministic spec-quality check results |
+| Quality Contract | Requirements, assertions, invariants, assurance and evidence expectations, approval policy, frozen at Plan approval | Execution; the decision to accept | Deterministic projection of the approved Plan | Superseded with the Plan revision | Coverage of every criterion by a check |
+| Factory Version | Runtime, model, tool, policy, data-classification, verification, and execution-constraint configuration | The WorkOrder's authority | Platform owner; each change is a new version | Retired | Readiness and promotion evidence |
+| Execution manifest | Repository, revision, harness, capability set, policy, budget, data classification, verifier for one Attempt | Anything after execution starts | Deterministic compilation at dispatch | Immutable | Digest recorded on the Attempt |
+| Context Package | The exact frozen, attributable context an Attempt received | The Mission or Plan it informs; Factory Memory | Context service at dispatch | Immutable | Provenance per item; package digest |
+| Candidate | The immutable output of execution, by digest | Correctness, verification, acceptance | Execution, on Attempt completion | Immutable; may be superseded by a new Candidate | Links to Verification Subject |
+| Verification Subject | Binding of Candidate, frozen Verification Plan, verifier Attempt, evidence, receipt, Quality Gate decision | The Candidate's content; acceptance | Control plane when a Candidate is presented | Verified, Failed, Stale | The receipt, bound to the exact digest |
+
+The state-machine principle that all of these serve is easiest to remember as an inequality: *execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified*. Each transition needs its own evidence and its own authority, and after merge the stages of deployment, activation, and production verification remain distinct. Code complete is not factory complete. Verification and acceptance in particular are different questions: verification asks whether the artifact satisfied the machine-checkable contract; acceptance asks whether we are authorising progression. Correctness and authority are separate concerns, and a control plane that lets a passing Quality Gate imply acceptance has quietly merged them.
+
+### The traceability chain
+
+The companion records make one more thing possible: an unbroken chain from a sentence in the Mission Spec to a check that ran against an exact artifact. The chain is a requirement on the design, not a nice-to-have, because it is the only way to answer "which check proves this requirement?" and "which requirement does this failing check threaten?" without a human reconstructing the answer.
+
+<!-- infographic: traceability-chain -->
+> **Infographic — From requirement to verification check.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    R["Spec requirement<br/>(stable ID)"] --> PA["Plan assertion"]
+    PA --> WOB["WorkOrder blueprint"]
+    WOB --> AC["Acceptance criterion"]
+    AC --> VC["Verification check /<br/>evidence expectation"]
+    VC --> EV["Evidence + receipt<br/>bound to Candidate digest"]
+    EV -. "satisfies or refutes" .-> R
+    C["Project Constitution"] -. "binds" .-> PA
+    QC["Quality Contract"] -. "freezes AC + VC" .-> AC
+```
+
+Every hop is a reference to a stable identifier, never a copy of text, so that a revised requirement can enumerate exactly which assertions, WorkOrders, criteria, checks, and receipts it invalidates. Plan approval sits on this chain with precise semantics: a human approves one exact Plan revision, bound to an exact Mission Spec and Constitution; a change in intent creates a new revision and never mutates the approved one; and approval does not dispatch execution, it authorises the release of governed WorkOrders. *Intelligence can recommend. Authority is granted separately.* The planner that produced the Plan is replaceable; the Plan, once approved, is governed. [Chapter 6](./06-intent-and-specification-engineering.md) builds the top of this chain; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) and [Chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) build the bottom.
 
 ### Record lifecycles
 
@@ -299,6 +357,12 @@ A design passes review when no lower-level status ever accepts a parent, every p
 
 **Vocabulary drift.** Product terms and schema terms diverge, and operators stop being able to translate. Keep the conceptual vocabulary stable and provide one explicit translation layer.
 
+**Candidate read as success.** The harness reports completion and a dashboard, a notification, or a pull request treats the output as done. Detect it wherever a Candidate exists without a Verification Subject; correct it by making "I'm done" an event that creates a Verification Subject and nothing else.
+
+**Retrieved context rewrote the contract.** A document in the Context Package restated the objective, and the agent followed the document. Detect it by diffing what the Attempt optimised for against the frozen Quality Contract; correct it by keeping Mission and Plan outside the context path and treating retrieved content as data.
+
+**Spec that cannot be checked.** Planning begins on a Mission Spec with unmeasurable outcomes or unresolved clarifications, and the planner fills the gaps. Run the deterministic spec-quality checks before planning and block on failure.
+
 ## In Mission Control
 
 Assessed at commit [`8014d5af`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c) (studied 2026-08-07), with the configuration work assessed at `main` [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) and study commit [`9d5f8e3`](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8) on draft PR #64 (2026-08-11).
@@ -322,6 +386,8 @@ On `main` at `b31e275`, Factory Configuration is versioned and readiness checks 
 
 The FactorySystemRecord inventory is a review-ready specification with a synthetic example; it is not implemented in Mission Control and does not claim to prove inventory completeness or control effectiveness anywhere.
 
+Jay's own walkthrough of the current design describes the fuller chain from the companion-records section (Project Constitution, immutable Mission Spec with deterministic spec-quality checks, Quality Contract, Factory Version, frozen execution manifest and Context Package, worker admission with fenced leases, immutable Candidate, Verification Subject with a frozen Verification Plan and a separate verifier Attempt, exact-current pull request, and distinct merge, deployment, activation, and production-verification stages) on a TypeScript and Node stack with Convex as durable state, Git worktrees, and sandboxed execution, with data classification frozen into the execution contract and fail-closed gates. That walkthrough is the author's account of the design at the time of writing and positions the project as an active personal control plane with substantial deterministic qualification, not a fleet-scale production system. The pinned commits above remain the evidence boundary for what this chapter asserts as implemented; where the walkthrough names a record the table does not, treat it as design direction until a pinned commit shows it.
+
 Schema presence is not proof of a coherent product journey. The complete hierarchy becomes a demonstrated capability only when the browser golden path shows creation, execution, failure, recovery, validation, review, and exact source lineage without direct database intervention. Future direction: expose the hierarchy as one navigable lineage, converge implementation names on the canonical vocabulary or ship one translation layer, make PR and Release lineage first-class without duplicating provider authority, and require policy diff, compatibility evaluation, canary evidence, and rollback for Factory promotion.
 
 ## Retain this
@@ -334,6 +400,9 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - Factory Configuration answers "which operating rules apply here?"; the execution manifest answers "what exactly governed this try?"; neither replaces the WorkOrder's authority.
 - State transitions are owned by deterministic control-plane code with actor, expected version, reason, idempotency key, and policy decision; agents recommend, they never advance.
 - The five invariants: upward traceability, exact versions per run, no silent parent completion, new version on material change, and downward traceability from every acceptance to fresh evidence.
+- The companion records each pin a fact the spine would otherwise carry loosely: Constitution (rules before intelligence), Mission Spec (immutable meaning, checked before planning), Quality Contract (success frozen before execution), Factory Version (what ran), execution manifest and Context Package (frozen inputs), Candidate (an output, not a success), Verification Subject (evidence belongs to the artifact, not the agent's confidence).
+- Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified. Verification on commit A does not authorise merge of commit B.
+- The traceability chain, spec requirement → Plan assertion → WorkOrder blueprint → acceptance criterion → verification check, is built from stable identifiers so a revision can enumerate what it invalidates. The planner is replaceable; the Plan is governed.
 
 ## Go deeper
 
@@ -345,4 +414,4 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - Labs: [1. Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md), [4. Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md), [10. Authority containment and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md), [13. External capability intake and recertification](../appendix/labs/13-external-capability-intake-and-recertification-lab.md).
 - [Glossary](../appendix/glossary.md); [Mission Control case study: implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md).
 - Primary sources at the pinned commits: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 Product Strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions Contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Domain Contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [Information Architecture](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/information-architecture.md), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Factory configuration](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/factory/configuration.ts), [PR checks and governed merge](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/prChecks.ts), [Execution manifest compiler](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/executionManifest.ts), [Workflow contract gate](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/factoryWorkflowContract.ts), [Structured handoff](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/packages/workflow-engine/src/handoff.ts), [Todo 025](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/025-complete-p1-freeze-agent-execution-manifests.md), [Todo 026](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/026-complete-p1-structured-workflow-contracts-context.md).
-- Source notes: Jay West, "AI Software Factory mission" (Intent layer outputs: Missions, WorkOrders, acceptance criteria, constraints, risk, evidence, ownership).
+- Source notes: Jay West, "AI Software Factory mission" (Intent layer outputs: Missions, WorkOrders, acceptance criteria, constraints, risk, evidence, ownership); Jay West, factory architecture notes and Mission Control walkthrough (Project Constitution, Mission Spec, Quality Contract, Factory Version, frozen manifest and Context Package, Candidate, Verification Subject, currentness, traceability chain, approval semantics).

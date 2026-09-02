@@ -39,7 +39,7 @@ export default function Home() {
               <h2 id="value-stream-title">From governed intent to confirmed outcome</h2>
               <p className="factory-one-line" aria-label="The factory in one line">Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</p>
             </div>
-            <p>The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority. Each phase opens the chapter that builds it.</p>
+            <p>The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority. Click any stage for the technical deep dive: what enters, what leaves, who decides, and how it is built.</p>
           </header>
           <ValueStream />
         </section>

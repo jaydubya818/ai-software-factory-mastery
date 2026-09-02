@@ -69,3 +69,12 @@ One line per absorbed v1 chapter. "Condensed" notes anything intentionally short
 - 122 Mermaid diagrams parsed by mermaid 11 in headless Chromium: 0 failures.
 - 0 broken relative links across 62 Markdown files.
 - Site: content:generate, lint, build, tests (11/11), links all pass.
+
+## Pass 2 (2026-09-02) — Jay's factory notes
+
+- Added `guide/stages/01..08` — eight technical stage pages behind the one-line value stream (clickable from the home page and TOC).
+- Wove Jay's architecture notes (six areas, layer ownership, agent definition contract, harness ownership and execution loop, durable execution, context types, MCP governance, model independence/routing, token economics, three-level evaluation, evals vs tests, evaluator calibration, golden set, signal aggregation, risk-tiered review, HITL, security/prompt injection, execution environments, incidents, waivers, feedback/self-improvement loop, build-vs-buy, what to build first, contribution model, forward-deployed engineering, multi-tenancy, release clocks, platform metrics, 30/60/90, five lessons, six themes) into chapters 2, 4–8, 10–18, 20–26, 28–35.
+- Chapter 34 is now the complete Mission Control walkthrough (Project Constitution → … → production verification → learning).
+- Added Appendix G (`guide/appendix/principles.md`): every one-line principle with its chapter link.
+- Excluded by request: any mention of specific employers, internal product names, or interviewers.
+- Checks: 181 Mermaid blocks parse; 0 broken links; exclusion grep empty; site build/lint/tests (12/12) pass.

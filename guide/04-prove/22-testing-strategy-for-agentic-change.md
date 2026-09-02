@@ -72,6 +72,25 @@ A few of these deserve a sentence of explanation for readers who have not used t
 
 The **Quality Contract** — the per-change statement of required evidence introduced in [Chapter 24](./24-quality-contracts-proof-packages-and-certificates.md) — chooses methods from change risk, affected behavior, architecture boundaries, data involved, reversibility, and production impact. No single pyramid shape or coverage percentage is universally sufficient. A one-line copy change and a payment-schema migration deserve different portfolios, and the contract is where that difference is written down.
 
+### Where tests stop and evals begin
+
+Every method in the portfolio above answers a deterministic question. Given this input, does the function return this value? Does the API still honor its contract? Is the database in the expected state afterward? The answer is yes or no, the same yes or no on every run, and a change in the answer is a change in the code. That is what makes a test a test.
+
+Agentic change introduces a second family of questions that no deterministic test can answer, because the thing being asked about is probabilistic. An **eval** (short for evaluation) is a check on how an agent behaves across a population of representative cases rather than on what one function returns. The questions an eval asks look like this:
+
+- Did the agent understand the task it was given?
+- Did it choose the right capabilities — the right tools, skills, and model — for that task?
+- Was its trajectory acceptable: did it investigate before editing, stay inside scope, stop when it should have?
+- Is its output grounded in the context it was given, rather than invented?
+- Did a change to the model, prompt, skill, or routing configuration cause a regression on work that used to succeed?
+- Are the trust-and-safety properties intact — no injection followed, no boundary crossed?
+
+Think of the difference between inspecting a car and licensing a driver. The inspection is deterministic: the brakes stop the car within the required distance or they do not. The driving test samples behavior across situations and judges whether it is acceptable often enough to be trusted on the road. Nobody would license a driver on the strength of a brake inspection, and nobody would skip the brake inspection because the driver seemed competent.
+
+The two are additive, not competing. Evals do not replace the portfolio; they sit alongside it, and they run at three points: offline in CI before a configuration is promoted, inline against the deployed agent, and operationally to watch for drift, reliability, safety, quality, and cost over time. [Chapter 23](./23-evaluation-engineering.md) builds the eval discipline in full. This chapter's job is to fix the boundary.
+
+*Traditional tests validate deterministic behavior. Evals validate probabilistic behavior.*
+
 ### Change-impact test selection
 
 Running the full suite on every Attempt maximizes breadth and can make feedback unusably slow. Running a hand-picked subset is fast and depends entirely on whether the pick was right. **Test-impact analysis** (equivalently, **change-impact test selection**, the first item in Jay's quality stack) is the discipline that makes the subset defensible.
@@ -155,6 +174,8 @@ A design exercise makes the trade-offs concrete. Take a payment API schema chang
 
 **Unstable test infrastructure.** Shared state, leaked secrets, or stale fixtures make results unreproducible. Detect it by results that differ by runner or by order. Fix by treating the estate as production: versioned, isolated, cleaned.
 
+**Tests asked probabilistic questions.** A team writes a unit test asserting the agent's exact output for a prompt, watches it flap, and either deletes it or pins the model version forever. Detect it by tests whose subject is model behavior rather than code behavior. Fix by moving the question into an eval with repeated trials and a threshold.
+
 **Untargeted heavy methods.** Mutation and fuzz run everywhere, cost too much, and get switched off. Detect it by pipeline duration and by nobody reading the results. Fix by targeting by risk and budget.
 
 ## In Mission Control
@@ -167,6 +188,7 @@ Mission Control does not yet provide a complete test taxonomy, an impact-analysi
 
 - Passing existing tests is weak evidence. The question is whether independent methods can detect the plausible faults introduced by this exact change.
 - Every test method makes one claim and has one blind spot; the portfolio is chosen by risk, not by a universal pyramid.
+- Traditional tests validate deterministic behavior; evals validate probabilistic behavior. They are additive, and evaluation starts before promotion and continues after deployment.
 - Change-impact selection is defensible only when the map is data, the reasons for exclusion are recorded, and full runs happen on a schedule. The model proposes; the map constrains.
 - Agent-written tests must fail red first, assert observable outcomes, and be judged by a validator that did not write the code.
 - Test infrastructure is production infrastructure: versioned fixtures, isolated tenants, no secrets, defined cleanup, retained environment identity.

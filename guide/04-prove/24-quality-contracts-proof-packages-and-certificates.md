@@ -137,6 +137,23 @@ quality_contract:
 
 A contract is **executable** when policy can determine, without interpreting a completion narrative, whether every required proof exists and remains usable. That is the difference between a contract and a well-written ticket.
 
+### The contract is the Plan, projected
+
+It helps to see where the contract comes from. The human approved one exact revision of the Plan ([Chapter 5](../02-design/05-authoritative-records.md)). The Quality Contract is the **machine-readable projection** of that approved Plan: the same requirements, assertions, and invariants, restated in a form a gate can evaluate rather than a form a person reads. Its fields fall into six groups:
+
+| Field group | What it carries from the Plan |
+| --- | --- |
+| Requirements | The stable-ID requirements the Plan decomposed, with criticality |
+| Assertions | The testable claims each requirement became, with method and pass rule |
+| Invariants | What must remain true throughout — boundaries, data classes, constraints agents may not reinterpret |
+| Assurance expectations | Required verifier capabilities, independence rules, and depth by risk |
+| Evidence requirements | Evidence type, method, freshness, and retention per assertion |
+| Approval policy | Who must decide, under what risk condition, with what separation of duty |
+
+The compile step freezes how success will be determined before any execution begins. That ordering is the whole point. If the definition of done were written after the candidate exists, it would be shaped by the candidate; frozen beforehand, it shapes the candidate instead. The producing agent inherits a contract it cannot edit, and the verifier inherits the same contract, so both sides are measuring the same thing.
+
+*Quality isn't inferred after generation. It's part of the execution contract.*
+
 ### Four records, not one report
 
 The implementable version of this idea rests on four core records, each with its own lifecycle:
@@ -185,7 +202,22 @@ Tool output is still not self-authenticating. Each result needs the artifact dig
 
 **Verification** asks whether the artifact satisfies specified technical controls. It favors deterministic tools and reproducible execution. **Validation** asks whether the delivered behavior solves the intended problem under realistic conditions; it may require domain judgment, adversarial scenarios, user research, probabilistic evaluation, or production comparison. A perfectly verified artifact can fail validation, which is the exact failure mode of an agent that builds the wrong thing well.
 
-The producer cannot be the sole judge of either. What makes a verifier independent is separate execution identity, environment, permissions, criteria, and receipts, not merely a differently named agent. Useful verifier capabilities include requirements coverage, testing, security, architecture, performance, accessibility, data migration, supply chain, and risk. They do not require eight permanently running agents. A factory may invoke deterministic tools, specialist agents, or qualified humans according to the contract. Adding agents without independent methods creates cost and correlated confidence, not assurance.
+The mechanics of independent verification follow a fixed sequence. When execution ends, what exists is an **immutable Candidate** — exactly what the run produced, no more. It is not correct, not verified, not accepted; it is an output. The factory wraps it as a **Verification Subject**: the candidate's exact identity (repository, head SHA, artifact digests) named as the thing to be examined. From the contract it derives a **frozen Verification Plan** — which checks will run, with which methods, in which environment, against which assertions — and freezes it before any verifier starts, so the plan cannot drift toward whatever happens to pass. A separate verifier Attempt executes that plan and emits evidence and a receipt; the Quality Gate then evaluates the receipts against the contract and issues its decision.
+
+```mermaid
+flowchart LR
+    Cand["Immutable Candidate"] --> Subj["Verification Subject"]
+    Contract["Quality Contract"] --> VPlan["Frozen Verification Plan"]
+    Subj --> Verifier["Independent verifier Attempt"]
+    VPlan --> Verifier
+    Verifier --> Ev["Evidence + receipt"]
+    Ev --> Gate["Quality Gate decision"]
+    Gate --> PR["Exact-current pull request"]
+```
+
+Two properties matter here. Evidence maps back to the original acceptance criteria, not to whatever the verifier happened to observe, so coverage gaps are visible. And the binding runs through the Subject: if the agent changes the candidate, the Subject changes with it, and it cannot inherit the old evidence. *Verification belongs to the artifact, not to the agent's confidence.*
+
+The producer cannot be the sole judge of either question. What makes a verifier independent is separate execution identity, environment, permissions, criteria, and receipts, not merely a differently named agent. Useful verifier capabilities include requirements coverage, testing, security, architecture, performance, accessibility, data migration, supply chain, and risk. They do not require eight permanently running agents. A factory may invoke deterministic tools, specialist agents, or qualified humans according to the contract. Adding agents without independent methods creates cost and correlated confidence, not assurance.
 
 ### Test outcomes, failure, and recovery, not coverage alone
 
@@ -424,6 +456,28 @@ Invalidation is dependency-aware. Trigger re-evaluation when any of the followin
 
 Re-evaluation may leave unaffected evidence usable. The system explains the invalidation path rather than deleting the proof package. Evidence expiry and subject change are different events: the first is time passing, the second is the certified thing no longer existing in that form.
 
+### Currentness: verified on A does not mean verified on B
+
+The most common subject change is the simplest. The verifier ran against commit A and everything passed. The agent, or a person, then pushed commit B to the same branch — a small fix, a rebase, a formatting pass. The branch now points at B, and the green evidence still describes A. Nothing in the evidence is false; it is simply about something else.
+
+**Currentness** is the property that a decision is being made about the exact thing the evidence describes. The factory enforces it by binding five identities together and checking them at the decision boundary:
+
+| Bound identity | What it pins |
+| --- | --- |
+| Candidate | The immutable output of the execution Attempt |
+| Verification Subject | The exact digest the verifier was told to examine |
+| Evidence | Each receipt's subject digest |
+| Checks | The frozen Verification Plan that produced the receipts |
+| Pull-request head | The commit the merge would actually take |
+
+If any one of the five disagrees with the others, the gate reports `STALE`, not `ELIGIBLE`, and the pull request is no longer exact-current. The rule is not a technicality about hashes. *Passing verification on commit A doesn't authorize merge of commit B.* And because any of those identities can move after issuance, *verified once does not mean verified forever.*
+
+### Acceptance is not verification
+
+The gate decision and the acceptance decision answer different questions and are owned by different parties. **Verification** asks: did the artifact satisfy the machine-checkable contract? It is deterministic and, given the same subject and contract, always yields the same answer. **Acceptance** asks: are we authorizing this to progress? It is a decision by someone with the authority to make it, informed by verification but not reducible to it. A verified artifact can be held because the business timing is wrong; an accepted artifact can never be one that failed verification. The two must stay separate so that neither can impersonate the other: a passing gate cannot quietly become acceptance, and an accepting human cannot quietly wave through a failing gate.
+
+*Correctness and authority are separate concerns.*
+
 ### Signing and canonicalization
 
 Compute digests over an explicitly versioned canonical representation. RFC 8785 JSON Canonicalization Scheme (JCS) is suitable for constrained JSON; alternatively, wrap the exact payload bytes in a DSSE envelope and avoid application-level canonicalization ambiguity altogether. Use in-toto Statement subjects for portable attestations, and Sigstore or enterprise PKI for signing. Verification policy must check certificate or workload identity, issuer, time, transparency or timestamp proof, subject digest, and predicate type.
@@ -506,6 +560,10 @@ Start with stable criterion and receipt identifiers; add richer claim and counte
 
 **Unknown coerced to pass.** A missing receipt that defaults to green is an open gate. Every state machine above fails closed.
 
+**Stale evidence merged.** The branch moved from A to B after verification and the pull request still shows green. Detect it by comparing the PR head with the Verification Subject digest at merge time. Fix by binding candidate, subject, evidence, checks, and PR head and failing to `STALE` on any mismatch.
+
+**Contract written after the candidate.** The definition of done is drafted once the output exists, and it fits the output. Detect it by comparing contract compile time with Attempt start time. Fix by compiling the contract from the approved Plan before dispatch and forbidding edits during execution.
+
 **Verifier with acceptance authority.** If a verifier can write "accepted" directly, it has become the producer's rubber stamp. Verifiers submit evidence; policy decides.
 
 **Parallel meanings of "quality evidence."** When a legacy evidence-pack concept and a canonical receipt model coexist, operators cannot tell which governs. Migrate the legacy concept into the assurance graph or label it legacy.
@@ -520,7 +578,7 @@ Start with stable criterion and receipt identifiers; add richer claim and counte
 
 Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1), study branch [`9d5f8e3`](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8), and local HEAD `a490648`, reviewed 2026-08-11.
 
-**Implemented.** Mission Plans define validation assertions, pass conditions, evidence requirements, independence, and waiver policy. Released Plans materialize revision-bound WorkOrders and criteria. Verification receipts bind criteria, runs, methods, results, artifacts, verifiers, validity, waiver decisions, and invalidation history. WorkOrder governance blocks acceptance on missing, failed, stale, expired, or unapproved evidence. WorkOrder revision and reopen preserve history while selectively invalidating affected evidence. GitHub PR checks retain source and head-SHA lineage. QC records model rulesets, runs, findings, evidence packs, risk grades, scores, artifacts, and dashboards. The QC design's score/gate separation is directionally correct: the score is informational, and failed delivery gates determine eligibility.
+**Implemented.** Mission Plans define validation assertions, pass conditions, evidence requirements, independence, and waiver policy. Released Plans materialize revision-bound WorkOrders and criteria. Verification receipts bind criteria, runs, methods, results, artifacts, verifiers, validity, waiver decisions, and invalidation history. WorkOrder governance blocks acceptance on missing, failed, stale, expired, or unapproved evidence. WorkOrder revision and reopen preserve history while selectively invalidating affected evidence. GitHub PR checks retain source and head-SHA lineage. QC records model rulesets, runs, findings, evidence packs, risk grades, scores, artifacts, and dashboards. The QC design's score/gate separation is directionally correct: the score is informational, and failed delivery gates determine eligibility. At the later study commit `d902fae` cited in [Chapter 23](./23-evaluation-engineering.md), the repository also carries Verification Subject and Verification Plan records, verifier Attempts, exact-currentness checks, and Quality Gate Decisions as mechanisms; that assessment did not verify them as an operating end-to-end path.
 
 **Partial.** The older `qcRuns.execute` path explicitly uses mock assurance and agent-output adapters, skips its policy-evaluation TODO, and generates synthetic evidence packs. Its release-gate integration runs in `SHADOW` mode. Shadow release-gate evaluations can consume QC, context-evaluation, and GitHub CI signals linked to a deployment, but they enforce nothing. Study-branch PR #64 adds frozen execution manifests, structured completion, bounded handoffs, path scope, durable leases, and a real GitHub App publication proof; it strengthens build provenance and authority but remains open, and the browser-only golden path is incomplete. A staged, uncommitted continuous-quality plan (SHA-256 `31e3f6fc44824b643ef5bfa3389ba3da1e0e6b1f6827f66fdb63efcbb4c9313b`) proposes evidence envelopes, quality findings, gate decisions, reconciliation, and the principle that the approved Plan is the top-level contract. Those tables and APIs are proposals, not demonstrated capability.
 
@@ -529,7 +587,10 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 ## Retain this
 
 - The factory produces software plus an assurance case. That is stronger than "CI is green" and more honest than promising defect-free software.
-- The Quality Contract is compiled from intent, policy, risk, and Factory Configuration *before* execution; the agent never defines "done" mid-run.
+- The Quality Contract is compiled from intent, policy, risk, and Factory Configuration *before* execution; the agent never defines "done" mid-run. It is the machine-readable projection of the approved Plan: quality is part of the execution contract, not inferred afterward.
+- A Candidate is an output, not a success declaration. It becomes a Verification Subject, is checked by a frozen Verification Plan in a separate Attempt, and cannot inherit old evidence once it changes.
+- Currentness binds candidate, subject, evidence, checks, and PR head. Verification on commit A does not authorize merge of commit B; verified once does not mean verified forever.
+- Verification asks whether the contract was satisfied; acceptance asks whether progression is authorized. Correctness and authority are separate concerns.
 - Four records: Contract (what must be true), Evidence Envelope (what was observed), Gate Decision (whether it suffices), Certificate (a signed, bounded, revocable projection).
 - Scores prioritize; hard gates protect. A 98/100 cannot override one critical finding, missing test, unknown migration result, or absent approval.
 - `UNKNOWN` and `STALE` are first-class states. Fail closed. Never coerce to pass.

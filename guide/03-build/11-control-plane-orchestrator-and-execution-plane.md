@@ -4,7 +4,7 @@ part: build
 chapter: 11
 summary: Separate durable authority from failure-prone execution, connect them with an orchestrator that coordinates but never mints authority, and give every runtime component an explicit contract.
 absorbs: [05-runtime-architecture/01-control-plane-and-execution-plane.md, 05-runtime-architecture/02-runtime-orchestration-and-state-machines.md, 05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts.md]
-infographics: [control-vs-execution-plane, orchestration-state-machine, dispatch-loop]
+infographics: [control-vs-execution-plane, orchestration-state-machine, dispatch-loop, release-clocks]
 ---
 
 # 11. Control plane, orchestrator, and execution plane
@@ -145,6 +145,24 @@ A more general form of the same idea is the **runtime contract envelope**, which
 ```
 
 A consumer authenticates the sender, validates scope and schema, compares the expected state version, reserves capacity, persists acceptance, and only then dispatches. It returns a durable acknowledgement that is distinct from completion. Results bind the exact input digest, environment, dependency versions, outputs, costs, errors, side-effect receipt, and any unresolved uncertainty.
+
+### The questions orchestration has to answer
+
+Orchestration does not matter while work is one prompt and one answer. It starts to matter the moment work modifies repositories, calls services, waits on dependencies, runs tasks in parallel, retries, and has to coordinate the results. At that point five questions decide whether the workflow is sound, and none of them is a reasoning question:
+
+1. What runs in parallel?
+2. What must wait, and on what?
+3. What shares mutable state?
+4. What happens when one branch fails?
+5. What requires a human checkpoint?
+
+These are distributed-systems and workflow-engineering questions. Two agents modifying the same repository is a coordination problem, not a reasoning problem, and no amount of model quality makes it one. The design consequence is to separate the intelligence that does the reasoning from the orchestration that controls the workflow. The model can propose a plan and propose each next action; the platform decides what runs, in what order, under what authority, and what happens when something breaks.
+
+*The control plane manages the work. Workers execute the work.*
+
+*The model doesn't own the workflow. The platform does.*
+
+The point is easy to nod at and easy to violate. A workflow that lives inside a single long model conversation, where the model "remembers" which tasks are done and decides for itself when to try again, has put orchestration inside the component least able to hold it: one that has no durable state, no notion of a lease, no idempotency, and no way to answer the five questions after a crash. Answer them in the orchestrator, in records, before the first token is generated.
 
 ### Commands request; events report; state is derived under rules
 
@@ -336,6 +354,21 @@ Define SLOs separately for admission, dispatch, model and tool latency, state co
 
 Contracts carry explicit versions and a producer/consumer support window. Additive fields require tolerant readers. Changed meaning or changed state semantics require a new major version, dual-read/write migration, replay tests, and rollback. Capability or policy revocation supersedes ordinary compatibility. Retain decoders for evidence and audit records for their full retention period ([Chapter 30](../05-operate/30-control-surfaces-event-contracts-and-storage.md)).
 
+### Three release clocks
+
+The versioning rule above is strict because the control plane's contracts are the slowest-moving thing in the factory. Not everything should move that slowly. A factory that ships models, skills, and runtime APIs on one release train either freezes its model routing to the pace of an API migration or exposes its durable contracts to the churn of a prompt tweak. Run three clocks instead.
+
+<!-- infographic: release-clocks -->
+> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Clock | What moves on it | Pace | Gate |
+|---|---|---|---|
+| Configuration | Models, prompts, routing weights, retrieval parameters | Fast, often daily | Evaluation against a frozen baseline; instantly reversible |
+| Artifact | Skills and Agent Definitions | Slower artifact lifecycle ([Chapter 10](./10-the-agent-factory.md)) | Certification, canary, promotion with human authorization for scope increases |
+| Contract | Runtime, APIs, execution manifest, event schema, durable records | Slowest | Compatibility discipline: support windows, tolerant readers, dual-read/write migration, replay tests |
+
+The fast clock is safe precisely because the slow clock is stable: a routing change can be evaluated and rolled back in an afternoon only if the manifest, the event contract, and the state machine it runs on have not changed underneath it. Conversely, the contract clock can afford compatibility ceremony because it turns rarely. Mixing them is how a prompt change ends up blocked behind a schema migration, or a schema change gets waved through as "just config."
+
 ## Failure modes
 
 **Split brain.** Two components each believe they own the WorkOrder or Attempt lifecycle, typically a coordinator that keeps its own status table alongside the database. Detect it by asking, for every state, which single record is authoritative; if the answer is "both, usually in sync", the design is broken. Fix it by making one plane own lifecycle and the other hold only a cache.
@@ -351,6 +384,10 @@ Contracts carry explicit versions and a producer/consumer support window. Additi
 **Stale evidence.** Validation passes for an old head SHA, then the branch advances. Detect by binding evidence to exact artifact identity and comparing it at acceptance time. Fix by treating evidence freshness as a gate, not a suggestion.
 
 **Crash between effect and record.** The orchestrator restarts after GitHub accepts a PR-creation request but before the response is recorded. Detect via reconciliation against provider truth using the operation's idempotency key. Fix by persisting intent before the call and querying the provider before any retry.
+
+**The conversation is the workflow.** A multi-step delivery lives inside one long model session; the model tracks what is done, decides when to retry, and coordinates parallel work by remembering it. Detect it by asking, after a crash, which record says what completed. If the answer is "the transcript", orchestration has moved into the model. Fix by answering the five orchestration questions in durable records and letting the model propose only the next action.
+
+**One release train.** A prompt change waits behind an API migration, or an event-schema change ships as configuration. Detect it by asking what gate a routing tweak passed through last week and whether the manifest schema has a support window. Fix with the three release clocks.
 
 **Adapter exists, therefore the factory works.** Architecture diagrams collapse "we have an executor adapter" into "the end-to-end path is proven". Detect it by asking for the browser or runtime evidence of normal execution, policy rejection, cancellation, lost lease, duplicate event, validator failure, corrective Attempt, and exact GitHub lineage. Until all of those exist, the capability is a design, not a fact.
 
@@ -390,6 +427,8 @@ No fresh browser journey or live executor run was performed for these assessment
 - Lifecycles are layered: an Attempt completing says nothing about Task review or WorkOrder acceptance. An execution-complete event is evidence, not acceptance.
 - Waiting states, stop conditions, and reconciliation are first-class parts of orchestration, and safety limits are not negotiable by a model.
 - External systems stay authoritative for their own facts; the factory owns the governance decision about them.
+- Orchestration answers five questions (parallel, wait, shared state, branch failure, human checkpoint) in records, not in a conversation. The control plane manages the work; workers execute the work. The model does not own the workflow; the platform does.
+- Run three release clocks: configuration moves fast and eval-gated, artifacts on a certification lifecycle, contracts under compatibility discipline.
 
 ## Go deeper
 
@@ -397,6 +436,6 @@ No fresh browser journey or live executor run was performed for these assessment
 - Related: [Chapter 5, Authoritative records](../02-design/05-authoritative-records.md); [Chapter 7, Governance and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md); [Chapter 13, Coding harnesses and agent protocols](./13-coding-harnesses-and-agent-protocols.md); [Chapter 14, Development environments and sandboxes](./14-development-environments-sandboxes-and-compute.md); [Chapter 18, Agent and loop engineering](./18-agent-and-loop-engineering.md); [Chapter 19, The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [Chapter 29, Resilience and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 34, Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md).
 - Labs: [Lab 1, Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md) traces one dispatch from the operator action through Convex, Hono, the executor boundary, and back; [Lab 11, Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md) exercises a timeout after an external mutation.
 - Glossary: [Appendix A](../appendix/glossary.md).
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (control-plane job list, the dispatcher, why no open-source control plane exists yet); Jay West, AI Software Factory mission notes ("Mission Control determines"); the 12-layer production AI agent stack notes (Infrastructure and Loop Engineering).
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (control-plane job list, the dispatcher, why no open-source control plane exists yet); Jay West, AI Software Factory mission notes ("Mission Control determines"); Jay West, factory architecture notes (the orchestration questions, the platform owning the workflow, release clocks); the 12-layer production AI agent stack notes (Infrastructure and Loop Engineering).
 - Mission Control at `8014d5a`: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [ADR-001 orchestration architecture](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/001-orchestration-architecture.md), [executor adapter contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/architecture/executor-adapter-contract.md), [React entry point](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/main.tsx), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [governed WorkOrder commands](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/workOrders.ts), [factory dispatch preflight](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/factoryDispatch.ts), [Hono service](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/index.ts), [signed service-command client](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/serviceCommandClient.ts), [executor adapter interface](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/packages/workflow-engine/src/executorAdapter.ts), [Codex V1 adapter](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/codexExecutorAdapter.ts), [workflow executor process](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/workflow-executor/src/index.ts).
 - Mission Control at `b31e275`: [WorkflowRuns](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/workflowRuns.ts), [workflow state reconciliation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/workflowRunState.ts), [workflow graph](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/workflow-engine/src/graph.ts), [workflow executor](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/workflow-engine/src/executor.ts), and the [golden-path assessment](../appendix/labs/evidence/2026-08-08-golden-path/README.md).

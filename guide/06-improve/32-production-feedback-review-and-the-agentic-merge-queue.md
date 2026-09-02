@@ -4,7 +4,7 @@ part: improve
 chapter: 32
 summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
 absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
-infographics: [feedback-to-reproduction, fix-review-loop, agentic-merge-queue]
+infographics: [feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
 ---
 
 # 32. Production feedback, automated review, and the agentic merge queue
@@ -191,6 +191,92 @@ The final step closes the loop with the reporter: a notification that says what
 happened — fixed in version X, already fixed, could not reproduce, or under
 investigation — grounded in the records above rather than in a guess.
 
+### Signal quality is a product problem
+
+Before any reviewer, human or automated, reads the change, the factory has
+already produced a pile of signals about it: test results, static analysis,
+security scans, dependency reports, architectural checks, evaluation results,
+and the review agent's own findings. More of them is not better. A pull request
+that arrives with a hundred and fifty warnings gets all hundred and fifty
+ignored, and the one that mattered goes with them. The answer to "AI produces
+more PRs and more signals" cannot be "more analysis"; it has to be better
+signal.
+
+That makes **signal aggregation** a product problem with a product's
+obligations. Duplicates are collapsed. Related findings are correlated into one
+(the failing test, the lint error, and the security warning that all point at
+the same line are one finding). Each surviving finding carries a severity, a
+confidence, the ownership context (whose code, whose module, who has fixed this
+class of thing before), a risk classification, and a sentence on why it
+matters here. The output is the smallest set of findings that could change the
+reviewer's decision, and nothing else. The measure of the aggregator is
+*maximum decision quality per unit of human attention, not maximum signal
+volume.*
+
+The findings should also teach. A junior engineer who receives "architectural
+boundary violated" learns nothing; one who receives *which* boundary, *why* the
+risk matters here, *what* evidence shows it, *what* to inspect, and the
+organizational context behind the rule has been mentored by the tool while it
+executed. Restricting tools for less experienced engineers is the wrong
+instinct; explaining findings well is the right one, alongside the human
+mentoring nothing replaces. *The platform should increase engineering
+capability, not merely coding throughput.*
+
+Finally, the reviewer's reaction to each finding is captured: useful, wrong,
+or correct but irrelevant. That reaction is one of the highest-value learning
+signals the factory has, because it calibrates both the aggregator's confidence
+and the risk classifier below, and it feeds the loop of
+[Chapter 33](./33-governed-learning-and-compounding-engineering.md).
+
+### Risk-tiered review
+
+Human review cannot scale linearly with generated code. If every AI-produced
+change gets the same senior review a hand-written change would, the reviewers
+become the factory's throughput limit within the first quarter, and they
+respond the way overloaded reviewers always do, by skimming. So review depth is
+set by the change's risk, and explicitly not by who or what produced it.
+*Review depth should be proportional to risk, not to the fact that AI generated
+the change.*
+
+**Risk classification** scores each change on nine dimensions: blast radius,
+reversibility, security sensitivity, data sensitivity, dependency impact,
+architecture impact, production criticality, novelty, and the strength of the
+verification already attached. The evidence it aggregates is the signal set
+above (tests, static analysis, security, dependency risk, architectural
+impact, evaluation results, ownership context) plus the history of what has
+failed before in this area. The tier that comes out decides the review path.
+
+<!-- infographic: signal-to-review-path -->
+> **Infographic — From signals to a risk-tiered review path.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    SIG["Tests, static analysis, security, deps, evals, ownership, history"] --> AGG["Aggregate: dedupe, correlate, severity, confidence, context"]
+    AGG --> RC{"Risk classification"}
+    RC -->|"low"| LOW["Automated verification; potentially autonomous promotion"]
+    RC -->|"medium"| MED["Lightweight human review with summarized evidence"]
+    RC -->|"high"| HIGH["Senior / principal review + stronger controls"]
+    LOW & MED & HIGH --> FB["Reviewer feedback: useful / wrong / irrelevant"]
+    FB -.->|"recalibrate"| AGG & RC
+```
+
+| Tier | Typical changes | Verification | Review path |
+| --- | --- | --- | --- |
+| Low | Documentation, mechanical configuration, deterministic or generated changes with strong tests | Automated verification against the quality contract | Potentially autonomous promotion under policy, with rollback |
+| Medium | A known dependency update, a bounded feature inside an existing pattern | Automated verification plus evaluation results | Lightweight human review of summarized evidence; one reviewer, one packet |
+| High | Architecture changes, authentication and authorization, sensitive data, large blast radius, novel patterns | Full verification, independent evaluation, security review | Senior or principal review with stronger controls and explicit approval records |
+
+The tier is a starting position, not a permanent one. Reviewer feedback
+(this "low" change should have been "medium"; this "high" finding was noise)
+improves the classifier and the evaluators behind it, so the boundaries move
+as evidence accumulates. And the direction of movement follows a rule that
+governs autonomy everywhere in this guide: *autonomy should scale with
+reversibility, not confidence.* A change earns a lighter review path because
+it is bounded and undoable and its verification is strong, never because the
+model sounded sure. The aim of the whole arrangement is *to scale trust, not
+human review.*
+
 ### Automated review and the bounded fix-review loop
 
 An **Automated PR Review Agent** reads a pull request and identifies potential
@@ -307,7 +393,7 @@ second. **Dependency-aware merge order** matters when several candidates
 depend on one another: land the migration before the code that reads the new
 column, and land shared library changes before the consumers.
 
-The invariant that makes this safe is short enough to memorize: an agent may
+The invariant that makes this safe fits in one sentence: an agent may
 keep a human-approved candidate mergeable, but it must not silently expand
 scope or replace the human merge decision. "Keep this mergeable" is a much
 narrower and safer authority than "merge this." Concretely, the maintenance
@@ -393,17 +479,25 @@ every stage with its own accuracy metric.
 8. **Retain the regression case** bound to issue, fix, versions, expected
    result, owner, retirement policy; run cheap cases on every PR; schedule
    expensive ones; quarantine flaky ones with an owner.
-9. **Ingest review findings** with full finding identity; support incremental
-   review and false-positive feedback.
-10. **Run the fix-review loop** under a written contract: allowed fixes, max
+9. **Aggregate signals before anyone reads them**: deduplicate, correlate,
+   attach severity, confidence, ownership context, and risk; surface the
+   smallest decision-changing set; explain each finding well enough to teach.
+   Capture the reviewer's useful / wrong / irrelevant reaction on every one.
+10. **Classify risk on the nine dimensions** and route by tier: low to
+    automated verification and policy-governed promotion, medium to one
+    reviewer with a summarized packet, high to senior review with stronger
+    controls. Let reviewer feedback move the boundaries.
+11. **Ingest review findings** with full finding identity; support incremental
+    review and false-positive feedback.
+12. **Run the fix-review loop** under a written contract: allowed fixes, max
     iterations (start at three), spend cap, oscillation detection, required
     deterministic checks after every fix, independence for consequential
     findings, escalation packet on stop.
-11. **Run merge maintenance** as a separate worker on a sandboxed machine, not a
+13. **Run merge maintenance** as a separate worker on a sandboxed machine, not a
     developer workstation, under a written policy: frozen scope, allowed update
     strategy, retry classification and budget, mechanical-conflict rules,
     invalidation-on-material-diff, human merge gate.
-12. **Notify the reporter** from the records, and measure triage accuracy,
+14. **Notify the reporter** from the records, and measure triage accuracy,
     reproduction yield, false-deduplication rate, review precision, human
     attention per accepted outcome, merge latency, and change-failure rate.
 
@@ -427,6 +521,9 @@ Merge-maintenance policy checklist:
 | Confident false reproduction | Fix passes repro but incident recurs | Verify reproductions on an independent path; record confidence; route ambiguity to a human |
 | False deduplication hides a distinct defect | Reporter says "still broken" after a linked fix | Record link rationale and confidence; allow split; measure false-merge rate |
 | Flaky regression case toggles between blocking and ignored | Case alternates pass/fail without a code change | Quarantine with owner and retirement date |
+| Signal flood | Dozens of findings per PR; reviewers resolve them in bulk without reading | Deduplicate and correlate; surface the smallest decision-changing set; measure decision quality per unit of attention |
+| Uniform review depth | Every AI-generated change gets senior review; review queue becomes the throughput limit | Classify on the nine risk dimensions; route by tier; let feedback move the boundaries |
+| Tier drift unnoticed | Changes classified low keep producing rework or incidents | Feed reviewer corrections and production outcomes back into the classifier; audit tier accuracy by outcome |
 | Reviewer noise and review churn | Rising iteration counts, low finding precision | Measure precision and recall; suppress with feedback; limit blocking authority |
 | Fix-review oscillation | Same findings alternate across iterations | Detect no-progress; stop at max iterations; escalate with packet |
 | Reviewer certifies its own suggestion | Same identity proposed and verified the change | Require an independent verifier for consequential findings |
@@ -449,6 +546,11 @@ WorkOrder acceptance, and separate merge and release states. V1 doctrine links
 production defects, incidents, and rollbacks to governed issues bound to an
 exact repository and commit. Those pieces are real substrate for this chapter,
 and the currentness check in particular is the seed of stale-base detection.
+
+Risk classes, policy envelopes, and risk-proportional approval records exist
+at that commit, which is the substrate a tiered review path needs; a signal
+aggregator with confidence and ownership context, and a classifier scoring the
+nine risk dimensions from aggregated evidence, are not demonstrated.
 
 The studied evidence does not establish a general feedback intake service, a
 current-version checker, a reproduction generator and independent verifier, an
@@ -476,6 +578,16 @@ precision, human attention, merge latency, and change-failure outcomes.
   shipping; measure by landed lines of code and reclassify.
 - Cheap regression cases run on every PR; expensive ones by risk; flaky ones are
   quarantined with an owner.
+- Signal quality is a product problem: deduplicate, correlate, attach severity,
+  confidence, ownership, and risk; surface the smallest set that can change the
+  decision; explain findings well enough to teach. Maximum decision quality per
+  unit of human attention, not maximum signal volume.
+- Review depth is proportional to risk, not to the fact that AI generated the
+  change. Low risk goes to automated verification and possibly autonomous
+  promotion; medium to one reviewer with a summarized packet; high to senior
+  review with stronger controls. Reviewer feedback recalibrates the tiers.
+- Autonomy scales with reversibility, not confidence. Scale trust, not human
+  review.
 - The fix-review loop is a while loop with a maximum of three iterations, then
   a human. Reviewer satisfaction is not acceptance, and a reviewer cannot
   certify its own fix.
@@ -507,7 +619,9 @@ precision, human attention, merge latency, and change-failure outcomes.
   patterns" livestream — the feedback-to-reproduction pipeline, the
   fix-CodeRabbit-until-mergeable loop, the agentic merge queue, and
   prototype-to-sliced-PR workflow; "The 12-layer production AI agent stack"
-  coverage audit, sections 8 and 9.
+  coverage audit, sections 8 and 9; Jay West, factory architecture notes, on
+  signal aggregation, risk-tiered review, reviewer feedback as a learning
+  signal, and review findings that teach.
 - CodeRabbit pull-request review documentation and review commands (accessed
   2026-08-30); GitHub, "Managing a merge queue" and "About stacked pull
   requests" (accessed 2026-08-30).

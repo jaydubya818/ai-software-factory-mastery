@@ -2,9 +2,9 @@
 title: Mission Control as a living case study
 part: improve
 chapter: 34
-summary: What Mission Control is, how a Mission moves through it, what the retained evidence proves at the pinned commits, why its architecture was decided the way it was, and where its honest limits sit today.
+summary: What Mission Control is and is not, the full record-by-record walkthrough of how a Mission moves through it, what the retained evidence proves at the pinned commits, why its architecture was decided the way it was, and where its honest limits sit today.
 absorbs: [09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md, 09-mission-control-case-studies/02-verification-first-software-factory.md, 09-mission-control-case-studies/03-capability-workflow-and-admission-map.md]
-infographics: [mission-control-architecture, mission-flow]
+infographics: [mission-control-architecture, three-layers, master-architecture-chain]
 ---
 
 # 34. Mission Control as a living case study
@@ -44,6 +44,21 @@ narrative:
 3. Which independent observations support each acceptance claim?
 4. Which policy and which accountable human allowed the next material action?
 
+The project began with a smaller, more personal version of that problem.
+Adding a second and third coding agent to a working day did not add
+throughput. It turned the human into the **scheduler**: the one person who
+knew which agent held which branch, which plan it was following, what
+permissions it had, what had passed, whether the code had changed since it
+passed, what needed review, and what was consuming budget. All of that state
+lived in one head, and the head was the bottleneck. The question that
+followed was a control-plane design question rather than a model question:
+what would the operating system look like if one person had to govern tens or
+hundreds of autonomous workers without holding their state in memory?
+
+> More agents without a control plane create more coordination, not
+> necessarily more throughput. A chat interface scales conversations. A
+> software factory scales governed work.
+
 The [North Star](https://github.com/jaydubya818/MissionControl/blob/d902fae7032c0696b531c44ae88829c652516fc6/docs/product/mission-control-north-star.md)
 states the intended answer as an operating model. Mission Control is to be the
 operating system for **human-directed, agent-executed software development**:
@@ -64,6 +79,66 @@ Everything below is the attempt to make that sentence true in code, and the
 evidence of how far the attempt has gotten.
 
 ## How it works
+
+### What Mission Control is, and is not
+
+Mission Control is a personal software-factory control plane for governed
+autonomous software delivery. The negatives are as important as the
+positive. It is not a coding agent, not a chatbot, not a multi-agent chat
+interface, not just a workflow engine, not just an evaluation framework, not
+just CI/CD, and not a replacement for coding harnesses. It is the durable
+authority, orchestration, verification, evidence, and lifecycle-control layer
+that sits above all of those. Harnesses — Codex today, Claude Code, DeepSeek,
+whatever comes next — remain replaceable execution backends behind one
+contract.
+
+> The harness executes. Mission Control governs. The coding agent is
+> replaceable; the governed delivery contract isn't.
+
+### Three layers
+
+<!-- infographic: three-layers -->
+> **Infographic — Harness, factory, control plane.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart TB
+    MC["Mission Control<br/>authority, durable state, human attention"]
+    SF["Software Factory<br/>workflow, environment, policy, budget, verification, recovery, delivery contract"]
+    HN["Coding agent / harness<br/>bounded engineering work"]
+    MC -->|"coordinates missions and factories across projects"| SF
+    SF -->|"runs bounded work through"| HN
+    HN -.->|"candidate + structured result"| SF
+    SF -.->|"evidence, exceptions, decisions"| MC
+```
+
+The system is easiest to hold as three layers, each with a different job. The
+**coding agent or harness** performs bounded engineering work: read the
+repository, change it, run what it is told to run, report. The **Software
+Factory** is the production system around that work — workflow, execution
+environment, policies, budgets, verification, recovery, and the delivery
+contract — whose purpose is to produce trusted change repeatedly rather than
+once. **Mission Control** is the control plane above the factory: it
+coordinates Missions and factories across projects, preserves durable state
+and authority, and routes the scarcest resource, human attention.
+
+> The harness performs the work. The factory produces trusted change. Mission
+> Control governs authority and attention.
+
+### Who owns what
+
+The responsibility model is a three-way split, and every later design choice
+is an instance of it.
+
+| Owner | Owns |
+| --- | --- |
+| Humans | Intent, Plan approval, consequential recommendations, acceptance, merge, release, risk decisions |
+| Agents and harnesses | Planning support, investigation, code changes, bounded engineering work, Candidate production, structured handoff |
+| Deterministic systems | Admission, scope, budgets, verification checks, digests and lineage, currentness, security boundaries, authority gates |
+
+> Agents propose and execute. Deterministic systems validate and govern.
+> Humans retain the decisions whose consequences require judgment or
+> authority.
 
 ### What Mission Control is made of
 
@@ -125,7 +200,7 @@ flowchart TB
     CX -.-> LEARN
 ```
 
-The picture has a shape worth memorizing. Convex is the courthouse: the only
+The picture has a shape worth holding onto. Convex is the courthouse: the only
 place a record becomes true. Hono is the workshop next door, where tools run
 and things get built, but which cannot file a judgment. The three advisory
 projections (memory, observability, learning) are the library: consulted
@@ -176,75 +251,297 @@ Builder intent
 Names vary between products. The principle does not: no link in that chain is
 allowed to write the next link's conclusion.
 
-### How a Mission flows through it
+### The master chain
 
-<!-- infographic: mission-flow -->
-> **Infographic — How a Mission flows through Mission Control.** *(Jay's graphic goes here.)* Until then, the diagram below
+<!-- infographic: master-architecture-chain -->
+> **Infographic — The master architecture chain.** *(Jay's graphic goes here.)* Until then, the diagram below
 > carries the same concept.
 
 ```mermaid
-flowchart LR
-    I["Mission + Spec revision"] --> P["Versioned Plan"]
-    P --> HA{"Human plan approval"}
-    HA --> W["WorkOrder + Quality Contract"]
-    W --> T["Task"]
-    T --> M["Frozen Execution Manifest"]
-    M --> A["Leased Attempt in worktree"]
-    A --> C["Immutable Candidate"]
-    C --> V["Independent verifier Attempt"]
-    V --> E["Evidence + receipt"]
-    E --> G{"Quality Gate Decision"}
-    G --> PP["Publication Permit"]
-    PP --> PR["GitHub App pull request"]
-    PR --> AC{"Human WorkOrder acceptance"}
-    AC --> R["Merge, release, production: separate states"]
+flowchart TB
+    subgraph S1["Scope and intent"]
+      CO["Company"] --> WS["Workspace"] --> RP["Repository"] --> PC["Project Constitution"] --> MI["Mission"] --> MS["Immutable Mission Spec"]
+    end
+    subgraph S2["Plan and authority"]
+      PL["Versioned Plan"] --> HPA{"Human Plan approval"} --> QC["Quality Contract"] --> WO["WorkOrder"] --> TK["Task"]
+    end
+    subgraph S3["Execution"]
+      AT["Attempt"] --> EM["Frozen execution manifest"] --> CP["Frozen Context Package"] --> AD["Worker admission + fenced lease"] --> HX["Harness execution"] --> CA["Immutable Candidate"]
+    end
+    subgraph S4["Verification"]
+      VS["Verification Subject"] --> VP["Frozen Verification Plan"] --> IV["Independent verifier"] --> EV["Evidence + receipt + Quality Gate"]
+    end
+    subgraph S5["Delivery"]
+      PR["Exact-current PR (permit-gated)"] --> HA{"Human acceptance"} --> MG["Merge"] --> DP["Deployment"] --> AC["Activation"] --> PV["Production verification"]
+    end
+    MS --> PL
+    TK --> AT
+    CA --> VS
+    EV --> PR
+    PV --> LN["Learning / improvement"]
+    LN -. "returns as a new Mission" .-> MI
 ```
 
-A **Mission** captures the desired outcome and governed scope inside a
-Project Constitution (immutable planning principles). With the default-off
-spec intake flag enabled, an immutable **Mission Spec** revision adds stable
-requirement identities, measurable outcomes, structured clarifications, and
-non-goals, checked by a deterministic quality evaluator; `FINALIZED` means
-planning-ready, nothing more. Agents or people then propose a versioned
-**Plan** that binds exact Spec and Constitution digests and maps requirements
-to assertions and WorkOrder blueprints. A separate human decision approves one
-exact Plan revision and releases **WorkOrders**. It does not dispatch anything.
+Read top to bottom, the chain is the whole product: Company → Workspace →
+Repository → Project Constitution → Mission → immutable Mission Spec →
+versioned Plan → human Plan approval → Quality Contract → governed WorkOrder
+→ Task → Attempt → frozen execution manifest → frozen Context Package →
+worker admission and fenced lease → harness execution → immutable Candidate →
+Verification Subject → frozen Verification Plan → independent verifier →
+evidence, receipt, and Quality Gate → exact-current pull request → human
+acceptance → merge → deployment → activation → production verification →
+learning. The property that holds the chain together is **negative
+authority**: Plan approval does not dispatch; the harness does not verify;
+verification does not publish; publication does not merge; merge does not
+prove the production outcome. The North Star states the same ladder as work
+attempted, completed, validated, approved, merged, deployed, and verified in
+production — different states, never interchangeable. The rest of this
+section walks the chain one record at a time.
 
-The **Quality Contract** is the machine-readable projection of that approved
-Plan: requirements, negative constraints, a three-boundary Change Budget
-(files, change size, protected paths and permitted change types), and a
-verification contract. Each WorkOrder decomposes into **Tasks**. Before a
-Task runs, the control plane freezes an **Execution Manifest** binding the
-active Factory Version and its digest, repository, code scopes, host, harness
-manifest, executor, governance policy, environment and backend, branch,
-allowed tools, WorkOrder revision, Quality Contract, optional Context Package,
-model route, and base SHA.
+### Project Constitution
 
-Server-authoritative worker admission then checks identity, session,
-generation, capabilities, capacity, Factory Version, and backend before
-issuing a fenced lease. The **Attempt** is one immutable execution try against
-that exact tuple; the harness runs in an Attempt-owned worktree or a remote
-sandbox and returns a **candidate** plus a normalized, untrusted result.
-Harness completion is not verification. Mission Control binds the candidate
-into a Verification Subject, freezes a Verification Plan, and runs a
-logically **independent verifier Attempt**, which records typed evidence
-envelopes and criterion receipts against that exact SHA. A **Quality Gate
-Decision** applies the versioned policy to the whole evidence set. A
-candidate-bound, expiring **Publication Permit** then gates the GitHub App
-push and pull request. The PR head, checks, candidate, subject, and evidence
-must remain **exact-current**; a moved head preserves the old evidence as
-history and blocks progress until a new lineage passes. Finally
-`workOrders.accept`, the single canonical acceptance mutation, is executed by
-an authorized human. Merge, deployment, activation, and production
-verification are separate states that follow and none of them is implied by
-the one before.
+Company, workspace, and repository are the scope boundaries that server-side
+authorization resolves before anything else happens. Inside a repository, the
+**Project Constitution** is the first record with content: durable
+architecture principles, governance expectations, repository rules, quality
+expectations, and constraints that agents may not reinterpret. It exists
+before any planner or agent reasons, which is the point. A rule that lives
+only in a system prompt or in what a model happens to remember is a rule that
+can be forgotten, argued with, or overwritten by something the agent reads.
 
-The property that matters is **negative authority**: Plan approval does not
-dispatch; the harness does not verify; verification does not publish;
-publication does not merge; merge does not prove the production outcome. The
-North Star states the same ladder as work attempted, completed, validated,
-approved, merged, deployed, and verified in production — different states,
-never interchangeable.
+> Intent and policy exist before intelligence is applied. Important system
+> rules should not depend on model memory.
+
+### Mission
+
+A **Mission** is the desired outcome and its governed scope — "eliminate
+this deprecated API safely", not "run agent X on this repository". The
+distinction decides what is durable. Agents come and go, harness adapters get
+swapped, a run fails and is retried; the Mission is the thing that persists
+through all of that, and it is the record everything downstream cites.
+
+### Mission Spec and its quality checks
+
+With the default-off spec intake flag enabled, an immutable **Mission Spec**
+revision turns the Mission into identifiable requirements with stable IDs,
+measurable outcomes, explicit non-goals, structured clarifications,
+acceptance expectations, and repository scope. Before planning is allowed,
+a deterministic evaluator asks the questions a good analyst would: Are the
+requirements individually identifiable? Are the outcomes measurable? Do any
+requirements contradict each other? Are there unresolved clarifications? Is
+the scope explicit? Is acceptance testable? `FINALIZED` means planning-ready
+and nothing more. An agent may help the human sharpen the Spec; what it
+cannot do is quietly change it while implementing.
+
+> An agent can help clarify intent. It cannot silently redefine intent.
+
+### Planner versus Plan, and what approval means
+
+Agents or people propose a versioned **Plan**. The planner is a replaceable
+component; the Plan is a governed record. A Plan binds the exact Mission Spec
+and Constitution digests, decomposes requirements into WorkOrder blueprints,
+and captures dependencies, risk, cost, rollback expectations, and
+independent-verification requirements. Traceability runs the length of it:
+Spec requirement → Plan assertion → WorkOrder blueprint → acceptance criterion
+→ verification check and evidence expectation, so that any later piece of
+evidence can be walked back to the requirement it serves.
+
+A human approves one exact Plan revision. If intent changes, a new revision
+is created and approved; a Plan is never mutated in place. And approval has a
+precise meaning: it authorizes the release of governed WorkOrders. It does
+not dispatch execution. That separation is what lets recommendation be
+cheap and authority be deliberate.
+
+> The Planner is replaceable. The Plan is governed. Intelligence can
+> recommend; authority is granted separately.
+
+### Quality Contract
+
+The **Quality Contract** is the machine-readable projection of the approved
+Plan: requirements, assertions, invariants, negative constraints, assurance
+expectations, evidence requirements, approval policy, a three-boundary
+**Change Budget** (files, change size, protected paths and permitted change
+types), and a verification contract. Its job is to freeze how success will be
+determined before any execution starts. Quality is not something the factory
+infers after looking at what the agent produced; it is part of the contract
+the agent executes against.
+
+> Quality isn't inferred after generation. It's part of the execution
+> contract.
+
+### WorkOrder
+
+A **WorkOrder** is the governed delivery contract for one bounded piece of
+work: objective, repository and scope, acceptance criteria, risk, budget,
+rollback expectation, verification requirement, and approval policy. It is
+the unit of governance. "An agent run" is not — a run is an implementation
+detail that can be retried, replaced, or moved between harnesses, and none of
+that changes what was ordered or how it will be judged.
+
+### Task versus Attempt
+
+Each WorkOrder decomposes into **Tasks**, the bounded operational units, and
+each Task is executed through **Attempts**. An Attempt is one immutable
+execution try against an exact tuple: the WorkOrder revision, the Factory
+Version, the worker lease, the execution manifest, and the frozen Context
+Package. Attempts are preserved independently. A retry is a new Attempt with
+its own record; nothing rewrites the history of the one that failed. This is
+the same distinction as a flight and a flight number: the number is the Task,
+each departure is an Attempt, and a cancelled departure stays in the log.
+
+### Factory Version
+
+A **Factory Version** is a reproducible execution configuration: runtime
+configuration, model configuration, tools, policies, data classification,
+verification configuration, and execution constraints, identified by an exact
+digest. Every Attempt binds one. Its purpose is reconstruction after the
+fact — when something fails, the first question is what actually ran, and
+that question has to have a deterministic answer.
+
+> If I can't reconstruct what ran, I can't reliably explain what failed.
+
+### Frozen execution manifest
+
+Before a Task runs, the control plane freezes an **execution manifest**
+binding the active Factory Version and its digest, repository and revision,
+code scopes, host, harness manifest and capability set, executor, governance
+policy, execution environment and backend, branch, allowed tools, WorkOrder
+revision, Quality Contract, optional Context Package, model route, budget,
+data classification, verifier, and base SHA. Frozen means it never mutates
+underneath the worker: a policy change or a route promotion made during the
+run applies to the next Attempt, not this one. Saving the prompt reproduces
+nothing; freezing the environment does.
+
+> Reproducibility requires freezing the execution environment, not saving
+> the prompt.
+
+### Factory Memory versus Context Package
+
+**Factory Memory** is advisory retrieval: prior outcomes, patterns, and
+knowledge the platform can offer. What an Attempt actually receives is a
+minimal, frozen, attributable **Context Package** — the specific items
+selected for this execution, recorded so that later analysis can say which
+context was present. The rule that separates the two is that retrieved
+context cannot change the approved Mission or Plan. Memory is a library the
+worker may consult, not a second author of the contract.
+
+> Context should inform execution, not rewrite the contract.
+
+### Durable workers and fenced leases
+
+Server-authoritative worker admission checks identity, session, worker
+generation, capabilities, capacity, Factory Version, and execution backend
+before granting a **fenced lease**. Ownership of an Attempt is explicit and
+visible in durable state. That gives two guarantees a fleet needs. A worker
+that dies leaves work that can be recovered from durable state by another
+worker. A stale worker that wakes up after ownership has transferred cannot
+keep mutating, because its fence no longer matches and every hardened write
+rechecks the tuple.
+
+> Model intelligence does not remove the need for distributed-systems
+> correctness.
+
+### Idempotency
+
+Every externally visible logical operation — a push, a PR creation, a comment
+— gets a durable identity that belongs to the operation, not to the Attempt
+that first tried it. Before a retry repeats a side effect, the platform checks
+whether it already happened and, if so, adopts the existing result. Chapter
+[12](../03-build/12-durable-execution.md) covers the general mechanism; the
+Mission Control version is compact:
+
+> Retry the intent, not the side effect. Attempt identity may change.
+> Logical-operation identity should not.
+
+### Bounded execution and data classification
+
+An Attempt runs bound to an exact repository, code scope, capability set,
+policy, budget, and execution manifest, and to a **data classification** —
+`PUBLIC`, `INTERNAL`, `CONFIDENTIAL`, or `RESTRICTED` — frozen into the
+contract, so that model route, tools, and backend can be admitted or refused
+against it. Enforcement is server-side authorization, capability admission,
+sandboxing, auditable authority, and fail-closed gates. None of it is
+enforced by asking the model to behave.
+
+> A model can reason about authority. It should never grant itself
+> authority.
+
+### Harness completion is not delivery
+
+The harness runs in an Attempt-owned worktree or a remote sandbox and returns
+a candidate plus a normalized, untrusted structured result. When the harness
+reports that it has finished, Mission Control records an event. It does not
+record a success.
+
+> The agent saying "I'm done" is an event, not evidence.
+
+### Immutable Candidate
+
+A **Candidate** is exactly what execution produced: a committed source
+subject with a SHA and a lineage back to its Attempt. It is not correct, not
+verified, and not accepted; those are separate states with separate evidence.
+Treating the Candidate as immutable is what makes everything after it
+meaningful, because every check is a check of this SHA and no other.
+
+> A Candidate is an output, not a success declaration.
+
+### Independent verification
+
+The verification flow is its own small chain. The Candidate is bound into a
+**Verification Subject**; a **Verification Plan** is frozen from the Quality
+Contract; a separate verifier Attempt — logically independent of the worker
+that produced the change — executes the checks and records typed evidence
+envelopes and criterion receipts against that exact SHA; a **Quality Gate
+Decision** applies the versioned policy to the complete evidence set. Evidence
+maps to the original acceptance criteria. Because the agent cannot change the
+Candidate and inherit the old evidence, verification attaches to the artifact
+rather than to anyone's confidence in it.
+
+> Verification belongs to the artifact, not the agent's confidence.
+> Independence is part of the trust model.
+
+### Evidence versus claims
+
+"Tests passed" written in a completion message is a claim. The test system's
+recorded result, tied to the exact Candidate and produced by an Attempt the
+worker did not control, is evidence. The whole assurance design comes down
+to insisting on the second and refusing to promote the first.
+
+> Evidence should come from the system performing the check, not from the
+> system being checked.
+
+### Currentness
+
+Commit A was verified. Someone pushes commit B to the branch. The evidence
+for A is now history, not proof. Mission Control binds Candidate,
+Verification Subject, evidence, checks, and PR head together and recomputes
+**exact-currentness** at every gate; a moved head preserves the old evidence
+and blocks progress until a new lineage passes. A candidate-bound, expiring
+**Publication Permit** gates the GitHub App push and pull request so that the
+SHA published is the SHA checked.
+
+> Passing verification on commit A doesn't authorize merge of commit B.
+> Verified once does not mean verified forever.
+
+### Acceptance versus verification
+
+Verification asks whether the artifact satisfied the machine-checkable
+contract. Acceptance asks whether we are authorizing progression — a human
+decision, executed through `workOrders.accept`, the single canonical
+acceptance mutation, by an authorized person. A verified Candidate can still
+be declined, and nothing accepted can skip verification.
+
+> Correctness and authority are separate concerns.
+
+### The state machine, before and after merge
+
+Every transition in the chain needs its own evidence and its own authority.
+After acceptance the ladder continues: merge → deployment → activation →
+production verification, each a distinct stage with its own record, none
+implied by the one before it. Code complete is not factory complete.
+
+> Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠
+> production verified.
 
 ### The assurance records and what each does not prove
 
@@ -294,7 +591,25 @@ constraint. An exact model route matters because a provider and model name
 alone do not describe the executable, adapter configuration, sandbox, or
 effective capabilities that produced an artifact.
 
-### Failure, recovery, and learning
+### Security model
+
+The security model follows the responsibility split rather than adding a
+layer on top of it. Every boundary is enforced outside the model: scope is
+resolved server-side from company, workspace, and repository; capability
+admission decides which harness, route, backend, and Sandbox Profile may run;
+each Attempt executes in an isolated worktree or sandbox with a protected
+ownership manifest outside the agent-writable tree; the data classification
+frozen into the manifest limits what the run may touch; publication requires
+a scoped, expiring permit; every external request arrives through a door
+that checks identity (signed webhooks, the HMAC service-command boundary,
+authenticated clients that cannot claim `SYSTEM` or `AGENT` authority); and
+every gate fails closed. The verification-plane threat model names the
+attacks this must survive — candidate substitution, evidence replay, test
+weakening, cross-tenant evidence — and the Failure modes section below shows
+how each is prevented and detected. Nothing an agent reads, including
+retrieved memory, can widen its permissions.
+
+### Failure and recovery
 
 When something goes wrong the workflow is: detect → classify as policy,
 capability, environment, provider, execution, or result failure → contain
@@ -310,15 +625,53 @@ invents a terminal outcome. Unknown or expired execution ownership becomes
 `LOST`, preserves the workspace, and requires a new Attempt; cleanup is
 non-forced and fails closed to `PRESERVED` on any ambiguity.
 
+### Command Center: exception-first
+
+The operator surface is built on one observation: the scarce resource in a
+factory is not agents, it is human attention. So the **Command Center** does
+not list everything that is running. It surfaces exceptions: what is blocked,
+what failed verification, what exceeded its budget, what drifted from the
+approved Plan, whose evidence has gone stale, what is ready for acceptance,
+and which consequential decision is waiting on a person. A healthy Attempt
+making progress is not news, and a view that shows it as news trains the
+operator to stop looking.
+
+> The scarce resource isn't agents. It's human attention.
+
+### Observability and evals are diagnostic, not authority
+
+Traces, telemetry, eval scores, routing advisories, and Factory Memory are
+projections. They explain what happened and suggest what might be improved;
+they never accept a WorkOrder, publish a Candidate, or promote a
+configuration. An eval score never becomes a verification receipt, and
+unavailable telemetry is recorded as `null` rather than as zero. The reason
+is that a metric that can accept work becomes, quietly and without a
+decision, a source of authority, and it will be gamed or misread the moment
+it matters.
+
+> Metrics can inform authority. They should not quietly become authority.
+
+### Learning and the recursive loop
+
 Learning follows the same discipline described in
 [Chapter 33](./33-governed-learning-and-compounding-engineering.md): Attempt,
 verification, review, and production observations become deterministic
-Learning Signals, then bounded clusters, then a human-reviewable Improvement
-Candidate, a frozen baseline-versus-candidate experiment, a reviewed result, a
-submitted Mission Plan, and a separate human Plan approval before the ordinary
-WorkOrder lifecycle. Learning can be autonomous; promotion is governed. The
-learning subsystem cannot accept, publish, merge, change an active Factory
-Version, or grant itself authority.
+Learning Signals, then bounded recurring-pattern clusters, then a
+human-reviewable Improvement Candidate, a frozen baseline-versus-candidate
+experiment, a reviewed result, and a recommendation — a better skill, route,
+prompt, verifier, workflow, or policy — which returns to the factory as a
+submitted Mission Plan and a separate human Plan approval before the
+ordinary WorkOrder lifecycle. Learning can be autonomous; promotion is
+governed. The learning subsystem cannot accept, publish, merge, change an
+active Factory Version, or grant itself authority.
+
+The loop, seen from the human side, is recursive: Research → Verify →
+Recommend → Approve → Implement → Validate → Measure → Iterate. Each
+improvement is delivered by the same chain that delivers product change,
+which is why the factory can improve itself without ever having authority
+over itself.
+
+> Autonomous discovery, not autonomous authority.
 
 ### Authorized action parity
 
@@ -335,7 +688,62 @@ it is a second control plane. Identity bootstrap, approval of consequential
 authority, risk acceptance, and merge remain human-only, and marking them so is
 clearer than leaving an accidental gap.
 
+### Mission Control, the Agent Factory, and the Software Factory
+
+Three names that are easy to confuse describe three different things. An
+**Agent Factory** creates and manages reusable intelligence: agent
+definitions, skills, tools, model configurations, and their evaluation
+suites, with versioning, ownership, and deprecation. A **Software Factory**
+is where that intelligence becomes trusted production software — the
+workflow, environment, verification, and delivery contract described above.
+**Mission Control** is the control plane that governs the delivery: it owns
+the Mission, the Plan, the WorkOrders, execution authority, verification,
+evidence, acceptance, and delivery. An Agent Factory can plug into Mission
+Control as a capability source, and in Mission Control's current shape the
+agent, skill, and route registries play that role. The generic five-system
+form — runtime executes, knowledge grounds, Agent Factory creates, Software
+Factory delivers, Mission Control governs — is in
+[Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md).
+
+> The Agent Factory creates reusable intelligence. Mission Control governs
+> how that intelligence becomes production work.
+
+### The central thesis, and the six questions
+
+Mission Control is not trying to make agents maximally autonomous. It is
+trying to make increased autonomy operationally trustworthy, and the way it
+does that is by insisting that the surrounding system can always answer six
+questions from records rather than from anyone's recollection:
+
+1. What was authorized?
+2. What actually ran?
+3. What changed?
+4. What proved it correct?
+5. Is that evidence still current?
+6. Who has the authority to move it forward?
+
+Every record in the master chain exists to answer one of those. When you
+cannot answer one from a record, you have found either a gap in the factory
+or a place where a model is being trusted with something that should be
+deterministic.
+
+> When autonomy increases, the surrounding system has to become more
+> explicit about authority and evidence, not less.
+
 ## How to build it
+
+### The stack
+
+The choices are ordinary and deliberately so. TypeScript and Node throughout;
+Convex for durable state and every server-side transition; REST where an
+external boundary needs it; Git and GitHub through a least-privilege App;
+per-Attempt worktrees; Docker and sandboxed execution with process isolation;
+harness contracts for Codex, Claude, and Claude Code; leases, idempotency,
+capability admission, recovery, and model routing in the control plane; and
+evals, observability, tracing, provenance, currentness, and deterministic
+gates in the assurance plane. Nothing on that list is exotic, which is the
+point: the difficulty of a factory is in the contracts between the pieces,
+not in the pieces.
 
 ### The key decisions and why
 
@@ -430,6 +838,19 @@ digests make drift fail closed and add configuration work; atomic tools
 compose better while domain tools reduce calls and variance. All of it should
 be proportional to risk, and none of it is an excuse to remove identity,
 authority, lineage, or evidence integrity.
+
+### Maturity, stated plainly
+
+Mission Control is an active personal project. The control-plane
+architecture and a substantial amount of deterministic qualification are
+implemented and system-qualified, and a bounded human-governed production
+pilot has been retained as evidence. It is not positioned as a fleet-scale
+production system running hundreds of live agents, and it should not be
+described as one. The "In Mission Control" section below pins each claim to
+a commit and an evidence state; the discipline that section models — say
+what is proven, partial, and future, and never let a proposal or an agent's
+assertion pass as capability — is itself one of the things the project is
+for.
 
 ### Reading any repository claim
 
@@ -588,22 +1009,48 @@ only then extend proof into deployment and production outcome.
 
 ## Retain this
 
+- The goal is not autonomous coding; it is governed autonomous software
+  delivery. Mission Control exists because more agents without a control
+  plane make the human the scheduler.
+- Three layers: the harness executes, the factory produces trusted change,
+  Mission Control governs authority and attention. The coding agent is
+  replaceable; the governed delivery contract isn't.
 - Mission Control is a control plane, not a coding agent: React for operators,
   Convex as the only source of truth and the only place transitions happen,
   Hono for orchestration and provider boundaries, executors in worktrees or
   sandboxes, GitHub behind a least-privilege App.
-- A Mission flows Mission → approved Plan → WorkOrder → Task → frozen
-  manifest → leased Attempt → immutable candidate → independent verification →
-  Quality Gate → permit → PR → human acceptance, and each step has negative
+- A Mission flows Constitution → Mission → immutable Spec → approved Plan →
+  Quality Contract → WorkOrder → Task → frozen manifest and Context Package →
+  leased Attempt → immutable Candidate → independent verification → Quality
+  Gate → permit → exact-current PR → human acceptance → merge → deployment →
+  activation → production verification → learning, and each step has negative
   authority over the next.
+- The Planner is replaceable; the Plan is governed. Plan approval releases
+  WorkOrders; it does not dispatch. Quality isn't inferred after generation;
+  it's part of the execution contract.
+- "I'm done" is an event, not evidence. A Candidate is an output, not a
+  success declaration. Verification belongs to the artifact, not the agent's
+  confidence, and evidence comes from the system performing the check.
 - Candidate identity is the join key. A green result for the wrong SHA proves
-  nothing; a moved head invalidates eligibility, not history.
-- Retry is a new Attempt. Missing evidence is a negative state. Unavailable
-  telemetry is `null`, not zero.
+  nothing; verification on commit A doesn't authorize merge of commit B; a
+  moved head invalidates eligibility, not history.
+- Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠
+  production verified. Correctness and authority are separate concerns.
+- A model can reason about authority; it should never grant itself authority.
+  Scope, budget, data classification, and capability are frozen into the
+  manifest and enforced outside the model.
+- Retry is a new Attempt; retry the intent, not the side effect. Missing
+  evidence is a negative state. Unavailable telemetry is `null`, not zero.
 - Admission is a chain of exact identities and digests; registration is not
   qualification, promotion is execution-only eligibility.
+- The scarce resource isn't agents; it's human attention. The Command Center
+  is exception-first.
 - Advisory stays advisory: memory, evals, and learning explain and propose, and
-  never accept, publish, merge, or reconfigure.
+  never accept, publish, merge, or reconfigure. Learning can be autonomous;
+  promotion remains governed.
+- The system must always answer six questions from records: what was
+  authorized, what ran, what changed, what proved it, is the evidence current,
+  who may move it forward.
 - The evidence at `b3dfcee` is a bounded, human-governed production pilot:
   15/15 accepted, 17 fail-closed drills, 3/3 live remote, `workOrders.accept`
   by a human, no merge. It authorizes nothing beyond that.
@@ -670,3 +1117,7 @@ only then extend proof into deployment and production outcome.
 - Source: Jay West, "Mission Control North Star" — the business-hours and
   overnight operating model, plan-before-execution, evidence-based
   development, and the measures of success.
+- Source: Jay West, factory notes, "Mission Control — full walkthrough" —
+  why the control plane exists, the three layers, the responsibility model,
+  the master chain record by record, the Command Center, the stack, maturity,
+  and the six questions.

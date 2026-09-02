@@ -4,7 +4,7 @@ part: prove
 chapter: 21
 summary: How the factory turns every completion claim into a traceable, challengeable, time-bound proof — and why that proof, not the agent's confidence, is what earns autonomy.
 absorbs: [07-quality-engineering/01-quality-and-evidence-architecture.md]
-infographics: [evidence-architecture, completion-vs-acceptance]
+infographics: [evidence-architecture, completion-vs-acceptance, signal-aggregation]
 ---
 
 # 21. Quality and evidence architecture
@@ -71,6 +71,22 @@ stateDiagram-v2
     end note
 ```
 
+### Three levels of correctness
+
+Before deciding how to prove a change is right, be precise about what "right" means. A candidate can be correct in three different senses, and a factory that checks only the first will ship work that is well-built, off-target, and out of bounds.
+
+**Execution correctness** asks whether the artifact holds together as engineering: it compiles, the unit and integration tests pass, static analysis and security scanning are clean, interface contracts are honored, and performance stays inside its envelope. **Outcome correctness** asks whether the work did what the builder asked for: the objective and the frozen acceptance criteria are met, and nothing the builder cared about regressed along the way. **Policy correctness** asks whether the work was allowed: the agent stayed inside its authorized repository, data, tool, and security boundaries, used only the tools it was granted, and respected every approval that policy required.
+
+| Level | Question | What the checklist covers |
+| --- | --- | --- |
+| Execution | Does it work? | Compile and type checks; unit and integration tests; static analysis; security scanning; contract tests; performance budgets |
+| Outcome | Did it accomplish the intent? | Objective met; each acceptance criterion satisfied; no unwanted regressions in behavior the builder depends on |
+| Policy | Was it authorized? | Correct tools used; repository, data, tool, and security boundaries respected; required approvals present; no scope expansion |
+
+The three are independent. A change can pass every test and solve the wrong problem. It can solve the right problem while reaching into a repository it was never authorized to touch. Prefer deterministic verification wherever a question has a deterministic answer; use calibrated model graders for the semantic judgments that remain, and never let a model grader be the sole authority on any of the three. The success measure that follows from this framing is not code generated but accepted outcomes, human rework, escaped defects, policy violations, reliability, latency, and cost per trusted outcome.
+
+*Generation is cheap. Evidence is what creates trust.*
+
 ### Five records that must never collapse into one
 
 Most quality failures in agentic systems come from letting one record stand in for another. Keep these five apart.
@@ -103,6 +119,8 @@ A receipt is trustworthy in proportion to what it captures. The **evidence envel
 - linkage to any waiver or exception; and
 - invalidation and supersession history.
 
+The envelope exists to keep claims and evidence apart. "Tests passed" in an agent's completion report is a **claim**: a statement made by the party whose work is under examination. The test system's own recorded result, bound to the exact candidate digest, is **evidence**: an observation made by the party doing the examining. The difference is not the wording but the source. *Evidence should come from the system performing the check, not from the system being checked.* An agent that summarizes the test output it saw has told you what it believes; the test runner's receipt tells you what happened.
+
 Receipts are immutable. A later result supersedes an earlier one; it never rewrites what happened. This is the property that makes the history auditable: you can always see that a criterion failed at 14:02 against commit `8f91a2c`, was corrected, and passed at 15:40 against `c3d7e01`, and nobody can quietly tidy up the first result.
 
 Highly structured receipts improve automation and auditability but can lose narrative — the sentence a human verifier wanted to add about why a result was borderline. The resolution is not to loosen the structure but to link the raw artifacts and allow a concise human interpretation alongside the envelope. Manual validation, where it remains necessary for product and business judgments, should produce the same attributable receipt rather than living as an undocumented conversation.
@@ -130,7 +148,7 @@ Discarding all evidence at every change is safe but wasteful. **Selective invali
 
 ### Validation must be independent
 
-The implementation worker cannot be the sole authority that declares its own success. This is the same principle that stops a company's accountants from auditing their own books, and for the same reason: not because they are dishonest, but because they share the assumptions that produced the error. **Independent validation** requires:
+The implementation worker cannot be the sole authority that declares its own success. This is the same principle that stops a company's accountants from auditing their own books, and for the same reason: not because they are dishonest, but because they share the assumptions that produced the error. Once work is produced, the factory does not trust the producing agent: it evaluates execution, outcome, and policy correctness through a path the producer does not control. *The producing agent should never be the only entity evaluating its own output.* **Independent validation** requires:
 
 - a separate execution identity and execution path;
 - frozen acceptance criteria defined before the result;
@@ -173,6 +191,43 @@ The validation layer draws on every method the mission enumerates: unit, integra
 The operator should never have to reconstruct the work from logs. A **review package** is the artifact that converts a pile of receipts into a decision a human can make in minutes. It shows the original outcome and its business reason; the approved Plan and WorkOrder scope; the files and systems changed; material decisions and deviations; the criterion-by-criterion result with direct links to evidence; verifier independence and artifact identity; every failed, stale, waived, conflicting, or missing piece of evidence; risk, uncertainty, where the reviewer should focus, and the rollback strategy; the pull-request URL, branch, head SHA, CI status, and merge state; and a recommendation with the available actions — approve, reject, revise, escalate.
 
 The package summarizes; it does not replace. The underlying evidence remains available for audit and deep inspection, and a package that hides uncertainty to look clean has failed at its only job.
+
+### The evidence bundle and signal aggregation
+
+A factory produces far more quality signals than a team ever did, because every candidate arrives with tests, static analysis, security findings, dependency risk, architectural-impact analysis, evaluation results, ownership context, and the history of what has failed in this part of the codebase before. That collection is the **evidence bundle** for a change, and it is what risk classification and review consume ([Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) covers the tiers). The bundle is only useful if a human can read it. More signals do not make better decisions; a pull request that arrives with 150 warnings gets all 150 ignored, and the one that mattered goes with them. The answer cannot be more analysis, because the volume is the problem.
+
+Signal quality is a product problem, not a scanning problem. Aggregation does the work of an experienced reviewer's first pass before a person ever looks:
+
+| Step | What it does |
+| --- | --- |
+| Deduplicate | Collapse the same finding reported by three tools into one |
+| Correlate | Group findings that share a root cause or a file |
+| Severity | Rank by consequence, not by which tool shouted loudest |
+| Confidence | Distinguish a confirmed defect from a heuristic guess |
+| Ownership context | Attach who owns this code and what they need to know |
+| Risk classification | Connect the finding to the change's risk tier and blast radius |
+| Explain | Say why it matters here, not just what rule fired |
+
+The goal is to surface the smallest set of signals that could change the decision. Everything else stays available but does not compete for attention. Then close the loop: capture what developers do with each signal — useful, wrong, correct but irrelevant — and feed it into the learning loop so the aggregation improves. A signal that is dismissed nine times in ten is either miscalibrated or misrouted, and the factory should be the one to notice.
+
+<!-- infographic: signal-aggregation -->
+> **Infographic — From signal flood to decision set.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    T["Tests"] --> Agg["Aggregation: dedupe, correlate, rank"]
+    S["Static analysis"] --> Agg
+    Sec["Security + dependency"] --> Agg
+    Arch["Architectural impact"] --> Agg
+    Ev["Eval results"] --> Agg
+    Hist["Ownership + history"] --> Agg
+    Agg --> Small["Smallest decision-changing set"]
+    Small --> Rev["Reviewer"]
+    Rev -->|"useful / wrong / irrelevant"| Learn["Learning loop"]
+    Learn --> Agg
+```
+
+*Maximum decision quality per unit of human attention, not maximum signal volume.*
 
 ### The coupled success system
 
@@ -227,6 +282,10 @@ The waiver contract, since it is the part most often done badly:
 
 **Validators are averaged.** An aggregate score or a majority of passes hides a hard failure. Detect it by checking whether any critical validator failed regardless of the total. The fix is to treat conflict as evidence and open a Risk Review.
 
+**Signal flood.** Every tool reports everything, the pull request carries 150 warnings, and reviewers learn to scroll past all of them. Detect it by measuring what fraction of surfaced findings a reviewer acts on. The fix is aggregation that surfaces the smallest decision-changing set, and developer feedback that recalibrates it.
+
+**Claims filed as evidence.** The agent's report that "tests passed" is stored where a receipt should be. Detect it by checking whether each receipt's producer is the checking system or the checked one. The fix is to accept evidence only from the verifier's own recorded result, bound to the exact candidate.
+
 **Activity is presented as proof.** The review surface shows commits, runs, and lines changed instead of criteria and receipts. Reviewers reconstruct the work by hand, and leverage goes negative. Detect it by measuring reviewer time per accepted change. The fix is the review package.
 
 **Merge is treated as done.** Lead time is measured to merge, change failure is never attributed back to a Mission, and customer value is assumed. Detect it by asking whether any record stops the clock. The fix is production validation bound to the Mission outcome.
@@ -255,7 +314,10 @@ Existing project documentation reports focused tests and local lifecycle evidenc
 
 ## Retain this
 
-- Confidence is not evidence. A completion report, however articulate, is a claim.
+- Confidence is not evidence. A completion report, however articulate, is a claim. Generation is cheap; evidence is what creates trust.
+- Correctness has three levels — execution (does it work?), outcome (did it accomplish the intent?), policy (was it authorized?) — and they are checked independently.
+- Evidence comes from the system performing the check, not the system being checked. The producing agent is never the only entity evaluating its own output.
+- More signals are not better decisions. Deduplicate, correlate, rank, and surface the smallest set that could change the decision; learn from what reviewers do with it.
 - Completion is a fact about execution; acceptance is a judgment about outcome. The producer's "done" is never sufficient for acceptance.
 - Keep five records apart: criterion (the claim), artifact (the thing), receipt (the observation), gate (the policy evaluation), and acceptance decision (the accountable judgment).
 - A receipt is trustworthy when it names the exact artifact, the method, the verifier, the environment, and the validity window — and is never rewritten.

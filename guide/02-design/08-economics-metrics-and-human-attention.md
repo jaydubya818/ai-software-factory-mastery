@@ -2,9 +2,9 @@
 title: Economics, metrics, and human attention
 part: design
 chapter: 8
-summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost, and how to treat qualified human attention as the scarcest resource it consumes — including where an engineer should focus and when to move up or down the altitude ladder.
+summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder.
 absorbs: [03-operating-model/02-factory-economics-and-operating-metrics.md, 03-operating-model/07-engineering-attention-altitude-and-control.md, 03-operating-model/05-compounding-engineering-and-human-attention.md]
-infographics: [five-metric-dimensions, attention-altitude, cost-per-validated-change]
+infographics: [five-metric-dimensions, cost-per-validated-change, budget-feedback-loop, attention-altitude]
 ---
 
 # 8. Economics, metrics, and human attention
@@ -65,6 +65,19 @@ flowchart TD
 
 For a factory offered as an internal platform, adoption has its own metrics: time to first successful workflow, task success, PR acceptance rate, human correction rate, model-routing quality, token cost per accepted outcome, reliability, repeat usage, time to onboard a new team, number of bespoke capabilities retired, builder satisfaction, and adoption across product organizations. Those are developed with the platform operating model in [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md).
 
+### Platform metrics in four families
+
+The same platform metrics are easier to defend when grouped by the question each family answers, and by what they deliberately exclude. Lines of code, prompts sent, agent count, PR count, and tokens consumed are all activity: they can rise while the platform gets worse. *Generation volume is an activity metric; trusted outcomes are the product metric.*
+
+| Family | Question | Metrics |
+| --- | --- | --- |
+| Builder | Does the factory get a builder from intent to a trusted result, and do they come back? | Intent → prototype time; intent → accepted PR time; intent → trusted production time; self-service onboarding; repeat usage |
+| Trust | Can the organisation rely on what the factory produces? | Accepted-task success; human edit rate; defect escape; rollback rate; false-positive review rate; policy violations |
+| Economics | What does a trusted outcome cost, all in? | Cost per trusted outcome; model cost; CI cost; human review cost; rework |
+| Platform | Is the machinery itself reliable? | Completion rate; reliability; latency; retry rate; tool failure rate; recovery time |
+
+A dashboard that reports one family alone is misleading in a predictable direction: builder metrics alone reward speed at the expense of trust, trust metrics alone reward caution at the expense of adoption, economics alone rewards the cheapest run rather than the cheapest outcome, and platform metrics alone describe a healthy machine that may be producing nothing anyone accepts. Read them together, and segment every one by team, workflow, risk tier, model route, and version.
+
 ### The metric hierarchy
 
 Metrics stack in four tiers, and confusing the tiers is the commonest measurement error. **Business outcomes** — adoption, revenue, retention, risk reduction, a customer problem solved. **Delivery outcomes** — lead time, deployment frequency, change failure, recovery time, accepted WorkOrders, outcome confirmation. **Factory effectiveness** — autonomous completion, first-pass validation, recovery success, evidence completeness, approval latency, review time, cost per accepted outcome. **Operational diagnostics** — tokens, tool calls, model latency, queue depth, lease expiry, retries, provider errors, context size. Diagnostics explain outcomes; they are not outcomes.
@@ -103,6 +116,47 @@ flowchart LR
 
 Three cautions. Comprehensive measurement can become surveillance: measure workflows and systems, not individuals, and never use lines of code, commits, hours online, or prompt volume as performance targets. Business outcomes take weeks to observe while teams need fast feedback: use leading indicators, label them as proxies, and never quietly substitute "PR merged" for customer value. Cost attribution will be imperfect: a transparent range beats a precise but incomplete number, and the measurement system itself has a cost that should stay proportional to the decisions it supports.
 
+### Token economics is an architecture problem
+
+Model spend is usually handed to finance as a bill to be negotiated. It is better treated as an architecture problem, because nearly every lever that moves it is a design decision, and because the cheapest model is not the cheapest system. A cheaper model that takes three attempts and then costs a senior engineer thirty to forty-five minutes of rework has cost more than one successful run on a stronger model, and the difference never appears on the model invoice. *Optimise cost per trusted outcome, not cost per token.*
+
+The structural levers are the ones to reach for before renegotiating a contract:
+
+- Use smaller models for simpler work, and strong models only where reasoning creates value.
+- Replace reasoning with deterministic automation wherever behaviour has become predictable.
+- Retrieve narrowly; a targeted context package is cheaper and more accurate than a full one.
+- Cache what repeats: prompts, retrieval results, compiled context.
+- Bound every loop, and give every run explicit budgets and stopping conditions.
+- Avoid multi-agent coordination that does not buy a measured quality gain; every extra agent is tokens, latency, and failure surface.
+- Measure human rework as a cost line, because it is the largest one the model bill hides.
+- Attribute cost by team, workflow, model, and outcome, so that a number can be acted on.
+
+One lever is easy to forget because it does not look like a model decision: for some tasks *the best model is no model at all*. A deterministic service or a mature skill that performs a known transformation costs almost nothing per run, never hallucinates, and needs no evaluation of its trajectory. Routing to it is an economic and a quality decision at once ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)).
+
+### Budgets and stopping conditions are execution controls
+
+Budgets are not accounting after the fact; they are controls the harness enforces while a run is in progress. Each Attempt carries limits on tokens, model spend, tool calls, execution time, retries, and compute, and an objective stopping condition so that an agent which is stuck stops rather than reasoning indefinitely in circles. A budget that is only reported is a bill; a budget that is enforced is a safety boundary, and it is also what makes a failed run cheap enough to be a normal event rather than an incident.
+
+Budget data flows back into design. If one skill costs five times another for the same outcome, that fact should change routing and go into the improvement backlog, not sit in a monthly report. *Economics should influence architecture continuously, not arrive as a surprise on the monthly bill.*
+
+<!-- infographic: budget-feedback-loop -->
+> **Infographic — Budgets as controls and as signals.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    B["Budgets + stopping conditions<br/>tokens · spend · tool calls · time · retries · compute"] --> H["Harness enforces during the run"]
+    H -->|"within budget"| O["Outcome + attributed cost"]
+    H -->|"exhausted"| S["Bounded stop; blocked state; escalate"]
+    O --> C["Cost per trusted outcome<br/>by team · workflow · model · skill"]
+    S --> C
+    C --> R["Routing and improvement decisions"]
+    R -.->|"cheaper reliable capability"| B
+```
+
+### What breaks first at scale
+
+Once the factory works for a few teams, the bottleneck moves, and it moves predictably. Four things break first. **Cost**: experimentation outpaces attribution, so spend rises before anyone can say which workflow, team, or model caused it. **Context**: huge repositories, many knowledge sources, permission boundaries, and stale documentation overwhelm retrieval, and grounded answers on obsolete facts are still wrong. **Supply-chain capacity**: pull requests, CI runs, security scans, artifact storage, and review demand grow faster than any of those systems were sized for, and the delivery pipeline becomes the queue. **Trust**: one visible autonomous mistake undoes months of adoption. None of these is a generation problem, which is why a factory optimised for generation speed hits them hardest. The bottleneck will keep moving; design the factory so that you can see where it moves next, which is what the four metric families and the stage-level lead-time breakdown are for.
+
 ### Proof, and how to say it
 
 The mission names five proofs the factory must produce. **Proof 1, speed:** a workflow that took five days reaches a validated pull request in one. **Proof 2, quality:** faster execution does not increase escaped defects, and ideally reduces them. **Proof 3, human leverage:** developers spend less time on repetitive execution and more on high-value decisions. **Proof 4, governance:** a complete chain of intent, planning, actions, approvals, evidence, and production outcomes. **Proof 5, financial value:** lower cost per validated change, or more throughput without proportional headcount. Together they are the business case, the executive narrative, and the sales foundation.
@@ -120,6 +174,12 @@ The scarce input is not tokens. It is **qualified human attention**: understandi
 A workflow can be out-of-the-loop for execution and still require human policy ownership, promotion, incident response, and risk review. Luke's model is the same shape: a human decides *what* to build and approves the plan; orchestrator, workers, and validators figure out *how*, with a validation contract written before any code and structured handoffs so context survives days of execution; the human returns as a project manager reading handoff summaries and a budget-burn view rather than a chat log. His economics: five engineers who could hold ten work streams now hold thirty, and the codebase ends cleaner because tests and skills accumulate.
 
 An **Attention Budget** states the expected human effort for a workflow and which decisions justify interruption. Its metrics are time to first required human decision; decision and approval latency; correction and override rate; review minutes per accepted outcome; avoidable notification and false-escalation rate; exception age and ownership; time spent reconstructing missing context; repeated correction clusters; and self-reported cognitive load. Attention is saved when the system presents a *decision*, not when it sends more activity notifications. An escalation therefore arrives as a decision packet — affected outcome, risk, evidence, uncertainty, options, recommendation, deadline, and resume behavior — the same object defined in [Chapter 7](./07-governance-policy-and-risk-proportional-approval.md).
+
+### Signal aggregation is attention economics
+
+The factory produces far more quality signals than a person can read: tests, static analysis, security scanners, dependency checks, evaluators, policy engines, and review agents all report, and a pull request with a hundred and fifty warnings attached is a pull request whose warnings are all ignored. More signals do not make better decisions. Signal quality is a product problem, and the product is the reviewer's attention.
+
+The pipeline that treats it as one deduplicates the same finding reported by three tools, aggregates and correlates findings that share a cause, assigns severity and confidence, attaches ownership context (who owns this file, who owns this dependency), attaches the risk classification of the change, and explains why each surviving finding matters for this change. The output is the smallest set of findings that could change the reviewer's decision, with everything else one click away rather than in the way. Then it closes the loop: the reviewer's reaction to each finding (useful, wrong, correct but irrelevant) is captured and fed to the learning system, so that the aggregation improves and a noisy check loses its place at the top. The objective is *maximum decision quality per unit of human attention, not maximum signal volume*. That is the same objective as the attention budget, applied to the evidence instead of the interruptions.
 
 Reducing human time is not always the objective. High-consequence decisions deserve deliberate attention. Optimize away polling, repetitive repair, and context reconstruction — not accountability. Interaction granularity is also a design choice: for writing, design, architecture, or ambiguous product work, small iterative increments calibrate better than one large generated artifact, with the human teaching through edits and repeated patterns extracted into a style guide, anti-pattern catalog, or skill; for mechanical work with strong specifications and tests, large autonomous increments are appropriate. A **Human Workflow Profile** may capture personal fit — planning depth, increment size, review cadence, explanation style, surface, notification channel, accessibility needs — but it must never grant tools, change policy, lower quality gates, or alter business authority. Switching models or harnesses has a human cost too: intuition and habits must be rebuilt, so migration should include training, paired use, opt-in canaries, and measurement of correction and attention, not just a new default announced by benchmark.
 
@@ -228,6 +288,10 @@ An agent workflow is **inside evaluated coverage** when its material inputs, sta
 | Surveillance drift | Per-developer productivity dashboards appear | Measure workflows and systems only |
 | False causality | Factory credited for gains that coincided with reorg or new tooling | Baselines, cohorts, medians and percentiles, experimental design |
 | Wrong marginal call | Cheapest model chosen; retries and review erase the saving | Compare marginal cost with marginal value per validated change |
+| Signal flood | Dozens of findings per PR; reviewers ignore all of them | Deduplicate, correlate, rank by severity and risk, surface the smallest decision-changing set; capture reviewer feedback |
+| Budget as a bill | Cost known only from the monthly invoice; no run ever stopped | Enforce token, spend, tool-call, time, retry, and compute budgets in the harness; attribute by team, workflow, model, outcome |
+| Reasoning where automation would do | Strong models on deterministic transformations | Route to scripts and mature skills; the best model for some tasks is none |
+| Bottleneck unobserved | Cost, context, CI capacity, or trust degrades before anyone measures it | Four metric families, stage-level lead time, attribution before scale |
 
 ## In Mission Control
 
@@ -252,13 +316,18 @@ The honest product statement: the immutable lineage and metric surfaces exist no
 - Altitude is a range, not a ladder. Move up for leverage when work is familiar, bounded, and evaluated; move down for control when it is novel, irreversible, sensitive, weakly evidenced, or out of distribution.
 - Governed control replaces inspection with contracts and independent evidence — and is only as good as those contracts.
 - Say "plan-to-validated-PR time down 60 percent with change failure rate held," never "50 percent more code."
+- Token economics is an architecture problem: the cheapest model is not the cheapest system once retries and senior rework are counted. Optimise cost per trusted outcome, not cost per token; sometimes the best model is no model.
+- Budgets (tokens, spend, tool calls, time, retries, compute) and objective stopping conditions are execution controls the harness enforces, and budget data feeds routing and improvement so economics shapes architecture continuously rather than arriving on the monthly bill.
+- Four metric families, builder, trust, economics, platform, read together and segmented; generation volume is activity, trusted outcomes are the product.
+- At scale, cost, context, supply-chain capacity, and trust break first. The bottleneck keeps moving; build the factory to see where it goes next.
+- Signal aggregation is attention economics: deduplicate, correlate, rank, contextualise, explain, and surface the smallest set that can change the decision. Maximum decision quality per unit of human attention, not maximum signal volume.
 
 ## Go deeper
 
 - [Chapter 3 — First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md) for autonomy levels and quality as the acceleration engine; [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md); [Chapter 7 — Governance](../02-design/07-governance-policy-and-risk-proportional-approval.md) for decision packets and risk bands
 - [Chapter 17 — Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for the marginal-cost model decision; [Chapter 18 — Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md) for orchestrator, worker, and validator roles; [Chapter 23 — Evaluation engineering](../04-prove/23-evaluation-engineering.md) for evaluated coverage; [Chapter 28 — Observability](../05-operate/28-observability-telemetry-and-forensics.md); [Chapter 33 — Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md); [Chapter 35 — Mastering the factory](../06-improve/35-mastering-the-factory.md) for the five audiences
 - Labs: [08 — Continual improvement promotion](../appendix/labs/08-continual-improvement-promotion-lab.md); [11 — Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md)
-- Sources: Jay West, *AI Software Factory Mission* (Success Metrics; The Proof You Need to Produce; North Star); *AI Software Factory Interview Study Guide* (ch. 10, Success Metrics and the executive framing); IndyDevDan, *Engineering Time, Focus and Attention* (the agentic operating level); Luke (Goose / Factory), *Multi-agent systems and the bottleneck of human attention*; Jay's platform notes on adoption metrics ("Factory in one line")
+- Sources: Jay West, *AI Software Factory Mission* (Success Metrics; The Proof You Need to Produce; North Star); *AI Software Factory Study Guide* (ch. 10, Success Metrics and the executive framing); IndyDevDan, *Engineering Time, Focus and Attention* (the agentic operating level); Luke (Goose / Factory), *Multi-agent systems and the bottleneck of human attention*; Jay's platform notes on adoption metrics ("Factory in one line"); Jay West, factory architecture notes (token economics levers, budgets and stopping conditions, four metric families, what breaks first at scale, signal aggregation)
 - Mission Control code at `af414acf`: `convex/schema.ts`, `convex/eos/projections.ts`, `convex/analytics.ts`, `convex/workflowMetrics.ts`, `convex/costEvents.ts`; `docs/product/software-factory-capability-maturity.md`; `docs/testing/evidence/production-factory-pilot-v3/README.md`; [Appendix C capability and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`
 - Background: *Team Topologies*; *The DevOps Handbook*; the Toyota Production System
 - [Glossary](../appendix/glossary.md)

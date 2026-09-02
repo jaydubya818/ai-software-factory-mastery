@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { adjacentDocuments, appendixGroups, chapters, documents, getDocument, partForDocument } from "../../../lib/content";
+import { adjacentDocuments, appendixGroups, chapters, documents, getDocument, partForDocument, stages } from "../../../lib/content";
 import { guideParts } from "../../../lib/guide";
 import { ChapterTOC } from "../../components/ChapterTOC";
 import { DocumentNav } from "../../components/DocumentNav";
@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 function chapterLabel(document: (typeof documents)[number]) {
   if (document.chapter === 0) return "Front matter";
+  if (document.stage !== null) return `Stage ${document.stage}`;
   if (document.chapter !== null) return `Chapter ${document.chapter}`;
   if (document.contentType === "overview") return "Book map";
   return document.group ?? "Appendix";
@@ -36,6 +37,7 @@ function navLabel(document: (typeof documents)[number]) {
 
 const navSections = [
   { key: "front-matter", label: "Front matter", documents: chapters.filter((document) => document.chapter === 0).map((document) => ({ slug: document.slug, title: document.title })) },
+  { key: "stages", label: "The factory in one line", documents: stages.map((document) => ({ slug: document.slug, title: document.title })) },
   ...guideParts.map((part) => ({
     key: part.id,
     label: `Part ${part.number} — ${part.verb}`,
@@ -65,7 +67,7 @@ export default async function DocumentPage({ params }: PageProps) {
         <article className="document-article">
           <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href="/guide">Guide</Link><span>/</span><Link href={crumbHref}>{crumb}</Link></nav>
           <header className="document-header">
-            <div className="document-labels">{part && <span>Part {part.number} — {part.verb}</span>}<span>{label}</span>{!part && document.contentType !== "overview" && <span>{document.contentType}</span>}</div>
+            <div className="document-labels">{part && <span>Part {part.number} — {part.verb}</span>}{document.stage !== null && <span>The factory in one line</span>}<span>{label}</span>{!part && document.stage === null && document.contentType !== "overview" && <span>{document.contentType}</span>}</div>
             <h1>{document.chapter ? `${document.chapter}. ${document.title}` : document.title}</h1>
             {document.summary && <p>{document.summary}</p>}
           </header>
