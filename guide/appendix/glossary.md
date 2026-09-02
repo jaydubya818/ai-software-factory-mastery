@@ -1362,6 +1362,22 @@ gates, the context it is shown, the execution environment, and the immutable
 trace of every turn. Model capability and agent capability differ exactly by
 what the harness exposes.
 
+**Execution graph** — The six typed nodes every production agent runs in
+order — perceive, build context, decide and plan, act, evaluate, respond —
+joined by stateful edges with conditional routing, parallel branches,
+subgraphs, checkpoints, and resumability. Graph engineering is the discipline
+of designing it; the harness owns it.
+
+**Loop engineering** — The bounded feedback path taken when evaluation says
+the goal is not complete: observe, diagnose, refine or replan, retry, under
+termination criteria (maximum iterations, time, token, and cost budgets) set
+by the harness rather than the model.
+
+**Secure tool gateway** — The single door between an agent's Act step and the
+world: MCP servers, APIs, code execution, databases, files, and other agents,
+behind schemas, permissions, authentication, secrets handling, sandboxing, and
+approvals. A tool the gateway does not expose does not exist for the agent.
+
 **Meta-harness** — A governance layer across several harnesses (hosted coding
 agents, internal agents, domain agents) that supplies composition (which agents
 exist and who may delegate to whom), policy enforced once, shared resumable

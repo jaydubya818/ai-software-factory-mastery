@@ -55,6 +55,8 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **The harness turns probabilistic intelligence into bounded execution.** It is an execution boundary, not a loop around an LLM. → [13. Coding harnesses and agent protocols](../03-build/13-coding-harnesses-and-agent-protocols.md)
 
+**Frameworks change. The harness, the graph, and the feedback loops remain.** Every production agent is one diagram: a harness around a six-node execution graph, a bounded loop, memory, a tool gateway, a trust rail, and an observability floor. → [13. Coding harnesses and agent protocols](../03-build/13-coding-harnesses-and-agent-protocols.md)
+
 **The model is just weights. The harness is the agent.** Model capability and agent capability differ exactly by what the harness exposes; a better prompt cannot compensate for a missing capability. → [15. Agent architecture](../03-build/15-agent-architecture.md)
 
 **Loop makes the work verifiable. Graph makes the workflow structured. Harness makes the model operational. Meta-harness makes many agent environments governable.** Diagnose a failure at its layer before touching the prompt or the model. → [15. Agent architecture](../03-build/15-agent-architecture.md)

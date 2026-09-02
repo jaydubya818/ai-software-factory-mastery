@@ -59,6 +59,8 @@ Promotion is earned with baseline-versus-candidate evaluation, non-regression on
 
 ### The shape of the work is a graph
 
+The six-node execution graph every production agent runs — perceive, build context, decide and plan, act, evaluate, respond — and its properties (typed nodes, stateful edges, conditional routing, parallel branches, subgraphs, checkpoints, resumability) are drawn once in [Chapter 13](./13-coding-harnesses-and-agent-protocols.md#the-harness-as-runtime-control-plane-one-diagram-for-every-production-agent); this chapter is about designing the graph well.
+
 A prompt is a sentence. A loop is a cycle. A harness is the floor the agent stands on. But the shape of the work, what runs before what, what can run at the same time, what has to wait for everything else, is a graph. Most people who build a multi-step agent end up with a straight line: step one, then two, then three, each waiting politely for the last. Nine times out of ten, half of those steps never needed to wait. The 0xCodez "graph engineering" roadmap turns that line into a graph in fourteen moves, compressed here because the whole factory depends on them.
 
 1. **Nodes are jobs, edges are what flows.** A node is one bounded job with one input and one output. An edge exists only when data actually moves. "And then" is not an edge.
@@ -220,6 +222,8 @@ Independence is a designed property, not an assumption. Compare producer and rev
 Concurrency needs budgets. Reserve a parent budget before fan-out, allocate per-child limits, and preserve capacity for aggregation, verification, and cancellation. Concurrency keys protect shared repositories and environments. Choose the **join policy** before execution: `all`, `quorum`, `first-qualified`, or `best-effort-with-gaps`. A timeout records which child effects and results are known, unknown, or absent. Never discard useful partial evidence merely because the whole graph failed.
 
 ### The attempt loop
+
+The feedback path in that diagram is the loop engineered here: observe, diagnose, refine or replan, retry — bounded by termination criteria (maximum iterations, time, token, and cost budgets) the harness sets and the model cannot raise.
 
 The canonical loop is **Generate → Verify → Diagnose → Repair or Replan → Retry → Escalate or Stop**. Verification produces structured findings linked to criteria. A retry requires a changed hypothesis, input, tool, configuration, or recovery action; repeating the same conditions is not a strategy, it is repeated cost.
 

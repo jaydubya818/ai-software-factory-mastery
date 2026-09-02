@@ -95,6 +95,8 @@ The taxonomy names what surrounds the loop. **Context management** supplies the 
 
 ### Four layers: loop, graph, harness, meta-harness
 
+For the harness layer drawn as a single runtime control plane — execution graph, loop, memory, tool gateway, trust rail, observability floor — see [Chapter 13](./13-coding-harnesses-and-agent-protocols.md#the-harness-as-runtime-control-plane-one-diagram-for-every-production-agent).
+
 An agent that burns tokens, declares the task complete, and then fails the tests is usually an architecture problem, not a prompting problem. The reflex is to rewrite the prompt or reach for a stronger model. Most of the time the failure came from the system around the model, and different failures have to be fixed at different layers. A public four-layer model, drawn as nested boxes, is the clearest way to see which layer is which; the outer layers each contain the inner ones, so the nesting reads meta-harness, then harness, then graph, then loop, then the model itself.
 
 The **loop** is the smallest unit of agency. It observes what the environment actually returned rather than what the model expected, acts with one tool call and one real-world side effect per turn, and verifies against an external signal only: tests, a build exit code, a grader, CI. The part that matters is how completion is decided. Completion is a goal condition such as "the tests pass," never a step count and never the model's belief that the work looks right. Without an external verification signal an agent will confidently declare success on an incomplete task. *The model never grades its own work.* This is the execution loop above with its evaluate step made strict.

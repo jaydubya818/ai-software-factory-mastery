@@ -4,7 +4,7 @@ part: build
 chapter: 13
 summary: How to wrap an interactive coding agent so it can be leased, observed, cancelled, resumed, and substituted inside a factory, and which protocol belongs at which boundary.
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, execution-loop, meta-harness, harness-adapter-contract, protocol-boundaries]
+infographics: [inner-outer-harness, harness-control-plane, execution-loop, meta-harness, harness-adapter-contract, protocol-boundaries]
 ---
 
 # 13. Coding harnesses and agent protocols
@@ -112,6 +112,69 @@ flowchart TD
 Read it as the heartbeat of the agent. Each beat loads the task and its current state, assembles only the context this step needs, selects a model, lets the model reason and propose an action, and then does the thing that separates a harness from a chat client: a policy check before any tool runs. The tool executes, its result is observed, and state is updated outside the model, in the durable record, not in the transcript. Then the runtime evaluates progress and picks one of continue, retry, checkpoint, escalate, pause, stop, or complete.
 
 Two properties of the loop carry the whole design. The model proposes the next action; the runtime decides whether that action is permitted and whether the loop continues. And every input to the next beat comes from persisted state, so a beat that starts on a different worker after a crash sees the same world.
+
+### The harness as runtime control plane: one diagram for every production agent
+
+Strip any production agent — a coding agent, a support agent, an on-call triage agent — down to what survives a framework change, and the same diagram appears. It has one outer boundary, three disciplines inside it, three services beside it, and one floor beneath it. Learn the diagram once and every vendor's architecture page becomes a labelled instance of it.
+
+<!-- infographic: harness-control-plane -->
+> **Infographic — The agent harness as runtime control plane.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph H["AGENT HARNESS — runtime control plane: orchestration · run state · context assembly · model routing · policies · budgets · checkpoints · recovery"]
+        direction TB
+        T["TRUST, SAFETY, IDENTITY<br/>input / output guardrails · identity and access · rate and cost limits · human approval"]
+        subgraph X["EXECUTION GRAPH — graph engineering"]
+            direction TB
+            P["1 Perceive<br/>user · event · API · sensor"] --> B["2 Build context<br/>instructions · state · memory · retrieved knowledge"]
+            B --> D["3 Decide and plan<br/>route model · decompose · choose next action<br/>parallel tasks · subgraphs · handoffs"]
+            D --> A["4 Act<br/>invoke model, tool, workflow, or agent"]
+            A --> E["5 Evaluate<br/>validate result · quality · policy · goal progress"]
+            E --> Q{"Goal complete?"}
+            Q -- yes --> R["6 Respond<br/>answer · cite · approve · escalate"]
+            Q -- no --> L["LOOP ENGINEERING<br/>observe → diagnose → refine / replan → retry<br/>termination criteria · max iterations · time / token / cost budgets"]
+            L --> D
+        end
+        M["MEMORY AND KNOWLEDGE<br/>working / session · episodic / semantic · retrieval / RAG<br/>read · write · retain · forget"]
+        S["SECURE TOOL GATEWAY<br/>MCP · APIs · code · databases · files · other agents<br/>schemas · permissions · auth · secrets · sandbox · approvals"]
+        T -. policy .-> D
+        B <-. read .-> M
+        E -. write-back .-> M
+        A <-. every call .-> S
+    end
+    O["OBSERVABILITY AND AGENTOPS — traces · logs · metrics · latency · token and cost usage · quality · audit trail"]
+    H --> O
+```
+
+**The outer boundary is the harness.** Everything inside the frame is what the harness owns as a **runtime control plane**: orchestration, run state, context assembly, model routing, policies, budgets, checkpoints, and recovery. The model is invoked from inside this frame; it never owns the frame. That is the same claim as the responsibility table above, drawn as a picture.
+
+**The execution graph is the middle.** Six typed nodes, in order, are the anatomy of one turn of any agent:
+
+| Node | What it does | What it must not do |
+|---|---|---|
+| 1 Perceive | Take in the trigger: a user message, an event, an API call, a sensor reading. Attach identity and scope. | Act on the input before it has been classified and guarded. |
+| 2 Build context | Assemble instructions, current state, memory, and retrieved knowledge into the context for this step only. | Load everything that exists; context is selected, not accumulated. |
+| 3 Decide and plan | Route to a model, decompose the task, choose the next action; fan out parallel tasks, subgraphs, or handoffs where the plan calls for them. | Widen its own authority or invent tools that were not exposed. |
+| 4 Act | Invoke a model, a tool, a workflow, or another agent — through the gateway, never around it. | Touch a system the gateway did not authorize. |
+| 5 Evaluate | Validate the result against quality criteria, policy, and goal progress; write back what was learned. | Accept the model's own report of success as evidence. |
+| 6 Respond | Answer, cite, approve, or escalate — the structured completion of the turn. | Complete silently; every response is a record. |
+
+The edges are the discipline of **graph engineering**: typed nodes, stateful edges, conditional routing, parallel branches, subgraphs, checkpoints, and resumability. A conditional edge after Decide reads state and names the next node; a checkpoint after each node is what makes pause, replay, and human review possible; a subgraph is how a specialist agent is invoked without giving it the parent's authority. [Chapter 18](./18-agent-and-loop-engineering.md) builds the graph in detail.
+
+**The loop is the feedback path.** When Evaluate answers "goal not complete", control does not return blindly to Decide; it passes through **loop engineering**: observe what actually happened, diagnose why it fell short, refine the plan or replan, then retry. The loop is bounded by termination criteria — maximum iterations, time, token, and cost budgets — set by the harness, not chosen by the model. Without the diagnose step a retry is just the same mistake with a higher bill; without the bound the loop is an outage.
+
+**Three services stand beside the graph, and the graph never bypasses them.**
+
+- *Memory and knowledge* — working or session memory, episodic and semantic memory, and knowledge retrieval — is read by Build context and written by Evaluate (the write-back). Read, write, retain, forget are explicit operations with policy; nothing enters long-term memory because a model happened to say it.
+- *The secure tool gateway* is the only door from Act to the world: MCP servers, APIs, code execution, databases, files, and other agents, all behind schemas, permissions, authentication, secrets handling, sandboxing, and approvals. A tool the gateway does not expose does not exist for the agent, which is exactly the point.
+- *Trust, safety, and identity* is the rail on the left: input and output guardrails on Perceive and Respond, identity and access on every call, rate and cost limits on the loop, and human approval as a first-class node that Decide can route to. Policy enters the graph at Decide, not after the fact.
+
+**Observability and AgentOps is the floor.** Traces, logs, metrics, latency, token and cost usage, quality signals, and the audit trail are emitted by every node and every service, and they are the only thing an operator ever sees of a run. They explain; they do not decide ([Chapter 28](../05-operate/28-observability-telemetry-and-forensics.md)).
+
+*Frameworks change. The harness, the graph, and the feedback loops remain.*
+
+The diagram also gives a fast diagnosis when an agent underperforms. Wrong or missing input handling: Perceive and the guardrails. Hallucination or stale facts: Build context and the memory service. Wrong action chosen: Decide and the routing policy. Action refused or unsafe: the gateway. Confident wrong answers: Evaluate is trusting the model. Runaway cost: the loop's termination criteria. Nobody can explain what happened: the floor. Fixing the prompt is the right answer for none of these.
 
 ### A harness is not a software factory
 
@@ -345,6 +408,7 @@ Future: one canonical harness contract with explicit optional capabilities and n
 
 ## Retain this
 
+- One diagram explains every production agent: the harness as runtime control plane around a six-node execution graph (perceive, build context, decide and plan, act, evaluate, respond), a bounded diagnose-and-retry loop, memory and knowledge, a secure tool gateway, a trust rail, and an observability floor. Frameworks change; the harness, the graph, and the feedback loops remain.
 - The inner harness runs one model-tool loop; the outer harness makes it leasable, observable, cancellable, and accountable. Neither approves, verifies, merges, or releases.
 - Integrate through the structured event stream and the JSONL transcript, never the terminal rendering. Exit zero is not completion.
 - Record native session identity, model route, tool grants, context and environment digests, and the ordered event stream for every session.
@@ -360,6 +424,7 @@ Future: one canonical harness contract with explicit optional capabilities and n
 
 ## Go deeper
 
+- *One architecture diagram that explains every production AI agent* (Brij Kishore Pandey, public diagram, 2026) — the harness, graph engineering, loop engineering framing reproduced in "The harness as runtime control plane".
 - [Chapter 11. Control plane, orchestrator, and execution plane](./11-control-plane-orchestrator-and-execution-plane.md) — where the Attempt contract that the outer harness receives is defined.
 - [Chapter 12. Durable execution](./12-durable-execution.md) — leases, heartbeats, and the recovery semantics session resume must honor.
 - [Chapter 14. Development environments, sandboxes, and compute](./14-development-environments-sandboxes-and-compute.md) — the layer beneath the harness.
