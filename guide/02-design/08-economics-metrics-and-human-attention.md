@@ -2,7 +2,7 @@
 title: Economics, metrics, and human attention
 part: design
 chapter: 8
-summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder. Includes the tokenomics playbook: the cost equation, the lever for every term, budgets as execution controls, and visibility instead of caps.
+summary: "How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder. Includes the tokenomics playbook: the cost equation, the lever for every term, budgets as execution controls, and visibility instead of caps."
 absorbs: [03-operating-model/02-factory-economics-and-operating-metrics.md, 03-operating-model/07-engineering-attention-altitude-and-control.md, 03-operating-model/05-compounding-engineering-and-human-attention.md]
 infographics: [five-metric-dimensions, cost-per-validated-change, cost-equation, budget-feedback-loop, attention-altitude]
 ---

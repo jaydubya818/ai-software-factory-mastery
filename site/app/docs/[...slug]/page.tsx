@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { adjacentDocuments, appendixGroups, chapters, documents, getDocument, partForDocument, stages } from "../../../lib/content";
+import { adjacentDocuments, appendixGroups, chapters, documents, getDocument, partForDocument, stages, SITE_URL } from "../../../lib/content";
 import { guideParts } from "../../../lib/guide";
 import { ChapterTOC } from "../../components/ChapterTOC";
 import { DocumentNav } from "../../components/DocumentNav";
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const document = getDocument(slug.join("/"));
   if (!document) return { title: "Document not found" };
   const title = `${document.title} · The AI Software Factory Guide`;
-  return { title, description: document.description, openGraph: { title, description: document.description, images: [] }, twitter: { card: "summary", title, description: document.description, images: [] } };
+  return { title, description: document.description, alternates: { canonical: `/docs/${document.slug}` }, openGraph: { title, description: document.description, images: [] }, twitter: { card: "summary", title, description: document.description, images: [] } };
 }
 
 function chapterLabel(document: (typeof documents)[number]) {
@@ -59,8 +59,19 @@ export default async function DocumentPage({ params }: PageProps) {
   const crumb = part ? `Part ${part.number} — ${part.verb}` : document.section;
   const crumbHref = part ? `/guide#${part.id}` : document.sectionKey === "appendix" ? "/topics" : "/guide";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: document.title,
+    description: document.description,
+    url: `${SITE_URL}/docs/${document.slug}`,
+    isPartOf: { "@type": "Book", name: "The AI Software Factory Guide", url: SITE_URL },
+    ...(document.chapter ? { position: document.chapter } : {}),
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader />
       <main className="docs-layout">
         <DocumentNav currentSlug={currentSlug} sections={navSections} />
@@ -71,13 +82,8 @@ export default async function DocumentPage({ params }: PageProps) {
             <h1>{document.chapter ? `${document.chapter}. ${document.title}` : document.title}</h1>
             {document.summary && <p>{document.summary}</p>}
           </header>
+          <ChapterTOC variant="mobile" headings={headings.map((heading) => ({ id: heading.id, text: heading.text }))} />
           <div className="markdown-body"><Markdown content={document.content} sourcePath={document.sourcePath} infographicAssets={"infographicAssets" in document ? (document.infographicAssets as Record<string, string>) : {}} /></div>
-          {document.infographics.length > 0 && (
-            <aside className="infographic-slots" aria-label="Infographic slots in this chapter">
-              <span>Infographic slots in this chapter</span>
-              <ul>{document.infographics.map((slot) => <li key={slot}><code>{slot}</code></li>)}</ul>
-            </aside>
-          )}
           <nav className="document-pagination" aria-label="Previous and next">
             {previous ? <Link href={`/docs/${previous.slug}`}><span>Previous · {chapterLabel(previous)}</span><strong>{previous.title}</strong></Link> : <span />}
             {next ? <Link className="next-document" href={`/docs/${next.slug}`}><span>Next · {chapterLabel(next)}</span><strong>{next.title}</strong></Link> : <span />}

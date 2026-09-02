@@ -30,7 +30,7 @@ tests, and direct operation supply different forms of evidence.
 | [Agent2Agent Protocol specification](https://a2a-protocol.org/dev/specification/) | Study agent discovery, tasks, messages, artifacts, streaming, and long-running agent-to-agent collaboration. |
 | [OpenAI Agents SDK](https://developers.openai.com/api/docs/guides/agents) | Study agent definitions, orchestration, guardrails, state, tracing, and evaluation. |
 | [OpenAI: A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/) | Study agent selection, models, tools, instructions, orchestration, layered guardrails, evaluation baselines, and human intervention. |
-| [OpenAI Responses API](https://developers.openai.com/api/docs/guides/responses) | Study tool-using model execution and durable application integration. |
+| [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) | Study tool-using model execution and durable application integration. |
 | [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/) | Study the relationship among the model, harness, tools, context, and execution loop. |
 | [Claude Code: Run programmatically](https://code.claude.com/docs/en/headless) | Study headless coding-agent invocation, structured output, session continuity, and automation boundaries as a dated product case. |
 | [Claude Code hooks reference](https://code.claude.com/docs/en/hooks) | Study lifecycle interception, policy checks, event capture, and the risks of shell-level automation as a dated product case. |
@@ -47,12 +47,12 @@ tests, and direct operation supply different forms of evidence.
 | --- | --- |
 | [GitHub Copilot concepts](https://docs.github.com/en/copilot/concepts) | Track the boundary among assistants, coding agents, enterprise controls, memory, and agent management. |
 | [GitHub Agentic Workflows](https://docs.github.com/en/copilot/concepts/agents/about-github-agentic-workflows) | Study natural-language automation compiled into permissioned GitHub Actions workflows. |
-| [GitHub Spark](https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/spark) | Study natural-language application creation and deployment as a comparison case, not as the definition of a factory. |
+| [GitHub Spark](https://docs.github.com/en/copilot/concepts/spark) | Study natural-language application creation and deployment as a comparison case, not as the definition of a factory. |
 | [GitHub Actions](https://docs.github.com/en/actions) | Study repository-native automation, runners, environments, permissions, CI, and deployment controls. |
 | [GitHub merge queues](https://docs.github.com/en/enterprise-cloud@latest/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue) | Study current-head validation, required checks, queue batching, and protected-branch admission. |
 | [GitHub stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs) | Study dependent change review and the coordination costs of ordered pull-request chains. |
 | [Git submodules](https://git-scm.com/docs/gitsubmodules) | Study commit-pinned repository composition and its checkout, update, publication, and ownership tradeoffs. |
-| [Git subtree](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.txt) | Study copied-history repository composition and contrast it with submodules and coordinated repositories. |
+| [Git subtree](https://github.com/git/git/tree/master/contrib/subtree) | Study copied-history repository composition and contrast it with submodules and coordinated repositories. |
 | [Devfile schema](https://devfile.io/docs/2.3.0/devfile-schema) | Study declarative development-environment components, commands, events, resources, and portability. |
 | [CodeRabbit pull-request review](https://docs.coderabbit.ai/overview/pull-request-review) | Study automated review as a dated product case, including incremental review and human resolution boundaries. |
 | [Convex overview](https://docs.convex.dev/understanding/overview) | Study the reactive database, transactional server functions, scheduling, and durable application state used by Mission Control. |
@@ -76,7 +76,7 @@ tests, and direct operation supply different forms of evidence.
 | --- | --- |
 | [SWE-bench paper](https://arxiv.org/abs/2310.06770) | Study repository-level evaluation design and the limits of reducing software engineering to issue resolution. |
 | [SWE-bench repository](https://github.com/SWE-bench/SWE-bench) | Inspect current harnesses, datasets, variants, and reproducibility mechanisms. |
-| [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf) | Study requirements, design review, verification, provenance, vulnerability response, and continuous improvement across the SDLC. |
+| [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf/) | Study requirements, design review, verification, provenance, vulnerability response, and continuous improvement across the SDLC. |
 | [NIST SP 800-218A](https://csrc.nist.gov/pubs/sp/800/218/a/final) | Study the AI-specific community profile for securing generative-AI model development across the software lifecycle. |
 | [NIST AI Risk Management Framework Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/) | Study documented TEVV, independent assessment, production monitoring, and AI risk decisions. |
 | [SLSA specification](https://slsa.dev/spec/v1.2/) | Study source and build provenance, hardened build levels, artifact verification, and supply-chain threat boundaries. |

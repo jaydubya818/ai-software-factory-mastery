@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CommandPalette } from "./CommandPalette";
+import { PrimaryNav } from "./PrimaryNav";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function SiteHeader() {
@@ -14,20 +15,13 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <Link href="/guide">Guide</Link>
-          <Link href="/visuals">Atlas</Link>
-          <Link href="/topics">Reference</Link>
-          <Link href="/docs/appendix/glossary">Glossary</Link>
+          <PrimaryNav />
         </nav>
         <div className="header-tools"><CommandPalette /><ThemeToggle /></div>
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
           <nav aria-label="Mobile navigation">
-            <Link href="/guide">Guide</Link>
-            <Link href="/visuals">Atlas</Link>
-            <Link href="/topics">Reference</Link>
-            <Link href="/docs/appendix/glossary">Glossary</Link>
-            <Link href="/search">Search</Link>
+            <PrimaryNav mobile />
           </nav>
         </details>
       </div>

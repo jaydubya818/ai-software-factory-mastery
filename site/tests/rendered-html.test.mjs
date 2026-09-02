@@ -102,8 +102,8 @@ test("chapter 2 renders with part label, chapter number, TOC, and prev/next", as
     assert.match(html, new RegExp(heading), `renders ${heading}`);
   }
   assert.match(html, /On this page/);
-  assert.match(html, /Infographic placeholder/);
-  assert.match(html, /Infographic slots in this chapter/);
+  assert.doesNotMatch(html, /Infographic placeholder|graphic goes here/, "unfilled infographic callouts are hidden from readers");
+  assert.match(html, /<!-- infographic: |class="mermaid|language-mermaid/, "the mermaid fallback still renders");
   assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "previous links to chapter 1");
   assert.match(html, new RegExp(`href="/docs/${chapterSlugs[3]}"`), "next links to chapter 3");
   assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|Interview practice|\d+ min read|status-badge|document-status/i);

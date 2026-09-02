@@ -48,3 +48,6 @@ yarn-error.log*
 /lib/palette.generated.ts
 *.tsbuildinfo
 public/infographics/
+/public/search-index.json
+/public/sitemap.xml
+/public/robots.txt

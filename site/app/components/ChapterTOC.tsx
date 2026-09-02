@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 type Heading = { id: string; text: string };
 
-export function ChapterTOC({ headings }: { headings: Heading[] }) {
+export function ChapterTOC({ headings, variant = "aside" }: { headings: Heading[]; variant?: "aside" | "mobile" }) {
   const [active, setActive] = useState(headings[0]?.id ?? "");
   useEffect(() => {
     const elements = headings.map((heading) => document.getElementById(heading.id)).filter((element): element is HTMLElement => Boolean(element));
@@ -13,5 +13,14 @@ export function ChapterTOC({ headings }: { headings: Heading[] }) {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [headings]);
-  return <aside className="table-of-contents" aria-label="On this page"><span>On this page</span><ol>{headings.map((heading) => <li className={active === heading.id ? "is-active" : undefined} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol></aside>;
+  const list = <ol>{headings.map((heading) => <li className={active === heading.id ? "is-active" : undefined} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>;
+  if (variant === "mobile") {
+    return (
+      <details className="toc-mobile">
+        <summary>On this page<small>{headings.length} sections</small></summary>
+        {list}
+      </details>
+    );
+  }
+  return <aside className="table-of-contents" aria-label="On this page"><span>On this page</span>{list}</aside>;
 }

@@ -12,8 +12,6 @@ const definitions = [
   ["Living implementation", "Mission Control", "The living control-plane implementation and case study for governing execution, evidence, and human authority.", 34],
 ] as const;
 
-const updated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" });
-
 export default function Home() {
   const firstChapter = getChapter(1);
   const numbered = chapters.filter((chapter) => chapter.chapter !== null && chapter.chapter > 0);
@@ -33,10 +31,37 @@ export default function Home() {
           </div>
           <p className="hero-credibility">
             <span>By Jay West</span><i aria-hidden="true">·</i>
-            <span>2026 edition, updated {updated}</span><i aria-hidden="true">·</i>
-            <span>Eight stages, {numbered.length} chapters, seven appendices</span><i aria-hidden="true">·</i>
+            <span>2026 edition</span><i aria-hidden="true">·</i>
+            <span>Eight stages, {numbered.length} chapters, six appendices</span><i aria-hidden="true">·</i>
             <a href="https://github.com/jaydubya818/ai-software-factory-mastery" rel="noreferrer" target="_blank">Open source on GitHub (MIT)</a>
           </p>
+        </section>
+
+        <section className="home-entry" aria-label="Where to start">
+          <div className="home-entry-paths">
+            <Link href="/docs/01-understand/02-the-factory-in-one-view" className="home-entry-card">
+              <span>10 minutes</span>
+              <strong>Understand the model</strong>
+              <em>The whole factory on one page: five systems, the one line, and the thesis everything else follows from.</em>
+            </Link>
+            <Link href="/search" className="home-entry-card">
+              <span>Right now</span>
+              <strong>Find guidance for a problem</strong>
+              <em>Search every section — leases, proof packages, prompt injection, merge queues, cost — and land on the paragraph, not the page.</em>
+            </Link>
+            <Link href="/guide" className="home-entry-card">
+              <span>Front to back</span>
+              <strong>Browse the complete guide</strong>
+              <em>Eight stages, six parts, {numbered.length} chapters, and the reference shelf, in reading order.</em>
+            </Link>
+          </div>
+          <div className="home-entry-outcomes">
+            <span>Start by outcome</span>
+            <Link href="/docs/appendix/architecture-communication">I have to explain or fund this <small>executive</small></Link>
+            <Link href="/docs/02-design/05-authoritative-records">I have to draw the boundaries <small>architect</small></Link>
+            <Link href="/docs/03-build/10-the-agent-factory">I have to build it <small>builder</small></Link>
+            <Link href="/docs/05-operate/27-the-factory-as-a-platform">I have to run it <small>operator</small></Link>
+          </div>
         </section>
 
         <section className="home-pipeline" aria-labelledby="pipeline-title">

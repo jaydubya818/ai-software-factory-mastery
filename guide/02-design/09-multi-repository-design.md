@@ -274,5 +274,5 @@ The intended direction is a versioned repository graph, Plans that create a coor
 - [Glossary](../appendix/glossary.md).
 - HumanLayer × BAML livestream, "Software factory design patterns" (Dexter Horthy and Vaibhav Gupta): the multi-repository segment on coordination repositories, submodules, subtrees, and the sandbox cloning tradeoff.
 - "The 12-layer production AI agent stack" coverage audit, section 10, for the multi-repository term list this chapter defines.
-- [Git submodules documentation](https://git-scm.com/docs/gitsubmodules); [Git subtree documentation](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.txt); [Git worktree documentation](https://git-scm.com/docs/git-worktree); [GitHub: About stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs).
+- [Git submodules documentation](https://git-scm.com/docs/gitsubmodules); [Git subtree documentation](https://github.com/git/git/tree/master/contrib/subtree); [Git worktree documentation](https://git-scm.com/docs/git-worktree); [GitHub: About stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs).
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.

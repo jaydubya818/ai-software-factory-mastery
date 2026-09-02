@@ -78,6 +78,9 @@ function normalizeAnchor(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+export const REPO_BLOB_URL = "https://github.com/jaydubya818/ai-software-factory-mastery/blob/main";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ai-software-factory-mastery.vercel.app";
+
 export function resolveDocumentHref(sourcePath: string, href?: string) {
   if (!href || href.startsWith("#") || /^(https?:|mailto:)/.test(href)) return href;
 
@@ -86,8 +89,11 @@ export function resolveDocumentHref(sourcePath: string, href?: string) {
 
   const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(sourcePath), pathname));
   const target = documents.find((document) => document.sourcePath === resolved);
-  if (!target) return href;
-  return `/docs/${target.slug}${hash ? `#${normalizeAnchor(hash)}` : ""}`;
+  if (target) return `/docs/${target.slug}${hash ? `#${normalizeAnchor(hash)}` : ""}`;
+  // A repository file that is not published as a page (evidence bundles, the v1 archive): link to it on GitHub.
+  const repoPath = path.posix.normalize(path.posix.join("guide", resolved));
+  if (repoPath.startsWith("..")) return href;
+  return `${REPO_BLOB_URL}/${repoPath}${hash ? `#${hash}` : ""}`;
 }
 
 export function adjacentDocuments(slug: string) {
