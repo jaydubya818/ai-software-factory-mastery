@@ -404,6 +404,34 @@ The certification suite for a tool tests schemas, authorization negatives, tenan
 7. Attach evaluation cases and a baseline before publication.
 8. Register it, version it, and route its improvements through the meta loop, never by editing in place.
 
+### Skills as packages: manifest, registry, and lifecycle
+
+The capability envelope and the lifecycle above are abstract on purpose. The concrete tooling that has grown up around agent skills makes them tangible, and it is worth seeing how the two line up, because the shape is the one package managers settled on a generation ago. Tessl's public documentation is one example of this layer applied to skills; the patterns below are general.
+
+Start with a distinction the guide has so far treated loosely. A **rule** is mandatory steering that is always pushed into the agent's context: coding conventions, prohibited actions, house style. Call that **eager push**. A **skill** is a folder of instructions, scripts, and resources the agent loads only when it judges the task relevant: procedural knowledge on demand, or **lazy push**. Rules are cheap to enforce and expensive in context; skills are cheap in context and depend on discovery working. The two are packaged together but governed differently, and knowing which one a piece of guidance should be is the first design decision (the routing consequences are in [Chapter 15](./15-agent-architecture.md)). Both are **context as code**: versioned artifacts with owners, releases, and a lifecycle, not text somebody pasted into a config.
+
+The unit of distribution is the **skill package** (also called a plugin): a versioned, agent-agnostic bundle of skills, rules, commands, and hooks, installed the way npm or pip packages are installed. The analogy is exact enough to use. A project carries a **manifest** that lists which packages it depends on and at what version range, and a **lockfile** that records the exact versions installed; the lockfile is the registry's resolution lock from earlier in this chapter, written to disk. Packages live in a **registry**, a searchable index that supports discovery, install, versioning, and rollback across public and private sources; a **workspace** scopes visibility and install permission, private by default, so a skill is addressed as `workspace/skill`. Installation can target every detected coding agent or a single one, from the registry, from a Git source, or from a local path.
+
+Versioning follows semver with the meaning this chapter already gave it. Cut patch, minor, and major releases on material behavior. An "outdated" report distinguishes the current version, the newest compatible version, and the latest version; a routine update moves only within the compatible range, and crossing a major boundary is an explicit, forced act with its own review. Rollback is a reinstall of the previous exact version, which is only possible because versions are immutable. The publish flow is short: import an existing skill file into package form, publish to a workspace at 0.1.0, dry-run first, make public only deliberately. For iteration, a local watch mode reinstalls the package on every edit so an author can test a change in a live agent before cutting a version.
+
+Two additions turn a skill from a document into a component. First, a skill can declare typed **input and output schemas** in its frontmatter (inline, by local reference, or by URL); inputs are validated before launch and a structured result comes back. A skill with schemas is a **launchable function**: the harness, a CI job, or another skill can invoke it headlessly with arguments and consume its result without reading its prose. That is the guide's tool contract applied to a skill, and it is what lets the maturity lifecycle's "package" stage feed directly into "automate." Second, a project link in the manifest anchors evaluation runs to a stable home, so a skill's eval history accumulates against something that persists across branches.
+
+In the guide's vocabulary: the manifest and lockfile are the capability envelope and resolution lock for the skill type; the registry and workspace are the Skill Registry with tenant scoping; compatible-only updates are the resolver's compatibility check applied to upgrades; and the publish flow is the transition from draft to candidate.
+
+### The skill inventory
+
+An organization that has been using agents for a year has skills in places nobody can list. The **skill inventory** is a scan of every repository in a source-control organization for skill files and agent configuration, producing a ranked list of what exists. The scan classifies each skill as **first-party** (authored inside the organization) or **third-party** (imported), which matters because the two carry different supply-chain risk ([Chapter 26](../04-prove/26-security.md)). It then detects **duplicates**, the same skill copied into several repositories, and **drift**, copies that started identical and have diverged, so that a fix applied to one copy never reaches the others. Each finding carries a severity and the report is ordered by it.
+
+The inventory is the active-use inventory from "Stand up the registry," taken from the consuming side rather than the registry's records, and the two should agree. Where they disagree, a skill is running that the registry never certified, or a certified skill has been forked in place. Both are findings, not curiosities.
+
+### Skill quality as a scored gate
+
+The guide argued above against a single quality score for eligibility, because eligibility is multidimensional and risk-specific. That argument stands. A narrower use of a score is defensible: a quality gate on the authoring side, applied before a skill enters evaluation, that asks whether the skill is well written for an agent at all. David Andre's advice to have a strong model review the skill "as an agent would read it" is this check done by hand; the tooling version is a **reviewer plugin**.
+
+A reviewer plugin is a configuration of weighted **judges**, each with a **rubric** file, the weights summing to one. A default rubric splits into two families. Description judges score specificity, completeness, trigger quality (does the description cause the skill to load when it should and not otherwise), and distinctiveness from neighboring skills. Content judges score conciseness, actionability, workflow clarity, and progressive disclosure (is the essential guidance up front, with detail available but not forced into context). Fork a public reviewer and tune the weights rather than writing rubrics from nothing. The result is a **skill quality score** from 0 to 100, and a **threshold** turns it into a gate: below the threshold, the review command exits non-zero, and in CI that fails the build. A fix command iterates on the skill against the same rubric until it clears the bar, which is the reviewer loop from [Chapter 23](../04-prove/23-evaluation-engineering.md) turned inward on the skill itself. Set the threshold explicitly and pass it consistently; a gate that defaults differently in CI and on a laptop is not a gate.
+
+Mapped to this chapter's lifecycle, the quality score is an entry condition for the candidate state: a skill that reads badly for agents is not worth evaluating for behavior. Certification still requires the with-and-without evaluation in [Chapter 23](../04-prove/23-evaluation-engineering.md), and the security scan in [Chapter 26](../04-prove/26-security.md), which no rubric replaces.
+
 ### The contribution model
 
 An Agent Factory serving one team can be run by that team. One serving an engineering organization needs a rule for who owns what, or it becomes either a bottleneck (everything goes through the platform team) or a bazaar (every team rebuilds identity, evaluation, and tool governance its own way). The rule that holds is that the central team owns the contracts and the paved road, and product organizations contribute domain intelligence inside those boundaries.
@@ -483,6 +511,12 @@ Two practical corollaries. First, teams with existing agents should be pulled in
 
 **The platform team that owns every skill.** Every domain capability waits on the central team, and the registry becomes a queue. Detect it in skill-publication lead time. Fix with the contribution model: central contracts, federated content.
 
+**Skill drift across copies.** The same skill was pasted into twelve repositories; three have since been edited, and a bug fixed in one persists in the other eleven. Detect it with the skill inventory's duplicate and drift report. Fix by publishing one package to the registry and installing it by version everywhere, so a fix is a release, not a search.
+
+**The unscored skill.** A skill is published because it exists, and nobody asked whether an agent can act on it. Detect it in skills that are installed but never loaded, or loaded and then ignored. Fix with a reviewer plugin and a quality threshold in CI before the skill enters evaluation.
+
+**Install from anywhere.** An engineer installs a public skill from an unknown source because it looked useful, and it carries instructions the agent follows. Detect it in the install audit and the inventory's third-party classification. Fix with an install policy: source allowlist, severity threshold, minimum release age ([Chapter 26](../04-prove/26-security.md)).
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control contains versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, canaries, policy gates, promotion and demotion concepts, model-route lifecycle, and Factory Version bindings that freeze many material bindings in Factory Versions and Execution Manifests. Those are real components of an Agent Factory: **implemented**.
@@ -509,6 +543,10 @@ The intended direction is a registry that continuously calculates certification 
 - Reason where reasoning creates value; automate where behavior becomes deterministic. A mature skills framework removes unnecessary reasoning rather than maximizing it.
 - Centralize undifferentiated complexity; federate differentiated expertise. Improve once, benefit everyone.
 - You cannot operate a learning system safely if you cannot reconstruct which version learned what.
+- Rules are eager push, skills are lazy push, and both are context as code: packaged with a manifest and lockfile, installed by exact version from a scoped registry, updated only within the compatible range, rolled back by reinstall.
+- A skill with typed input and output schemas is a launchable function, which is how packaged reasoning becomes automation.
+- Inventory what is installed across the organization, classify first-party and third-party, and treat duplicates and drift as findings.
+- A 0–100 quality score with a threshold in CI is an entry gate to evaluation, never a substitute for it.
 
 ## Go deeper
 
@@ -526,6 +564,7 @@ The intended direction is a registry that continuously calculates certification 
 - [Glossary](../appendix/glossary.md).
 - Dru Knox (Tessl), AI Engineer SF talk on harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
 - David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, Pi, and Hermes.
+- Tessl documentation (docs.tessl.io), 2026: skill packages, manifests and workspaces, registry install and update mechanics, typed skill schemas, the organization inventory, and reviewer plugins with score thresholds. The Agent Skills specification (agentskills.io) defines the skill folder format.
 - Jay West, "Key terms and definitions" capability taxonomy: Agent Definitions, Skills Framework, and Agent Harness tool terms.
 - Jay West, factory architecture notes: the Agent Definition contract, the agent/skill/tool/model/harness/factory distinction, the skill maturity lifecycle, versioning, and the contribution model.
 - [Chapter 31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) for the gravity-well adoption path and forward-deployed engineering.

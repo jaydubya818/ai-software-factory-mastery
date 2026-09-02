@@ -396,6 +396,78 @@ person rather than changing a capability, but the advice is still derived
 from the anti-pattern catalog, and that catalog is versioned and evaluated
 like any other evaluator. *Traces may propose; the gate promotes.*
 
+### Mining corrections: from review history to durable assets
+
+Skill traces are one mine. The richer one, in most organizations, is the pull
+request history, because every review comment that led to a diff is a
+correction with its evidence already attached. Public harness-engineering
+tooling now ships this as a read-only skill: read the PR review comments,
+review summaries, CI results, and the diffs that addressed them; categorize
+each correction into an **improvement type**; and propose a concrete next
+step. The output is a list of findings, not a change. That is discovery, in
+this chapter's terms, done against the record the factory already keeps.
+
+```mermaid
+flowchart LR
+    PRs["PR review comments,<br/>summaries, CI results,<br/>fixing diffs"] --> Mine["Mine corrections<br/>(read-only)"]
+    Mine --> Type{"Improvement type"}
+    Type --> Rule["Rule"]
+    Type --> Skill["Skill"]
+    Type --> Ver["Verifier"]
+    Type --> Ref["Refactor + rule/verifier"]
+    Rule & Skill & Ver & Ref --> Ticket["Ticket with evidence<br/>(PR numbers)"]
+    Ticket --> Impl["Implement as candidate"]
+    Impl --> Prove["With/without eval"]
+    Prove --> Gate["Promotion gate"]
+    Gate --> Weekly["Weekly scan re-runs"]
+    Weekly --> Mine
+```
+
+The four improvement types are a decision table for where a fix belongs, and
+they refine the "narrowest durable mechanism" table above for the corrections
+that come out of review:
+
+| Improvement type | Use it when the correction is | Example |
+| --- | --- | --- |
+| **Rule** | An always-on convention the agent should never have to discover (eager push, [Chapter 10](../03-build/10-the-agent-factory.md)) | "Use the shared HTTP client, never a raw fetch" |
+| **Skill** | A multi-step procedure needed only for some tasks (lazy push) | The playbook for adding a CLI command end to end |
+| **Verifier** | A binary, observable invariant on committed files that a judge can check | "Every component file exports an element with a test identifier" |
+| **Refactor** | A structural change to the code that removes the temptation, paired with a rule or verifier so it stays removed | Extract the duplicated validation so there is one place to get it right |
+
+The order of preference runs from the bottom of that table upward whenever the
+correction can be made deterministic: a verifier or refactor removes a class
+of mistake; a rule prevents it at some context cost; a skill teaches it on
+demand. The finding names its type, the evidence (the PR numbers where the
+correction recurred), and the proposed next step.
+
+Then the improvement follows the ordinary path: file a ticket carrying the
+evidence, implement the rule, skill, verifier, or refactor as a versioned
+candidate, prove it with the with-and-without evaluation of
+[Chapter 23](../04-prove/23-evaluation-engineering.md) so the delta is
+measured rather than assumed, and keep the skill quality gate in CI. Schedule
+the scan weekly, with manual dispatch for after a large merge, and write its
+findings to an artifact the team reviews. The loop that results is the meta
+loop in one sentence: *agents write code, the scan surfaces patterns, people
+improve skills and rules, agents get better.*
+
+A sibling scan mines the same history for chores instead of corrections. Read
+ninety days of pull requests for repeated manual work and coordination
+patterns (the dependency bump somebody does every Monday, the changelog
+someone always fixes, the cross-repository ping that precedes every release),
+classify each pattern as established or emerging, state why automating it is
+worth it, cite the evidence PRs, and suggest an execution mode: **scheduled**
+(a cron workflow) or **triggered** (on a PR event or label). That is
+find-automations, and it feeds the maturity lifecycle of Chapter 10 from the
+other side: work that is already deterministic should leave the reasoning
+budget entirely.
+
+In this guide's model, every finding either scan produces is a governed
+candidate. A mined rule is not appended to the repository instructions because
+a scan suggested it; it is a versioned improvement proposal with recurrence
+evidence, it is evaluated with and without, and it goes live only through the
+[promotion gate](#baseline-candidate-and-the-promotion-gate). The scan is
+allowed to be read-only precisely so that nobody has to trust it.
+
 ### Scope: personal fit versus organizational truth
 
 Corrections occur at different scopes. "Use this tone in my draft" is a
@@ -689,6 +761,11 @@ a self-operating learning factory.
   An auto-generated skill update is a governed candidate that must beat the
   current skill as baseline at the promotion gate. Traces may propose; the gate
   promotes.
+- Mine PR review history for corrections and sort each into Rule, Skill,
+  Verifier, or Refactor; prefer the deterministic end. File tickets with the
+  evidence PRs, prove with a with/without eval, scan weekly. Mine the same
+  history for chores and turn them into scheduled or triggered automations.
+  Every mined finding is a governed candidate through the promotion gate.
 - Autonomy is set per action class by reversibility and blast radius, never by
   model confidence: bounded tuning may auto-promote; capability changes need a
   human; authority changes never self-promote.
@@ -740,5 +817,10 @@ a self-operating learning factory.
 - Public source: Uber Engineering, *Running a Software Factory Efficiently at
   Uber Scale* (2026), for continuous skill improvement from execution traces
   and the move from batch anti-pattern detection to real-time guidance.
+- Tessl documentation (docs.tessl.io), 2026: the find-optimizations skill
+  (PR review mining into Rule / Skill / Verifier / Refactor improvement types,
+  evidence-linked tickets, with/without proof, weekly scan) and the
+  find-automations skill (PR history mining for scheduled or triggered
+  automations).
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
   referenced in the research canon.

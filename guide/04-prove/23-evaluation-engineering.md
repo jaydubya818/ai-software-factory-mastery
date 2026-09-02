@@ -263,6 +263,31 @@ This is where evaluation becomes **controlled experimentation**. The evaluation 
 
 Production incidents feed the dataset, but only through a gate: normalization, deduplication, privacy review, and approval of what the expected behavior should have been. An incident copied straight into the eval set brings its sensitive data and its wrong expectations with it.
 
+### Context evals: with and without
+
+Everything above evaluates a whole configuration. One component deserves its own, cheaper instrument, because it changes most often and is easiest to fool yourself about: the skill, rule, or other piece of context an agent loads. The question a skill author needs answered is not "did the agent succeed" but "did the skill make any difference." A **context eval** answers it by running the same task twice, once without the skill and once with it, and comparing. Tessl's public skill-eval tooling is one implementation of the pattern; the shape is what matters.
+
+```mermaid
+flowchart LR
+    Src["Real commits / PRs<br/>in the problem area"] --> Gen["Generate scenarios"]
+    Gen --> Feas["Feasibility check"]
+    Feas -->|"kept"| Corpus["Scenario corpus<br/>(evals/, versioned)"]
+    Corpus --> Base["Run without skill<br/>(baseline)"]
+    Corpus --> With["Run with skill"]
+    Base --> Judge["Judge: multiple binary criteria"]
+    With --> Judge
+    Judge --> Rep["baseline avg / with-skill avg / delta"]
+    Rep --> Diag["Diagnose weakest criterion"]
+    Diag --> Fix["Fix the skill"]
+    Fix --> With
+```
+
+The steps, in the vocabulary of this chapter. A **scenario** is an eval task written for one skill: a realistic prompt the skill should influence, with criteria that say what good behavior looks like. Scenarios are generated from real commits and pull requests in the problem area the skill addresses, which keeps them representative rather than imagined, and each generated scenario passes a **feasibility check** before it is kept, so that the corpus contains only tasks an agent can complete in the harness at hand. The kept scenarios live beside the skill in a versioned directory and are its regression set; every later change to the skill is measured against them, and the corpus grows when a failure shows a gap.
+
+The run is a **paired comparison**, exactly as defined earlier, with the pair being the presence or absence of the skill rather than two whole configurations. The agent solves each scenario without the skill and then with it, several trials each where variance matters. A model grader scores both against **multiple binary criteria**, one per observable behavior the skill is supposed to produce, so that the report is a set of pass rates rather than a single impression; the criteria are the grader's rubric and are subject to the calibration rules above. The output is three numbers: the **baseline** average, the **with-skill** average, and the **delta**. A large positive delta means the skill reliably moves the agent toward the intended behavior. A delta near zero means the agent already behaves that way and the skill is dead weight in the context window. A negative delta is a finding: the skill is making things worse, which happens more often than authors expect when instructions are long, ambiguous, or contradict a rule.
+
+The loop that uses this is the **skill optimizer**: review the skill against a quality rubric ([Chapter 10](../03-build/10-the-agent-factory.md)), fix what the rubric flags, generate scenarios, run the with-and-without eval, diagnose the criterion with the weakest delta, revise, and re-run until the delta stops improving. It is the same review-and-fix loop applied to context instead of code, and it obeys the same discipline: predeclare the threshold, keep the scenario corpus frozen during a comparison, and never optimize against a judge that has not been calibrated. A skill that clears the loop has earned the evidence line that certification in Chapter 10 requires; a skill that cannot be given scenarios probably does not have a clear enough trigger to be a skill at all.
+
 What happens *after* promotion — regression control across versions, optimizing prompts, skills, and tools from evaluated evidence, and the governance that stops a learned improvement from authorizing itself — is the subject of [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md). This chapter builds the measuring instrument; that one uses it to improve the factory.
 
 ## How to build it
@@ -344,11 +369,12 @@ The intended direction is for Mission Control to compile versioned Eval Tasks an
 - Observability says what happened; evaluation says whether it was good enough. The lineage chain from builder to outcome is what connects them.
 - Drift comes from the model, the knowledge source, the tool contract, the skill, and the environment. Continuous evaluation is only useful if you can attribute what changed.
 - Evaluate in three windows — offline in CI, inline on the deployed agent, operationally over time. Trust is continuously measured, never certified once.
+- Evaluate a skill by its delta: scenarios from real work, run without and with the skill, judged on multiple binary criteria, reported as baseline / with-skill / delta, kept as a regression corpus. A skill with no delta is context cost with no return.
 
 ## Go deeper
 
 - Before this: [21. Quality and evidence architecture](./21-quality-and-evidence-architecture.md), [22. Testing strategy for agentic change](./22-testing-strategy-for-agentic-change.md). After this: [24. Quality contracts, proof packages, and certificates](./24-quality-contracts-proof-packages-and-certificates.md); [25. CI/CD, progressive delivery, and production verification](./25-cicd-progressive-delivery-and-production-verification.md) for canaries and rollback in delivery.
 - What evaluation feeds: [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) (regression control, capability optimization, promotion governance). What it evaluates: [17. Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md), [18. Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md), [19. The 12-layer production AI agent stack](../03-build/19-the-12-layer-production-ai-agent-stack.md). Where traces come from: [28. Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md).
 - Terms: [Glossary](../appendix/glossary.md).
-- Sources: Jay West, *The 12-layer production AI agent stack* (Evaluation Engineering and Harness Engineering layers; the evaluation-operations term list); HumanLayer × BAML livestream, *Software factory design patterns* (Dexter on building evals for automated issue triage from past issues, pushing repros on every PR, per-version accuracy, force-reclassifying by lines of code).
+- Sources: Jay West, *The 12-layer production AI agent stack* (Evaluation Engineering and Harness Engineering layers; the evaluation-operations term list); HumanLayer × BAML livestream, *Software factory design patterns* (Dexter on building evals for automated issue triage from past issues, pushing repros on every PR, per-version accuracy, force-reclassifying by lines of code); Tessl documentation (docs.tessl.io), 2026 (scenario generation with feasibility checks, with-and-without skill evals judged on binary criteria, the baseline / with-skill / delta report, and the skill optimizer loop).
 - External: [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents); [SWE-bench paper](https://arxiv.org/abs/2310.06770) and [repository](https://github.com/SWE-bench/SWE-bench); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [NIST AI Resource Center](https://airc.nist.gov/); [OpenAI Agents SDK tracing](https://openai.github.io/openai-agents-python/tracing/). All accessed 2026-08-30.

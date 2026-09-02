@@ -223,6 +223,40 @@ authority.
 decision criteria, examples, and tool-use patterns for a class of tasks. A
 skill teaches behavior; it does not grant authority or certify its own result.
 
+**Rule (eager push)** — Mandatory steering that the harness pushes into the
+agent's context on every run regardless of task: conventions, prohibited
+actions, house style. A rule is always present and costs context on every turn;
+a skill, by contrast, is loaded lazily when the agent judges it relevant. Both
+are versioned context as code.
+
+**Skill package (plugin)** — A versioned, agent-agnostic bundle of skills,
+rules, commands, and hooks, installed by exact version from a registry, a Git
+source, or a local path, the way a language package is installed. It is the
+distribution form of a Capability Package for the skill type.
+
+**Skill manifest and lockfile** — The project file that declares which skill
+packages a project depends on and at what version range (the manifest), and the
+file recording the exact versions installed (the lockfile). The lockfile is the
+resolution lock for skills, written to disk; updates move only within the
+compatible range unless a major bump is explicit.
+
+**Skill inventory** — A scan of every repository in a source-control
+organization for skill files and agent configuration, classifying each skill as
+first-party or third-party, flagging duplicate copies and drift between them,
+and ranking findings by security severity. It is the consuming-side view that
+the registry's active-use inventory must agree with.
+
+**Reviewer plugin** — A configuration of weighted judges, each with a rubric,
+used to score a skill's fitness for an agent: description specificity,
+completeness, trigger quality, and distinctiveness; content conciseness,
+actionability, workflow clarity, and progressive disclosure. It is forked and
+tuned rather than written from scratch.
+
+**Skill quality score** — A 0–100 score produced by a reviewer plugin, with a
+declared threshold that turns it into a gate in CI. It is an entry condition
+for evaluation, not a substitute for a with/without context eval or a security
+review, and never the multidimensional eligibility a certification names.
+
 **Agent platform** — Infrastructure for building and operating agents, including
 tools, context, memory, identity, routing, and orchestration. It becomes part of
 a factory only when connected to the engineering operating model.
@@ -677,6 +711,12 @@ workflows, systems, and business outcomes. Attention moves upward only when
 risk, evaluated coverage, evidence, and recovery justify reduced direct
 inspection; it moves downward when novelty or consequence increases.
 
+**Change-risk policy** — A repository-owned, executable rule that decides
+whether a pull request needs a human reviewer, judging the change (blast
+radius, paths touched, novelty) rather than the code. It is the risk-tier
+assignment made runnable, and it is kept separate from the file invariants a
+verifier checks.
+
 ## Quality and assurance concepts
 
 **Quality Contract** — A versioned, machine-readable specification of the
@@ -945,6 +985,19 @@ acceptance as the outcomes.
 **Rollback** — A governed, pre-engineered transition toward a prior safe
 artifact or configuration with verification of data, dependencies, and external
 effects. It is not a universal undo operation.
+
+**Context eval (with/without)** — A paired evaluation of one skill, rule, or
+other context artifact: scenarios generated from real work and feasibility
+checked, each run by the agent without the artifact and with it, judged on
+multiple binary criteria, and reported as baseline average, with-skill average,
+and delta. The scenarios are kept as the artifact's regression corpus. A delta
+near zero means the artifact is context cost without return.
+
+**Verifier (file invariant)** — A model-judged check on committed files for a
+single binary, observable invariant (for example, every component file exports
+an element with a test identifier), emitted as a CI annotation. It verifies the
+files; it does not decide whether the change needs a human, which is the
+change-risk policy's job.
 
 ## Runtime concepts
 
@@ -1420,6 +1473,18 @@ escalate unacceptable use. Generated output does not remove provenance duties.
 form. It improves consistency but does not replace ownership, rationale,
 exceptions, evidence, or human risk accountability.
 
+**Install policy** — The rules governing which skill packages may be installed,
+set at project, workspace, and organization level with the tightest level
+winning. Three rule types: a security threshold with a warn level (install
+needs explicit acceptance) and a block level (no override), a source
+restriction (registry limits and Git allowlists), and a minimum release age.
+Every install attempt is logged against the policy that decided it.
+
+**Minimum release age** — An install-policy rule requiring that a Git-sourced
+skill version has existed for a set number of days before it may be installed,
+so that a freshly pushed payload has time to be noticed and scored before it
+reaches an agent.
+
 ## Autonomy and trust
 
 **Operational autonomy** — A revocable, scoped grant of authority. It belongs to
@@ -1531,6 +1596,14 @@ change creates a new evaluated capability version.
 **Skill improvement** — A governed update to a reusable task method based on
 diagnosed evidence, followed by evaluation, certification, promotion, and
 rollback planning.
+
+**Improvement type (Rule / Skill / Verifier / Refactor)** — The four
+destinations for a correction mined from review history: a Rule for an
+always-on convention, a Skill for a multi-step procedure needed on demand, a
+Verifier for a binary observable invariant on files, and a Refactor for a
+structural change paired with a rule or verifier so it holds. Prefer the
+deterministic end. Each is a governed candidate through the promotion gate,
+not a change.
 
 **Learning from success** — Analysis of matched successful runs to identify
 strategies associated with accepted outcomes, low retry, safe recovery, cost,

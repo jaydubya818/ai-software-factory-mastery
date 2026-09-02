@@ -345,6 +345,62 @@ verifier certifying that fix. Blocking authority should be extended to the
 review agent only as measured precision, recall, severity calibration, and the
 rate of human correction justify it; until then it advises.
 
+### Advisory first, then gate
+
+"Until then it advises" deserves its own mechanics, because the way a review
+agent is promoted from commentator to gate is where most rollouts go wrong.
+The public review products now converging on this shape (Tessl's code review
+is one documented example) share a discipline worth adopting whatever tool is
+behind it.
+
+Run the reviewer in **advisory mode** first. In advisory mode the check never
+concludes failure: it posts findings, it is measured, and it is deliberately
+kept out of branch protection, because a required check that cannot yet be
+trusted trains everyone to override it. Only after precision, recall, and
+severity calibration are known does it move to **gate mode**, where it can
+request changes and block the merge. The move is a promotion decision in the
+sense of [Chapter 23](../04-prove/23-evaluation-engineering.md): predeclared
+thresholds, a measured baseline, and a way back.
+
+Severity is computed, not felt. The reviewer assesses each finding on
+**consequence** (what happens if this ships), **likelihood** (how probable
+that outcome is), its own confidence, and the relationship between the
+finding and the change. The published severity is derived from consequence
+multiplied by likelihood, which is the same arithmetic the risk classifier
+above uses on whole changes, applied to one finding. A **request-changes
+threshold** then names the severity at which a finding stops being a comment
+and becomes a request for changes, and a review mode sets how much blocking
+strength a finding needs before it can hold the merge. Profiles and lenses
+route which reviewers apply to which repositories and file classes, in
+configuration that is versioned with the reviewer.
+
+Re-review is stateful. When a new commit lands, the reviewer accounts for
+replies, resolved threads, and its own earlier findings: an unresolved earlier
+finding stays visible on the new review rather than being silently dropped
+because the line moved. That is the finding-identity rule from the previous
+section enforced by the reviewer itself.
+
+Currentness is enforced by construction. One review runs at a time per pull
+request; a newer run waits for or cancels the superseded one; and the head
+commit is verified again immediately before the review is published, so a
+review is never posted against a commit that is no longer the head. That is
+the exact-current PR gate this guide applies to verification evidence
+([Chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md)),
+applied to review. And gate mode **fails closed**: if the reviewer returns no
+boolean verdict, because it timed out, errored, or produced prose instead of a
+decision, the check fails rather than passes. A missing verdict is not
+approval.
+
+Finally, keep two questions in two checks. A **change-risk policy** is a
+repository-owned rule that decides whether this pull request needs a human
+reviewer at all: it judges the change (its blast radius, the paths it touches,
+its novelty), not the code, and it is the tier assignment from "Risk-tiered
+review" made executable. **Change-verify invariants** are targeted, binary,
+observable checks on the resulting files (every new component exports a test
+identifier, no migration lacks a down step), emitted as CI annotations. The
+first routes; the second verifies. Merging them into one score reproduces the
+composite-score failure Chapter 23 warns about.
+
 ### Mergeability and the agentic merge queue
 
 Once a human has approved the candidate, the remaining work is keeping it
@@ -540,6 +596,11 @@ Merge-maintenance policy checklist:
 | 20k-line PR asked for review | Review latency and resentment | Treat as prototype; slice via reviewed plan; order migrations |
 | Stacked PRs invalidated by upstream change | Downstream evidence older than upstream head | Re-base and refresh evidence automatically; re-review if material |
 | Reproduction required before containment | Severe incident waits on repro | Risk policy permits containment first; reproduction proceeds in parallel |
+| Reviewer made a required check while still advisory | Overrides climb; findings ignored in bulk | Keep advisory out of branch protection; promote to gate on measured precision and calibration |
+| Review posted against a superseded head | Findings reference lines that no longer exist; stale approvals | One run per PR head; cancel superseded runs; re-verify head before publication |
+| Missing verdict treated as pass | Reviewer timeout or error lets a PR through | Fail closed in gate mode; a non-verdict is a failure |
+| Unresolved finding vanishes on re-review | Earlier blocking finding absent after a new push, never addressed | Carry unresolved findings forward across reviews |
+| Risk routing and file invariants fused into one score | Low-risk PRs blocked on style; risky PRs pass on clean lint | Separate change-risk policy (needs a human?) from change-verify invariants (are the files right?) |
 
 ## In Mission Control
 
@@ -601,6 +662,12 @@ precision, human attention, merge latency, and change-failure outcomes.
   scope or take the merge decision. A material diff invalidates approval.
 - A 20,000-line prototype is a specification, not a PR. Slice it through a
   reviewed plan with migrations ordered first.
+- Roll a review agent out advisory first, then gate. Severity is consequence
+  times likelihood; a threshold decides what requests changes; unresolved
+  findings carry forward; one review per head, re-verified before publication;
+  no verdict means fail.
+- "Does this PR need a human?" and "are the files right?" are two checks:
+  change-risk policy and change-verify invariants.
 
 ## Go deeper
 
@@ -626,6 +693,11 @@ precision, human attention, merge latency, and change-failure outcomes.
   coverage audit, sections 8 and 9; Jay West, factory architecture notes, on
   signal aggregation, risk-tiered review, reviewer feedback as a learning
   signal, and review findings that teach.
+- Tessl documentation (docs.tessl.io), 2026: advisory and gate modes for
+  agentic code review, consequence-times-likelihood severity, the
+  request-changes threshold, stateful re-review, head re-verification before
+  publication, fail-closed verdicts, and change-risk policy versus
+  change-verify invariants.
 - CodeRabbit pull-request review documentation and review commands (accessed
   2026-08-30); GitHub, "Managing a merge queue" and "About stacked pull
   requests" (accessed 2026-08-30).

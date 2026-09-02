@@ -264,6 +264,24 @@ Harden the builder and the publication boundary: ephemeral isolated builders wit
 
 For agent-produced work, provenance should also record the executor configuration, model and provider identifier, tool and MCP server versions, policy bundle, context sources, and prompt or instruction digest where retention policy permits. Prompts, tools, and models are dependencies. Do not store secrets or unrestricted prompt content in public attestations; the goal is reproducibility and accountability, not disclosure of sensitive reasoning.
 
+### Skills are supply chain
+
+The sentence "prompts, tools, and models are dependencies" has a corollary that organizations discover late: a skill is a dependency with the same threat profile as a package, plus one property packages do not have. A package runs code; a skill is instructions the agent will follow. That makes a skill the ideal carrier for the indirect prompt injection described above. A public skill can contain a **prompt-injection payload** (instructions that redirect the agent's task) or **exfiltration instructions** (send the contents of this file to that endpoint, include the token in the commit message), and because the agent loads the skill on the grounds that it is relevant, the payload arrives already trusted. First-party skills are not exempt: an internal author can leak a credential into a skill by mistake, or an insider can plant a payload in a skill the whole organization installs. The skill registry of [Chapter 10](../03-build/10-the-agent-factory.md) is therefore a supply-chain boundary, and the controls are the ones this chapter applies to any other dependency, with one addition.
+
+The addition is a **security review of the skill's content**, run before install for third-party skills and at import for first-party ones, producing a severity: LOW, MEDIUM, HIGH, or CRITICAL. The scan looks for instruction patterns that attempt to change the agent's objective, reach credentials or secrets, encode data into outputs, or call destinations outside the task. It is a vulnerability scan for instructions, and like every scan in this chapter it produces a finding, not a verdict; the same review runs on demand in CI with a fail-on level so a skill cannot be merged into a repository above the threshold.
+
+The severity feeds an **install policy**, which is the default-deny stance of this chapter applied to skills. Policy is set at three levels, **project**, **workspace**, and **organization**, and where they disagree the tightest wins, so a team can be stricter than its organization but never looser. Three rule types cover what matters:
+
+| Rule type | What it sets |
+| --- | --- |
+| Security threshold | A **warn** level (install proceeds only with explicit acceptance) and a **block** level (install is refused, no override) |
+| Source restriction | Which registries and which Git sources are allowed, as an allowlist such as the organization's own Git host namespace |
+| Minimum release age | How many days a Git-sourced version must have existed before it may be installed, so a freshly pushed payload has time to be noticed |
+
+The install flow follows from the thresholds. Below the warn level, install is silent. At the warn level, install stops for a confirmation the installer must give deliberately. At the block level, install is refused and no flag overrides it. Every install attempt, permitted or refused, is logged against the policy that decided it, which is the same audit-the-denials rule from earlier in this chapter, and the headline label on a skill (passed, advisory, risky, critical) is the operator-facing summary of the scan. Tessl's public documentation describes one implementation of this policy stack; the shape is the one any package ecosystem eventually converges on.
+
+Two ties to the rest of the chapter. First, the install audit plus the skill inventory of Chapter 10 is the attestation story for skills: what is installed, from where, at what version, under which policy decision. Without it a skill is a mutable tag, and this chapter has already said what mutable tags are worth. Second, the scan reduces the chance that a payload is loaded; it does not remove the need for the controls that make a loaded payload harmless. A skill that tells the agent to exfiltrate a token still fails against attempt-scoped credentials, egress policy, and secrets that never enter context. The scan is the outer wall; the execution contract is the one that holds.
+
 ### Privacy, information lifecycle, and compliance
 
 Classify source, prompts, context, telemetry, artifacts, evidence, memory, and backups. For each class define allowed purpose, provider, region, encryption, access, retention, deletion, legal hold, and incident handling. Deletion workflows must reach derived indexes and backups while preserving required audit evidence lawfully. Personal data needs one more control on the way in: **PII redaction** at the boundary where content enters prompts, context packages, traces, and evaluation sets, so that a customer's identifiers are replaced or tokenised before a model, a log, or a golden set ever holds them, with the same second-line scanning on outputs that secrets receive.
@@ -384,6 +402,10 @@ Use the incident frame from [Chapter 29](../05-operate/29-resilience-incidents-a
 
 **Configuration documents mistaken for evidence.** A security design that exists on paper is not an enforced control. Promotion requires negative tests and runtime proof.
 
+**The trusted skill.** A skill installed from a public source carries an injection or exfiltration payload, and the agent follows it because it loaded the skill as relevant. Detect it with a content security scan at install and import, and in the install audit. Fix with an install policy: severity thresholds that warn and block, a source allowlist, a minimum release age, and the execution controls that make a followed payload a wasted run rather than a breach.
+
+**Install policy that loosens downward.** A project sets a weaker threshold than its organization and the weaker one wins. Detect it by comparing effective policy at each level. Fix by making the tightest level win.
+
 ## In Mission Control
 
 Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) and local HEAD `a490648`, reviewed 2026-08-09 through 2026-08-30.
@@ -416,6 +438,6 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 
 **Primary sources.** Jay's reliability-and-security preparation notes (threat list, security thesis, incident framework); HumanLayer and BAML, "Software factory design patterns" livestream (trusted versus untrusted execution of feedback and repros); OWASP Agentic Security Initiative; OWASP LLM01 Prompt Injection and LLM06 Excessive Agency; NIST AI Risk Management Framework; NIST SP 800-218 SSDF 1.1, especially provenance practice PS.3.2; NIST Privacy Framework; SLSA specification 1.2 and provenance v1; in-toto Attestation Framework, Statement v1, and DSSE; Sigstore Cosign verification guidance; SPDX 3.0; CycloneDX 1.7; SPIFFE overview and Workload API.
 
-**Public sources.** Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026), for routing every internal and SaaS MCP server through one gateway with central authentication and policy; *Six layers of a working agentic system* (public post, 2026), for private model instances per tenant and identity, secrets, and audit as runtime obligations rather than afterthoughts.
+**Public sources.** Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026), for routing every internal and SaaS MCP server through one gateway with central authentication and policy; *Six layers of a working agentic system* (public post, 2026), for private model instances per tenant and identity, secrets, and audit as runtime obligations rather than afterthoughts; Tessl documentation (docs.tessl.io), 2026, for skill security severity scoring, install policy levels and rule types, the warn/block install flow, and install auditing.
 
 **Mission Control sources at `b31e275`.** `docs/security/clerk-company-authorization.md`, `docs/security/human-service-authorization-matrix.md`, `docs/security/service-command-authentication.md`, `docs/security/github-app-connection.md`, `convex/lib/companyAccess.ts`, `apps/orchestration-server/src/auth.ts`, `convex/lib/githubAppAuth.ts`, `convex/factory/githubCi.ts`, `convex/schema.ts`; staged candidates `convex/factory/attempts.ts` and `apps/orchestration-server/src/githubAppRuntime.ts`.
