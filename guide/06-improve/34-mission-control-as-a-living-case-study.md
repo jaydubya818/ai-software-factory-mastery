@@ -4,7 +4,7 @@ part: improve
 chapter: 34
 summary: What Mission Control is and is not, the full record-by-record walkthrough of how a Mission moves through it, what the retained evidence proves at the pinned commits, why its architecture was decided the way it was, and where its honest limits sit today.
 absorbs: [09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md, 09-mission-control-case-studies/02-verification-first-software-factory.md, 09-mission-control-case-studies/03-capability-workflow-and-admission-map.md]
-infographics: [mission-control-architecture, three-layers, master-architecture-chain]
+infographics: [mission-control-architecture, three-layers, master-architecture-chain, pluggable-execution-engine, operator-surfaces]
 ---
 
 # 34. Mission Control as a living case study
@@ -242,9 +242,10 @@ queries, mutations, actions, internal functions, and HTTP actions. A **Hono**
 orchestration service hosts the execution side: the canonical worker runtime,
 harness adapters, the sandbox runtime, the independent verifier, and the
 GitHub App publisher. Below Hono sit the **executors** (the production-admitted
-`codex/v1` adapter, an experimental DeepSeek harness, and a future Loom
-admission), each running in an Attempt-scoped git **worktree** or a remote
-sandbox. **GitHub** is the V1 git provider, reached only through a
+`codex/v1` adapter, an experimental DeepSeek harness, and a flag-gated
+experimental adapter for a pluggable epic-delivery execution engine that is
+not yet admitted), each running in an Attempt-scoped git **worktree** or a
+remote sandbox. **GitHub** is the V1 git provider, reached only through a
 least-privilege GitHub App with signed, deduplicated webhooks.
 
 <!-- infographic: mission-control-architecture -->
@@ -742,6 +743,85 @@ constraint. An exact model route matters because a provider and model name
 alone do not describe the executable, adapter configuration, sandbox, or
 effective capabilities that produced an artifact.
 
+### Pluggable execution engines
+
+The `codex/v1` adapter is a single-session coding harness. The Generic
+Harness Contract was written so that something larger could be composed the
+same way: an epic-delivery execution engine that plans, splits an epic into
+stories, runs its own gates, and reports phases. Mission Control's design for
+composing such an engine as a harness adapter is worth describing as
+implemented in contract, because it is the sharpest statement in the
+repository of what a control plane keeps and what it hands over. The engine
+is unnamed here; the contract is what matters.
+
+<!-- infographic: pluggable-execution-engine -->
+> **Infographic — Composing an execution engine as a harness adapter.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    CP["Control plane: whether and what executes"] -->|"executor snapshot on the Attempt"| W["Canonical Factory worker"]
+    W -->|"adapter selection only"| AD["Engine adapter: prepare → execute → collectResult → cancel → cleanup"]
+    AD --> EN["Execution engine: how it is planned and implemented"]
+    EN -->|"phases, stories, gates as evidence"| AD
+    AD -->|"factory-result/v1 + candidate SHA"| W
+    W --> VER["Independent verifier Attempt"]
+    VER --> PUB["Permit-gated GitHub App PR"]
+    PUB --> HUM["Human accepts (workOrders.accept) and merges"]
+    EN -. "never" .-> PUB
+    EN -. "never" .-> HUM
+```
+
+**The authority split.** The control plane decides whether and what
+executes. The engine decides how it is planned and implemented. The control
+plane independently verifies, publishes the pull request through its own
+GitHub App, and accepts through `workOrders.accept`, the only acceptance
+command; a human merges on GitHub. The engine never creates the PR and its
+workers never push (their allowed remotes are empty). Engine-produced gates
+are evidence: a failed engine gate makes the Attempt `failed` and the
+WorkOrder BLOCKED, never DONE, and engine "done" without a candidate SHA is
+BLOCKED as well. A completed engine run is not an accepted WorkOrder.
+
+**The executor snapshot.** Dispatch copies the complete executor
+configuration (adapter, version, planning backend, worker backend,
+configuration version) onto the Attempt. The Attempt never re-resolves
+repository policy files or the live Factory Version; editing, superseding, or
+deleting the Factory Version never changes a historical Attempt; retry is a
+new Attempt with a new engine identity. Backend selection is frozen on the
+Factory Version as a pair; authentication is the operator's existing local
+CLI login rather than API keys held by the factory; runtime configuration
+reaches the engine as environment overrides that win over committed
+repository policy, which is never mutated per Attempt.
+
+**Admission.** Admission is maturity plus required external controls minus
+prohibited authorities. The adapter is prohibited from holding worker leases,
+verification subjects, verification plans, evidence authority, GitHub
+publication, and acceptance. The canonical worker lease, sandbox policy,
+repository-scope reconciliation, independent verification, and the
+publication permit must exist outside it. The Factory Attempt worker selects
+the adapter and runs those controls itself; there is no engine-specific
+worker path. Engine status is polled and mapped onto the canonical run events
+under the idempotency key `{workOrderId}:{runId}:{engineId}:{eventType}:{sequence}`;
+engine phases map to WorkOrder tendencies, never transitions; stories live in
+engine-owned nested worktrees beneath the epic worktree the Attempt records.
+Cancellation runs control plane → adapter cancel → engine stop, and wins until
+terminal success is durably reported. CI exercises the adapter against a
+deterministic fake engine that returns a fixed epic id, status JSON, and
+candidate SHA; live engine runs are operator evidence, never a CI gate. The
+engine's unattended mode is not admitted: the posture is manual
+approve-then-run with control-plane-attested approval.
+
+**Learning writeback.** After a terminal successful engine run, the worker
+reads the engine's own lessons store read-only. Matching rows become additive
+learning candidates on the Attempt and WorkOrder, emitted as idempotent
+`EVIDENCE_CREATED` events of type `learning.candidate.proposed`. They are
+telemetry: they cannot accept and cannot satisfy verification receipts. A
+missing store yields no candidates.
+
+The whole design reduces to one line that the general chapters state in the
+abstract and this adapter makes concrete: the engine is trusted with *how*,
+and with nothing that decides *whether*.
+
 ### Security model
 
 The security model follows the responsibility split rather than adding a
@@ -865,6 +945,51 @@ become a production feature merely by existing in the codebase. The same
 honesty that governs evidence governs the navigation. A `mc` command-line
 client reaches the same Convex functions as the browser, which is the
 authorized-action parity described below applied to the CLI.
+
+### The operator surfaces
+
+The routes above are the V1 set. The repository's lexicon names the surfaces
+by the job each does, and the list is worth having in full because each
+surface carries one negative rule, in the same way each record does.
+
+<!-- infographic: operator-surfaces -->
+> **Infographic — The surfaces and what each one refuses to do.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Surface | Job | What it refuses to do |
+| --- | --- | --- |
+| Command Center | Exception-first triage of decisions, blockers, failed or stale evidence, and aging work | Show routine activity as news |
+| Factory Board | Guided entry: recipe recommendation, Mission draft with a stop condition, Plan compile | Dispatch or accept |
+| Work Orders queue | Govern, dispatch, verify, and accept WorkOrders, showing Tasks Done and blocking criteria verified as two counts | Enable accept before independent verification and a human decision |
+| Tasks board | Inbox, Ready, In Progress, Review, Needs Approval, Blocked, Done | Let a Task's Done accept its WorkOrder |
+| Execution Run Inspector | The frozen executor snapshot, the engine phase, the required action, the frozen Factory context, and the exact receipts for one Attempt | Label engine completion as acceptance |
+| Factory Overview | KPI strip, dispatch gate state, and the architecture diagram | Hide a failed readiness check |
+| Factory Health | Human touches per agent task, shared component contributions, workflow versus interactive token spend | Report a metric as evidence |
+| Knowledge → Memory | Overview, Memory, Graph, and Context views over Factory Memory and Context Packages | Let retrieved text approve, invoke, or satisfy anything |
+| Registry | Discover, Skill Inventory, Installations, CDL, Evaluate Skill, Eval Runs | Treat publication as permission to run |
+| Harness engineering | Change review, merge gates, mutation testing, the seven-step code-review wizard, the Agent Fleet view | Let a gate merge or a fleet view grant authority |
+| Labs | Experimental surfaces in preview until they meet the golden-path bar | Present a preview as a product feature |
+
+The shell that organises them is the Engineering OS described in
+[Chapter 27](../05-operate/27-the-factory-as-a-platform.md): Strategy,
+Delivery, Operations, Intelligence, Knowledge, and Governance, over the same
+Convex functions and the same authorization the CLI uses.
+
+### The V1 program constraints
+
+The V1 program is bounded by a written constraint set, ASF-001 through
+ASF-008, and the constraints explain several decisions that would otherwise
+look like missing features. The set includes: **GitHub only** as the git
+provider, reached through the least-privilege App; **one production
+executor**, the `codex/v1` adapter, with everything else experimental and
+flag-gated; **human merge only**, so that V1 ends at an evidence-backed,
+review-ready pull request and no band auto-merges; **sandboxed RED work**,
+so that security-sensitive, destructive, or irreversible WorkOrders run in a
+restricted sandbox rather than merely under extra review; and **tiered
+evidence retention**, so that receipts, artifacts, and packages are kept by
+classification and risk rather than forever or not at all. Read the set as
+the shape of the pilot: it is what makes "qualified delivery kernel" a
+bounded claim rather than a marketing one.
 
 ### Observability and evals are diagnostic, not authority
 
@@ -1216,6 +1341,14 @@ and hardened writes recheck the tuple; stale sessions cannot report evidence
 or authorize publication; ownership becomes `LOST` and a new Attempt is
 required.
 
+**Engine completion counted as delivery.** An execution engine reports its
+terminal phase and a surface, a notification, or an adapter treats the
+WorkOrder as done. The contract prevents it by mapping phases to tendencies,
+blocking on a missing candidate SHA, and reserving acceptance to
+`workOrders.accept`; the Execution Run Inspector labels engine completion as
+not acceptance. Detection: any WorkOrder transition whose actor is an
+adapter, or any DONE WorkOrder whose Attempt has no Candidate.
+
 **Incidental failures counted as the wrong evidence.** The golden-path run
 also saw the operator shell time out on Convex query
 `analytics:schematicOverview` and recover on reload, and saw some ref-based
@@ -1332,6 +1465,17 @@ evals as diagnostics; company, workspace, and repository boundaries with
 server-side authorization; six versioned YAML workflows snapshotted onto
 Attempts.
 
+**Contract at the 2026-09-02 lexicon review, not retained evidence.** The
+pluggable execution-engine design in "Pluggable execution engines" (the
+authority split, the executor snapshot, the admission lists, the event
+mapping and fake-engine fixture, and learning writeback) is stated in the
+repository's glossary and lexicon as the Generic Harness Contract applied to
+an epic-delivery engine. Its adapter is experimental: flag-gated, off by
+default, and not admitted to remote sandbox execution. The surfaces table and
+the ASF-001 to ASF-008 constraint set come from the same review. None of
+this section's pinned evidence packages exercised that adapter, and this
+chapter does not claim a live run through it.
+
 **Partial.** Spec-driven intake: merged, qualified, default off. Factory
 Memory: implemented, default off by phase. Skills: discoverable and linted,
 but no exact skill digest was observed in `factory-execution-manifest/v1`, so
@@ -1353,9 +1497,11 @@ repository-wide action-parity manifest with CI drift checks, exact skill
 binding, a governed MCP gateway, a browser-originated Mission-to-reviewed-PR
 run with no direct mutation, retained post-merge production-outcome evidence,
 Trust Score and automatic autonomy calibration, first-class Risk Review,
-DeepSeek beyond experimental, Loom admission, supply-chain attestations across
-source, build, dependencies, and deployment, additional git providers,
-fleet-scale load, and measured multi-team adoption.
+DeepSeek beyond experimental, admission of the experimental execution-engine
+adapter (flag-gated, default off, and not admitted to remote sandbox
+execution at the review date), supply-chain attestations across source,
+build, dependencies, and deployment, additional git providers, fleet-scale
+load, and measured multi-team adoption.
 
 **Next evidence, in order.** Establish a clean pinned baseline; repair the
 browser Mission path and webhook evidence reconciliation; configure the
@@ -1436,6 +1582,19 @@ only then extend proof into deployment and production outcome.
   worker is off by default.
 - The most valuable habit in the repository is refusing to fabricate evidence
   when prerequisites are absent.
+- A pluggable execution engine is trusted with how, never with whether: the
+  control plane dispatches under an executor snapshot, the engine plans and
+  implements, the factory worker verifies and publishes, a human accepts and
+  merges. Engine gates are evidence; engine done without a candidate SHA is
+  BLOCKED; the adapter holds none of the six prohibited authorities; its
+  lessons become telemetry, never receipts. At the review date the adapter is
+  experimental, flag-gated, and not admitted to remote sandbox.
+- Eleven surfaces, each with a refusal: Command Center, Factory Board, Work
+  Orders, Tasks board, Execution Run Inspector, Factory Overview, Factory
+  Health, Knowledge → Memory, Registry, harness engineering, Labs. The V1
+  constraint set (ASF-001 to ASF-008) bounds the pilot: GitHub only, one
+  production executor, human merge only, sandboxed RED work, tiered evidence
+  retention.
 
 ## Go deeper
 
@@ -1517,3 +1676,8 @@ only then extend proof into deployment and production outcome.
   why the control plane exists, the three layers, the responsibility model,
   the master chain record by record, the Command Center, the stack, maturity,
   and the six questions.
+- Source: Mission Control repository glossary and lexicon, reviewed
+  2026-09-02 — the pluggable execution-engine contract (authority split,
+  executor snapshot, admission, event mapping, learning writeback), the
+  operator surfaces, the Engineering OS shell, and the ASF-001 to ASF-008 V1
+  constraints.

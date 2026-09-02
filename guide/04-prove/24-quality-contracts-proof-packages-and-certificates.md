@@ -4,7 +4,7 @@ part: prove
 chapter: 24
 summary: How to compile intent, policy, and risk into an executable Quality Contract before an agent runs, bind every piece of evidence to an exact artifact, decide release eligibility deterministically, and issue a bounded, revocable certificate that means exactly what it says.
 absorbs: [07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates.md, 07-quality-engineering/04-quality-contract-and-certificate-technical-specification.md]
-infographics: [quality-contract, proof-package, certificate-lifecycle]
+infographics: [quality-contract, proof-package, review-package, two-counts, certificate-lifecycle]
 ---
 
 # 24. Quality contracts, proof packages, and certificates
@@ -312,6 +312,50 @@ The certificate means only this:
 
 It does not mean defect-free, permanently safe, or valid for a different artifact or environment. New code, dependency changes, expired evidence, counterevidence, incident linkage, or policy revision can revoke or supersede it. A certificate without verified provenance and accessible evidence is decorative paperwork. Cryptographic signing proves issuer and integrity, not truth: a perfectly signed fabricated test result remains false, which is why independence, protected execution, method quality, and raw evidence remain necessary.
 
+### The review package: evidence-first human review
+
+The proof package is built for audit. The person who has to accept a WorkOrder on a Tuesday afternoon needs a different projection of the same graph, ordered for a decision rather than for completeness. That projection is the **review package**, and the discipline behind it is **evidence-first human review**: the reviewer starts from what was proven and disproven, not from the diff. It carries, in this order:
+
+<!-- infographic: review-package -->
+> **Infographic — The review package, in reading order.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Section | What it holds | Why it comes here |
+| --- | --- | --- |
+| Frozen intent | The Mission Spec revision, the approved Plan revision, and the Quality Contract, by digest | The reviewer judges against what was authorised, not against what was produced |
+| Criteria → checks | Every acceptance criterion with the check that covers it and the check's state (VERIFIED, PASS, FAIL, WAIVED, STALE, UNKNOWN, MISSING) | Coverage gaps are visible before any file is opened |
+| Failures and retries | Each failed Attempt, what was retried, on what hypothesis, and what changed | The history of failure is information, not noise |
+| Decision Candidates | Bounded observations the implementation surfaced that a human may need to decide on | Surprises belong above the diff |
+| Changed-file groups | The diff, grouped by the criterion or component it serves, with scope reconciliation against the frozen code scope | The reviewer reads the change by purpose |
+| Residual findings (optional, ADVISORY) | Post-verification analysis by a model, labelled ADVISORY | Useful, never authoritative |
+
+Two of those rows need their own rule. A **Decision Candidate** is a bounded implementation observation that came out of execution: the agent found that the requirement as written conflicts with an existing invariant, or that a cheaper design satisfies the criterion, or that a dependency is deprecated. It is recorded, it is shown, and a human may accept it. What accepting it never does is rewrite the frozen intent. If the Decision Candidate implies a different requirement, a different plan, or a different architecture, accepting it opens a new Spec revision, a new Plan revision, or an Architecture Decision Record, each through its own approval; the current WorkOrder is judged against the intent it was dispatched under. Without that rule, the implementation quietly authors its own acceptance criteria one observation at a time.
+
+**Residual AI** is the optional last section: a model's advisory pass over the verified candidate, looking for what the deterministic checks do not express. It is labelled ADVISORY in the package and in the record, it has no authority over any state, and it cannot satisfy a criterion or count as a receipt. Its value is in the reviewer's attention, not in the gate.
+
+### Receipt packets, waivers, and the two counts
+
+Three more mechanisms decide whether a review package is honest.
+
+A **receipt packet** is the artifact bundle a bounded runtime produces to prove it executed inside its envelope: the manifest digest it ran under, the commands and exit codes, the artifacts and their hashes, the budget consumed, and the sandbox and credential scope it observed. It is ingested through a **receipt endpoint** that validates the packet against the Attempt's frozen manifest before any of its contents become evidence envelopes. A packet that does not match its manifest is rejected, not partially trusted; a runtime that cannot produce a packet is a runtime whose work has no proof of having stayed in bounds.
+
+A **waiver** is an authorised decision that a failed or missing check will not block this decision. The state is WAIVED, recorded with owner, reason, scope, and expiry, and it is never silently rewritten as PASS: the review package shows the waiver as a waiver, the certificate carries it as a waived claim, and a later audit can see exactly which criterion was not proven. Policy may still block: a waiver satisfies the criterion's *gate*; it does not override a hard gate or a risk-band rule that forbids waiving that class of check, and a control plane should refuse the waiver rather than record it if policy forbids it.
+
+The third mechanism is a pair of numbers that should never be shown alone. **Execution progress** is how much of the work has been done: Tasks in DONE over Tasks in total. **Acceptance readiness** is how much of the contract has been proven: blocking criteria with current, verified evidence over blocking criteria in total. A WorkOrder view shows both, because either one alone lies. Five of five Tasks done with two of six criteria verified is a WorkOrder that is finished and not acceptable; two of five Tasks done with six of six criteria verified is a WorkOrder whose remaining Tasks are not on the acceptance path at all. Task count alone is never sufficient for acceptance, and a surface that shows a single progress bar has picked one of the two and hidden the other.
+
+<!-- infographic: two-counts -->
+> **Infographic — Execution progress and acceptance readiness are different numbers.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    T["Tasks: 5 of 5 DONE"] --> EP["Execution progress: 100%"]
+    C["Blocking criteria: 2 of 6 VERIFIED and current"] --> AR["Acceptance readiness: 33%"]
+    EP -. "never implies" .-> AR
+    AR -->|"100% and approvals present"| Elig["Eligible for human acceptance"]
+    EP -. "alone, never" .-> Elig
+```
+
+Where the change goes on to merge, the last check is the **merge gate**: a composite of pull-request readiness that combines CI status, the review lenses (specialised reviewers and verifiers over the diff), mutation-testing results where the contract requires them, and the policy decision for the risk band, all bound to the exact PR head. The merge gate is composite so that no single green signal can stand in for the others; it is a gate, not a merge, and in a first version a human still performs the merge on the source provider ([Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md)).
+
 ### The proof continues in production
 
 Pre-release evidence cannot reproduce every workload, dependency, customer, or failure interaction. Release progresses through an explicit canary, observation, and expansion policy: compare canary with a control using representative, attributable signals, and enforce absolute SLO limits as well. Correlate traces, metrics, logs, deployment identity, feature configuration, and business outcomes so a production fact can be traced back to the release and the original requirement. OpenTelemetry supplies the signal categories and correlation mechanisms; it does not define the product's SLO or customer-success measure.
@@ -574,6 +618,16 @@ Start with stable criterion and receipt identifiers; add richer claim and counte
 
 **Automated rollback as universal undo.** Rollback may be unsafe for irreversible data or external side effects. Some changes need roll-forward, containment, or a human-directed recovery plan; the contract's production policy must say which.
 
+**Decision Candidate rewrote the intent.** An observation surfaced during implementation was accepted in review and the acceptance criteria were edited to match, so the WorkOrder was judged against what it produced. Detect it by diffing the Quality Contract digest at dispatch against the one at acceptance; fix by routing accepted candidates into a new Spec or Plan revision or an ADR and judging the current WorkOrder against its frozen intent.
+
+**Waiver shown as PASS.** A waived criterion is rendered green, and the certificate carries no waived claim. Detect it by comparing WAIVED states in the evidence set with the states in the package and certificate; fix by preserving WAIVED end to end and letting policy refuse a waiver it does not permit.
+
+**Advisory findings given authority.** A residual model pass blocks or unblocks a gate, or its findings are counted as receipts. Detect it wherever a gate decision cites an ADVISORY-labelled input; fix by keeping residual analysis in the review package only.
+
+**One progress bar.** The WorkOrder shows Tasks done and nothing else, and a fully executed WorkOrder with unverified blocking criteria reads as ready. Detect it in any surface that displays execution progress without acceptance readiness; fix by showing both counts and gating on the second.
+
+**Receipt without an envelope.** A runtime's artifacts are ingested as evidence with no proof they were produced under the Attempt's manifest. Detect it by asking which manifest digest each receipt was validated against; fix with a receipt endpoint that rejects packets that do not match.
+
 ## In Mission Control
 
 Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1), study branch [`9d5f8e3`](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8), and local HEAD `a490648`, reviewed 2026-08-11.
@@ -581,6 +635,8 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 **Implemented.** Mission Plans define validation assertions, pass conditions, evidence requirements, independence, and waiver policy. Released Plans materialize revision-bound WorkOrders and criteria. Verification receipts bind criteria, runs, methods, results, artifacts, verifiers, validity, waiver decisions, and invalidation history. WorkOrder governance blocks acceptance on missing, failed, stale, expired, or unapproved evidence. WorkOrder revision and reopen preserve history while selectively invalidating affected evidence. GitHub PR checks retain source and head-SHA lineage. QC records model rulesets, runs, findings, evidence packs, risk grades, scores, artifacts, and dashboards. The QC design's score/gate separation is directionally correct: the score is informational, and failed delivery gates determine eligibility. At the later study commit `d902fae` cited in [Chapter 23](./23-evaluation-engineering.md), the repository also carries Verification Subject and Verification Plan records, verifier Attempts, exact-currentness checks, and Quality Gate Decisions as mechanisms; that assessment did not verify them as an operating end-to-end path.
 
 **Partial.** The older `qcRuns.execute` path explicitly uses mock assurance and agent-output adapters, skips its policy-evaluation TODO, and generates synthetic evidence packs. Its release-gate integration runs in `SHADOW` mode. Shadow release-gate evaluations can consume QC, context-evaluation, and GitHub CI signals linked to a deployment, but they enforce nothing. Study-branch PR #64 adds frozen execution manifests, structured completion, bounded handoffs, path scope, durable leases, and a real GitHub App publication proof; it strengthens build provenance and authority but remains open, and the browser-only golden path is incomplete. A staged, uncommitted continuous-quality plan (SHA-256 `31e3f6fc44824b643ef5bfa3389ba3da1e0e6b1f6827f66fdb63efcbb4c9313b`) proposes evidence envelopes, quality findings, gate decisions, reconciliation, and the principle that the approved Plan is the top-level contract. Those tables and APIs are proposals, not demonstrated capability.
+
+The repository glossary and lexicon reviewed 2026-09-02 name the review-package mechanisms in this chapter (evidence-first review with frozen intent, criteria-to-checks, failures and retries, Decision Candidates, changed-file groups, and optional ADVISORY residual findings; the receipt packet ingested through a receipt endpoint; WAIVED as a recorded state that policy may still block; the two counts on Work Orders; and the composite merge gate of CI, lenses, mutation, and policy) as contract vocabulary, with the Review Package projection exercised in the Production Factory Pilot V3 evidence that [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) pins at `b3dfcee`. The lexicon is the source for the vocabulary; the pinned evidence is the boundary for what has run.
 
 **Future.** Mission Control does not issue the Software Quality Certificate defined here. It has several required primitives and one legacy evidence-pack concept, but not the canonical contract compiler, assurance graph, signed certificate, revocation workflow, or complete production feedback loop. The intended path: compile an approved WorkOrder and active Factory version into one immutable Quality Contract before dispatch; let that contract generate Worker, Validator, deterministic-tool, approval, deployment, and observation work; connect everything in one canonical assurance graph; and either migrate existing QC concepts into it or mark them legacy. Until signing, verification, status, and revocation exist, the user-facing V1 artifact should be called a Quality Proof Package, and "Quality Certificate" reserved for the portable technical contract above. The first certificate should cover the controlled Governed Issue to Validated Pull Request demonstration and certify PR eligibility, not production quality.
 
@@ -597,11 +653,14 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - A certificate means only: this exact subject satisfied this contract version with this evidence and these approvals at this time. Consumers check status at the decision boundary.
 - Verifiers submit evidence; policy decides; humans accept material risk. Nothing certifies its own work.
 - The doctrine in nine lines: no assertion without evidence; no evidence without provenance; no acceptance without independent validation; no autonomy without calibrated trust; no release without a satisfied contract; no score may override a hard gate; no certificate means more than its exact subject, policy, evidence, and time; no production contradiction may be hidden by an earlier pass; no learning proposal may promote itself.
+- The review package is evidence-first: frozen intent, criteria → checks, failures and retries, Decision Candidates, changed-file groups, then optional ADVISORY residual findings. Accepting a Decision Candidate never rewrites frozen intent; it opens a new Spec or Plan revision or an ADR.
+- A receipt packet proves a bounded runtime stayed in its envelope and is validated against the manifest before it becomes evidence. WAIVED is recorded, never rendered as PASS, and policy may still block. Residual AI is advisory only.
+- Show two counts: execution progress (Tasks done) and acceptance readiness (blocking criteria verified and current). Task count alone never accepts. The merge gate is a composite of CI, lenses, mutation, and policy on the exact head, and a human still merges.
 
 ## Go deeper
 
 **Related chapters.** [21. Quality and evidence architecture](./21-quality-and-evidence-architecture.md) defines the evidence semantics this chapter builds on. [22. Testing strategy for agentic change](./22-testing-strategy-for-agentic-change.md) and [23. Evaluation engineering](./23-evaluation-engineering.md) supply the methods the contract references. [25. CI/CD, progressive delivery, and production verification](./25-cicd-progressive-delivery-and-production-verification.md) continues the proof past release. [26. Security](./26-security.md) covers provenance, attestation, and signing infrastructure. [7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) explains who may waive and approve. [5. Authoritative records](../02-design/05-authoritative-records.md) defines the Mission, Plan, and WorkOrder records the contract is compiled from. Terms are in the [glossary](../appendix/glossary.md).
 
-**Primary sources.** NIST Secure Software Development Framework (SP 800-218 v1.1); NIST AI Risk Management Framework Core (TEVV, independent assessment, production monitoring); SLSA specification v1.2 and provenance definition; in-toto Attestation Statement v1; DSSE; Sigstore; RFC 8785 JSON Canonicalization Scheme; GitHub Artifact Attestations documentation (provenance benefits and limits); OMG Structured Assurance Case Metamodel 2.3; Anthropic, "Demystifying Evals for AI Agents" (2026); OpenAI, "Measuring Performance on Real-World Tasks" (GDPval); OWASP LLM01 Prompt Injection and LLM06 Excessive Agency; Google SRE Workbook, "Canarying Releases"; OpenTelemetry Signals; DORA software delivery performance metrics. Jay's Factory Run Explorer design note, "Use the factory run to teach failure" (completion is not acceptance).
+**Primary sources.** NIST Secure Software Development Framework (SP 800-218 v1.1); NIST AI Risk Management Framework Core (TEVV, independent assessment, production monitoring); SLSA specification v1.2 and provenance definition; in-toto Attestation Statement v1; DSSE; Sigstore; RFC 8785 JSON Canonicalization Scheme; GitHub Artifact Attestations documentation (provenance benefits and limits); OMG Structured Assurance Case Metamodel 2.3; Anthropic, "Demystifying Evals for AI Agents" (2026); OpenAI, "Measuring Performance on Real-World Tasks" (GDPval); OWASP LLM01 Prompt Injection and LLM06 Excessive Agency; Google SRE Workbook, "Canarying Releases"; OpenTelemetry Signals; DORA software delivery performance metrics. Jay's Factory Run Explorer design note, "Use the factory run to teach failure" (completion is not acceptance). Mission Control repository glossary and lexicon, reviewed 2026-09-02 (review package and Review Intelligence, Decision Candidate, receipt packet, waiver, residual AI, execution progress versus acceptance readiness, merge gate).
 
 **Mission Control sources at `b31e275`.** `convex/schema.ts` (evidence schema), `convex/lib/workOrderGovernance.ts`, `convex/lib/missionGovernance.ts`, `convex/missions.ts`, `convex/qcRuns.ts`, `convex/governance/releaseGateAutomation.ts`, `convex/factory/prChecks.ts`, `convex/factory/githubCi.ts`, `QC_IMPLEMENTATION_GUIDE.md`, and PR #64 (execution hardening).

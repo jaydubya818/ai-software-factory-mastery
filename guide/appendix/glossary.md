@@ -3,7 +3,7 @@ title: Canonical Glossary
 status: review-ready
 audience:
   - all
-last_verified: 2026-08-30
+last_verified: 2026-09-02
 mission_control_commit: d902fae7032c0696b531c44ae88829c652516fc6
 ---
 
@@ -651,6 +651,17 @@ repositories, configuration, and factory records.
 **Repository** — The registered source-control target against which work may be
 authorized. A repository record does not itself permit modification.
 
+**Host binding** — The record that names the runtime host, sandbox, or
+execution backend authorized to act on a Repository, with its own readiness
+state. Dispatch is blocked until an active host binding and a code scope
+exist; a Repository without one is authorized work with nowhere it may
+lawfully run.
+
+**Code scope** — The governed allowlist of repository paths (typically monorepo
+paths) inside which an Attempt may change files. It is frozen into the
+execution manifest, enforced at dispatch, and re-checked against changed files
+before a pull request is review-ready.
+
 **Portable repository identity** — A repository identity owned by the
 organization and separate from any developer's local checkout, so that scope,
 policy, readiness, and lineage attach to the repository rather than to a
@@ -700,6 +711,11 @@ which the factory may recommend or select execution according to value,
 urgency, risk, dependencies, capacity, and work-in-progress limits. It does not
 grant agents product-priority authority.
 
+**Goal** — The strategic result one or more Missions serve, sitting above the
+Mission in the hierarchy. A Goal owns an outcome and never execution state: it
+has no budget to spend, no acceptance criteria an agent can satisfy, and it is
+not done because its Missions are.
+
 **Mission** — A durable governed outcome. It owns the objective, business reason,
 constraints, risk, acceptance criteria, and accountable owner. It is not an
 agent session or task list.
@@ -726,6 +742,12 @@ execution. Task completion does not accept the parent WorkOrder.
 **Attempt** — One immutable execution try for a Task or WorkOrder. Retries create
 new Attempts so history and causality are preserved.
 
+**Run (agent turn)** — One low-level agent turn beneath an Attempt: a model
+call, its tool invocations, and its observations, recorded in order with a
+sequence number. An Attempt contains many Runs; a Run never needs approval and
+never decides the Attempt's outcome. "The run finished" is not "the Attempt
+completed".
+
 **Evidence** — An attributable receipt or artifact that supports or refutes an
 acceptance criterion. Useful evidence identifies the verifier, method,
 environment, source commit, artifact, time, and result.
@@ -737,6 +759,21 @@ acceptance or production value.
 **Release** — A governed progression of an accepted change through merge,
 deployment, activation, observation, rollback readiness, and production
 verification. These states should not be compressed into “done.”
+
+**Authoritative states** — The seven state machines a control plane keeps, one
+per record, with the rules that relate them. Mission: DRAFT, PLANNING,
+AWAITING_PLAN_APPROVAL, READY, IN_PROGRESS, BLOCKED, AWAITING_VALIDATION,
+AWAITING_ACCEPTANCE, DONE, CANCELED, SUPERSEDED. Plan: DRAFT, PROPOSED,
+APPROVED, REJECTED, SUPERSEDED. WorkOrder: DRAFT, READY, DISPATCHED,
+IN_PROGRESS, BLOCKED, AWAITING_APPROVAL, AWAITING_VERIFICATION, REOPENED, DONE,
+CANCELED, SUPERSEDED. Task: INBOX, READY, IN_PROGRESS, REVIEW, NEEDS_APPROVAL,
+BLOCKED, DONE, FAILED, CANCELED. Attempt: queued, running, paused, completed,
+failed, canceled, timeout. Verification: PENDING, PASS, FAIL, WAIVED, STALE
+(plus VERIFIED, UNKNOWN, MISSING in a review package). Approval: NOT_REQUIRED,
+PENDING, APPROVED, REJECTED, CONDITIONAL, EXPIRED. No state implies the next;
+Task Done ≠ WorkOrder accepted ≠ engine done ≠ Definition of Done; a failed
+Attempt does not make the Task terminal while recovery is active; none of
+UNKNOWN, MISSING, PENDING, FAILED, or STALE is success.
 
 ## Governance concepts
 
@@ -779,11 +816,48 @@ governance; it is not resolved by majority vote.
 **Review package** — A concise decision packet containing the original intent,
 approved plan, changed scope, technical decisions, criterion-level evidence,
 risks, deviations, uncertainty, rollback approach, and exact source lineage.
+Built for evidence-first human review (sometimes called Review Intelligence),
+it reads in a fixed order: frozen intent, criteria → checks, failures and
+retries, Decision Candidates, changed-file groups, and optional residual
+findings labelled ADVISORY.
 
 **Decision packet** — An operator-facing explanation of the exact decision
 required, why automation stopped, affected scope, risk, available and missing
 evidence, safe options, recommendation, uncertainty, deadline, and what resumes
 after the decision.
+
+**Operator attention contract** — The rule that a factory interrupts a person
+only when judgment, authority, or credentials are required, and that every
+interruption arrives as a decision packet stating the decision, why, risk,
+evidence, options, and what resumes after. Progress and routine completion
+stay in the record and out of the inbox.
+
+**Human touch** — Any manual override, approval, or takeover during agent
+execution. Some touches are authority working as designed; many are the
+platform failing. Human touches per agent task is the Factory Health measure
+of leverage.
+
+**Overnight continuity** — The property that governed work survives a model
+change, a context-window limit, a process restart, a worker handoff, and the
+end of the chat session that started it, continuing under bounded retries and
+escalating when the bound is hit rather than looping silently. A Mission
+carries a stop condition before its Plan is compiled for this reason.
+
+**Risk-proportional autonomy (GREEN / YELLOW / RED)** — The pairing of each
+risk band with what may proceed without a human, classified by the policy
+engine: GREEN bounded reversible work proceeds automatically to a review-ready
+pull request; YELLOW needs Plan approval and merge approval; RED runs in a
+restricted sandbox with additional reviewers. Merge is human-only in a first
+version in every band.
+
+**Experience level** — A presentation setting (Basic, Intermediate, Advanced)
+that controls how much of the factory a builder is shown. It never changes
+permissions, the executor, the evidence required, or who may accept.
+
+**Waiver** — An authorized decision that a failed or missing check will not
+block this decision, recorded as WAIVED with owner, reason, scope, and
+expiry. It is never silently rendered as PASS, and policy may still block
+acceptance or refuse the waiver for that class of check.
 
 **Supervised autonomy** — The operating mode in which an agent proposes an
 action and waits for human approval before it takes effect. The default for
@@ -1221,6 +1295,34 @@ an element with a test identifier), emitted as a CI annotation. It verifies the
 files; it does not decide whether the change needs a human, which is the
 change-risk policy's job.
 
+**Receipt packet** — The artifact bundle a bounded runtime produces to prove it
+executed inside its envelope: manifest digest, commands and exit codes,
+artifacts and hashes, budget consumed, sandbox and credential scope observed.
+It is ingested through a receipt endpoint that validates it against the
+Attempt's frozen manifest before any of it becomes evidence.
+
+**Decision Candidate** — A bounded implementation observation surfaced during
+execution and shown in the review package for a human to decide on. Accepting
+it never rewrites frozen intent; if it implies a different requirement, plan,
+or architecture, it opens a new Spec or Plan revision or an ADR, and the
+current WorkOrder is judged against the intent it was dispatched under.
+
+**Residual AI** — An optional post-verification advisory analysis of a verified
+candidate by a model, labelled ADVISORY in the review package and the record.
+It has no authority over any state and cannot satisfy a criterion or count as
+a receipt.
+
+**Execution progress vs acceptance readiness** — Two counts a WorkOrder view
+must show together: Tasks Done over Tasks total (how much work happened) and
+blocking criteria verified and current over blocking criteria total (how much
+of the contract is proven). Task count alone is never sufficient for
+acceptance.
+
+**Merge gate** — The composite pull-request readiness check bound to the exact
+head: CI status, review lenses, mutation-testing results where required, and
+the policy decision for the risk band. It is a gate, not a merge; a human
+still merges in a first version.
+
 ## Runtime concepts
 
 **Orchestrator** — The control-plane actor that sequences authorized work,
@@ -1426,6 +1528,24 @@ separate and bind an Attempt to an exact repository state.
 **Preflight** — The fail-closed evaluation performed before execution. It checks
 authority, repository state, executor capability, environment, tools, secrets,
 capacity, budget, risk, and policy.
+
+**Executor snapshot** — The immutable copy of the complete executor
+configuration (adapter, version, planning backend, worker backend,
+configuration version) that dispatch writes onto the Attempt. The Attempt never
+re-resolves repository policy files or the live Factory Version; editing,
+superseding, or deleting the Factory Version never changes a historical
+Attempt; retry is a new Attempt with a new engine identity.
+
+**Prohibited authorities** — The six authorities an execution-engine adapter
+must demonstrably lack to be admitted: worker leases, verification subjects,
+verification plans, evidence authority, GitHub publication, and acceptance. An
+adapter holding any of them is a second control plane.
+
+**Required external controls** — The five controls that must exist outside an
+adapter before it is admitted, supplied by the factory's own worker: the
+canonical worker lease, sandbox policy, repository-scope reconciliation,
+independent verification, and the publication permit. Adapter selection is
+the only engine-specific step; there is no engine-specific worker path.
 
 **Lease and heartbeat** — Runtime controls that establish which worker currently
 owns work and whether it remains alive. They help detect abandoned or duplicate
@@ -1874,12 +1994,34 @@ selection defect; more retrieval is not the remedy.
 **Factory Memory** — The governed retrieval surface over a factory's own
 accumulated artifacts, decisions, traces, and outcomes. It is a first-class
 subsystem serving factory execution, not a general enterprise search product or
-a sidecar chatbot, and retrieval from it is not evidence.
+a sidecar chatbot, and retrieval from it is not evidence. Retrieved text is
+untrusted: it cannot approve, invoke tools, or satisfy acceptance.
+
+**Context CDL** — The context definition lifecycle of a registered context
+package (a versioned skill, rule, or document with scope, name, content hash,
+quality score, and security status): draft → publish → install → deprecate.
+Publish makes a version immutable; install binds an exact version; deprecate
+stops new installs while history still resolves.
+
+**CBOM** — The Context Bill of Materials: a snapshot taken at run start of every
+context package an Attempt can see, with version, hash, install source, and
+selection reason. It answers "which runs were exposed?" when a package is later
+found wrong or poisoned. Advisory; it records what was shown, not what was
+authorized.
+
+**Agentic retrieval (sufficiency loop)** — Retrieval by a bounded planner that
+retrieves, assesses whether the context in hand is sufficient for the task,
+reformulates, and retrieves again until sufficient or the iteration, token, or
+time bound is reached. It never expands authorization scope: every iteration
+runs under the same requester, tenant, purpose, and classification ceiling.
 
 **Recipe** — A reusable, versioned execution pattern describing how a class of
 work is normally carried out, including the shape of the plan, the agents and
 skills typically involved, and the expected verification. A recipe proposes an
-approach; it does not authorize execution or accept a result.
+approach; it does not authorize execution or accept a result. On a Factory
+Board the eight recipes (Scout, Plan, Build, Quality, Build+Test,
+Build+Review, Plan+Build+Test, Full SDLC) are rule-based recommendations, and
+a recipe never lowers active policy.
 
 **Model routing** — The policy-governed selection of which model serves a given
 step, based on declared eligibility, capability, cost, and risk. A routing
@@ -1887,6 +2029,13 @@ decision is a configuration outcome; it does not widen the authority of the
 work being routed.
 
 ## Factory learning and improvement
+
+**Learning candidate** — A learning observation recorded additively on an
+Attempt and its WorkOrder, typically read from an execution engine's own
+lessons store after a terminal successful run and emitted as an idempotent
+`learning.candidate.proposed` event. It is telemetry: it cannot accept a
+WorkOrder, satisfy a verification receipt, or change configuration, and it
+earns an Improvement Candidate only through recurrence.
 
 **Signal severity** — The operator-facing weight assigned to a learning signal:
 Low, Medium, High, or Critical. Severity orders attention; it does not
@@ -2050,6 +2199,29 @@ dropped and counted. Dropped findings are kept so a later incident can show
 the threshold was wrong.
 
 ## Architecture, governance, and operations concepts
+
+**ARM (Agent Runtime Management)** — The layer that manages running agents as
+templates (registered Agent Definitions), versions (immutable revisions by
+digest), instances (one running agent bound to a version, Attempt, lease,
+sandbox, and budget), and identities (the workload identity each instance
+authenticates as). An instance is never more than its version and identity
+allow. The Agent Fleet view is its operator surface.
+
+**Controlled execution system** — The 2026 landscape's name for what a factory
+should be: isolated execution environments, lifecycle hooks at every
+consequential step, durable checkpoints, independent verification, and
+evidence correlation from intent to outcome. It is not an unattended agent
+swarm. Its opposite, the dark factory, is an aspiration and not a safe
+default; progressive autonomy is the doctrine for moving toward it.
+
+**Factory Board** — The guided entry surface: it recommends a recipe, drafts a
+Mission with a stop condition, and compiles a Plan for human review. It never
+dispatches and never accepts; both remain separate commands.
+
+**Engineering OS (EOS)** — The outcome-oriented shell that organizes a
+factory's surfaces by what an engineering organization is doing rather than by
+which service renders them: Strategy, Delivery, Operations, Intelligence,
+Knowledge, and Governance, all over the same control APIs and permissions.
 
 **Factory System Record** — The governed accountability and classification
 record for one material autonomous delivery system. It identifies purpose,

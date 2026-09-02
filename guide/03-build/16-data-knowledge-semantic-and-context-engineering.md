@@ -4,7 +4,7 @@ part: build
 chapter: 16
 summary: Four disciplines stand between a raw source and a model's context window — data understanding decides whether data is usable, knowledge engineering prepares a governed corpus, semantic engineering makes terms mean one thing, and context engineering selects the smallest sufficient subset for this attempt.
 absorbs: [06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md, 06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md]
-infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer, context-graph, context-hierarchy]
+infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer, context-graph, context-hierarchy, context-cdl, sufficiency-loop]
 ---
 
 # 16. Data, knowledge, semantic, and context engineering
@@ -203,6 +203,47 @@ Allocation has separate budgets for governing contracts, task facts, repository 
 
 Context is an Attempt input, not an authority record. Retrieved text cannot alter the approved Mission, policy, tool grants, or acceptance criteria.
 
+### Governed context artifacts: the Context CDL and the CBOM
+
+The material the compiler selects from is not a heap of files. Skills, rules, and documents that agents are meant to read are **context packages** in a registry: each has a scope and a name, a version, a content hash, a quality score from the authoring-side review of [Chapter 10](./10-the-agent-factory.md), and a security status from the scan of [Chapter 26](../04-prove/26-security.md). Because they are versioned artifacts, they have a lifecycle, and the lifecycle is the **Context CDL** (context definition lifecycle): **draft**, where an author iterates; **publish**, where a version becomes immutable and eligible; **install**, where a workspace, repository, or agent binds that exact version; and **deprecate**, where the version stops being selectable for new installs while historical packages keep resolving. The four states matter because context is the input most often edited in place. A rule file changed on a Tuesday afternoon that is already installed in forty repositories is forty behaviour changes with no version, no review, and no way to say which Attempts ran under which text.
+
+<!-- infographic: context-cdl -->
+> **Infographic — The Context CDL and the CBOM.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    D["draft"] --> P["publish: immutable version, hash, score, security status"]
+    P --> I["install: exact version bound to workspace, repo, or agent"]
+    I --> X["deprecate: no new installs, history resolves"]
+    I --> C["CBOM at run start: every package, version, hash, and reason"]
+    C --> F["Frozen Context Package on the Attempt"]
+```
+
+The record that ties the lifecycle to a run is the **CBOM**, the Context Bill of Materials: a snapshot taken at run start of every context package the Attempt will be able to see, with its version, hash, install source, and the reason it was selected. It is to context what a software bill of materials is to dependencies, and it answers the same question after the fact: when a package is later found to be wrong, poisoned, or deprecated, which runs were exposed? The CBOM is a projection of the same facts the **Frozen Context Package** holds for the Attempt (selected sources, revisions, token budget, selection reasons), and both are advisory: they record what the model was shown, never what it was authorised to do.
+
+**Factory Memory** is the retrieval store the compiler draws from over the factory's own history: prior outcomes, patterns, decisions, and explainable engineering context. It has one rule that is easy to state and easy to break: *retrieved text is untrusted*. Whatever comes back from memory cannot approve anything, cannot invoke a tool, and cannot satisfy an acceptance criterion. A memory entry that reads "this repository allows force-push to main" is data about what someone once wrote, and the policy engine does not consult it. The reason the rule needs restating here is that memory looks like the factory's own voice, and a document in the factory's own voice is the easiest one to mistake for an instruction.
+
+Two properties of the retrieval machinery underneath keep it inspectable. The **knowledge graph** the factory projects from its records is a typed entity and relationship structure whose edges come in three kinds, and each edge says which: **authoritative** (asserted by the system of record: this WorkOrder belongs to this Mission), **deterministic** (computed by code from authoritative facts: this file was changed by this Attempt), or **inferred** (proposed by a model or a heuristic: this incident is probably related to that change). An inferred edge never outranks an authoritative one, and a query result shows the kind of each edge it traversed. The graph also carries **hard caps** on traversal depth, fan-out, and result size, so that a single query cannot walk the entire corpus and hand it to a model; the caps are what keep a graph from becoming a corpus-exposure mechanism with a friendlier interface. And **hybrid retrieval** in this setting is lexical, semantic, and code-aware candidates fused with a versioned strategy, with the **score components** visible per result: the lexical score, the semantic score, the code-aware score, the fusion, and the provenance of the artifact. A ranked list without its components cannot be debugged, and a ranking that cannot be debugged cannot be trusted with a governing document.
+
+### Agentic retrieval: the sufficiency loop
+
+Single-shot retrieval asks once and packs what it gets. **Agentic retrieval** lets a bounded planner ask several times: retrieve, assess whether the context now in hand is sufficient for the task, and if not, reformulate and retrieve again, until it is sufficient or the bound is reached. That is the **sufficiency loop**, and its value is in the second step. A retrieval planner that can say "I have the changed symbols and their callers, but not the contract test that covers them" will fetch the test; a single-shot retriever will pack whatever ranked highest and let the model discover the gap at inference cost.
+
+<!-- infographic: sufficiency-loop -->
+> **Infographic — The sufficiency loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    Q["Task requirements + frozen authorization scope"] --> R["Retrieve (hybrid, permission-filtered)"]
+    R --> A{"Sufficient for this task?"}
+    A -->|no, iterations and budget remain| RF["Reformulate: missing entity, missing level, missing check"] --> R
+    A -->|yes| F["Freeze package + CBOM"]
+    A -->|bound reached| F2["Freeze with explicit gaps listed"]
+    RF -. "never" .-> W["Widen scope, tenant, or permission"]
+```
+
+The loop has three bounds and one prohibition. It is bounded in iterations, in tokens spent on retrieval, and in wall time, and when a bound is reached it freezes what it has with the gaps stated as unresolved facts rather than pretending sufficiency. The prohibition is the one that makes the loop safe to automate: *the sufficiency loop never expands authorization scope*. Every iteration runs under the same requester, tenant, purpose, classification ceiling, and source eligibility as the first; reformulating a query can change which artifacts are asked for, never which artifacts the requester is allowed to see. A planner that responds to insufficiency by reaching for a source outside its scope has stopped retrieving and started escalating privilege.
+
 ### Evaluate each layer separately, then together
 
 <!-- infographic: retrieval-evaluation -->
@@ -294,6 +335,10 @@ Define SLOs for ingestion lag, retrieval availability and latency, permission fa
 
 Version everything that can change an answer: schemas, connectors, parsers, semantic mappings, embedding models, indexes, rankers, context policies, and the package format. Migrate with shadow indexes and representative comparisons. Semantic or permission changes invalidate prior compatibility assumptions. Keep decoders for retained packages, and emit explicit deprecation and revocation events.
 
+### Discover and sync instruction files
+
+Most of the context that agents read in a repository is already there, in the files the harnesses converged on: `SKILL.md` folders, `AGENTS.md`, and `CLAUDE.md`. The lifecycle above does not require rewriting them; it requires knowing about them. The pattern is a small **context CLI** with two verbs. **Discover** walks a checkout (or every checkout in an organisation), finds each `SKILL.md`, `AGENTS.md`, and `CLAUDE.md`, computes its content hash, and reports what exists, where, and whether it matches a published package version, a drifted copy, or an unregistered local file. **Sync** takes that inventory and reconciles installations with the control plane: a registered package at the right version is recorded as installed; a drifted copy is reported as drift; an unregistered file is reported as a candidate for publication, never silently registered. The CLI is the same discipline as the skill inventory in [Chapter 10](./10-the-agent-factory.md), applied to context, and it is how the CBOM gets accurate inputs from repositories that were never told they were part of a registry. Two rules keep it safe: it never rewrites a file in the working tree, and it never installs from an unknown source.
+
 ### Choosing between live and indexed
 
 Centralizing knowledge simplifies governance and discovery but can create a stale copy of systems that already have authoritative APIs. Live retrieval preserves currentness at the cost of latency and dependency risk. The usual answer is hybrid: index discovery metadata, and resolve consequential facts from the source at decision time. Knowledge graphs buy explicit traversal and lineage with modeling, ingestion, and consistency work; add one when queries need graph structure, not because it sounds thorough.
@@ -315,6 +360,13 @@ Centralizing knowledge simplifies governance and discovery but can create a stal
 | Whole-window stuffing | Context size flat regardless of change size; token cost per accepted outcome high | Retrieve from the change upward: changed symbols, dependency context, review history, then only the levels the scope requires | Context evals show packages are minimal and sufficient |
 | Local convention overrides a global standard | Precedence check in compilation | Global material allocated first and never compressed below governing clauses | Standard present in the package; evaluation case added |
 | Change level missing | Agent reads whole files to find what the diff touches | Changed-symbol retrieval and dependency context from the code index | Retrieval trace shows symbol-level candidates |
+| Context edited in place | An installed rule or skill file changes with no version; forty repositories change behaviour at once | Publish creates an immutable version; installs bind exact versions; the CBOM names what each run saw | Drift report from discover is empty; CBOM resolves every package |
+| Memory read as instruction | A retrieved memory entry is treated as policy or as satisfying a criterion | Retrieved text is untrusted: no approval, no tool call, no acceptance from memory | Policy decision trace cites no memory input |
+| Graph walk exposes the corpus | One query traverses the whole graph and returns it to the model | Hard caps on depth, fan-out, and result size; edge kinds visible | Query trace shows caps applied and edge kinds |
+| Sufficiency loop widens scope | Reformulation reaches a source outside the requester's tenant or classification ceiling | Every iteration runs under the frozen authorization scope; escalation is refused | Retrieval trace shows identical scope on every iteration |
+| Ranking without components | A governing document is outranked and nobody can say by what | Score components and provenance visible per result | Fusion strategy versioned; components logged |
+
+The rows about memory, the graph, and the sufficiency loop are the same failure seen three ways: a retrieval mechanism acquiring an authority it was never granted, either over decisions or over data it should not reach.
 
 Two rows deserve a second look because they are the ones that pass every ranking metric. "Obsolete document ranks first" is the grounded-but-stale failure: the citations are real and the answer is wrong. "Permission mismatch" is the relevant-but-unauthorized failure: the answer is right and the builder was never allowed to have it. Neither shows up in Recall@k. Both show up in production.
 
@@ -323,6 +375,8 @@ The diagnostic habit is the one from the evaluation section: "the model missed i
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control has provenance-backed retrieval, graph relationships, planning, Attempt-bound Context Packages, context evaluations, configuration drift scans, versioned context manifests, and content-hash checks. Factory Memory is advisory and cannot satisfy acceptance. Those mechanisms are a strong context-governance foundation.
+
+The repository glossary and lexicon reviewed 2026-09-02 name the rest of this chapter's vocabulary as contract: context packages with scope, name, content hash, quality score, and security status; the Context CDL (draft, publish, install, deprecate); the Frozen Context Package and the CBOM at run start; Factory Memory's untrusted-text rule; knowledge-graph edges typed authoritative, deterministic, or inferred under hard caps; hybrid retrieval with visible score components; the bounded sufficiency loop that never expands authorization; a Knowledge → Memory surface with Overview, Memory, Graph, and Context views; a Registry surface with Discover, Skill Inventory, Installations, CDL, Evaluate Skill, and Eval Runs; and a context CLI that discovers local `SKILL.md`, `AGENTS.md`, and `CLAUDE.md` files and syncs installations to the control plane. Factory Memory is implemented and default off by phase at the pinned commits of [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md); the surfaces and the CLI are lexicon vocabulary at the review date, not evidence of a measured retrieval quality series.
 
 **Partial or future.** The studied evidence does not establish a complete production source registry, a connector and checkpoint lifecycle, a data-quality gate, a semantic-contract registry, a permission-aware hybrid retrieval service, or an independently benchmarked reranking pipeline. The graph and memory mechanisms should not be presented as a general enterprise knowledge system. The specification in this chapter likewise does not claim a production source registry, benchmarked ranker, deletion guarantee, or poisoning defense; it is the target. The target state is that Mission Control registers sources with ownership, authority, classification, retention, and ingestion policy; produces versioned knowledge artifacts and semantic contracts; evaluates retrieval by workflow and persona; freezes the resulting selection into each execution manifest; and lets an operator inspect missing required data, stale sources, semantic ambiguity, retrieval candidates, reranking decisions, excluded sources, token allocation, citations, and the exact package an Attempt used. Promotion of that system requires tenant-isolation tests, correction propagation, deletion tests, representative retrieval evaluations, and end-to-end outcome evidence.
 
@@ -341,6 +395,9 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Evaluate each layer separately with its own measures (Recall@k, MRR, NDCG, groundedness among them); end-to-end success is necessary but not diagnostic.
 - Revocation needs forward and reverse lineage or it is only an announcement.
 - Context is hierarchical: Organisation (engineering standards, global) → Product/Domain (product-level guidance) → Repository (repository-specific guidance, local) → Change (changed symbols, dependency context, historical review patterns). Precedence runs down, selection runs up. Retrieve the minimum relevant context; never stuff one window.
+- Context packages are versioned artifacts with a hash, a quality score, and a security status, and they move through the Context CDL: draft, publish, install, deprecate. The CBOM snapshots every package a run could see at run start; the Frozen Context Package records what it received. Both are advisory.
+- Factory Memory's retrieved text is untrusted: it cannot approve, invoke a tool, or satisfy acceptance. Knowledge-graph edges are authoritative, deterministic, or inferred, under hard caps; hybrid retrieval shows its score components and provenance.
+- Agentic retrieval is a bounded sufficiency loop (retrieve, assess, reformulate) that never expands authorization scope. A context CLI discovers `SKILL.md`, `AGENTS.md`, and `CLAUDE.md` files and syncs installations to the control plane without rewriting them.
 
 ## Go deeper
 
@@ -348,4 +405,5 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://doi.org/10.6028/NIST.AI.100-1); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
 - Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline, the five properties of enterprise context, the four-level context hierarchy, changed-symbol retrieval, dependency context, and historical review patterns).
 - Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the context graph, its published scale, and the grounded-versus-ungrounded comparison; *Six layers of a working agentic system* (public post, 2026) for the trusted-context layer and the "80 percent of the agent's success" line.
+- Mission Control repository glossary and lexicon, reviewed 2026-09-02: context packages, the Context CDL, the Frozen Context Package and CBOM, Factory Memory's untrusted-text rule, knowledge-graph edge kinds and hard caps, hybrid retrieval score components, agentic retrieval and the sufficiency loop, and the context CLI.
 - [Glossary](../appendix/glossary.md).

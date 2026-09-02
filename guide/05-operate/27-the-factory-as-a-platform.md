@@ -4,7 +4,7 @@ part: operate
 chapter: 27
 summary: How to run the factory as an internal product — a portal and catalog that humans and agents share, golden paths with an escape hatch, and a scheduler that turns business priority, fairness, budgets, and cost attribution into explicit, observable policy.
 absorbs: [factory-platform-engineering/01-developer-portal-catalog-and-golden-paths.md, factory-platform-engineering/02-scheduling-capacity-cost-and-fairness.md]
-infographics: [platform-golden-path, scheduling-and-capacity]
+infographics: [platform-golden-path, factory-board, engineering-os-shell, scheduling-and-capacity]
 ---
 
 # 27. The factory as a platform
@@ -27,7 +27,7 @@ Capacity is hard because it is multidimensional and changes by the minute. A wor
 
 The organising decision is to treat the factory as an **internal product** with target users, defined journeys, service levels, adoption measures, support, a feedback channel, and a roadmap. The platform team owns *ease of safe use*. That is **platform ownership**: a named team is accountable for the paved paths, their service levels, their deprecations, and the experience of using them, so that "the platform" is never an orphan that everyone depends on and nobody answers for. Consuming teams keep responsibility for product intent and domain risk, exactly as the [operating model](../02-design/04-the-human-agent-operating-model.md) already assigns them. This division matters because the alternative is a platform that either abdicates ("we just run the agents") or overreaches ("we approve your changes").
 
-Jay's own platform notes describe the operating model that makes this real, and it looks much more like running a product than running infrastructure. **Design partners** from specific product lines adopt early and shape the roadmap. **Builder interviews** are scheduled, not opportunistic. **Forward-deployed engineers** sit with adopting teams for the first weeks and bring friction back as tickets. **Internal champions** in each organisation carry the practice after the forward-deployed engineer leaves. A **weekly usage review** looks at who used what, what failed, and where people exited a supported path. **Release experiments** compare a new default against the current one before it becomes the default. **Paved paths** (the golden paths below) are the primary unit of support. **Migration support** and a published **deprecation strategy** mean a team never discovers that the workflow they depend on quietly stopped working. **Adoption and reliability dashboards** are reviewed side by side, because adoption without reliability is churn waiting to happen.
+Jay's own platform notes describe the operating model that makes this real, and it looks much more like running a product than running infrastructure. **Design partners** from specific product lines adopt early and shape the roadmap. **Builder conversations** are scheduled, not opportunistic. **Forward-deployed engineers** sit with adopting teams for the first weeks and bring friction back as tickets. **Internal champions** in each organisation carry the practice after the forward-deployed engineer leaves. A **weekly usage review** looks at who used what, what failed, and where people exited a supported path. **Release experiments** compare a new default against the current one before it becomes the default. **Paved paths** (the golden paths below) are the primary unit of support. **Migration support** and a published **deprecation strategy** mean a team never discovers that the workflow they depend on quietly stopped working. **Adoption and reliability dashboards** are reviewed side by side, because adoption without reliability is churn waiting to happen.
 
 The metrics that tell you whether the product is working are outcome measures, not activity counts: time to first successful workflow, task success rate, PR acceptance rate, human correction rate, model-routing quality, token cost per accepted outcome, reliability, repeat usage, time to onboard a new team, number of bespoke capabilities retired, builder satisfaction, and adoption across product organisations. Adoption is evidence about product fit. Requiring training is reasonable; requiring a specialist for routine use is a platform defect.
 
@@ -95,6 +95,61 @@ flowchart TD
 ```
 
 The escape hatch is deliberate. Teams need explicit extension and exception mechanisms, because domain needs are real and a platform that denies them creates forks. The **extension model** is the published answer to "how do I add something the path does not do": which points may be extended (a skill, a verifier, a tool, a policy hook), what an extension must declare, and what compatibility it must keep. **Extensions** are versioned and tested against the path's compatibility obligations. **Exceptions** have an owner, a reason, a scope, an expiry, and compensating controls, the same discipline as any [policy exception](../02-design/07-governance-policy-and-risk-proportional-approval.md). Silent forks are the thing to prevent; they fragment the platform and hide risk. Strong standardisation improves reliability and can also constrain legitimate needs, so build a small number of well-supported paths and measure where users exit them. The exit points are your roadmap.
+
+### The Factory Board: guided entry that never dispatches
+
+The first golden path most builders meet is the front door. A **Factory Board** is the guided entry surface: it asks what the builder is trying to do, recommends a **recipe** (the eight postures of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md), from read-only Scout to Full SDLC), drafts a Mission from the answers, requires a stop condition on the draft, and compiles a Plan for the builder to review. Then it stops. The Factory Board never dispatches and never accepts. Dispatch is a later command, checked by preflight and policy; acceptance is a human decision through the single acceptance command. The board's whole value is that it lowers the cost of starting well without touching the cost of authority, and a board that grows a "run it" button has become a task launcher, which is the thing a control plane is built not to be.
+
+<!-- infographic: factory-board -->
+> **Infographic — Factory Board: recipe → Mission draft → Plan compile, and no further.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    B["Builder intent"] --> R["Recipe recommendation (rule-based)"]
+    R --> M["Mission draft: outcome, scope, risk, stop condition"]
+    M --> P["Plan compile for human review"]
+    P -. "board stops here" .-> X["Dispatch: separate command, preflight, policy"]
+    X --> A["Acceptance: human, single command"]
+    R -. "never lowers" .-> Pol["Active policy"]
+```
+
+### Factory Health and the Engineering OS shell
+
+A platform needs a small set of measures that say whether it is turning into leverage rather than into a faster way to generate work for people. **Factory Health** is that KPI set, and three of its measures are worth naming because they are the ones that move when the factory is working:
+
+| Factory Health KPI | What it measures | Direction of health |
+| --- | --- | --- |
+| Human touches per agent task | Manual overrides, approvals, and takeovers per unit of agent work ([Chapter 4](../02-design/04-the-human-agent-operating-model.md)) | Falling, with authority touches the only remainder |
+| Shared component contributions | Skills, verifiers, recipes, and context packages contributed to the shared registry by consuming teams | Rising: the compounding loop is running |
+| Workflow versus interactive token spend | The share of model spend inside governed workflows against the share in interactive chat sessions | Workflow share rising: work is moving onto the paved road |
+
+The third is the platform's adoption measure in disguise. Interactive spend is not bad, but it is ungoverned, unverified, and unshared; every token that moves from a chat window into a workflow is a token whose output can be checked and whose lesson can be harvested.
+
+The surfaces that carry all of this sit inside one shell. An **Engineering OS** (EOS) is the outcome-oriented shell that organises the factory's surfaces by what an engineering organisation is trying to do rather than by which service renders them: **Strategy** (Goals and Missions), **Delivery** (Factory Board, Work Orders, Tasks, the run inspector), **Operations** (Command Center, Factory Overview, Factory Health, incidents), **Intelligence** (observability, evals, routing advisories), **Knowledge** (Memory, Graph, Context, the Registry), and **Governance** (policy, approvals, audit). The catalog and action-parity rules above apply to every surface in the shell; the shell adds only navigation.
+
+<!-- infographic: engineering-os-shell -->
+> **Infographic — The Engineering OS shell.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    EOS["Engineering OS shell"]
+    EOS --> S["Strategy: Goals, Missions"]
+    EOS --> D["Delivery: Factory Board, Work Orders, Tasks, run inspector"]
+    EOS --> O["Operations: Command Center, Factory Overview, Factory Health"]
+    EOS --> I["Intelligence: observability, evals, routing advisories"]
+    EOS --> K["Knowledge: Memory, Graph, Context, Registry"]
+    EOS --> G["Governance: policy, approvals, audit"]
+    L["Labs: experimental, preview until golden-path bar"] -.-> EOS
+    S & D & O & I & K & G --> API["Same control APIs, same records, same permissions"]
+```
+
+One more area belongs beside the shell rather than in it. **Labs** is where experimental surfaces live: explicitly labelled, navigable, and in **preview** until they meet the golden-path bar (a contract, an owner, a service level, observability, and evidence of a complete journey). A component does not become a product feature by existing in the codebase, and Labs is the honest place to keep it until it has earned the move.
+
+### A controlled execution system, not a dark factory
+
+It is worth saying what the platform is aiming at, because the industry has a name for the wrong target. A **dark factory** is a fully unattended autonomous factory: intent in, software out, nobody watching. It is an aspiration some teams state and none of them run safely, and it is not a safe default for anyone, because it removes the human from exactly the decisions (intent, irreversible actions, acceptance) that this book has argued only a human can be held to. The design target the 2026 landscape supports instead is a **controlled execution system**: isolated execution environments, lifecycle hooks at every consequential step, durable checkpoints, independent verification, and evidence correlation from intent to outcome. That is not an unattended agent swarm with a dashboard; it is a factory in which every automated step can be stopped, inspected, and attributed.
+
+The doctrine that gets an organisation from here to more autonomy is **progressive autonomy**: human-led for intent and for irreversible decisions; agent-orchestrated for decomposition and execution; automatic acceptance only for low-risk actions that policy explicitly covers, and only after the evidence and trust calibration of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) have been earned. The platform's job is to make each step of that progression measurable, with Factory Health as the gauge, rather than to promise the last step first.
 
 ### Admission is not scheduling
 
@@ -217,11 +272,21 @@ Build the product side and the scheduling side in parallel; each is useless with
 
 **Predictive scheduling penalises novel work.** Duration models learned from routine work misjudge new workflow classes. Keep priority and risk policy independent of predicted duration, and review forecast error per class.
 
+**The Factory Board grows a run button.** The guided entry starts dispatching or accepting, so the front door has become a task launcher with hidden authority. Detected when a dispatch or acceptance record names the board as its actor. Fix by keeping the board to recipe, Mission draft, and Plan compile, and routing dispatch and acceptance through their own commands.
+
+**Interactive spend never moves.** Token spend stays in chat sessions while workflow spend is flat, and Factory Health cannot show adoption of the paved road. Detected in the workflow-versus-interactive split. Fix by removing friction from the governed path, not by restricting the chat window.
+
+**Labs shipped as product.** An experimental surface appears in the main navigation without a contract, an owner, or evidence of a complete journey. Detected when a route has no golden-path record. Fix by returning it to Labs as preview until the bar is met.
+
+**Dark factory as roadmap.** Unattended operation is promised before intent capture, irreversible decisions, and acceptance have been separated and measured. Detected when the roadmap has an autonomy milestone with no Factory Health gate. Fix with progressive autonomy: earn each step with evidence.
+
 ## In Mission Control
 
 At the pinned study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control provides operator surfaces for intent, plans, workflows, evidence, approvals, runtime state, and review, and the guide's capability map describes the authorised-action parity those surfaces are meant to honour. Basic, intermediate, and advanced presentation modes, feature flags, immutable versions, and migration guidance exist; the presentation modes do not alter authority.
 
 On the scheduling side, the runtime has queues, leases, worker capabilities, retry and Attempt budgets, model routing with an exact route identity, provider rate limits, concurrency controls, and health metrics. These support bounded execution.
+
+The repository glossary and lexicon reviewed 2026-09-02 name the surfaces in this chapter as Mission Control's: a Factory Board that recommends a recipe, drafts the Mission, and compiles the Plan and never dispatches or accepts; a Factory Health surface with human touches per agent task, shared component contributions, and workflow-versus-interactive token spend; an Engineering OS shell organising Strategy, Delivery, Operations, Intelligence, Knowledge, and Governance; and a Labs area whose surfaces stay in preview until they meet the golden-path bar. The lexicon also states the design target as a controlled execution system under progressive autonomy, with the dark factory named as an aspiration and not a safe default. Those are named surfaces and doctrine at the review date; whether each KPI has a measured series is pinned in [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md), and this chapter does not claim one.
 
 What is not implemented, and what this chapter should therefore be read as design guidance for rather than as a description of the product: a complete developer portal, a service catalog, self-service repository onboarding, a golden-path ownership model, an extension marketplace, adoption analytics, a full admission-and-scheduling policy, a fairness model, a preemption protocol, capacity forecasting, a reviewer-capacity constraint, and end-to-end cost attribution to accepted outcomes. The economic metrics Mission Control records need this operational layer to become actionable.
 
@@ -234,6 +299,9 @@ What is not implemented, and what this chapter should therefore be read as desig
 - Budgets are layered from Attempt to organisation, fallbacks cannot evade them, and incident and recovery capacity is always reserved.
 - Fair shares, aging, scoped concurrency, and backpressure that reaches the requester keep queues honest. Preempt only checkpointed work.
 - Cost belongs to accepted outcomes and preserves reserved, incurred, wasted, avoided, and unallocated amounts. Start with showback; move to chargeback only once the allocation rule is stable.
+- The Factory Board is guided entry: recipe → Mission draft (with a stop condition) → Plan compile, and nothing further. It never dispatches or accepts.
+- Factory Health watches human touches per agent task, shared component contributions, and workflow-versus-interactive token spend. The Engineering OS shell organises Strategy, Delivery, Operations, Intelligence, Knowledge, and Governance over the same APIs; Labs holds experiments in preview until the golden-path bar.
+- Aim at a controlled execution system (isolated environments, lifecycle hooks, durable checkpoints, independent verification, evidence correlation), not a dark factory. Progressive autonomy is the doctrine: human-led for intent and irreversible decisions, agent-orchestrated for decomposition and execution, auto-accept only for low-risk, policy-covered actions.
 
 ## Go deeper
 
@@ -244,4 +312,4 @@ What is not implemented, and what this chapter should therefore be read as desig
 - [Chapter 28, Observability, telemetry, and forensics](./28-observability-telemetry-and-forensics.md) for how usage and cost are captured.
 - [Chapter 31, Enterprise adoption and the infrastructure landscape](./31-enterprise-adoption-and-the-infrastructure-landscape.md) for quotas, chargeback, and showback as enterprise requirements.
 - Primary references: Backstage Software Catalog documentation (accessed 2026-08-30); DORA, platform engineering capability (accessed 2026-08-30).
-- Sources: Jay West, platform operating model and adoption metrics notes ("Factory in one line"); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on cost-by-model dashboards and the control plane as the underserved layer.
+- Sources: Jay West, platform operating model and adoption metrics notes ("Factory in one line"); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on cost-by-model dashboards and the control plane as the underserved layer; Mission Control repository glossary and lexicon, reviewed 2026-09-02 (Factory Board, Factory Health KPIs, the Engineering OS shell, Labs, controlled execution system, dark factory, progressive autonomy).

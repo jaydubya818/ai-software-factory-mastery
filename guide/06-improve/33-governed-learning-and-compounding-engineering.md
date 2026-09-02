@@ -4,7 +4,7 @@ part: improve
 chapter: 33
 summary: How the factory turns failures, corrections, and successful strategies into evaluated, human-promoted improvements to its own prompts, skills, tools, tests, and policies — learning autonomously without authorizing itself.
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [learning-loop, signal-diagnosis, recursive-loop, seven-step-loop, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder]
+infographics: [learning-loop, signal-diagnosis, recursive-loop, factory-learning-chain, learning-writeback, seven-step-loop, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder]
 ---
 
 # 33. Governed learning and compounding engineering
@@ -282,6 +282,119 @@ recommendations (a better skill, route, prompt, verifier, workflow, or policy);
 and an accepted recommendation returns to the factory through a new Mission
 and a governed Plan, the same door every other change uses. The line that
 summarises both drawings: *autonomous discovery, not autonomous authority.*
+
+### The Factory Learning chain and the Improvement Candidate
+
+Written as records rather than stages, the discovery half is a chain with a
+fixed number of links, and each link is a type the next one consumes:
+
+`persisted evidence → deterministic signal → recurring cluster → Improvement
+Candidate → human review → experiment → Mission → Plan → WorkOrder`
+
+<!-- infographic: factory-learning-chain -->
+> **Infographic — The Factory Learning chain.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    EV["Persisted evidence<br/>receipts, gate decisions, review outcomes"] --> SG["Deterministic signal<br/>no model call"]
+    SG --> CL["Recurring cluster<br/>3+ occurrences"]
+    CL --> IC["Improvement Candidate<br/>PROPOSED"]
+    IC --> HR{"Human review"}
+    HR -->|"approve experiment"| EX["Experiment vs frozen baseline"]
+    HR -->|"snooze"| IC
+    HR -->|"dismiss"| D1["Closed: not actionable"]
+    HR -->|"reject"| D2["Closed: wrong"]
+    EX --> MI["Mission → Plan → WorkOrder"]
+    IC -. "no authority over" .-> LIVE["Live configuration · acceptance"]
+```
+
+Three rules on that chain are what make it safe to run continuously.
+
+*Signals are deterministic and a refresh makes zero model calls.* A learning
+signal is computed by code from persisted evidence: this criterion failed on
+this class of check for the third time this month; this reviewer overrode
+this verifier again; this Attempt exceeded its budget on this repository. No
+model reads the evidence to decide that a signal exists. That is what lets
+the learning view be refreshed on a schedule, or on demand, without spending
+inference and without a model quietly deciding which of the factory's
+failures deserve attention. Models enter later, in the experiment, where
+their output is measured against a frozen baseline.
+
+*A cluster needs three occurrences before it becomes a candidate.* One
+failure is an incident; two are a coincidence worth noting; three of the
+same deterministic signal, clustered by the versioned failure taxonomy, are a
+pattern, and only a pattern earns an **Improvement Candidate**. The threshold
+is deliberately low enough to catch real recurrence early and high enough to
+keep single loud failures from flooding the queue.
+
+*The candidate has four human verbs and no authority.* A reviewer can
+**approve an experiment** (the candidate becomes a frozen baseline-versus-
+candidate comparison), **snooze** it (it returns after a window, with its
+recurrence count still accumulating), **dismiss** it (recorded as not
+actionable, and the signal keeps counting so that a dismissed pattern that
+keeps recurring resurfaces with its history), or **reject** it (recorded as
+wrong, with the reason). None of those verbs, and nothing in the candidate
+itself, touches live configuration or acceptance. An Improvement Candidate
+cannot change a Factory Version, cannot alter a policy, cannot accept a
+WorkOrder, and cannot satisfy a receipt; an approved experiment that wins
+produces a recommendation that enters the factory as a Mission with its own
+Plan approval, like any other change.
+
+One recommendation type has a name because it closes a loop the others do
+not. When the meta loop finds that a production failure or a recurring
+correction was not covered by any evaluation, the recommendation is an
+`EVAL_SCENARIO`: a new case for the golden evaluation set, drawn from the
+exact failure. Accepting an `EVAL_SCENARIO` creates the scenario in the
+evaluation registry with its **PR lineage** attached, the pull request and
+commits in which the failure was fixed, so that the case can be traced to
+the change that motivated it and re-derived when that code changes again.
+That is the mechanism by which escaped defects update the regression suite
+rather than the postmortem document.
+
+### Learning writeback from an execution engine
+
+A pluggable execution engine ([Chapters 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
+and [13](../03-build/13-coding-harnesses-and-agent-protocols.md)) often
+keeps a lessons store of its own: notes it wrote to itself about what
+worked, what failed, and what it would do differently in this repository.
+That store is a learning signal the factory should not ignore and must not
+trust. **Learning writeback** is the bounded way to use it.
+
+<!-- infographic: learning-writeback -->
+> **Infographic — Learning writeback: read-only, additive, advisory.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    T["Engine run reaches terminal success"] --> R["Factory worker reads the engine's lessons store (read-only)"]
+    R --> M{"Store present and rows match this Attempt?"}
+    M -->|no| N["No candidates; nothing recorded"]
+    M -->|yes| C["Additive learning candidates on Attempt and WorkOrder"]
+    C --> E["Idempotent EVIDENCE_CREATED events: learning.candidate.proposed"]
+    E --> CH["Factory Learning chain (as deterministic signals)"]
+    C -. "cannot" .-> A["Accept · satisfy a receipt · change config"]
+```
+
+The mechanics are narrow on purpose. After a terminal *successful* engine
+run, and only then, the factory worker reads the engine's lessons store
+read-only; it never writes to it, and it never reads it after a failed or
+cancelled run, because lessons written on the way to a failure are
+hypotheses the engine did not get to test. Rows that match this Attempt
+become **learning candidates**, recorded additively on the Attempt and its
+WorkOrder (nothing on either record is overwritten), and each one is emitted
+as an idempotent `EVIDENCE_CREATED` event of type
+`learning.candidate.proposed`, so that a re-poll after a crash produces the
+same candidates once. If the store is missing, there are no candidates and
+no error; an engine that does not keep lessons is not a defect.
+
+The rule that keeps writeback from becoming a side channel is the one the
+whole chapter rests on: *learning candidates are telemetry*. They cannot
+accept a WorkOrder, cannot satisfy a verification receipt, and cannot change
+a Factory Version. They enter the Factory Learning chain as inputs to a
+deterministic signal and earn their way to an Improvement Candidate on
+recurrence like any other evidence. An engine's own confidence that it
+learned something is, in this guide's terms, one more claim.
 
 ### The seven-step loop, and the step it must never skip
 
@@ -856,6 +969,11 @@ threshold.
 | Candidate treated as controlled | A proposal is promoted on its own evidence without regression, shadow, A/B, or canary | Every candidate passes Verify in order; no instrument substitutes for the one before it |
 | Jumping straight to training | A behavior that could have been a rule or a retrieval fix is fine-tuned; the failure is now unattributable and bound to one model version | Climb the adaptation ladder one rung at a time and record why each lower rung was insufficient |
 | Preference data without provenance | RLHF or a reward model trained on acceptance signals polluted by deadlines and reformatting | Hand specialists governed dataset versions and experiment manifests, never raw traces; fix signal quality first |
+| Model in the signal path | Refreshing the learning view spends inference; a model decides which failures count | Signals are deterministic over persisted evidence; zero model calls on refresh |
+| Candidate from one occurrence | The queue fills with single failures dressed as patterns | Cluster by the versioned taxonomy; three occurrences before a candidate |
+| Candidate with authority | An Improvement Candidate edits live configuration or satisfies a receipt | Four human verbs only (approve experiment, snooze, dismiss, reject); recommendations enter as a Mission |
+| Engine lessons trusted | An engine's lessons store is written into instructions or counted as evidence | Read-only after terminal success; additive candidates; telemetry that cannot accept or satisfy receipts |
+| Writeback after failure | Lessons from a failed or cancelled run become candidates | Read the store only after terminal success; missing store means no candidates |
 
 ## In Mission Control
 
@@ -890,6 +1008,18 @@ experiment, and human-promotion records above as its implemented substrate;
 the full sequence running unattended end to end is not demonstrated, and
 per-action-class auto-promotion of bounded tuning is a design position rather
 than a shipped control.
+
+The repository glossary and lexicon reviewed 2026-09-02 state the Factory
+Learning chain (persisted evidence → deterministic signal → recurring cluster
+→ Improvement Candidate → human review → experiment → Mission → Plan →
+WorkOrder), the three-occurrence threshold, the four review verbs, the
+zero-model-call refresh, the `EVAL_SCENARIO` recommendation with PR lineage,
+and learning writeback from an execution engine's lessons store as contract.
+The Production Factory Pilot V3 evidence in
+[Chapter 34](./34-mission-control-as-a-living-case-study.md) shows Factory
+Learning producing one `PROPOSED` candidate with automatic promotion
+disabled; writeback belongs to a flag-gated experimental adapter that is off
+by default, so it is contract, not retained evidence.
 
 What the evidence does not establish: a production correction-harvesting
 pipeline, scoped Human Workflow Profiles, anti-pattern extraction, automatic
@@ -961,6 +1091,17 @@ a self-operating learning factory.
   Routing → Fine-tuning → Preference optimization and training. Climb one rung
   at a time with the evidence that the rung below was insufficient. Never jump
   straight to training.
+- The Factory Learning chain is persisted evidence → deterministic signal →
+  recurring cluster (three occurrences) → Improvement Candidate → human review
+  (approve experiment, snooze, dismiss, reject) → experiment → Mission → Plan
+  → WorkOrder. Refresh makes zero model calls; a candidate has no authority
+  over live configuration or acceptance; an accepted `EVAL_SCENARIO` creates a
+  scenario with PR lineage.
+- Learning writeback reads an execution engine's lessons store read-only after
+  terminal success, records additive learning candidates on the Attempt and
+  WorkOrder as idempotent `learning.candidate.proposed` events, and treats
+  them as telemetry: they cannot accept or satisfy receipts. Missing store,
+  no candidates.
 
 ## Go deeper
 
@@ -1013,3 +1154,6 @@ a self-operating learning factory.
   automations).
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
   referenced in the research canon.
+- Mission Control repository glossary and lexicon, reviewed 2026-09-02: the
+  Factory Learning chain, Improvement Candidate rules, `EVAL_SCENARIO` with
+  PR lineage, and learning writeback from an execution engine.

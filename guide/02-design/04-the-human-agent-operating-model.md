@@ -4,7 +4,7 @@ part: design
 chapter: 4
 summary: How people, agents, and deterministic systems divide decisions, execution, oversight, and accountability — through explicit roles, decision rights, a governed lifecycle with durable handoffs, escalation that presents a decision rather than a transcript, and a paved road fast enough that builders of every kind choose it.
 absorbs: [03-operating-model/01-human-agent-operating-model.md, 03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md]
-infographics: [responsibility-split, governed-lifecycle, decision-rights, builder-entry-points]
+infographics: [responsibility-split, governed-lifecycle, decision-rights, overnight-continuity, builder-entry-points]
 ---
 
 # 4. The human–agent operating model
@@ -214,6 +214,45 @@ The factory interrupts a human when it lacks authority, evidence, a safe recover
 
 An **attention item** states the decision required, why autonomy stopped, the affected scope, risk and urgency, available evidence, safe options, expected consequences, a recommendation, the uncertainty, and what resumes afterwards. That is the difference between a decision and a transcript.
 
+### The operator attention contract
+
+The attention item is one side of a contract; the other side is a promise about *when* it may be sent. The **operator attention contract** binds both. The factory may interrupt a person only when one of three things is required: **judgment** (a decision the criteria do not settle), **authority** (a grant only a human holds: Plan approval, acceptance, merge, a risk exception), or **credentials** (a login, a token, an installation the runtime cannot obtain for itself). Anything else, including progress, routine completion, a retry that succeeded, and a check that a gate already proved, stays in the record and out of the inbox.
+
+In return, every interruption arrives as a **decision packet** that answers six questions in a fixed order, so that a person can act on it without opening anything else:
+
+| Field | What it must say |
+| --- | --- |
+| Decision | The exact choice being asked for, with the options as verbs (approve, reject, revise, restrict, escalate) |
+| Why | Which trigger stopped autonomy: the policy, the missing authority, the failed or stale evidence, the exhausted budget, the conflict |
+| Risk | The band and the factors behind it, and what changes if the person says yes |
+| Evidence | What is known, criterion by criterion, and what is missing, stale, or contradicted |
+| Options | The safe choices, always including the lower-autonomy one, with the consequence of each |
+| What resumes after | Precisely which work restarts automatically on each answer, and which stays stopped |
+
+The last field is the one most systems omit and the one that makes the packet usable. A person who does not know what happens after they click will either not click or click and then watch, and both waste the attention the contract exists to protect. [Chapter 7](./07-governance-policy-and-risk-proportional-approval.md) gives the packet's fuller form for governance decisions; the six fields here are the minimum any interruption must carry.
+
+### Human touches and overnight continuity
+
+Two measures tell you whether the contract is holding. The first is the **human touch**: any manual override, approval, or takeover during agent execution. Some touches are the contract working (an authority grant at a gate). Many are the contract failing (a takeover because the agent stalled, an override because a check was wrong, an approval that a policy should have made). Counted per unit of work, **human touches per agent task** is the Factory Health measure that says how much of a person the factory still consumes for each thing it delivers, and its trend is the trend of leverage. A factory whose touches per task are rising while its throughput rises has not automated anything; it has moved work from typing to clicking.
+
+The second measure is whether the work is still there in the morning. **Overnight continuity** is the property that governed work survives everything that ends a conversation: a model change, a context-window limit, a process restart, a handoff between workers, and the end of the chat session that started it. Continuity is not the same as persistence. The durable records of [Chapter 5](./05-authoritative-records.md) make the state survive; continuity also requires that the work *continues* under bounded retries and escalates when the bound is hit, rather than looping silently or waiting for the person who went home. A Mission carries a stop condition for exactly this reason, and a control plane should refuse to compile a Plan from a Mission draft that has none.
+
+<!-- infographic: overnight-continuity -->
+> **Infographic — What ends a conversation, and what the work survives.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    Approve["Developer approves Plan, leaves"] --> Work["Governed work: durable state, leases, checkpoints"]
+    Work --> E1["Model change"] --> Work
+    Work --> E2["Context limit"] --> Work
+    Work --> E3["Process restart"] --> Work
+    Work --> E4["Worker handoff"] --> Work
+    Work --> E5["Chat session ends"] --> Work
+    Work -->|"bounded retries exhausted or judgment needed"| Esc["Decision packet in the morning inbox"]
+    Work -->|"stop condition met"| Stop["Stopped, with evidence"]
+    Work -. "never" .-> Loop["Silent looping"]
+```
+
 ### The decision contract
 
 Whatever the level — portfolio, system, release, incident, or autonomy — every consequential decision leaves the same record: subject, exact version, purpose, risk, and requested authority; the accountable owner and participating roles; policy baseline, evidence, counterevidence, uncertainty, and exceptions; alternatives, always including a lower-autonomy option; the decision, its conditions, expiry, review trigger, and reason; dissent or unresolved concern; downstream grants or restrictions; and correlation to later outcomes, incidents, and learning proposals. Hidden model reasoning is neither required nor a valid authority artifact; what is retained is observable inputs, decisions, actions, outputs, and evidence.
@@ -320,6 +359,9 @@ Proportional control answers the cost objections. Strong role separation adds ha
 | Human compensating for missing automation | Reviewers re-check scope, currentness, or budgets by hand | Route the check to a deterministic gate | Add the gate; remove the manual step from the packet |
 | Paved road slower than the workaround | Builders bypass the factory for a chat window; governed usage flat | Measure time-to-result on both paths | Remove friction from the governed path; never add friction to the workaround |
 | Trust collapse | One destructive change or noisy reviewer; repeat usage drops | Pause the offending capability; explain publicly | Visible fix, regression case, and re-earned usage before wider rollout |
+| Interruption without a trigger | Inbox items that require no judgment, authority, or credential; packets missing "what resumes after" | Suppress the notification class; keep the record | Enforce the operator attention contract; every packet carries the six fields |
+| Rising human touches per agent task | Takeovers and overrides climb while throughput climbs | Classify each touch as authority, stall, or wrong check | Fix stalls and wrong checks in the platform; leave only authority touches |
+| Work dies with the session | Overnight work stops when the chat, process, or context that started it ends; nobody is escalated | Recover from durable state under a new lease | Bounded retries, escalation on exhaustion, stop condition required before Plan compilation |
 
 Failed validation is not one of these. It is a normal feedback path, and a model in which validators never fail is more suspicious than one in which they sometimes do.
 
@@ -338,6 +380,7 @@ Implemented: Mission records retain state, owner, budget, stop condition, correc
 | Complete governance-role matrix | Partial; business, security, compliance, architecture, and release owners not one enforced matrix |
 | Risk-proportional approval automation | Partial; cross-lifecycle policy proof incomplete |
 | Overnight autonomous shift; morning briefing | Product target; durable state exists, unattended end-to-end shift not demonstrated |
+| Operator attention contract; human touches per agent task; overnight continuity; stop condition required before Plan compilation | Stated in the repository glossary and lexicon reviewed 2026-09-02 as contract and as a Factory Health measure; not evidence of a measured series at the pinned commit |
 | Decision contract, cadence reviews, enterprise three-level governance | Design doctrine; not evidence that any organization operates it |
 
 No fresh browser journey was performed. The operating model becomes proven only when repeated browser and runtime evidence shows work surviving process restart, handoff, validation failure, corrective execution, and delayed human review without bypassing authority.
@@ -358,10 +401,12 @@ No fresh browser journey was performed. The operating model becomes proven only 
 - The safest paved road must also be the fastest, and a prototype should become trustworthy by raising its evidence bar, not by being rewritten.
 - Tools should educate while they execute; the platform should increase engineering capability, not just coding throughput.
 - Trust is measured (repeat usage, accepted outcomes, reduced rework, self-service onboarding, time saved, use after support leaves) and protected with escape hatches: explained recommendations, visible policy decisions, feedback, recoverable errors.
+- The operator attention contract: interrupt only for judgment, authority, or credentials, and every packet states decision, why, risk, evidence, options, and what resumes after.
+- A human touch is any override, approval, or takeover during agent execution; human touches per agent task is the leverage measure. Overnight continuity means work survives model changes, context limits, restarts, handoffs, and the end of the chat session, under bounded retries and escalation, never silent looping; a Mission needs a stop condition before its Plan is compiled.
 
 ## Go deeper
 
 - Previous: [Chapter 3, First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md). Next: [Chapter 5, Authoritative records](./05-authoritative-records.md) defines the Mission, Plan, WorkOrder, Attempt, and Evidence records this model runs on.
 - [Chapter 7, Governance, policy, and risk-proportional approval](./07-governance-policy-and-risk-proportional-approval.md); [Chapter 8, Economics, metrics, and human attention](./08-economics-metrics-and-human-attention.md); [Chapter 12, Durable execution](../03-build/12-durable-execution.md); [Chapter 29, Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 31, Enterprise adoption](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md).
 - [Glossary](../appendix/glossary.md): handoff, attention item, decision packet, Orchestrator, Worker, Validator, governed work order.
-- Sources: Jay West, *Mission Control North Star* (business-hours/overnight model, review package, governed work order); Jay West, *AI Software Factory Mission* (humans own / agents perform / shared, governed lifecycle, transformation shifts); Jay West, factory architecture notes (three-party responsibility model, builders beyond developers, paved road, junior engineers, developer trust and adoption metrics, escape hatches); Jay West, *AI Software Factory Study Guide* chapters 3 and 16; NIST [AI Risk Management Framework 1.0](https://doi.org/10.6028/NIST.AI.100-1) and [Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1); Mission Control at the studied commit: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [`convex/missions.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/missions.ts), [`missionGovernance.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [`missionExecution.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionExecution.ts), [MissionDetailView](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionDetailView.tsx), [MissionPlanWorkspace](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx).
+- Sources: Jay West, *Mission Control North Star* (business-hours/overnight model, review package, governed work order); Jay West, *AI Software Factory Mission* (humans own / agents perform / shared, governed lifecycle, transformation shifts); Jay West, factory architecture notes (three-party responsibility model, builders beyond developers, paved road, junior engineers, developer trust and adoption metrics, escape hatches); Mission Control repository glossary and lexicon, reviewed 2026-09-02 (operator attention contract, human touch, human touches per agent task, overnight continuity, stop condition before Plan compilation); Jay West, *AI Software Factory Study Guide* chapters 3 and 16; NIST [AI Risk Management Framework 1.0](https://doi.org/10.6028/NIST.AI.100-1) and [Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1); Mission Control at the studied commit: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [`convex/missions.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/missions.ts), [`missionGovernance.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [`missionExecution.ts`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionExecution.ts), [MissionDetailView](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionDetailView.tsx), [MissionPlanWorkspace](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx).

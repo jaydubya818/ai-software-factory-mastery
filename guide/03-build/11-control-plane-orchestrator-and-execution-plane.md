@@ -4,7 +4,7 @@ part: build
 chapter: 11
 summary: Separate durable authority from failure-prone execution, connect them with an orchestrator that coordinates but never mints authority, and give every runtime component an explicit contract.
 absorbs: [05-runtime-architecture/01-control-plane-and-execution-plane.md, 05-runtime-architecture/02-runtime-orchestration-and-state-machines.md, 05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts.md]
-infographics: [control-vs-execution-plane, orchestration-state-machine, dispatch-loop, release-clocks]
+infographics: [control-vs-execution-plane, orchestration-state-machine, dispatch-loop, engine-authority-split, executor-snapshot, release-clocks]
 ---
 
 # 11. Control plane, orchestrator, and execution plane
@@ -255,6 +255,67 @@ The control plane must periodically compare its records with executor, repositor
 
 Validation belongs to the governance model, but it runs through an execution path separate from implementation. The control plane freezes the criteria and the artifact identity. The validator receives no authority to alter the implementation it evaluates. It emits independent evidence, and the control plane decides whether that evidence satisfies policy. Different people or models can strengthen independence, but the technical separation is what is essential: separate execution identity, a clean environment, independent commands, fresh evidence, and immutable receipts. [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) and [Chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) build on this.
 
+### Pluggable execution engines: who decides what
+
+The execution plane's most capable component is usually not something the factory wrote. It is an **execution engine**: a coding harness, an epic-delivery engine, or any product that can take a task and produce a change, composed into the factory as a harness adapter ([Chapter 13](./13-coding-harnesses-and-agent-protocols.md)). Engines are good at deciding *how* to plan and implement, and every one of them arrives with opinions about planning, gates, stories, worktrees, and what "done" means. The control plane's job is to accept the first and refuse the rest. The authority split is short enough to memorise:
+
+<!-- infographic: engine-authority-split -->
+> **Infographic — Control plane, engine, human: who decides what.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Question | Decided by | Never decided by |
+| --- | --- | --- |
+| Whether anything executes, and what (which WorkOrder, which scope, under which manifest) | Control plane | The engine, however confident its plan |
+| How it is planned and implemented (decomposition, order of work, tool choice inside the frozen scope) | The engine | The control plane, which does not micromanage a turn |
+| Whether the result is verified (frozen Verification Plan, exact Candidate, separate verifier) | Control plane | The engine's own gates |
+| Whether a pull request exists (published through the factory's own GitHub App, from a permitted Candidate) | Control plane | The engine; its workers never push, and their allowed remotes are empty |
+| Whether the WorkOrder is accepted (`workOrders.accept` or its equivalent, the single acceptance command) | Control plane, on a human decision | Anything else, including a green engine gate |
+| Whether the change merges | A human, on the source provider | Every automated actor in a first version |
+
+Two consequences follow from the table and are worth stating as rules, because every engine integration is tempted to break them.
+
+*A completed engine run is not an accepted WorkOrder.* When the engine reports done, the control plane records an event, collects the Candidate, and starts verification. Engine "done" is necessary and never sufficient, and engine "done" without a candidate SHA is not even that: it moves the WorkOrder to BLOCKED, because there is nothing to verify.
+
+*Engine-produced gates are evidence, not verdicts.* An engine that runs its own command and test gates is producing something the factory is glad to have and will store as evidence. A failed engine gate makes the Attempt FAILED and the WorkOrder BLOCKED; it never makes anything DONE, and a passed engine gate never substitutes for the factory's independent verification, because the process being checked cannot be the process doing the checking.
+
+Cancellation follows the same direction of authority. A control-plane cancel command calls the adapter's cancel operation, which stops the engine; cancellation wins over any late success until terminal success has been durably reported, and a stop that itself fails still leaves the Attempt canceled with the cleanup outcome recorded rather than the engine quietly continuing. The engine never cancels the WorkOrder; it only stops working on it.
+
+### The executor snapshot
+
+Executors change. Adapters get new versions, planning and worker backends get swapped, the Factory Version gets edited, superseded, or deleted, and repository policy files get committed over. None of that may change what a historical Attempt meant, or what a running Attempt is allowed to do. The record that guarantees this is the **executor snapshot**: at dispatch, the control plane copies the complete executor configuration onto the Attempt itself, and the Attempt reads only that copy for the rest of its life.
+
+<!-- infographic: executor-snapshot -->
+> **Infographic — The executor snapshot.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    FV["Factory Version<br/>adapter · version · planning backend · worker backend · config version"] -->|"copied at dispatch"| Snap["Executor snapshot on the Attempt (immutable)"]
+    Snap --> Run["Attempt executes against the snapshot only"]
+    Live["Live Factory Version edited, superseded, or deleted"] -. "never re-read" .-> Run
+    Repo["Committed repository policy files"] -. "never re-resolved, never mutated" .-> Run
+    Env["Runtime configuration as environment overrides"] -->|"win over committed policy"| Run
+    Run -->|"retry"| New["New Attempt · new engine identity · fresh snapshot"]
+```
+
+The snapshot names the adapter, the adapter version, the planning backend, the worker backend, and the configuration version. Four rules make it worth having.
+
+*The Attempt never re-resolves.* It does not re-read the repository's policy files, and it does not look up the live Factory Version. If the Factory Version is edited, superseded, or deleted an hour into the run, the running Attempt is unaffected and the historical Attempt's semantics are unchanged; the edit applies to the next dispatch.
+
+*Retry is a new Attempt with a new engine identity.* A retry copies a fresh snapshot from the then-current Factory Version, and the engine's own identifier for the work (its epic, session, or run id) is new too. Reusing the engine identity would let a retry inherit the failed try's state, and it would make two Attempts share one lineage in the engine's records.
+
+*Backends are frozen as a pair on the Factory Version.* The planning backend and the worker backend are selected together and versioned together, because an engine qualified with one pair has not been qualified with another. Where the backends authenticate through the operator's existing local CLI login rather than API keys, the snapshot records which login identity the pair was admitted under and the factory holds no long-lived engine credentials of its own.
+
+*Environment overrides win, and committed policy is never mutated.* Runtime configuration reaches the engine as environment overrides that take precedence over whatever policy the repository has committed, so that the factory can bound an engine per Attempt without editing files in the worktree. The committed repository policy is never rewritten per Attempt; if it were, the diff the engine produces would carry the factory's configuration into the Candidate.
+
+### Admission: what an engine adapter may never hold
+
+The control plane admits an adapter, not an engine. **Admission** is the decision that a particular adapter version may be selected for governed work, and it has three parts: the adapter's maturity, evidenced by its conformance results; the **required external controls** the control plane must supply around it; and the **prohibited authorities** the adapter must demonstrably lack. The mechanics of the adapter (its lifecycle, result contract, capability manifest, and event mapping) are in [Chapter 13](./13-coding-harnesses-and-agent-protocols.md). The control plane's side is the two lists.
+
+An adapter is prohibited from holding six authorities, and the prohibition is checked, not declared: **worker leases** (it cannot claim or renew ownership of an Attempt), **verification subjects** (it cannot create the record that names what will be verified), **verification plans** (it cannot decide which checks run), **evidence authority** (nothing it emits is a receipt), **GitHub publication** (it cannot open, update, or push to a pull request), and **acceptance** (it cannot advance a WorkOrder). An adapter that can do any of these is not an adapter; it is a second control plane.
+
+Five controls must exist outside the adapter before it is admitted: the **canonical worker lease** held by the factory's own worker runtime; the **sandbox policy** that bounds filesystem, network, and process for the Attempt; **repository-scope reconciliation**, which compares changed files, commits, and head SHA against the frozen code scope before anything is review-ready; **independent verification** through a separate verifier Attempt; and the **publication permit** that gates the GitHub App. The factory's worker selects the adapter and then runs those five itself, so that switching engines changes the adapter and nothing else; there is no engine-specific worker path.
+
+Two admission rules are about posture rather than mechanism. An experimental adapter is flag-gated, off by default, and not admitted to remote sandbox execution until it has cleared the same evidence bar as the production adapter. And an engine's unattended or "full-auto" mode is not admitted at all in a first version: the admitted posture is manual approve-then-run, with the approval attested by the control plane rather than by the engine's own prompt.
+
 ### Policy hooks and the grains of authority
 
 The control plane enforces policy at named points rather than by inspecting everything all the time. A **policy hook** is one of those points: a place in the lifecycle where the orchestrator stops, hands the current state and the proposed next effect to the policy engine, and proceeds only with an allow, a deny, or a condition. The hooks that every factory needs are the same short list: before dispatch (is this manifest still authorized?), before each tool call with a side effect, before publication, before merge, before release, before a learning candidate is promoted, and on every resume. Each hook records the policy version it consulted and the decision it received, which is what makes the control plane's audit trail more than a log of things that happened: it is a record of why each thing was permitted.
@@ -407,6 +468,14 @@ The fast clock is safe precisely because the slow clock is stable: a routing cha
 
 **Adapter exists, therefore the factory works.** Architecture diagrams collapse "we have an executor adapter" into "the end-to-end path is proven". Detect it by asking for the browser or runtime evidence of normal execution, policy rejection, cancellation, lost lease, duplicate event, validator failure, corrective Attempt, and exact GitHub lineage. Until all of those exist, the capability is a design, not a fact.
 
+**Engine done treated as accepted.** The engine reports its terminal phase and a WorkOrder moves to DONE, sometimes without a candidate SHA. Detect it by looking for any WorkOrder transition whose actor is an adapter; fix it by mapping engine phases to tendencies only and routing acceptance through the single acceptance command on a human decision.
+
+**Engine gate treated as verification.** The engine's own test gate passed, so the factory skipped its verifier. Detect it wherever a Quality Gate decision cites evidence produced by the same execution identity that produced the Candidate; fix it by classifying engine gates as evidence and requiring a separate verifier Attempt.
+
+**Live configuration read mid-Attempt.** An Attempt re-reads the Factory Version or the repository's policy files during execution, so an edit made during the run changes what the run was allowed to do, and the historical record can no longer say what governed it. Detect it by editing a Factory Version during a canary Attempt and diffing behaviour; fix it with the executor snapshot and a retry-creates-new-Attempt rule.
+
+**Engine-specific worker path.** A second engine arrived with its own worker, its own lease, and its own publication code, so the five required external controls now exist twice with different semantics. Detect it by asking how many places can push to the source provider; fix it by making the canonical worker select an adapter and run the same controls around it.
+
 ## In Mission Control
 
 This section reflects Mission Control at commit [`8014d5a`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c) (studied 2026-08-08) and [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) (studied 2026-08-09). The working tree contained unrelated in-progress changes at both points, so all claims refer to the pinned commits.
@@ -433,6 +502,8 @@ This section reflects Mission Control at commit [`8014d5a`](https://github.com/j
 
 No fresh browser journey or live executor run was performed for these assessments; they are source-backed architecture reviews, not proof that the complete Mission-to-pull-request path works.
 
+The repository glossary and lexicon reviewed on 2026-09-02 state the authority split, executor snapshot, and admission rules in this chapter as the contract for composing a pluggable execution engine as a harness adapter: `workOrders.accept` remains the only acceptance command, the engine never creates the pull request and its workers hold no remotes, the snapshot is copied onto the Attempt at dispatch, and the six prohibited authorities and five required external controls are the admission checklist. That contract describes a flag-gated experimental adapter that is off by default and not admitted to remote sandbox execution; [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) pins what has and has not been demonstrated.
+
 ## Retain this
 
 - Authority and state ownership define the plane; deployment topology does not. The browser is a surface, never the policy boundary.
@@ -446,12 +517,15 @@ No fresh browser journey or live executor run was performed for these assessment
 - Orchestration answers five questions (parallel, wait, shared state, branch failure, human checkpoint) in records, not in a conversation. The control plane manages the work; workers execute the work. The model does not own the workflow; the platform does.
 - Run three release clocks: configuration moves fast and eval-gated, artifacts on a certification lifecycle, contracts under compatibility discipline.
 - Policy is enforced at named hooks (dispatch, side-effecting tool call, publication, merge, release, promotion, resume), and each hook records the policy version and the decision. Authority comes in grains: merge authority and release authority are distinct grants with distinct approvers, joined by controlled rollout. Governed promotion and regression gates apply the same hooks to the factory's own changes; traceability is the walk from any effect back through its hook to its intent.
+- With a pluggable execution engine: the control plane decides whether and what executes, the engine decides how, the control plane verifies, publishes through its own GitHub App, and accepts on a human decision, and a human merges. A completed engine run ≠ an accepted WorkOrder; engine gates are evidence; done without a candidate SHA is BLOCKED; cancellation wins until terminal success is durably reported.
+- The executor snapshot is copied onto the Attempt at dispatch and never re-resolved: editing the Factory Version changes the next dispatch, not this run; retry is a new Attempt with a new engine identity; backends are frozen as a pair; environment overrides win over committed repository policy, which is never mutated.
+- Admission is maturity plus five required external controls (canonical worker lease, sandbox policy, repository-scope reconciliation, independent verification, publication permit) minus six prohibited authorities (worker leases, verification subjects, verification plans, evidence authority, GitHub publication, acceptance). Adapter selection only, never an engine-specific worker path; experimental adapters are flag-gated and off by default; unattended engine modes are not admitted.
 
 ## Go deeper
 
 - Next: [Chapter 12, Durable execution](./12-durable-execution.md) for Tasks, Attempts, leases, fencing, idempotency keys, and the reliability vocabulary.
 - Related: [Chapter 5, Authoritative records](../02-design/05-authoritative-records.md); [Chapter 7, Governance and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md); [Chapter 13, Coding harnesses and agent protocols](./13-coding-harnesses-and-agent-protocols.md); [Chapter 14, Development environments and sandboxes](./14-development-environments-sandboxes-and-compute.md); [Chapter 18, Agent and loop engineering](./18-agent-and-loop-engineering.md); [Chapter 19, The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [Chapter 25, CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md) for controlled rollout under release authority; [Chapter 29, Resilience and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 33, Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for the promotion hook applied to the factory's own learning; [Chapter 34, Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md).
 - Glossary: [Appendix A](../appendix/glossary.md).
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (control-plane job list, the dispatcher, why no open-source control plane exists yet); Jay West, AI Software Factory mission notes ("Mission Control determines"); Jay West, factory architecture notes (the orchestration questions, the platform owning the workflow, release clocks, policy hooks and the grains of authority); the 12-layer production AI agent stack notes (Infrastructure and Loop Engineering).
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (control-plane job list, the dispatcher, why no open-source control plane exists yet); Jay West, AI Software Factory mission notes ("Mission Control determines"); Jay West, factory architecture notes (the orchestration questions, the platform owning the workflow, release clocks, policy hooks and the grains of authority); the 12-layer production AI agent stack notes (Infrastructure and Loop Engineering); Mission Control repository glossary and lexicon, reviewed 2026-09-02 (the authority split for pluggable execution engines, the executor snapshot, prohibited authorities, required external controls, and cancellation semantics).
 - Mission Control at `8014d5a`: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [ADR-001 orchestration architecture](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/001-orchestration-architecture.md), [executor adapter contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/architecture/executor-adapter-contract.md), [React entry point](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/main.tsx), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [governed WorkOrder commands](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/workOrders.ts), [factory dispatch preflight](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/factoryDispatch.ts), [Hono service](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/index.ts), [signed service-command client](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/serviceCommandClient.ts), [executor adapter interface](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/packages/workflow-engine/src/executorAdapter.ts), [Codex V1 adapter](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/codexExecutorAdapter.ts), [workflow executor process](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/workflow-executor/src/index.ts).
 - Mission Control at `b31e275`: [WorkflowRuns](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/workflowRuns.ts), [workflow state reconciliation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/workflowRunState.ts), [workflow graph](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/workflow-engine/src/graph.ts), [workflow executor](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/workflow-engine/src/executor.ts), and the [golden-path assessment](../appendix/mission-control/evidence/2026-08-08-golden-path/README.md).

@@ -4,7 +4,7 @@ part: build
 chapter: 10
 summary: How agents, skills, tools, prompts, model profiles, and evaluators become governed, versioned, resolvable, certified, and revocable capabilities that the Software Factory consumes but never authors on the fly.
 absorbs: [agent-factory/01-capability-supply-chain-and-registries.md, agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md, agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md, agent-factory/04-tool-skill-and-integration-contract-reference.md]
-infographics: [capability-supply-chain, agent-factory-architecture, capability-lifecycle, skill-anatomy, skill-maturity-lifecycle]
+infographics: [capability-supply-chain, agent-factory-architecture, capability-lifecycle, agent-runtime-management, skill-anatomy, skill-maturity-lifecycle]
 ---
 
 # 10. The Agent Factory: reusable capabilities
@@ -17,7 +17,7 @@ Most organizations manage agent capabilities as loose prompt files, copied scrip
 
 Two failure classes follow. Teams duplicate behavior and learn the same lesson repeatedly. And a convenient capability quietly becomes production infrastructure without any of the controls applied to code, packages, identities, or deployment artifacts.
 
-Dru Knox of Tessl describes the ladder most teams climb: individual engineers collect skills; then someone starts doing **harness engineering**, building the loops that automate and improve agent work; then the team realizes that everyone has become an internal tool builder and the thing they are building is a software factory. At every rung the same question appears: where do the skills live, who owns them, which version is running, and how do we know they still work? His answer, and this chapter's, is that a skills registry with publication controls, security and quality review, and versioning is part of the control plane, not an afterthought. David Andre's open-sourced skills repository, used across Codex, Claude Code, Pi, and Hermes, shows the same pressure from the individual side: forty-two skills is already a supply chain, and without discipline it degrades into forty-two ways to be surprised.
+Dru Knox of Tessl describes the ladder most teams climb: individual engineers collect skills; then someone starts doing **harness engineering**, building the loops that automate and improve agent work; then the team realizes that everyone has become an internal tool builder and the thing they are building is a software factory. At every rung the same question appears: where do the skills live, who owns them, which version is running, and how do we know they still work? His answer, and this chapter's, is that a skills registry with publication controls, security and quality review, and versioning is part of the control plane, not an afterthought. David Andre's open-sourced skills repository, used across Codex, Claude Code, and two smaller open-source harnesses, shows the same pressure from the individual side: forty-two skills is already a supply chain, and without discipline it degrades into forty-two ways to be surprised.
 
 ## How it works
 
@@ -262,6 +262,35 @@ stateDiagram-v2
 The states, in order: **draft**, **candidate** (packaged), **evaluated**, **certified**, **canary**, **generally eligible** (published and active), with side exits to **restricted**, **deprecated**, **quarantined**, **revoked**, and **retired**. Read as verbs, the whole lifecycle is: author, package, test, certify, publish, discover, activate, upgrade, deprecate, revoke. Two of those verbs happen on the consuming side rather than in the registry. To **activate** a capability is for a workspace or Factory Version to bind a specific certified version into its resolved graph, which is when publication becomes permission to run; to **upgrade** is to rebind to a newer version, which is a new resolution with its own compatibility check and, for a major version, its own approval. Every transition names its authority, scope, evidence, conditions, expiration, and rollback.
 
 The four retirement states mean different things. **Deprecation** warns and provides migration. **Quarantine** stops use while facts are investigated. **Revocation** blocks new resolution immediately and may cancel or isolate active work according to risk. **Retirement** removes discoverability after migration while preserving historical resolution and evidence, so that an Attempt from last year still explains what it ran.
+
+### Agent Runtime Management: templates, versions, instances, identities
+
+The lifecycle above governs the *definition* of an agent. Something still has to govern the agents that are actually running, and the two are different objects the way a class and its instances are. **Agent Runtime Management (ARM)** is the layer that keeps them apart and keeps each one accountable. It manages four things:
+
+| Object | What it is | What it answers |
+| --- | --- | --- |
+| Template | A registered Agent Definition eligible to be instantiated: role, instructions, skills, tools, model requirements, budgets, stopping conditions | What kinds of agent may exist here? |
+| Version | An immutable revision of a template, by digest | Which exact definition is this instance running? |
+| Instance | One running agent, bound to a version, an Attempt, a lease, a sandbox, and a budget | What is running right now, on whose authority, and for how long? |
+| Identity | The workload identity the instance authenticates as, with its short-lived credentials and scoped grants | Which principal did this call come from, and what was it allowed? |
+
+<!-- infographic: agent-runtime-management -->
+> **Infographic — Agent Runtime Management.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    T["Template (registered Agent Definition)"] --> V["Version (immutable, by digest)"]
+    V --> I1["Instance: Attempt 41, lease, sandbox, budget"]
+    V --> I2["Instance: Attempt 42, lease, sandbox, budget"]
+    I1 --> Id1["Identity: workload credential, scoped grants, expiry"]
+    I2 --> Id2["Identity: workload credential, scoped grants, expiry"]
+    Fleet["Agent Fleet view: every instance, its version, identity, lease, budget, and last heartbeat"] -.-> I1
+    Fleet -.-> I2
+```
+
+The rule ARM enforces is that an instance is never more than its version and its identity allow. An instance cannot upgrade itself to a newer version mid-run (that is a new Attempt), cannot acquire an identity broader than the one issued for its lease, and cannot outlive its lease or its budget. When a version is quarantined or revoked in the registry, ARM is the component that can answer "which instances are running it now?" and stop them, which is the runtime half of the revocation propagation the registry promises.
+
+The operator's window onto ARM is the **Agent Fleet** view: every running instance with its template, version, identity, Attempt, lease state, budget consumed, last heartbeat, and the action available on it (pause, drain, kill). It is the fleet-management surface that every team running more than a handful of agents ends up building, and building it on ARM's four objects rather than on a list of processes is what makes it say something true when a process has died and its lease has not yet expired. ARM is the harness-engineering surface's operational half; the definitional half is the registry above.
 
 ### Evaluation, certification, promotion
 
@@ -564,11 +593,15 @@ Two practical corollaries. First, teams with existing agents should be pulled in
 
 **Inference spent on the deterministic.** Linting, type errors, and policy violations are discovered by the model rather than by the tools that already exist for them. Detect it in model findings that a static check would have produced. Fix with deterministic preprocessing packaged as certified capabilities that run before any agent.
 
+**Instances without versions.** Agents are running, and nobody can say which definition revision each one is on, so a revoked version cannot be stopped because it cannot be found. Detect it by asking the fleet view for the version digest of every running instance; fix by making every instance bind an immutable version and an issued identity, and by making the Agent Fleet view read from those bindings rather than from process lists.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control contains versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, canaries, policy gates, promotion and demotion concepts, model-route lifecycle, and Factory Version bindings that freeze many material bindings in Factory Versions and Execution Manifests. Those are real components of an Agent Factory: **implemented**.
 
 It does not yet demonstrate one canonical registry boundary with unified publication, dependency resolution, compatibility qualification, deprecation, quarantine, and revocation across every capability type; a single package format; a complete transitive lock; a universal compatibility suite; a migration mechanism spanning agents, skills, prompts, tools, and evaluators; a uniform certification object; or end-to-end revocation propagation. Exact skill-version binding and a complete promotion path are **partial**. Runtime substitutions therefore need explicit scrutiny rather than an assumption of parity.
+
+The repository glossary and lexicon reviewed 2026-09-02 name Agent Runtime Management (templates, versions, instances, identities) and its Agent Fleet operator view, inside a harness-engineering surface that also carries change review, merge gates, mutation testing, and a seven-step code-review wizard. Those are named surfaces and contract vocabulary at the review date; `packages/agent-runtime/` holds agent lifecycle and heartbeat behaviour at the pinned commits, and the fleet view's evidence is whatever [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) pins, not a claim this chapter makes.
 
 The intended boundary between the two systems is the one this chapter describes: the Agent Factory creates and manages reusable agents, skills, tools, model configurations, and evaluations, and plugs into Mission Control as a capability source, while Mission Control owns the Mission, Plan, WorkOrders, execution authority, verification, evidence, acceptance, and delivery. In Jay's words, the Agent Factory creates reusable intelligence; Mission Control governs how that intelligence becomes production work. That division is the design intent, not a claim that the two are separately deployed today.
 
@@ -597,6 +630,7 @@ The intended direction is a registry that continuously calculates certification 
 - Repository- or domain-specific behavior does not belong inside the model. Deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning for stable behavior; and deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs before any agent.
 - Capability matching turns a step's requirements into eligible, recorded capabilities without widening authority; tool extensibility happens at the registry and gateway, never in the prompt; standardize the core contract and optimize model adapters at the edge.
 - Code-review skills, policy skills, and the wider class of reusable artifacts share one envelope, which is what lets a capability built for one product be matched and certified for another.
+- Agent Runtime Management keeps templates, versions, instances, and identities apart: an instance is never more than its version and its issued identity allow, and the Agent Fleet view reads from those bindings so revocation can find and stop what is running.
 
 ## Go deeper
 
@@ -613,7 +647,8 @@ The intended direction is a registry that continuously calculates certification 
 - The acceptance bar for an external capability, in one line: it must demonstrate negative authorization, duplicate invocation, timeout after a side effect, reconciliation, revocation, dependency change, recertification, and independent reconstruction of the resulting evidence before it is admitted.
 - [Glossary](../appendix/glossary.md).
 - Dru Knox (Tessl), AI Engineer SF talk on harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
-- David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, Pi, and Hermes.
+- David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, and two smaller open-source harnesses.
+- Mission Control repository glossary and lexicon, reviewed 2026-09-02: Agent Runtime Management (templates, versions, instances, identities) and the Agent Fleet operator view.
 - Tessl documentation (docs.tessl.io), 2026: skill packages, manifests and workspaces, registry install and update mechanics, typed skill schemas, the organization inventory, and reviewer plugins with score thresholds. The Agent Skills specification (agentskills.io) defines the skill folder format.
 - Jay West, "Key terms and definitions" capability taxonomy: Agent Definitions, Skills Framework, and Agent Harness tool terms.
 - Jay West, factory architecture notes: the Agent Definition contract, the agent/skill/tool/model/harness/factory distinction, the skill maturity lifecycle, versioning, the contribution model, the three-way rule for where behavior belongs, deterministic preprocessing, capability matching, tool extensibility, and model adapters at the edge.

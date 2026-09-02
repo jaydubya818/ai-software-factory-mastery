@@ -4,7 +4,7 @@ part: design
 chapter: 5
 summary: The twelve records that carry intent, authority, causality, evidence, and acceptance through an AI Software Factory, the companion records (Constitution, Mission Spec, Quality Contract, Factory Version, manifest, Context Package, Candidate, Verification Subject) that pin down what the spine would otherwise carry loosely, the traceability chain that joins them, and how a factory keeps a lower-level fact from silently rewriting a higher-level decision.
 absorbs: [04-domain-model/01-authoritative-delivery-hierarchy.md, 04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md, 04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md]
-infographics: [delivery-hierarchy, record-lifecycles, factory-configuration, traceability-chain]
+infographics: [delivery-hierarchy, record-lifecycles, authoritative-state-machines, factory-configuration, traceability-chain]
 ---
 
 # 5. Authoritative records: from company to release
@@ -35,6 +35,8 @@ The full conceptual hierarchy is:
 
 `Company → Workspace → Repository → Factory Configuration → Mission → Approved Plan → WorkOrder → Task → Attempt → Evidence → Pull Request → Release`
 
+Two records sit around that spine once a control plane has been operated for a while, and they are drawn in the diagram because they change where authority begins and where it may act. A **Goal** sits above the Mission and holds the strategic result the Mission serves; it owns an outcome, never execution state. Beneath the Repository, a **host binding** and a **code scope** say where and on what the factory may act at all. Both are introduced in full a few sections down.
+
 <!-- infographic: delivery-hierarchy -->
 > **Infographic — The authoritative delivery hierarchy.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
 
@@ -44,9 +46,11 @@ flowchart TB
         Company["Company: accountability boundary"]
         Workspace["Workspace: isolated operating scope"]
         Repository["Repository: registered source target"]
+        Host["Host binding + code scope: where and on what"]
         Config["Factory Configuration: versioned authority envelope"]
     end
     subgraph Intent["Intent and authority"]
+        Goal["Goal: strategic result"]
         Mission["Mission: governed outcome"]
         Plan["Approved Plan: frozen execution contract"]
         WO["WorkOrder: bounded authority and acceptance"]
@@ -58,7 +62,8 @@ flowchart TB
         PR["Pull Request: reviewable change"]
         Release["Release: governed delivery outcome"]
     end
-    Company --> Workspace --> Repository --> Config
+    Company --> Workspace --> Repository --> Host --> Config
+    Goal --> Mission
     Config --> Mission --> Plan --> WO --> Task --> Attempt
     Attempt --> Evidence --> PR --> Release
 ```
@@ -97,6 +102,18 @@ The **Repository** record identifies an exact source-control target and its conn
 
 The **Factory Configuration** is a versioned authority envelope for operating on a Repository. It binds an approved workflow, an executor and its version, policy, environment, budget, verifiers, risk boundary, and recovery controls, and a digest identifies the exact configuration that was evaluated at dispatch. It answers "under which operating rules may this factory work here?", not "what outcome is wanted?". Without versioning, a run cannot prove which tools, policy, budget, or validator set governed it. Editing configuration in place destroys reproducibility. The next section goes deeper on this record because it is where most reproducibility bugs hide.
 
+### Goal, host binding, code scope, and Run
+
+Four records that the twelve-record spine does not name turn out to be needed the first time a factory serves more than one team on more than one machine. Each answers a question the spine leaves implicit.
+
+The **Goal** answers "what strategic result is this Mission for?". A Goal owns an outcome and nothing else: it has no execution state, no budget of its own to spend, and no acceptance criteria that an agent could satisfy. It is the parent of one or more Missions, and it exists so that a Mission can be abandoned, superseded, or split without losing the reason it was started. In product terms the Goal is where an executive's intent lives; the Mission is where an engineering owner's intent lives. Neither becomes done because the other did.
+
+The **host binding** answers "on which runtime host may this Repository's work execute?". A Repository record says which source target is authorised; a host binding says which worker host, sandbox, or execution backend is authorised to touch it, with its own readiness state. The **code scope** answers "on which paths inside that Repository?": a governed allowlist, typically of monorepo paths, that is frozen into the execution manifest and enforced at dispatch and again when changed files are compared with authority before publication. The rule that gives both records teeth is simple and should be enforced in the dispatch preflight rather than in a prompt: *dispatch is blocked until an active host binding and a code scope exist*. A WorkOrder released from an approved Plan with neither is authorised work with nowhere it may lawfully run, and the correct state for it is blocked, not "defaulted to the developer's laptop and the whole tree".
+
+The **Run** answers "what did the agent do in this turn?". Beneath the Attempt, which is one immutable execution try, a Run is one low-level agent turn: a model call, its tool invocations, and its observations, recorded in order with a sequence number. An Attempt usually contains many Runs; a Run never contains an Attempt. The layer exists because an Attempt's timeline is too coarse for forensics (which turn widened the diff? which turn read the injected document?) and a Run is too fine for governance (no Run ever needs approval; the Attempt does). Keep the two names distinct in schema and in conversation. "The run finished" and "the Attempt completed" are different claims, and only the second one is a fact the control plane will act on.
+
+Alongside these sits a naming rule that saves a design from growing a second lifecycle. The **Software Factory** record, where a control plane has one, is a thin versioned configuration: it references the approved repositories, workflows, executors, agents, policies, budgets, and verifiers that a team is allowed to compose, and a version of it is what the Factory Configuration above binds. It is not a second execution lifecycle. A factory has no states of its own beyond the versioning states of any configuration record; Missions, WorkOrders, Tasks, and Attempts carry the lifecycle, and a design in which "the factory is running" is a state that something can be in has quietly created a parallel machine that nothing in the evidence chain references.
+
 ### Record cards
 
 The table below compresses each record into the five facts worth memorising: what it owns, what it explicitly does not own, who creates it, where its lifecycle ends, and what evidence hangs off it.
@@ -106,12 +123,15 @@ The table below compresses each record into the five facts worth memorising: wha
 | Company | Identity, membership, broad policy, ultimate risk ownership, data isolation | Product outcomes, repository authority | Platform administration | Archived | Audit trail of policy and membership changes |
 | Workspace | Operating scope: people, repos, configs, Missions, permissions, cost | Proof of access to a specific repo or environment | Company admin | Archived | Ownership and permission history |
 | Repository | Provider identity, canonical name, default branch, installation link, readiness, policy overrides | Authority to mutate the repo | Workspace admin via provider connection | Disconnected, Removed | Connection and readiness checks |
+| Host binding and code scope | Authorised runtime host and its readiness; governed path allowlist | The outcome; the executor's behaviour | Workspace admin; frozen into each manifest | Revoked, Superseded | Host readiness; changed-file comparison against scope |
 | Factory Configuration | Versioned envelope: workflow, executor, policy, environment, budget, verifiers, risk, recovery, agent versions, code scopes; digest | The business outcome | Platform or workspace owner; each change is a new version | Retired version | Readiness assessment, promotion evidence |
+| Goal | Strategic result; the reason its Missions exist | Execution state, budget spend, acceptance of any Mission | Business or executive owner | Achieved, Abandoned, Superseded | Outcome measures rolled up from Missions, never Mission state itself |
 | Mission | Objective, business reason, context, constraints, sources of truth, owner, risk, stop condition, budget, acceptance criteria | Runtime execution | Human owner from intent | Accepted, Abandoned, Stopped | Outcome verification against acceptance criteria |
 | Plan | Research, unknowns, sequencing, WorkOrder blueprints, validation assertions, cost, rollback; one frozen approved version | Dispatch, WorkOrder risk approval, acceptance, merge, deploy | Agent or human proposes; human approves | Approved (frozen), Rejected, Superseded | Independent plan review, coverage matrix |
 | WorkOrder | Bounded outcome, repo and branch strategy, scope, constraints, dependencies, risk, model limits, approvals, acceptance criteria, escalation conditions | Mission-level outcome, Task progress semantics | Released from an approved Plan | Accepted, Rejected, Superseded, Reopened then closed | Criterion-linked verification receipts, waivers |
 | Task | Decomposition, assignment, dependency, progress | Business acceptance, expansion of authority | Orchestrator or agent within a WorkOrder | Completed, Failed, Cancelled | Links to Attempts |
 | Attempt | Runtime identity, exact input versions, worker, tools, worktree, timeline, status, artifacts, cost, errors, termination reason | Logical Task identity; any later retry | Dispatcher, one per execution try | Succeeded, Failed, Timed out, Cancelled (immutable) | Run events, artifacts, execution manifest |
+| Run | One ordered agent turn under an Attempt: model call, tool invocations, observations | Any approval; the Attempt's outcome | Executor, per turn | Completed, Failed (immutable) | Sequence-numbered events |
 | Evidence | Method, result, provenance, freshness, artifact hashes, source commit, validity | The requirement itself | Known verifier against an exact artifact | Valid, Stale, Invalidated, Waived | It is the evidence |
 | Pull Request | Comparison, branch, head SHA, checks, review state, merge result, review package links | WorkOrder acceptance, customer value | Control plane on agent recommendation | Merged, Closed | Head-SHA-specific checks and receipts |
 | Release | Merge, deployment, activation, observation, rollback readiness, production verification | Review of the change | Release policy and human release authority | Verified in production, Rolled back | Per-stage gate evidence |
@@ -212,6 +232,45 @@ stateDiagram-v2
         Valid --> Waived: authorised waiver
         Stale --> [*]: fresh evidence replaces
     }
+```
+
+### The authoritative state machines
+
+The lifecycle diagram above shows the shape. A working control plane needs the exact vocabulary, because operators, dashboards, and adapters all have to agree on what a word means. The table gives the seven state lists a mature control plane keeps, one per record, as they stand in the Mission Control lexicon reviewed for this edition. Your names may differ; the number of machines and the rules beneath the table should not.
+
+<!-- infographic: authoritative-state-machines -->
+> **Infographic — Seven state machines, no implied transitions.** *(Jay's graphic goes here.)* Until then, the table and diagram below carry the same concept.
+
+| Record | States | Terminal |
+| --- | --- | --- |
+| Mission | DRAFT, PLANNING, AWAITING_PLAN_APPROVAL, READY, IN_PROGRESS, BLOCKED, AWAITING_VALIDATION, AWAITING_ACCEPTANCE, DONE, CANCELED, SUPERSEDED | DONE, CANCELED, SUPERSEDED |
+| Plan | DRAFT, PROPOSED, APPROVED, REJECTED, SUPERSEDED | REJECTED, SUPERSEDED (APPROVED is frozen, not terminal) |
+| WorkOrder | DRAFT, READY, DISPATCHED, IN_PROGRESS, BLOCKED, AWAITING_APPROVAL, AWAITING_VERIFICATION, REOPENED, DONE, CANCELED, SUPERSEDED | DONE, CANCELED, SUPERSEDED |
+| Task | INBOX, READY, IN_PROGRESS, REVIEW, NEEDS_APPROVAL, BLOCKED, DONE, FAILED, CANCELED | DONE, CANCELED |
+| Attempt | queued, running, paused, completed, failed, canceled, timeout | completed, failed, canceled, timeout (immutable) |
+| Verification | PENDING, PASS, FAIL, WAIVED, STALE; a review package additionally shows VERIFIED, UNKNOWN, MISSING | None is final: STALE can follow PASS |
+| Approval | NOT_REQUIRED, PENDING, APPROVED, REJECTED, CONDITIONAL, EXPIRED | REJECTED, EXPIRED |
+
+Five rules govern how the seven machines relate, and each one closes a specific hole.
+
+*No state implies the next.* A Mission in AWAITING_ACCEPTANCE is not accepted; a WorkOrder in AWAITING_VERIFICATION has no verdict; an Attempt that completed has produced a Candidate and nothing more. Every forward move is a command with an actor and evidence.
+
+*Task Done ≠ WorkOrder accepted ≠ engine done ≠ Definition of Done.* Four different sentences hide behind the word "done". A Task reaching DONE says the operational unit finished. A WorkOrder reaching DONE says an authorised human accepted it on current evidence. An execution engine reporting that it is done says a process stopped and returned a result. The Definition of Done is the contract all three are measured against and satisfies none of them by itself. Dashboards that show one "done" column have merged four decisions into one word.
+
+*A failed Attempt does not make the Task terminal while recovery is active.* Task FAILED is reached only when the bounded recovery policy is exhausted or a human stops it; until then a failed Attempt leaves the Task in BLOCKED or IN_PROGRESS with a new Attempt pending. This is why Attempt states are lower-case and Task states upper-case in the table: they are different machines, and an adapter that writes the Attempt's failure straight into the Task has collapsed them.
+
+*None of UNKNOWN, MISSING, PENDING, FAILED, or STALE is success.* Only PASS (and VERIFIED, where the review package distinguishes a criterion from its receipt) counts toward acceptance, and only while it is current. A gate that treats "no failing evidence" as passing has inverted the rule; the absence of evidence is a negative state with its own name.
+
+*Approval is its own machine.* NOT_REQUIRED is a recorded policy outcome, not a missing row; CONDITIONAL carries the condition as data the next gate re-checks; EXPIRED means a decision was made and then aged out, which is different from PENDING. Re-using a WorkOrder state to mean "somebody approved something" loses all three distinctions.
+
+```mermaid
+flowchart LR
+    T["Task: DONE"] -. "does not imply" .-> W["WorkOrder: DONE (accepted)"]
+    E["Engine: done"] -. "does not imply" .-> T
+    A["Attempt: failed"] -. "does not terminate while recovery active" .-> T
+    V["Verification: PENDING / UNKNOWN / MISSING / FAILED / STALE"] -. "never counts as" .-> P["PASS, current"]
+    P --> W
+    Ap["Approval: APPROVED and unexpired"] --> W
 ```
 
 ### Factory Configuration, workflow contracts, and execution manifests
@@ -363,6 +422,12 @@ A design passes review when no lower-level status ever accepts a parent, every p
 
 **Spec that cannot be checked.** Planning begins on a Mission Spec with unmeasurable outcomes or unresolved clarifications, and the planner fills the gaps. Run the deterministic spec-quality checks before planning and block on failure.
 
+**Dispatch without a host binding or code scope.** A released WorkOrder runs on whatever machine the operator happens to be on, against the whole repository tree, because neither record existed and nothing refused. Detect it by asking the dispatch preflight which host binding and code scope it froze into the manifest; if the answer is a default, the gate is missing. Correct it by blocking dispatch until both exist and are active.
+
+**Engine done written as Task done.** An adapter maps the execution engine's terminal phase directly onto the Task, and a Task reaches DONE with no Candidate, no verification, and sometimes no commit. Detect it wherever a Task is DONE and its Attempt has no Candidate SHA; correct it by mapping engine phases to WorkOrder tendencies only, and by letting the Task advance only through the control plane's own transition with evidence attached.
+
+**A second lifecycle on the factory record.** The Software Factory grows states of its own ("running", "paused", "complete") and operators start reading them as the state of the work. Detect it by asking what evidence a factory state is derived from; correct it by keeping the factory a thin versioned configuration and leaving lifecycle to Mission, WorkOrder, Task, and Attempt.
+
 ## In Mission Control
 
 Assessed at commit [`8014d5af`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c) (studied 2026-08-07), with the configuration work assessed at `main` [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) and study commit [`9d5f8e3`](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8) on draft PR #64 (2026-08-11).
@@ -386,6 +451,8 @@ On `main` at `b31e275`, Factory Configuration is versioned and readiness checks 
 
 The FactorySystemRecord inventory is a review-ready specification with a synthetic example; it is not implemented in Mission Control and does not claim to prove inventory completeness or control effectiveness anywhere.
 
+The repository's glossary and lexicon, reviewed 2026-09-02, carry the additions in this chapter's "Goal, host binding, code scope, and Run" section and the seven state lists in "The authoritative state machines": readiness already checks a clean host binding at `8014d5af`, code scopes are frozen into the digest on the study branch, and the dispatch rule that blocks work until an active host binding and code scope exist is stated as contract. The Goal record and the Run layer are lexicon vocabulary at that review date; treat them as design direction until a pinned commit shows them in schema and the table above is updated.
+
 Jay's own walkthrough of the current design describes the fuller chain from the companion-records section (Project Constitution, immutable Mission Spec with deterministic spec-quality checks, Quality Contract, Factory Version, frozen execution manifest and Context Package, worker admission with fenced leases, immutable Candidate, Verification Subject with a frozen Verification Plan and a separate verifier Attempt, exact-current pull request, and distinct merge, deployment, activation, and production-verification stages) on a TypeScript and Node stack with Convex as durable state, Git worktrees, and sandboxed execution, with data classification frozen into the execution contract and fail-closed gates. That walkthrough is the author's account of the design at the time of writing and positions the project as an active personal control plane with substantial deterministic qualification, not a fleet-scale production system. The pinned commits above remain the evidence boundary for what this chapter asserts as implemented; where the walkthrough names a record the table does not, treat it as design direction until a pinned commit shows it.
 
 Schema presence is not proof of a coherent product journey. The complete hierarchy becomes a demonstrated capability only when the browser golden path shows creation, execution, failure, recovery, validation, review, and exact source lineage without direct database intervention. Future direction: expose the hierarchy as one navigable lineage, converge implementation names on the canonical vocabulary or ship one translation layer, make PR and Release lineage first-class without duplicating provider authority, and require policy diff, compatibility evaluation, canary evidence, and rollback for Factory promotion.
@@ -403,6 +470,8 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - The companion records each pin a fact the spine would otherwise carry loosely: Constitution (rules before intelligence), Mission Spec (immutable meaning, checked before planning), Quality Contract (success frozen before execution), Factory Version (what ran), execution manifest and Context Package (frozen inputs), Candidate (an output, not a success), Verification Subject (evidence belongs to the artifact, not the agent's confidence).
 - Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified. Verification on commit A does not authorise merge of commit B.
 - The traceability chain, spec requirement → Plan assertion → WorkOrder blueprint → acceptance criterion → verification check, is built from stable identifiers so a revision can enumerate what it invalidates. The planner is replaceable; the Plan is governed.
+- A Goal above the Mission owns an outcome, never execution state. A host binding and a code scope say where and on what work may run, and dispatch is blocked until both exist. A Run is one agent turn beneath an Attempt. The Software Factory is a thin versioned configuration, not a second lifecycle.
+- Seven state machines (Mission, Plan, WorkOrder, Task, Attempt, Verification, Approval) and five rules: no state implies the next; Task Done ≠ WorkOrder accepted ≠ engine done ≠ Definition of Done; a failed Attempt does not make the Task terminal while recovery is active; none of UNKNOWN, MISSING, PENDING, FAILED, or STALE is success; approval is its own machine.
 
 ## Go deeper
 
@@ -413,4 +482,4 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - [30. Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md) for the command envelope and outbox.
 - [Glossary](../appendix/glossary.md); [Mission Control case study: implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md).
 - Primary sources at the pinned commits: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 Product Strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions Contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Domain Contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [Information Architecture](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/information-architecture.md), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Factory configuration](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/factory/configuration.ts), [PR checks and governed merge](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/prChecks.ts), [Execution manifest compiler](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/executionManifest.ts), [Workflow contract gate](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/factoryWorkflowContract.ts), [Structured handoff](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/packages/workflow-engine/src/handoff.ts), [Todo 025](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/025-complete-p1-freeze-agent-execution-manifests.md), [Todo 026](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/026-complete-p1-structured-workflow-contracts-context.md).
-- Source notes: Jay West, "AI Software Factory mission" (Intent layer outputs: Missions, WorkOrders, acceptance criteria, constraints, risk, evidence, ownership); Jay West, factory architecture notes and Mission Control walkthrough (Project Constitution, Mission Spec, Quality Contract, Factory Version, frozen manifest and Context Package, Candidate, Verification Subject, currentness, traceability chain, approval semantics).
+- Source notes: Jay West, "AI Software Factory mission" (Intent layer outputs: Missions, WorkOrders, acceptance criteria, constraints, risk, evidence, ownership); Jay West, factory architecture notes and Mission Control walkthrough (Project Constitution, Mission Spec, Quality Contract, Factory Version, frozen manifest and Context Package, Candidate, Verification Subject, currentness, traceability chain, approval semantics); Mission Control repository glossary and lexicon, reviewed 2026-09-02 (Goal, host binding, code scope, Run, the thin Software Factory configuration, and the seven authoritative state lists with their rules).

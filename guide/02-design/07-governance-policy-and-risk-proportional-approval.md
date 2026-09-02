@@ -4,7 +4,7 @@ part: design
 chapter: 7
 summary: How organizational intent becomes bounded machine authority — versioned policy, authorization envelopes, risk bands and risk-tiered review, decision rights, separation of duties, human-in-the-loop done right, waivers as product data, trust ceilings, autonomy per action class, ten control families, and the emergency controls that revoke authority when a run turns unsafe.
 absorbs: [08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md, 08-security-and-governance/06-agentic-governance-control-framework.md, 08-security-and-governance/07-authority-autonomy-and-emergency-control.md]
-infographics: [policy-decision-flow, risk-tier-review, autonomy-matrix, emergency-control]
+infographics: [policy-decision-flow, risk-tier-review, risk-proportional-autonomy, autonomy-matrix, recipe-ladder, emergency-control]
 ---
 
 # 7. Governance, policy, and risk-proportional approval
@@ -84,6 +84,21 @@ A practical first model uses three bands:
 | Red | Destructive, financial, security-sensitive, privacy, regulatory, irreversible data, or broad architectural change | Restricted execution, additional domain review, explicit risk owner, stronger evidence, multi-party approval where appropriate |
 
 The label should be policy-derived and explainable. A useful classifier considers `risk = impact × likelihood × exposure × irreversibility × uncertainty`. Detection strength and recovery quality reduce *residual* risk; they do not erase the hazard. Retain the factors, not only the colour.
+
+### Risk-proportional autonomy in a first version
+
+The three bands become operational when each one is paired with what the factory may do without asking. **Risk-proportional autonomy** is that pairing, classified by the policy engine rather than by the person opening the WorkOrder, and a defensible first version is deliberately narrow:
+
+<!-- infographic: risk-proportional-autonomy -->
+> **Infographic — Green, Yellow, Red: what proceeds without asking.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Band | What the factory may do automatically | What still needs a human | Execution posture |
+| --- | --- | --- | --- |
+| GREEN | Bounded, reversible work proceeds: dispatch, implementation, independent verification, and preparation of a review-ready pull request | Merge | Standard sandbox; sampled after the fact |
+| YELLOW | Research, planning, and bounded execution once the Plan is approved | Plan approval before execution; merge approval after evidence | Standard sandbox; full review package |
+| RED | Read-only investigation and planning | Plan approval, additional named reviewers, and merge approval; explicit risk owner | Restricted sandbox with narrowed tools, network, and credentials |
+
+Two lines in that table are easy to relax and should not be. First, *merge is human-only in a first version*, in every band. GREEN autonomy means the factory may carry work all the way to a review-ready pull request with independent evidence attached; it does not mean the pull request merges itself. The autonomy matrix later in this chapter shows rows where policy merges after independent validation, and those rows describe where a mature factory can go once its evidence, trust calibration, and rollback have been proven; a V1 ends at the review-ready PR and a human merges on the source provider. Second, RED work is sandboxed more tightly, not reviewed more slowly. Extra reviewers are the human half; the restricted sandbox is the deterministic half, and a factory that adds reviewers without narrowing the runtime has changed the paperwork and not the blast radius.
 
 ### Risk-tiered review
 
@@ -165,6 +180,8 @@ flowchart TD
 
 One person may hold several of these roles, but implementation and validation must remain *technically* distinct: validation runs under a separate identity and execution path, uses predefined criteria, generates its own evidence, and has no permission to modify the artifact it is judging. Where two-person control is impossible, narrow the allowed actions, strengthen independent technical validation, retain immutable evidence, and require later review. Combining people never justifies combining records or letting an executor certify itself.
 
+On the human side the same rule produces three distinct roles that a control plane should model as separate grants even when one person holds all of them on a small team: the **plan-approver**, who approves one exact Plan revision; the **acceptor**, who accepts a WorkOrder on current evidence; and the **merger**, who merges the pull request on the source provider. Keeping them separate does two things. It lets a factory require different people for them when the risk band demands it, without redesigning anything. And it makes a rule enforceable that is otherwise only a convention: *plan approval does not start execution*. Approving the Plan releases WorkOrders; dispatch is a later command, checked against preflight, and the person who approved the Plan has not thereby dispatched anything.
+
 ### Disagreement escalates; it is never voted away
 
 When validators conflict, majority voting can suppress the one signal that matters. A security failure is not outvoted by two passing formatting checks. Validator disagreement always *increases* governance. The factory opens a **Risk Review** holding the competing claims, their methods, artifact identities, severity, freshness, independence, likely causes, and safe options. The next action may be targeted revalidation, corrective work, a domain-owner decision, or rejection. An unexplained retry is not a resolution.
@@ -180,6 +197,28 @@ Approval fatigue is what happens when reviewers keep receiving low-information r
 When a human is brought in, what they receive determines whether the decision is real. A reviewer given only an approve button is being asked to lend their name, not their judgment. The decision packet below gives them the Plan, the diff, the risk class, the tests, the evaluation results, the policy decisions that fired, and the evidence, organised so that the surprise is at the top. One more rule keeps the loop honest: the human should never be compensating for missing automation. If reviewers are routinely checking that the diff stayed in scope or that tests ran on the current commit, those checks belong in a deterministic gate, and their presence in the packet is a defect in the platform, not diligence on the reviewer's part.
 
 Where the packets land matters as much as what they contain. An **approval inbox** is the one queue where every pending decision packet waits, sorted by risk and expiry, so a decision owner sees what needs them in one place rather than across chat threads, pull-request tabs, and email. **Escalation UX** is the design of the moment a surprise reaches a person: the packet must state what happened, what the system already did, what it is asking for, and what happens if nobody answers before the deadline. The budget being spent here is **operator cognitive load**, the amount of attention a human must expend to make a sound decision; every packet that arrives without a clear question, or that repeats a check a gate should have made, spends that budget and buys nothing.
+
+### Recipes and experience levels: guidance that never lowers policy
+
+Governance also has to meet the builder before a Mission exists, when the question is "what kind of work is this, and how much of the factory does it need?". A **recipe** is a rule-based recommendation for that question: given what the builder has said about the work, it proposes a default posture (which roles run, which checks run, how much autonomy is reasonable) and drafts the Mission accordingly. Eight recipes cover most engineering work, and they form a ladder from cheapest to most complete:
+
+<!-- infographic: recipe-ladder -->
+> **Infographic — Eight recipes, from read-only Scout to Full SDLC.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Recipe | Use it when | Default posture |
+| --- | --- | --- |
+| Scout | Facts or a root cause are needed before anything is decided | Read-only investigation; no repository mutation |
+| Plan | An approval-ready plan is the deliverable | Read-only planning; Plan submitted for human approval |
+| Build | A small, obvious change with low ambiguity | One builder plus baseline checks |
+| Quality | Existing code needs deterministic checks | Deterministic-first: lint, type, test, scan; no model call if everything passes |
+| Build+Test | A known change needs regression evidence | Builder, tests, and a bounded repair loop |
+| Build+Review | Requirement fidelity needs an independent eye | Builder, independent reviewer, bounded revision |
+| Plan+Build+Test | A normal moderate change | Standard governed delivery: plan approval, build, test, verify |
+| Full SDLC | Broad, ambiguous, high-risk, or security-sensitive work | Research → plan → build → review → verify → accept, with every gate in place |
+
+The rule that keeps a recipe from becoming a loophole is one sentence: *a recipe never lowers active policy*. A recipe can add roles, checks, and review; it can propose a posture; it can pre-fill a Mission draft. It cannot turn a RED classification GREEN, skip preflight, or waive a required approval, because those are decided by the policy engine from the WorkOrder's actual scope and risk after the recipe has done its work. Recipes are how the Factory Board of [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) guides a builder in; policy is what governs them once they are in.
+
+The same principle applies to how much of the factory a builder is *shown*. An **experience level** (Basic, Intermediate, Advanced) is a presentation setting: it controls disclosure, so that a first-time builder sees a guided path and a platform engineer sees every knob. It never changes permissions, the executor that runs, the evidence required, or who may accept. A control plane in which switching to "Advanced" widens what a person can do has put authorization in a preference; the level should be safe to set to anything by anyone, because it moves only what is on the screen.
 
 ### Exceptions are governed objects
 
@@ -309,6 +348,19 @@ Every high-impact action has a named override point and an accountable owner. Du
 
 **Policy decision record** (retained per evaluation): policy version, normalized inputs, matched rules, precedence trace, result (`ALLOW`, `DENY`, `NEEDS_APPROVAL`), reason, required approver roles, expiry, and invalidation events.
 
+**Preflight checklist** (every item checked, fail-closed, before a lease is granted; an unknown result is treated as a failure):
+
+- repository: registered, readable, correct default branch, provider connection current
+- branch or worktree: Attempt-scoped, clean, base SHA recorded
+- environment: sandbox or host profile admitted for the data classification
+- executor: adapter and version admitted; executor snapshot copied onto the Attempt
+- tools: allowed set resolved from the manifest, nothing inherited from the host
+- secrets: short-lived, scoped to the Attempt, none in browser-facing configuration
+- capacity: concurrency key free, worker available, reviewer capacity where required
+- policy: active version resolved, risk band classified, required approvals present and unexpired
+- budget: token, spend, time, attempt, and tool-call ceilings reserved
+- scope: host binding active and code scope frozen; dispatch blocked without both
+
 **Decision packet** (what a human sees instead of an approval queue):
 
 - the decision required and its accountable owner
@@ -392,6 +444,10 @@ Control evidence binds the exact control version, subject, environment, identity
 | Repeated waiver | Same exception requested by many teams | Grant time-boxed waivers with owner, reason, scope, expiry, evidence | Fix the policy or add the missing capability |
 | Exception by relationship | Waivers depend on knowing which manager to ask | One documented exception path for everyone | Audit exception provenance; remove informal routes |
 | Human compensating for missing automation | Reviewers check scope, currentness, or budgets by hand | Move the check into a deterministic gate | Remove the manual step from the packet |
+| GREEN auto-merge in a first version | A pull request merged with no human merge decision recorded | Revoke the merge grant from every automated actor; human merge only | Re-earn policy merge later with trust calibration, rollback proof, and a governed promotion |
+| Recipe lowers policy | A RED-classified WorkOrder ran under a Build recipe with baseline checks only | Policy engine reclassifies from actual scope and risk after recipe selection | Recipes may add controls, never remove them |
+| Experience level widens permission | Switching to Advanced exposes an action the role does not hold | Move the check to server-side authorization; treat the level as presentation | Levels change disclosure only |
+| Plan approval dispatched execution | Attempts start the moment a Plan is approved | Separate the dispatch command; require preflight | Distinct plan-approver, acceptor, and merger grants |
 
 ## In Mission Control
 
@@ -416,6 +472,8 @@ flowchart TD
 
 **Future.** Operational Autonomy Levels, the numeric Trust Score and bands, automatic demotion and quarantine, sustained-evidence promotion, the Factory Governance Board, a single explainable policy decision service, and decision-packet-centred operator experience remain doctrine.
 
+The repository glossary and lexicon reviewed 2026-09-02 state the V1 posture in this chapter's terms: GREEN, YELLOW, and RED classified by the policy engine; human merge only, with V1 ending at a review-ready pull request and no GREEN auto-merge; distinct plan-approver, acceptor, and merger roles with plan approval never starting execution; the eight Factory Board recipes that never lower active policy; Basic, Intermediate, and Advanced experience levels as presentation-only disclosure; a stop condition required on the Mission draft before Plan compilation; and preflight over repository, branch or worktree, environment, executor, tools, secrets, capacity, policy, and budget. Those are contract statements at that review date; the pinned commit above is the evidence boundary for what is enforced.
+
 **Why the golden-path run stopped.** Golden Path 01 proved Mission creation, versioned Plan approval, WorkOrder release, and the separate Validator WorkOrder, then stopped before Task or Attempt creation because no Governance Policy existed to bind into a Factory Configuration. That was the correct outcome: without an active policy version the control plane cannot say which actions the executor may take. Two independent blockers remained — the GitHub App was not installed for the lab repository, and todo 024 (durable worker, leased Attempt, isolated worktree, bounded path scope, idempotent PR creation, lineage, restart reconciliation) was incomplete. The sequence to rerun is: finish todo 024; install the least-privilege GitHub App; create an active Governance Policy; create, assess, and activate the exact Factory Configuration; rerun the unchanged acceptance contract from a clean pinned commit. See [Appendix C](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) and the [golden-path evidence](../appendix/mission-control/evidence/2026-08-08-golden-path/README.md).
 
 ## Retain this
@@ -433,12 +491,15 @@ flowchart TD
 - Define autonomy per action class: instantly reversible changes may auto-promote on baseline wins; anything touching permissions, security boundaries, tool authority, destructive operations, or deployment authority never does. Ask "what if this is wrong, and how easily can we reverse it?"
 - Waivers carry owner, reason, scope, expiration, and evidence; a repeated waiver is bad policy or a missing capability; governance cannot become a relationship business.
 - The model proposes; policy authorizes. Probabilistic reasoning never implies probabilistic authorization, and nothing a model reads can widen its grant.
+- Risk-proportional autonomy in a first version: GREEN bounded reversible work proceeds to a review-ready PR; YELLOW needs Plan approval and merge approval; RED runs in a restricted sandbox with extra reviewers. Merge is human-only in V1 in every band.
+- Plan-approver, acceptor, and merger are distinct grants, and plan approval never starts execution. Preflight checks repository, branch, environment, executor, tools, secrets, capacity, policy, budget, and scope before any lease.
+- A recipe (Scout, Plan, Build, Quality, Build+Test, Build+Review, Plan+Build+Test, Full SDLC) recommends a posture and never lowers active policy. An experience level changes what is shown, never what is permitted.
 
 ## Go deeper
 
 - [Chapter 3 — First principles: trust, evidence, and authority](../01-understand/03-first-principles-trust-evidence-and-authority.md), [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md), [Chapter 5 — Authoritative records](../02-design/05-authoritative-records.md)
 - [Chapter 12 — Durable execution](../03-build/12-durable-execution.md) for leases and attempt manifests; [Chapter 26 — Security](../04-prove/26-security.md); [Chapter 29 — Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 30 — Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md); [Chapter 33 — Governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md)
-- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Study Guide* (weeks 5–6 autonomy matrix); Jay West, factory architecture notes (risk-classification dimensions, risk-tiered review, human-in-the-loop done right, autonomy per action class, waivers as product data, the model proposes and policy authorizes); Mission Control North Star and V1 Product Strategy docs at `8014d5af`
+- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Study Guide* (weeks 5–6 autonomy matrix); Jay West, factory architecture notes (risk-classification dimensions, risk-tiered review, human-in-the-loop done right, autonomy per action class, waivers as product data, the model proposes and policy authorizes); Mission Control North Star and V1 Product Strategy docs at `8014d5af`; Mission Control repository glossary and lexicon, reviewed 2026-09-02 (risk-proportional autonomy, human merge only, separation of duties roles, recipes, experience levels, preflight)
 - Mission Control code at `8014d5af`: `convex/factory/configuration.ts`, `convex/governance/policyEnvelopes.ts`, `convex/lib/armPolicy.ts`, `convex/governance/approvalRecords.ts`, `convex/approvals.ts`, `convex/governance/permissions.ts`, `convex/governance/roles.ts`, `convex/governance/roleAssignments.ts`, `convex/lib/githubAppReadiness.ts`, `convex/githubAppConnections.ts`, `apps/mission-control-ui/src/ApprovalsModal.tsx`
 - Standards: [NIST AI RMF 1.0](https://doi.org/10.6028/NIST.AI.100-1); [NIST Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1); [NIST SSDF](https://csrc.nist.gov/projects/ssdf/); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); [SLSA 1.2](https://slsa.dev/spec/v1.2/); [SPIFFE Workload API](https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/)
 - [Glossary](../appendix/glossary.md)

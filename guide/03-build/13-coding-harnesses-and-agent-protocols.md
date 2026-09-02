@@ -4,12 +4,12 @@ part: build
 chapter: 13
 summary: How to wrap an interactive coding agent so it can be leased, observed, cancelled, resumed, and substituted inside a factory, and which protocol belongs at which boundary.
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, harness-control-plane, execution-loop, agent-contract, meta-harness, harness-adapter-contract, protocol-boundaries]
+infographics: [inner-outer-harness, harness-control-plane, execution-loop, agent-contract, meta-harness, harness-adapter-contract, adapter-admission, protocol-boundaries]
 ---
 
 # 13. Coding harnesses and agent protocols
 
-The control plane from the previous two chapters can dispatch an Attempt, but something still has to run the model-and-tools loop that writes code. That something is a **coding harness**: Claude Code, Codex, Pi, OpenCode, Amp, Devin, Factory, or one you build. This chapter explains how to make a harness operable inside a factory without depending on its terminal output, how to keep your own controls outside it, and which of the competing protocols (MCP, ACP, AG-UI, A2A) solves which problem. After reading it you should be able to specify an adapter contract, argue for or against wrapping a vendor harness, and explain why "the hook fired" is never the same as "the policy held."
+The control plane from the previous two chapters can dispatch an Attempt, but something still has to run the model-and-tools loop that writes code. That something is a **coding harness**: Claude Code, Codex, OpenCode, Amp, Devin, Factory, or one you build. This chapter explains how to make a harness operable inside a factory without depending on its terminal output, how to keep your own controls outside it, and which of the competing protocols (MCP, ACP, AG-UI, A2A) solves which problem. After reading it you should be able to specify an adapter contract, argue for or against wrapping a vendor harness, and explain why "the hook fired" is never the same as "the policy held."
 
 ## The problem
 
@@ -252,7 +252,7 @@ In this guide's terms the meta-harness is the control plane's harness-facing hal
 
 ### Where the seam sits: thin or thick
 
-You choose where to put the seam between the two. Buy a rich inner harness that ships with a browser, testing, subagents, and compaction, and your outer harness can be thin, little more than the skills you inject and the loop that drives it. Or take a thin, configurable inner harness such as Pi or OpenCode, where you set up every behavior yourself, and build a thick outer harness around it. Dexter's framing on the HumanLayer and BAML livestream is that Claude Code is "bring it and it's good," while Pi "comes with control but you have to build more." Both are legitimate; they are different bets on where your team's effort goes.
+You choose where to put the seam between the two. Buy a rich inner harness that ships with a browser, testing, subagents, and compaction, and your outer harness can be thin, little more than the skills you inject and the loop that drives it. Or take a thin, configurable inner harness such as OpenCode or one of the smaller build-your-own harnesses, where you set up every behavior yourself, and build a thick outer harness around it. Dexter's framing on the HumanLayer and BAML livestream is that Claude Code is "bring it and it's good," while a thin harness "comes with control but you have to build more." Both are legitimate; they are different bets on where your team's effort goes.
 
 The same tradeoff shows up in the adapter itself. A **thin adapter** preserves native features and exposes the control plane to provider differences. A **thick adapter** normalizes behavior across providers but may erase useful capabilities or invent a false lowest-common-denominator abstraction. The practical answer is to translate only the events and commands the factory contracts require, and to preserve the native payloads as diagnostic artifacts alongside the normalized stream. Think of a travel power adapter: it converts the plug shape so the factory can connect, but it does not pretend every appliance behaves the same.
 
@@ -289,7 +289,7 @@ Most harnesses expose **lifecycle hooks**: callbacks on session start, tool call
 
 But a native hook is not automatically trustworthy. Before relying on one for anything consequential, the factory must know whether it is synchronous or fire-and-forget, bypassable by a flag or a config edit, ordered relative to other hooks, retryable, authenticated, and covered by the harness's own configuration hierarchy (user, project, enterprise). A hook in a user-editable settings file is a smoke detector wired to your phone: valuable, and not the fire code. Consequential policy belongs in an external authoritative control path or a qualified enforcement point, per [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md).
 
-Hooks are also where cross-harness portability dies. Claude Code and Codex do not have the same hooks. Pi's are different again. OpenCode has a plugin system in which hooks are a separate concept entirely. Dexter's diagnosis is that every harness is, underneath, its own bespoke UI, and the hook model is part of that UI. Even the instruction file is contested: Claude Code reads `CLAUDE.md` while most other tools converged on `AGENTS.md`, and the vendors have not agreed to share. Expect to maintain both.
+Hooks are also where cross-harness portability dies. Claude Code and Codex do not have the same hooks. The thin configurable harnesses differ again. OpenCode has a plugin system in which hooks are a separate concept entirely. Dexter's diagnosis is that every harness is, underneath, its own bespoke UI, and the hook model is part of that UI. Even the instruction file is contested: Claude Code reads `CLAUDE.md` while most other tools converged on `AGENTS.md`, and the vendors have not agreed to share. Expect to maintain both.
 
 ### Driving to completion with bounded loops
 
@@ -319,6 +319,49 @@ flowchart TB
 ```
 
 Substitutability is never global. Two adapters are substitutable only for a specified workload and policy set. One may be eligible for read-only repository analysis and ineligible for code mutation or long-running recovery. The manifest plus the conformance results (below) are what let the orchestrator make that call per WorkOrder.
+
+### Adapter admission: prohibited authorities and required external controls
+
+The capability manifest says what an adapter can do. **Admission** is the control plane's decision that a specific adapter version may be selected for governed work, and it is made against a harness contract that is the same for every engine, whether the engine is a single-session coding harness or a larger epic-delivery engine that plans, splits work into stories, and runs its own gates. [Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md) gives the authority table and the two admission lists from the control plane's side; this section is the adapter mechanics that make those lists checkable.
+
+<!-- infographic: adapter-admission -->
+> **Infographic — What an adapter runs, and what runs around it.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph Outside["Required external controls (factory worker)"]
+        L["Canonical worker lease"]
+        S["Sandbox policy"]
+        R["Repository-scope reconciliation"]
+        V["Independent verification"]
+        P["Publication permit"]
+    end
+    subgraph Adapter["Adapter lifecycle"]
+        A1["prepare"] --> A2["execute"] --> A3["collectResult"] --> A5["cleanup"]
+        A4["cancel"] -.-> A5
+    end
+    L --> A1
+    S --> A2
+    A3 -->|"factory-result/v1 + Candidate SHA"| R
+    R --> V --> P
+    X["Prohibited: leases · verification subjects · verification plans · evidence authority · publication · acceptance"] -. "adapter must lack" .-> Adapter
+```
+
+**The lifecycle is five operations.** `prepare` receives the frozen manifest and the executor snapshot, provisions the engine's environment inside the Attempt's worktree or sandbox, and records the engine's own identity for this Attempt before any work starts. `execute` starts the engine and streams its native status. `collectResult` gathers the engine's terminal output into the shared structured result. `cancel` is the control plane's stop, called from a control-plane cancel command and never from the engine's side. `cleanup` releases the engine's resources and records what it could and could not remove. Every operation is idempotent against its Attempt, because the worker may call it twice after a crash.
+
+**The result is a shared contract.** Every adapter returns the same **structured result contract**, `factory-result/v1`: the outcome class, the candidate SHA if one exists, the engine's phase at termination, the artifacts and their digests, the gate outcomes the engine observed, unresolved work, and the native payload reference. The control plane reads only this. A result without a candidate SHA is a result the control plane cannot verify, and the WorkOrder goes to BLOCKED rather than forward. The **harness capability manifest** (v1) sits beside the result contract and declares, per adapter version, what the engine supports for models, filesystem, git, sandbox, cancellation, and admission, and what its known limitations are; a required capability the manifest does not claim fails admission closed.
+
+**Selection is the only engine-specific step.** The factory's own Attempt worker selects the adapter from the executor snapshot, then runs the five required external controls itself: it holds the canonical lease, applies the sandbox policy, reconciles changed files and the head SHA against the frozen code scope, dispatches independent verification, and publishes through the permit-gated GitHub App. There is no engine-specific worker path. An engine that wants its own lease, its own publication, or its own verifier has asked for one of the six prohibited authorities, and the answer is no.
+
+**Events are mapped, not trusted.** The adapter polls or receives engine status and maps it onto the factory's canonical run events, each with the idempotency key `{workOrderId}:{runId}:{engineId}:{eventType}:{sequence}` so that a re-poll after a crash cannot double-count. The canonical event types are `run.created`, `worktree.created`, `plan.generated`, `step.started`, `step.completed`, `artifact.produced`, `approval.required`, `verification.executed`, `failure.encountered`, `retry.attempted`, `pr.updated`, `run.completed`, and `learning.candidate.proposed`. Native events that have no canonical equivalent are archived as raw payloads, not invented as new types.
+
+**Engine phases map to tendencies, never to transitions.** An epic-delivery engine moves through phases such as planning, planned, approved, implementation or in progress, gate, finalizing, done, failed, rejected, and stopped. Each phase tells the control plane which WorkOrder state the work is *tending toward*, and the Execution Run Inspector may show it; none of them moves the WorkOrder. Done tends toward AWAITING_VERIFICATION and reaches it only when a candidate SHA exists. Failed, rejected, and stopped tend toward BLOCKED or the Attempt's terminal states. An engine's nested units of work (stories, with their own pending, running, done, failed, or blocked states) live in engine-owned nested worktrees beneath the epic worktree; the Attempt records the epic worktree and the adapter records the story tree as artifacts, so the factory can see the engine's decomposition without adopting its state machine.
+
+**Cancellation has one direction.** A control-plane cancel calls the adapter's `cancel`, which stops the engine. Cancellation wins over any late success until terminal success has been durably reported; a stop that fails still leaves the Attempt canceled, with the cleanup outcome recorded and the worktree preserved for inspection. The engine never cancels the WorkOrder.
+
+**CI proves the adapter, operators prove the engine.** Continuous integration runs the adapter against a **deterministic fake-engine fixture**: a stub that returns a fixed epic id, a fixed status sequence as JSON, and a fixed candidate SHA, so the lifecycle, result mapping, idempotency keys, cancellation, and cleanup can be exercised on every commit with no model in the loop. Live engine runs are operator evidence, retained against an exact revision, and are never a CI gate; a CI job that needs a real engine to pass is a job that fails for reasons unrelated to the code.
+
+**Unattended mode is not admitted.** Most engines offer a "full-auto" mode that approves its own plan and proceeds without a human. That mode is not admitted in a first version. The admitted posture is manual approve-then-run: a human approves the plan in the control plane, the control plane attests that approval, and only then does the adapter start the engine. An experimental adapter is additionally flag-gated, off by default, and excluded from remote sandbox execution until it has passed the same conformance and live evidence bar as the production adapter.
 
 ### Protocols and their boundaries
 
@@ -355,7 +398,7 @@ flowchart LR
 
 ### The dated landscape, and the bet on owning it
 
-Product names belong in dated case studies; contract vocabulary belongs in the canon. As of this writing (verified 2026-08-30), Codex and Claude Code are the two most useful case studies: both offer a CLI, an SDK or programmatic mode, hooks, tool and permission models, session persistence, and automation features, each on a different model, local/cloud split, and lifecycle. Pi and OpenCode are the configurable, build-your-own end. Amp, Devin, Factory, Gemini's agent, and vendor "cloud agents" such as Cursor's and Cognition's bundle harness, environment, and orchestration together. That is the line between a **vertically integrated stack**, where one vendor supplies model, harness, environment, and orchestration as a single product, and a **composable stack**, where each layer is a separately chosen component behind an interface you own; the first is faster to adopt, the second is easier to leave. The same line separates **managed execution**, where the vendor runs the harness on its own fleet, from a **self-hosted harness** that you run on your own workers with your own identity and network boundaries. Every one of these must be verified against current official documentation and a pinned runtime before use. The product name describes a suite of experiences; the factory integrates with one exact harness and version.
+Product names belong in dated case studies; contract vocabulary belongs in the canon. As of this writing (verified 2026-08-30), Codex and Claude Code are the two most useful case studies: both offer a CLI, an SDK or programmatic mode, hooks, tool and permission models, session persistence, and automation features, each on a different model, local/cloud split, and lifecycle. OpenCode and the thinner configurable harnesses are the build-your-own end. Amp, Devin, Factory, Gemini's agent, and vendor "cloud agents" such as Cursor's and Cognition's bundle harness, environment, and orchestration together. That is the line between a **vertically integrated stack**, where one vendor supplies model, harness, environment, and orchestration as a single product, and a **composable stack**, where each layer is a separately chosen component behind an interface you own; the first is faster to adopt, the second is easier to leave. The same line separates **managed execution**, where the vendor runs the harness on its own fleet, from a **self-hosted harness** that you run on your own workers with your own identity and network boundaries. Every one of these must be verified against current official documentation and a pinned runtime before use. The product name describes a suite of experiences; the factory integrates with one exact harness and version.
 
 Why are there so many? Because, as Dexter puts it, a lot of people are betting that owning the harness is worth a lot of money, the way owning the browser and owning mobile turned out to be. That bet is why vendors keep their hooks and instruction files different, and why you should assume APIs will keep breaking. The vendors' incentive is not your portability.
 
@@ -446,6 +489,14 @@ These are drawn from teams running factories today and apply to whichever harnes
 
 **Remote agent trusted by location.** A vendor-hosted or remote execution is treated as more trustworthy because it runs on managed infrastructure, and its output flows further with less verification. Detect by asking whether the remote agent's events trace to one authorized Attempt under the same contract. Fix by treating every backend, local or remote, as an execution behind the same contract and the same verification.
 
+**Phase written as state.** The adapter maps the engine's "done" phase straight onto the WorkOrder, or its "failed" phase straight onto the Task, and the factory's state machines are now driven by a vendor's enum. Detect it by finding any WorkOrder or Task transition whose actor is an adapter; fix it by mapping phases to tendencies shown in the run inspector and leaving transitions to control-plane commands with evidence.
+
+**Duplicate events after a re-poll.** The adapter crashed mid-poll, restarted, and re-emitted the engine's status history, doubling step counts and re-triggering downstream handlers. Detect it in event tables with repeated `{workOrderId, runId, engineId, eventType, sequence}` tuples; fix it with the idempotency key on every mapped event.
+
+**Live engine as a CI gate.** The adapter's test suite calls a real engine, so the build fails on provider outages, model drift, and login expiry. Detect it in flaky CI history correlated with provider status; fix it with the deterministic fake-engine fixture in CI and live runs retained as operator evidence.
+
+**Unattended mode admitted by default.** The engine's full-auto flag was left on because it made the demo faster, so plans are approved by the engine's own prompt and the control plane's approval record is decorative. Detect it by asking who attested the plan approval on the last ten Attempts; fix by admitting only approve-then-run with control-plane-attested approval.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control defines a provider-neutral harness lifecycle, exact capability manifests, structured results, Execution Manifest bindings, persistent-worker and remote-sandbox backends, and a `codex/v1` adapter. It separates executing harnesses from independent verification and publication authority. That is implemented as architecture and contract.
@@ -453,6 +504,8 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 Partial or unproven: the studied Codex and DeepSeek capability manifests declared MCP unsupported, and no first-class production MCP gateway was verified. There is no evidence of an ACP, AG-UI, or A2A bridge, no cross-harness conformance suite, and no complete proof of session resume or of behaviorally equivalent substitution between adapters. Generic harness architecture was present while production execution remained unconfigured.
 
 Future: one canonical harness contract with explicit optional capabilities and native-extension envelopes; each adapter shipping with pinned manifest, compatibility range, conformance results, security review, event mapping, known loss of fidelity, and rollback path; protocol bridges terminating at a policy-aware gateway so any event can be traced to one authorized Attempt.
+
+The repository glossary and lexicon reviewed 2026-09-02 describe the admission mechanics in this chapter (the five-operation lifecycle, `factory-result/v1`, the capability manifest v1, the canonical event types with their idempotency key, phase-to-tendency mapping, the fake-engine CI fixture, and the approve-then-run posture) as the contract under which a pluggable execution engine is composed as a harness adapter. That adapter is experimental: flag-gated, off by default, and not admitted to remote sandbox execution. The contract and its CI fixture are what the lexicon states; live runs through it are operator evidence to be pinned in [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md), not a claim this chapter makes.
 
 ## Retain this
 
@@ -471,6 +524,7 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - Several harnesses without a common layer are several silos. The meta-harness governs across them: a composition manifest, policy enforced once, shared resumable sessions, and a pluggable sandbox. Its practical form is a unified wrapper that owns install, configuration, authentication, standard defaults, and cost visibility for every harness; in this guide it is the control plane's harness-facing half.
 - Decide which part of the harness to own: adopt commodity agent-loop mechanics, own the agent contract. The harness is how agents execute; the control plane is how the organization governs what they execute.
 - The agent contract fixes input (frozen manifest and frozen scope), output (normalized events, artifacts, structured completion), state semantics (conversation state is evidence, durable state is what recovery relies on), authority, and lifecycle. Behind it, local workers, remote sandboxes, and vendor cloud agents are interchangeable execution backends; delegated and remote execution get the same scope and the same verification, and portability is proven by the conformance suite.
+- An adapter runs prepare → execute → collectResult → cancel → cleanup, returns `factory-result/v1` with a candidate SHA, publishes a capability manifest, and is admitted only when it lacks the six prohibited authorities and the factory worker supplies the five external controls. Engine status is mapped to canonical events under an idempotency key; engine phases are tendencies, never transitions; cancellation runs one way; CI uses a fake engine and live runs are operator evidence; unattended mode is not admitted.
 
 ## Go deeper
 
@@ -484,6 +538,6 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - [Chapter 7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) — why enforcement cannot live in a hook.
 - [Glossary](../appendix/glossary.md) — inner harness, outer harness, adapter, capability manifest, ACP, AG-UI, A2A, MCP.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory, the agent contract, execution backends and delegated execution, frozen scope, conversation versus durable state, portability.
+- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory, the agent contract, execution backends and delegated execution, frozen scope, conversation versus durable state, portability; Mission Control repository glossary and lexicon, reviewed 2026-09-02 — the adapter lifecycle, `factory-result/v1`, the capability manifest, canonical event types and idempotency key, phase-to-tendency mapping, the fake-engine fixture, and the approve-then-run admission posture.
 - Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) — the meta-harness layer (composition, policy, collaboration, sandbox) and Omnigent as one implementation; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) — the unified wrapper across interactive harnesses, its standard defaults, cost visibility, and the single MCP gateway.
 - Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.
