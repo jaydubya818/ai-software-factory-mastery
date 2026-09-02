@@ -1335,13 +1335,13 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .factory-line .section-kicker { color: var(--amber); }
 .factory-line p { margin: 10px 0 0; font-family: var(--font-geist-mono), monospace; font-size: clamp(12px, 1.4vw, 16px); letter-spacing: .02em; line-height: 1.6; }
 .home-guide-map ol.home-part-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; border-top: 0; }
-.home-guide-map .home-part-cards li a { display: flex; flex-direction: column; gap: 0; min-height: 300px; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); transition: background-color 160ms ease, border-color 160ms ease; }
+.home-guide-map .home-part-cards li a { display: flex; flex-direction: column; gap: 0; min-height: 0; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); transition: background-color 160ms ease, border-color 160ms ease; }
 .home-guide-map .home-part-cards li a:hover { background: var(--sage); border-color: #9bafa4; }
 .home-guide-map .home-part-cards li a > span { color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
-.home-guide-map .home-part-cards li strong { display: block; margin: 28px 0 8px; font-family: Georgia, serif; font-size: 34px; font-weight: 500; letter-spacing: -.03em; }
+.home-guide-map .home-part-cards li strong { display: block; margin: 18px 0 8px; font-family: Georgia, serif; font-size: 34px; font-weight: 500; letter-spacing: -.03em; }
 .home-guide-map .home-part-cards li em { display: block; color: var(--ink); font-size: 15px; font-style: normal; font-weight: 600; line-height: 1.45; }
 .home-guide-map .home-part-cards li p { margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-.home-guide-map .home-part-cards li small { display: block; margin-top: auto; padding-top: 22px; color: var(--green); font-family: var(--font-geist-mono), monospace; font-size: 11px; }
+.home-guide-map .home-part-cards li small { display: block; margin-top: auto; padding-top: 18px; color: var(--green); font-family: var(--font-geist-mono), monospace; font-size: 11px; }
 .toc-part > header > a { align-self: center; color: var(--green); font-size: 13px; font-weight: 650; }
 .toc-list { list-style: none; margin: 0; padding: 12px 34px 22px; }
 .toc-list li a { display: grid; grid-template-columns: 42px 1fr auto; gap: 16px; align-items: start; padding: 18px 0; border-bottom: 1px solid var(--line); }
@@ -1434,3 +1434,6 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 @media (max-width: 600px) { .guide-home-hero { padding-top: 40px; padding-bottom: 36px; } .guide-home-hero h1 { font-size: 42px; } }
 .hero-tertiary { align-self: center; margin-left: 6px; font-size: 14px; font-weight: 600; color: var(--green); text-decoration: none; }
 .hero-tertiary:hover { text-decoration: underline; }
+/* Part cards: equal height, question-led */
+.home-part-cards > li > a { display: flex; flex-direction: column; height: 100%; }
+.home-part-cards > li > a > em { flex: 1; }

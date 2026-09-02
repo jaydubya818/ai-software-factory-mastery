@@ -70,7 +70,6 @@ export default function Home() {
                     <span>Part {part.number}</span>
                     <strong>{part.verb}</strong>
                     <em>{part.question}</em>
-                    <p>{part.summary}</p>
                     <small>{first && last ? `Chapters ${first.chapter}–${last.chapter}` : ""}</small>
                   </Link>
                 </li>
@@ -84,11 +83,6 @@ export default function Home() {
           <div className="principle-list"><div><strong>Humans</strong><span>Own intent, judgment, policy, and material risk</span></div><div><strong>Agents</strong><span>Reason and execute inside bounded authority</span></div><div><strong>Software</strong><span>Owns durable state, policy, recovery, and control</span></div><div><strong>Evidence</strong><span>Proves whether exact work is ready to progress</span></div></div>
         </section>
 
-        <section className="guide-reference-callout home-reference-callout">
-          <div><span className="section-kicker">Beyond the sequence</span><h2>The table of contents, the atlas, and the reference shelf.</h2></div>
-          <p>The full table of contents lists every chapter with its summary. The atlas holds the system maps. The reference shelf holds the glossary, labs, Mission Control case studies, research canon, and coverage.</p>
-          <div><Link className="button button-primary" href="/guide">Table of contents</Link><Link className="button button-secondary" href="/visuals">Atlas</Link><Link className="button button-secondary" href="/topics">Reference</Link></div>
-        </section>
       </main>
       <SiteFooter />
     </>
