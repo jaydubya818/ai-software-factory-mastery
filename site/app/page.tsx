@@ -3,7 +3,7 @@ import { chapters, chaptersForPart, getChapter } from "../lib/content";
 import { guideParts } from "../lib/guide";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
-import { ValueStream } from "./components/ValueStream";
+import { Pipeline } from "./components/Pipeline";
 
 const definitions = [
   ["Capability supply", "Agent Factory", "Creates, versions, evaluates, publishes, and governs reusable agents, skills, tools, model profiles, and configurations.", 10],
@@ -38,17 +38,17 @@ export default function Home() {
           </p>
         </section>
 
-        <section className="home-value-stream" aria-labelledby="value-stream-title">
+        <section className="home-pipeline" aria-labelledby="pipeline-title">
           <header>
             <div>
-              <span className="section-kicker">End-to-end value stream</span>
-              <h2 id="value-stream-title">From governed intent to confirmed outcome</h2>
-              <p className="factory-one-line" aria-label="The factory in one line">Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</p>
+              <span className="section-kicker">The factory in one line</span>
+              <h2 id="pipeline-title">From governed intent to confirmed outcome.</h2>
             </div>
-            <p>A closed loop: every stage receives an explicit contract, produces durable records, and returns evidence to a named authority. Click a stage for the technical deep dive.</p>
+            <p>Eight stages, each with an explicit contract, durable records, and evidence returned to a named authority. Click a stage for the technical deep dive.</p>
           </header>
-          <ValueStream compact />
+          <Pipeline />
         </section>
+
 
         <section className="definition-band" aria-label="Three definitions">
           {definitions.map(([kicker, title, description, chapterNumber]) => {
