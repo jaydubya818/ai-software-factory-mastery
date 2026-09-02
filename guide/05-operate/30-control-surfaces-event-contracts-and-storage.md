@@ -111,7 +111,7 @@ Status words are contracts. A run is *awaiting plan approval*, *queued for capac
 
 ### Stream useful progress, not tokens
 
-A **progress event** is a summary written for a person: the decisions completed since the last event, any material discovery (a dependency nobody mentioned, a test that was already broken), any change to scope, evidence produced, budget consumed, and the next transition the run expects. Token streams and tool-call streams remain available as diagnostics for the engineer who wants them, but they are not the default view.
+**Live progress** is the execution view's running account of what a run has done and what it expects to do next, updated as the run proceeds rather than when it ends. Its unit is the **progress event**, a summary written for a person: the decisions completed since the last event, any material discovery (a dependency nobody mentioned, a test that was already broken), any change to scope, evidence produced, budget consumed, and the next transition the run expects. Token streams and tool-call streams remain available as diagnostics for the engineer who wants them, but they are not the default view.
 
 Notifications built on progress events need four properties. They are deduplicated, so that three retries of one failure do not produce three pages. They are severity-aware, so that a stale-evidence block and a budget-exhausted halt are not styled the same as a routine completion. They are accessible. And they are routed to the accountable person, not to a channel where responsibility diffuses.
 
@@ -143,7 +143,7 @@ A decision packet also enforces the distinction between rejecting and requesting
 
 ### Preserve safe human control
 
-Pause and cancel are different operations, and the interface has to say which it is doing. Pause holds the lease and retained state so the run can resume; cancel releases the lease, records the terminal state, and may trigger cleanup or compensation. Before any approval the interface previews the side effects it will unlock (which repositories, environments, spend), and after an action is accepted it confirms what was recorded, so the operator never guesses whether the click landed.
+Pause and cancel are different operations, and the interface has to say which it is doing. **Pause/resume** is one reversible pair: pause holds the lease and retained state so the run can resume from the same point; cancel releases the lease, records the terminal state, and may trigger cleanup or compensation. Before any approval the interface previews the side effects it will unlock (which repositories, environments, spend), and after an action is accepted it confirms what was recorded, so the operator never guesses whether the click landed.
 
 Operational interfaces are used under stress, at odd hours, by people with different abilities in different time zones. Keyboard navigation, screen-reader support, contrast, reduced motion, time-zone rendering, and localisation are not polish for a factory console; they decide whether an operator can act at 3 a.m.
 
@@ -192,11 +192,11 @@ flowchart LR
 
 Everything above assumes the screen is showing the truth. That depends on how the factory ingests the world. Schedules, webhooks, messages, API calls, and repository events all create or update *proposed* work through an intake path that is authenticated and idempotent. None of them starts execution on their own. **Admission** then verifies the current owner, the scope, the applicable policy, the risk class, readiness (is the environment and configuration present?), and budget before anything runs. A webhook is a claim from a provider about its own state. It may be forged, replayed, or incomplete, so the factory treats it as intake and lets the control plane decide.
 
-This is the cron-and-webhook item on the control plane wish-list done properly. "Run every night" and "run when Linear changes" are triggers into intake; the nightly run still passes admission, and still binds to an approved workflow version.
+This is the cron-and-webhook item on the control plane wish-list done properly. **Triggers, schedules, and webhooks** are the three intake shapes: a trigger is any authenticated signal that proposes work, a schedule is a trigger that fires on a clock, and a webhook is a trigger that fires when an external system reports a change. "Run every night" and "run when Linear changes" are triggers into intake; the nightly run still passes admission, and still binds to an approved workflow version.
 
 ### Typed event envelopes
 
-Every event that crosses a boundary inside the factory carries a typed **event envelope**. The envelope is the contract that lets consumers deduplicate, order, verify, and route without parsing the payload.
+Every event that crosses a boundary inside the factory carries a typed **event envelope**. The envelope is the contract that lets consumers deduplicate, order, verify, and route without parsing the payload. Underneath it sits **durable messaging**: the events are written to a persistent log or broker before any consumer sees them, delivered at least once, and retained long enough to replay, so a consumer that was down when the fact occurred still receives it. **Event schemas**, kept in a schema registry with advertised version ranges, define what each payload type contains and how it may evolve.
 
 <!-- infographic: event-contract -->
 > **Infographic — The event envelope and its journey.** *(Jay's graphic goes here.)* Until then, the diagram below
@@ -225,9 +225,9 @@ Consumers deduplicate on event identity and tolerate a defined ordering (usually
 
 ### Version the workflow definition
 
-A **workflow contract** (or workflow DSL) declares, for each workflow, its nodes with their inputs and outputs, the dependencies between them, the triggers that may start it, timeouts, retry policy, budgets, cancellation behaviour, compensation steps, human gates, completion states, and the evidence each completion requires. Declaring this makes the workflow inspectable in the plan preview and reviewable by policy, which is the argument for a DSL. The risk is that flexibility invites unsafe dynamic behaviour, so types, policy checks, and a migration protocol are not optional.
+**Declarative workflows** describe what a workflow consists of rather than scripting how to run it, which is what makes them inspectable before execution and diffable between versions. A **workflow contract** (or workflow DSL) is that declaration: for each workflow, its nodes with their inputs and outputs, the dependencies between them, the triggers that may start it, timeouts, retry policy, budgets, cancellation behaviour, compensation steps, human gates, completion states, and the evidence each completion requires. Declaring this makes the workflow inspectable in the plan preview and reviewable by policy, which is the argument for a DSL. The risk is that flexibility invites unsafe dynamic behaviour, so types, policy checks, and a migration protocol are not optional.
 
-The binding rule is that a running WorkOrder stays bound to the workflow version approved when it started. Changing the definition does not change running work. Migrating an active run is a new decision with its own authority, done through a replay-safe transition that leaves the history of both versions intact.
+**Workflow versioning** follows from the declaration: every change to a workflow contract produces a new immutable version with a digest, and the binding rule is that a running WorkOrder stays bound to the workflow version approved when it started. Changing the definition does not change running work. Migrating an active run is a new decision with its own authority, done through a replay-safe transition that leaves the history of both versions intact.
 
 ### Evolve schemas as a rollout
 
@@ -235,7 +235,7 @@ Schemas for events, workflows, and projections change, and a **compatibility win
 
 ### Compensate partial effects explicitly
 
-A distributed workflow cannot assume a global rollback. If a run has pushed a branch, opened a PR, and posted a comment before failing, there is no transaction to abort. The pattern is a **saga**: the workflow records each completed effect and the approved compensation for it, and on failure runs the compensations that apply. Compensation is not undo; it is a new action with its own authority and its own failure path. Ambiguous effects, where the factory does not know whether an external call landed, go to **reconciliation**: query the provider, compare, record what was true. Chapter [12](../03-build/12-durable-execution.md) covers the runtime side; here the point is that the recovery view must show completed effects and pending compensations, not just "failed".
+A distributed workflow cannot assume a global rollback. If a run has pushed a branch, opened a PR, and posted a comment before failing, there is no transaction to abort. The pattern is a **saga**: the workflow records each completed effect and the approved compensation for it, and on failure runs the compensations that apply. **Compensation** is a recorded, forward action that neutralizes a completed effect (closing the PR, deleting the branch, posting a retraction), and it is not undo; it is a new action with its own authority and its own failure path. Ambiguous effects, where the factory does not know whether an external call landed, go to **reconciliation**: query the provider, compare, record what was true. Chapter [12](../03-build/12-durable-execution.md) covers the runtime side; here the point is that the recovery view must show completed effects and pending compensations, not just "failed".
 
 ### Assign every store a truth boundary
 
@@ -245,7 +245,7 @@ The last contract is about where facts live. Each kind of store is good at one t
 | --- | --- | --- |
 | Transactional control store | Authority, state, policy decisions, leases, approvals | Avoid large unbounded artifacts |
 | Event log or message broker | Durable facts and asynchronous delivery | Delivery does not equal acceptance |
-| Object or artifact store | Logs, diffs, test output, packages, evidence blobs | Metadata and digest must remain authoritative elsewhere |
+| Object or artifact store (**artifact storage**) | Logs, diffs, test output, packages, evidence blobs, addressed by content digest | Metadata and digest must remain authoritative elsewhere |
 | Search index | Discoverable projections | Derived, stale, rebuildable |
 | Vector database | Semantic retrieval candidates | Similarity is not authority or evidence |
 | Analytics warehouse | Aggregates and trends | Delayed projections cannot drive immediate authority blindly |

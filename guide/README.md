@@ -25,6 +25,7 @@ Click a stage for the technical deep dive on how it works.
 ## Front matter
 
 - [How to read this guide](./00-front-matter/00-how-to-read-this-guide.md)
+- [What this guide covers](./00-front-matter/01-what-this-guide-covers.md) — the coverage map: stack boundaries, vocabulary areas, capability areas by priority, and where each lives
 
 ## Part I — Understand
 

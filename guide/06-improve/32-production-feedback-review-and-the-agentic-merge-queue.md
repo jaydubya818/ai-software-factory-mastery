@@ -110,9 +110,11 @@ each subsystem and accept that each one will be wrong at some cadence.
 Partial automation that safely resolves or routes a large, measurable subset is
 the goal; fictional full autonomy is not.
 
-The fourth step is the one worth the most engineering: **reproduction
-generation**. Because the report cannot be trusted, the factory burns its own
-tokens to produce a **canonical or minimal reproduction** — and it is worth
+The fourth step is the one worth the most engineering: **reproduction generation**,
+the agent workflow that turns an untrusted report into a runnable, repeatable
+failing case the factory owns. Because the report cannot be trusted, the
+factory burns its own tokens to produce a **canonical or minimal
+reproduction** — and it is worth
 generating several candidates and picking the best, then running a separate
 verification path before the reproduction earns any standing. A useful
 reproduction specifies:
@@ -146,8 +148,11 @@ the promoted record retains the original report, affected version, source,
 privacy treatment, deduplication decision, every reproduction Attempt, the
 remaining uncertainty, and a named human owner.
 
-**Issue triage** then classifies **severity, priority, and difficulty**. Difficulty
-classification is an agent task with an evaluation behind it: once a team has
+**Issue triage** then classifies **severity, priority, and difficulty**:
+severity is how bad the defect is for users, priority is how soon the
+organization wants it fixed, and difficulty is how much work the fix is
+expected to take. **Difficulty classification** is an agent task with an
+evaluation behind it: once a team has
 enough historical issues, those become a dataset, and every version of the
 classifier is measured against it before it is trusted. The practitioners
 building this aimed for roughly 60 percent correct as good enough to be useful,
@@ -316,8 +321,9 @@ stateDiagram-v2
 
 The **fix-review loop** is a hard-coded while loop, and one team was explicit
 that it is exactly that: fix what the review agent flagged, push, wait for the
-re-review, repeat until the reviewer is satisfied — with a **maximum review
-iteration** count of three, after which the loop boots the PR out to a human.
+re-review, repeat until the reviewer is satisfied — with a **maximum review iterations**
+count of three, a harness-level parameter after which the loop boots the PR
+out to a human.
 The human is not notified until either the reviewer is happy or the budget is
 spent. That is the whole point: the person sees the PR once, in a good state,
 instead of watching each round.
@@ -372,8 +378,8 @@ stateDiagram-v2
 A repository **merge queue** (GitHub's, for instance) orders eligible pull
 requests and evaluates each against the latest target state, often as a
 **merge train** that tests several candidates together. That is platform
-machinery. **Agentic merge maintenance** — the practitioners call it merge
-babysitting, and the resulting system an **agentic merge queue** — is an agent
+machinery. **Agentic merge maintenance** — the practitioners call it **merge babysitting**,
+and the resulting system an **agentic merge queue** — is an agent
 that keeps a human-approved candidate eligible: it watches the base branch,
 performs the **update-branch or rebase loop** when policy allows, reruns
 checks, resolves bounded mechanical conflicts, and escalates the rest. The

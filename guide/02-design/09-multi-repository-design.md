@@ -29,7 +29,7 @@ Consolidating repositories is an organizational architecture decision. Do not ma
 
 ### The coordination repository
 
-The practical shape is a small **coordination repository** that sits one level up from the component repositories. On disk it looks like a folder containing `repo-a/`, `repo-b/`, `repo-c/`, and `coordination/`. They do not share a Git history. The coordination repository holds a single instructions file for the agent (a `CLAUDE.md`, `AGENTS.md`, or equivalent), the workspace manifest described below, plans, and shared playbooks. Every agent session starts there.
+The practical shape is a **multi-repository workspace**: one directory tree, materialized for a single Attempt, that holds checkouts of every repository the work may touch at recorded commits, plus a small **coordination repository** that sits one level up from the component repositories. On disk it looks like a folder containing `repo-a/`, `repo-b/`, `repo-c/`, and `coordination/`. They do not share a Git history. The coordination repository holds a single instructions file for the agent (a `CLAUDE.md`, `AGENTS.md`, or equivalent), the workspace manifest described below, plans, and shared playbooks. Every agent session starts there.
 
 The analogy is an airport. Each airline maintains its own aircraft, crews, and schedules; the control tower does not own any of them. It owns the map of the airfield and the rules for moving between gates. The coordination repository is the tower: it organizes movement without becoming a superproject that owns the components.
 
@@ -192,7 +192,7 @@ Some detail on each, with the failure mode first, because the failure mode is wh
 
 **Symlink workspaces** create a folder of symbolic links to existing checkouts so the agent can traverse everything as if it were one tree. This is cheap and works with local coding harnesses. It carries no version information at all, links break when a path moves, and many sandboxes either refuse to follow symlinks or mount them read-only. Treat it as a convenience for a developer's own machine, not as a workspace definition.
 
-**Sparse and partial clones** solve the opposite problem: one repository is too big. A sparse checkout limits the paths materialized; a partial clone limits the objects fetched. Both are excellent for large monorepos, with one caveat: if the manifest's scope is wrong, the material that would have told the agent about a dependency is precisely the material that was excluded.
+A **sparse clone** (a **partial clone** combined with a sparse checkout) solves the opposite problem: one repository is too big. A sparse checkout limits the paths materialized; a partial clone limits the objects fetched. Both are excellent for large monorepos, with one caveat: if the manifest's scope is wrong, the material that would have told the agent about a dependency is precisely the material that was excluded.
 
 **Adjacent independent checkouts plus a versioned manifest** is the default recommendation. It changes no repository's history, works in any sandbox, and puts version information where it can be reviewed. The manifest can become stale; that is a freshness check, not a structural problem. Do not adopt submodules or subtrees merely to make an agent see several repositories. Use repository-composition features only when their versioning and distribution semantics solve a real product need.
 

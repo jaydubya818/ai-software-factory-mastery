@@ -78,3 +78,8 @@ One line per absorbed v1 chapter. "Condensed" notes anything intentionally short
 - Added Appendix G (`guide/appendix/principles.md`): every one-line principle with its chapter link.
 - Excluded by request: any mention of specific employers, internal product names, or interviewers.
 - Checks: 181 Mermaid blocks parse; 0 broken links; exclusion grep empty; site build/lint/tests (12/12) pass.
+
+## Pass 3 (2026-09-02) — coverage audit vocabulary
+
+- Added `guide/00-front-matter/01-what-this-guide-covers.md`: the organized coverage map (four separated disciplines, eleven canonical stack definitions, thirteen vocabulary areas with every term, P0/P1/P2 capability table, six requested sections, nine closed gaps, twelve-item checklist, reading order).
+- 416 audit terms checked across chapters, stage pages, and glossary: all present; ~75 glossary entries added; the three-actors framing and the "100th or 1,000th run" principle added to chapters 3 and 4.

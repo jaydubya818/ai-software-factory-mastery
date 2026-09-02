@@ -53,6 +53,8 @@ flowchart LR
 
 The humans-own / agents-perform split leaves out the party that does most of the governing. A factory has three kinds of actor, and the third is the one people forget when they draw "human in the loop" as a person watching an agent.
 
+Stated plainly, the **three actors** divide the work like this. Humans define intent, constraints, priorities, risk, and consequential decisions. Agents investigate, plan, use tools, modify software, and execute bounded work. Deterministic code enforces contracts, scope, identity, tests, verification, evidence, security boundaries, currentness, and acceptance gates. Every row in the table below is a consequence of that division, and every failure mode later in this chapter is one of the three actors doing another's job.
+
 | Party | Owns | Never owns |
 | --- | --- | --- |
 | Humans | Intent; Plan approval; consequential recommendations; acceptance; merge; release; risk decisions | Routine execution; re-checking what a deterministic gate already proved |

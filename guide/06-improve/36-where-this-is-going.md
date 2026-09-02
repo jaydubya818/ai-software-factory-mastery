@@ -209,7 +209,13 @@ for authority to cross back. Teams already describe their codebases this way
 — a functional core and a "no-slop zone" where changes go through the factory
 and a governed pull request, surrounded by zones where pragmatic, generated
 code is welcome. The phrase for the whole shape is an **agentic shell around a
-deterministic core**. Push it to its conclusion and the prediction is that
+deterministic core**. What crosses the boundary is **dynamic code
+generation**: code written at run time, for this user and this moment, rather
+than shipped in a release, and the units it produces are **agent-generated
+extensions**, small versioned pieces of behavior that an agent authored and
+that the core loads through the sandboxed API with the same lifecycle
+(publish, activate, revoke) as any human-written plugin. Push it to its
+conclusion and the prediction is that
 every piece of software becomes a harness: an application that exposes a
 core and lets agents extend it in real time, the way editor extensions let a
 new tool work in the editor without the editor updating. The hard parts are
@@ -230,14 +236,25 @@ never accept.
 
 A coverage audit of the practitioner material sorted a set of patterns as
 lower priority than the production gaps — useful, adjacent, and not V1
-requirements. They belong here rather than in the build chapters:
-**prototype-as-spec** (a large generated prototype used as the specification,
-then sliced into reviewed PRs, as in Chapter 32), the **interaction mock** and
-**discovery prototype**, the **tracer bullet** or technical spike, the
-**prototype-to-production rewrite**, **visual regression evidence** as a
-first-class artifact, **agent-generated extensions**, code mode, **dynamic
-code generation**, the trusted-core boundary, the sandboxed extension API,
-and the agentic shell. The audit's ordering is the right posture: canonical
+requirements. They belong here rather than in the build chapters.
+
+The first cluster is about prototypes as a way of learning before committing.
+**Prototype-as-spec** is a large generated prototype used as the specification
+itself, then sliced into reviewed PRs as in Chapter 32. An **interaction mock**
+is a clickable, generated approximation of a user interface built to test how
+something should feel before anyone decides how it should work. A **discovery
+prototype** is a throwaway built to answer one product question (will users
+understand this flow, does this data exist) and discarded once the answer is
+recorded. A **tracer bullet**, also called a **technical spike**, is a thin
+end-to-end slice through every layer of a proposed architecture, built to
+prove the path is passable rather than to deliver a feature, and kept only if
+it proves out. Beside them sit the **prototype-to-production rewrite** and
+**visual regression evidence** as a first-class artifact.
+
+The second cluster is the extensibility material above: agent-generated
+extensions, code mode, dynamic code generation, the trusted-core boundary,
+the sandboxed extension API, and the agentic shell. The audit's ordering is
+the right posture: canonical
 stack boundaries, context engineering, evaluation, environments, feedback,
 multi-repository delivery, and the infrastructure landscape first;
 prototype and extensibility patterns last.

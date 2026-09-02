@@ -84,7 +84,7 @@ Declared degraded modes include read-only operator access, stopping new admissio
 
 Run **game days** against the real scenario list: provider outage, queue corruption or duplication, lost worker, expired or compromised credential, evidence-store failure, control-store corruption, identity-issuer outage, regional loss, model or tool provider degradation, artifact unavailability, and an unavailable human approver. Measure detection, decision, containment, restore, reconciliation, communication, and return to service. Backups are automated and their restoration verified on a schedule, not assumed. Autonomy promotion should require recent recovery evidence for the supporting platform; a factory that has never rehearsed losing its control store should not run at autonomy level four.
 
-Topology is a tradeoff. Multi-region active-active improves availability and makes consistency and fencing harder; warm standby is simpler and slower. Chaos experiments reveal coupling and can harm shared environments, so begin with simulation and controlled fault injection. Keeping every provider fallback warm may cost more than accepting bounded unavailability. Start with the simplest topology that meets the scoped objectives.
+Topology is a tradeoff. **Regional failover**, moving the control plane and its authority records to a second region when the first is lost, is the largest of these exercises and the one most likely to produce two active authorities if fencing was designed for a single region. Multi-region active-active improves availability and makes consistency and fencing harder; warm standby is simpler and slower. **Chaos testing** (deliberately injecting the failures on the scenario list into a running system to see whether the declared degraded modes and recovery paths actually engage) reveals coupling and can harm shared environments, so begin with simulation and controlled fault injection. Keeping every provider fallback warm may cost more than accepting bounded unavailability. Start with the simplest topology that meets the scoped objectives.
 
 <!-- infographic: slo-and-dr -->
 > **Infographic — Recovery objectives, degraded modes, and the SLO loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -235,7 +235,7 @@ finding:
   residual_risk: "Affected prior releases under review"
 ```
 
-Closure records detection quality, the response, the affected scope, verified recovery, residual risk, notifications, the postmortem, and the improvement disposition. Service restoration alone is not closure.
+Closure records detection quality, the response, the affected scope, verified recovery, residual risk, notifications, the postmortem, and the improvement disposition. Service restoration alone is not closure. **Factory postmortems** differ from ordinary service postmortems in one respect: they must name which layer failed (model, harness, environment, orchestration, policy, evidence, or human decision) and whether the factory's own authority records stayed truthful throughout, because a factory incident that corrupted a grant or a decision is worse than one that merely lost availability.
 
 ### When an agent fails mid-workflow
 

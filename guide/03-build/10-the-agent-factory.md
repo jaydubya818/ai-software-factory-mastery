@@ -71,8 +71,10 @@ Every registered capability, whatever its type, carries the same identity model:
 - dependencies on tools, protocols, models, runtimes, policies, and other capabilities;
 - evaluation suites, results, limitations, and known failure modes;
 - compatibility ranges and qualified environment combinations;
-- a lifecycle state; and
+- a lifecycle state and a trust level; and
 - provenance from source revision through package and signature.
+
+Three of those fields deserve names because operators ask about them constantly. **Compatibility metadata** is the declared set of harness versions, model profiles, runtimes, and peer capabilities a version has been tested with, and it is only as good as the conformance suite behind it. **Version lineage** is the recorded chain from one version to its predecessors and successors, with the reason each was cut, so that an operator can see what changed between the version that ran last month and the one that runs today. **Trust level** is the standing the capability has earned (internal and certified, external and reviewed, or external and unreviewed, for instance), and it sets a ceiling on the risk classes and autonomy levels in which the capability may be resolved.
 
 One universal schema is tempting and would flatten real differences between a tool and an agent. Use the shared envelope plus type-specific manifests, and avoid a single quality score: eligibility is multidimensional and risk-specific.
 
@@ -218,7 +220,7 @@ stateDiagram-v2
     retired --> [*]
 ```
 
-The states, in order: **draft**, **candidate** (packaged), **evaluated**, **certified**, **canary**, **generally eligible** (published and active), with side exits to **restricted**, **deprecated**, **quarantined**, **revoked**, and **retired**. Every transition names its authority, scope, evidence, conditions, expiration, and rollback.
+The states, in order: **draft**, **candidate** (packaged), **evaluated**, **certified**, **canary**, **generally eligible** (published and active), with side exits to **restricted**, **deprecated**, **quarantined**, **revoked**, and **retired**. Read as verbs, the whole lifecycle is: author, package, test, certify, publish, discover, activate, upgrade, deprecate, revoke. Two of those verbs happen on the consuming side rather than in the registry. To **activate** a capability is for a workspace or Factory Version to bind a specific certified version into its resolved graph, which is when publication becomes permission to run; to **upgrade** is to rebind to a newer version, which is a new resolution with its own compatibility check and, for a major version, its own approval. Every transition names its authority, scope, evidence, conditions, expiration, and rollback.
 
 The four retirement states mean different things. **Deprecation** warns and provides migration. **Quarantine** stops use while facts are investigated. **Revocation** blocks new resolution immediately and may cancel or isolate active work according to risk. **Retirement** removes discoverability after migration while preserving historical resolution and evidence, so that an Attempt from last year still explains what it ran.
 

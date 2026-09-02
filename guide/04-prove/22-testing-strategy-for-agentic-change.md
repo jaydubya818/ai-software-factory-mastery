@@ -131,6 +131,8 @@ Third, separate the agent that proposes behavior from the validator that evaluat
 
 Tests produce evidence, and evidence that comes from unreliable machinery is worthless. Treat the test estate with the same seriousness as a production service: version fixtures and test data; isolate tenants so parallel runs cannot see each other; remove secrets from fixtures; define cleanup so a failed run does not poison the next; retain environment identity so a result can be tied to the versions that produced it; and track flaky behavior as a measured property rather than folklore.
 
+Most of that list is **test-data management**: the discipline of deciding where every fixture, seed record, and synthetic dataset comes from, which version of it a given run used, who may see it, and how it is reset afterwards. Agents make this urgent rather than tidy, because an agent that needs a customer-shaped record will happily copy one from a production dump if nothing stops it; the factory therefore supplies governed, privacy-safe generated data and treats a fixture that carries real personal data as a defect in the estate, not a shortcut.
+
 A **flaky test** — one that passes and fails without any change to the code under test — needs an operating model, not a shrug. Quarantining it is acceptable as visible debt: the quarantine has an owner and an expiry, the test's result is recorded as excluded rather than passed, and the required gate it belonged to is explicitly re-covered or explicitly waived under the waiver contract. What is not acceptable is the silent pass: a test that is retried into green or marked skipped without a record.
 
 ### Results are bound to exact subjects

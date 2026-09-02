@@ -35,19 +35,19 @@ Start with what must be protected: source, secrets, customer data, credentials, 
 
 Security design starts with the threat model, not with a control catalog, because a control that does not map to a threat is either decoration or friction. The threats a factory must prepare for, merging Jay's list with the agentic abuse cases:
 
-- **Prompt injection**: goal or instruction hijacking through direct or indirect injected text.
+- **Prompt injection** and **goal hijacking**: instruction hijacking through direct or indirect injected text, up to and including replacing the task's objective with the attacker's while the agent still believes it is doing the assigned work.
 - **Malicious repository content** and **poisoned context**: files, issues, documentation, or retrieved knowledge crafted to steer the agent.
 - **Data and secret exfiltration**: credentials or sensitive data leaving through prompts, logs, outputs, artifacts, encoded channels, or side channels.
 - **Tool abuse** and **MCP tool poisoning**: a legitimate tool driven to an illegitimate end; malicious tool descriptions, schema manipulation, or poisoned tool output.
-- **Privilege escalation**: identity, credential, or tenant-boundary abuse; excessive agency and unsafe action composition.
+- **Privilege escalation** and **privilege abuse**: identity, credential, or tenant-boundary abuse, and the misuse of a grant the agent legitimately holds for an action the grant was never meant to cover; **excessive agency**, where the agent has been given more authority, tools, or autonomy than the task requires, so a mistake or a hijack has more to reach; and unsafe action composition.
 - **Unauthorized file changes** and **cross-repository access**: edits outside the WorkOrder's path scope, including to tests, CI, or policy; reads or writes to repositories the task was never scoped to.
 - **Unsafe code execution** and **sandbox escape**: generated or retrieved code run without containment; unexpected execution reaching the host or network.
 - **Human-approval bypass**: approval deception, evaluator manipulation, or evidence tampering that makes a gate look satisfied.
 - **Supply-chain compromise**: of agents, skills, prompts, models, packages, tools, builders, or registries.
 - **Cross-organization data leakage**: context, memory, or retrieval crossing tenant or product-line boundaries.
 - **Runaway loops and token spending**: denial of service, denial of wallet, and retry amplification.
-- **Inter-agent impersonation**: delegation confusion and authority laundering between peers.
-- **Memory and retrieval poisoning**: an attack that persists in durable memory beyond the run that introduced it.
+- **Inter-agent impersonation** and misplaced **inter-agent trust**: delegation confusion and authority laundering between peers, and the assumption that a message from another agent carries that agent's authority when it carries only its content.
+- **Memory poisoning** and retrieval poisoning: an attack that persists in durable memory beyond the run that introduced it.
 
 <!-- infographic: threat-model -->
 > **Infographic — Trust boundaries and threats.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.

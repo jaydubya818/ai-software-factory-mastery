@@ -24,6 +24,13 @@ process, automation, environments, quality controls, and feedback from intent
 through production. An AI Software Factory uses agents as bounded participants;
 the factory remains the larger engineering system.
 
+**Three actors** — The division of labor a factory is built on: humans define
+intent, constraints, priorities, risk, and consequential decisions; agents
+investigate, plan, use tools, modify software, and execute bounded work;
+deterministic code enforces contracts, scope, identity, tests, verification,
+evidence, security boundaries, currentness, and acceptance gates. A failure
+mode is usually one actor doing another's job.
+
 **Agent Factory** — The governed capability supply chain that creates,
 packages, versions, evaluates, publishes, discovers, admits, deprecates, and
 revokes reusable agents, skills, tools, model profiles, and configurations. It
@@ -61,6 +68,25 @@ and lifecycle. A registered evaluator cannot certify its own reliability.
 **Capability Package** — An immutable, digest-bound artifact containing a
 capability manifest, content or executable source, schemas, dependencies,
 tests, evaluation references, provenance, signature, and lifecycle metadata.
+
+**Compatibility metadata** — The declared set of harness versions, model
+profiles, runtimes, and peer capabilities a capability version has been tested
+with. It is evidence only when a conformance suite has passed against the exact
+combination.
+
+**Version lineage** — The recorded chain from a capability version to its
+predecessors and successors, with the reason each was cut, so an operator can
+see what changed between the version that ran and the version that runs now.
+
+**Trust level** — The standing a capability has earned (for example internal
+and certified, external and reviewed, external and unreviewed). It sets a
+ceiling on the risk classes and autonomy levels in which the capability may be
+resolved; it does not grant permission.
+
+**Capability lifecycle verbs** — Author, package, test, certify, publish,
+discover, activate, upgrade, deprecate, revoke. Activation is a consuming
+workspace or Factory Version binding a certified version into its resolved
+graph; upgrade is a new resolution with its own compatibility check.
 
 **Capability Certification** — A scoped, expiring decision that an exact
 capability graph has sufficient evidence for defined tasks, risks,
@@ -160,6 +186,33 @@ cross-run workflow authority.
 validates the execution contract, provisions the environment, translates
 lifecycle events, enforces runtime budgets, captures artifacts, classifies
 completion, and tears down resources. It cannot accept or publish its own work.
+
+**Maximum review iterations** — An outer-loop parameter, owned by the harness
+rather than the model, that caps how many review-and-fix cycles one Attempt may
+consume before the work is escalated to a human. Bounded iterations, a
+deterministic exit condition, and a human handoff make a fix loop safe.
+
+**Provider lock-in** — The condition in which switching harness, model, or
+compute vendor would cost more than the switch is worth because transcripts,
+instructions, skills, and evidence exist only in one vendor's shape.
+
+**Exit strategy** — The documented, rehearsed path out of a provider: what is
+kept in the factory's own format, which adapter would be qualified next, and
+how long the switch would take. It is proven by having run the same workload
+through two adapters, not by asserting portability.
+
+**Composable stack** — A factory whose model, harness, environment, compute,
+and orchestration are separately chosen components behind interfaces the
+organization owns. It is slower to adopt and easier to leave than a vertically
+integrated stack.
+
+**Vertically integrated stack** — A factory in which one vendor supplies model,
+harness, environment, and orchestration as a single product. It is fastest to
+adopt and hardest to exit.
+
+**Managed execution versus self-hosted harness** — Whether the vendor runs the
+harness on its own fleet under its own operations, or the organization runs the
+harness on its own workers with its own identity and network boundaries.
 
 **Agent Runtime** — The execution substrate that starts, observes, controls,
 and terminates agent sessions or Attempts using an exact harness, environment,
@@ -422,6 +475,30 @@ identity, ownership, instructions, architecture, dependencies, build, tests,
 delivery, data, security, environment, and eligible workflow classes. It is
 scoped and expiring; registration alone does not establish readiness.
 
+**Instruction resolution** — The onboarding step that reads every instruction
+file a repository carries and resolves them into one declared precedence order,
+so that when two files disagree the winner is recorded rather than chosen
+silently at run time.
+
+**Architecture mapping** — The onboarding step that produces a repository's
+component, boundary, entry-point, and data-flow view by combining human-
+authored architecture documents with generated maps and surfacing where they
+conflict.
+
+**Build/test topology** — The discovered map of which build targets exist,
+which test suites cover which targets, how long each takes, and which are known
+to be flaky, so a planner can select the cheapest sufficient verification.
+
+**Codebase indexing** — The pipeline that turns source, instructions,
+architecture, and build/test topology into queryable indexes (symbols,
+dependencies, ownership, test-to-code mapping, hotspots) with source commit,
+method, confidence, and expiry recorded on every derived view.
+
+**Documentation maintenance workflow** — The catalog workflow that begins from
+a system, policy, interface, or workflow change, identifies affected guidance,
+updates it, verifies commands, links, schemas, and examples, and publishes
+under governance. Semantic correctness still needs an accountable owner.
+
 **Codebase intelligence** — Derived, attributable views such as symbol,
 dependency, ownership, build, test-impact, change-history, and architecture
 indexes created from exact source versions. Derived intelligence is not an
@@ -520,6 +597,32 @@ does not mean reading every agent action.
 instance can complete without an in-run human decision. Prior human policy,
 accountability, incident response, and promotion authority still apply.
 
+**Meaningful human control** — A human decides where the decision is
+consequential, with enough information, time, and authority for the decision to
+be real rather than ceremonial, and retains override and abort at every point.
+
+**Human override and abort** — The standing ability of an accountable human to
+countermand a decision the system made or to stop a run in flight, without
+needing anyone's permission to do so. It is a control with a named owner, not a
+courtesy.
+
+**Approval inbox** — The single queue where every pending decision packet
+waits, sorted by risk and expiry, so a decision owner sees what needs them in
+one place rather than across chat, pull-request tabs, and email.
+
+**Escalation UX** — The design of the moment a surprise reaches a person: what
+happened, what the system already did, what it is asking for, and what happens
+if nobody answers before the deadline.
+
+**Operator cognitive load** — The attention a human must spend to make a sound
+decision. Every packet that arrives without a clear question, or that repeats a
+check a gate should have made, spends the budget and buys nothing.
+
+**Audit export** — A packaged, tamper-evident extract of control lineage
+(decisions, denials, grants, exceptions, overrides, revocations) for a defined
+scope and period, in a form an auditor can read without access to the factory's
+internal stores.
+
 **Attention Budget** — The expected and permitted human effort for a workflow,
 including review, correction, approvals, escalation, and context reconstruction.
 It is an operating metric, not permission to skip consequential judgment.
@@ -580,6 +683,38 @@ uncertainty, grader versions, cost, artifacts, and a promotion recommendation.
 Repeated trials remain separate observations so consistency and variance can be
 measured.
 
+**Repeated trials** — Several independent executions of the same candidate on
+the same task, so that variance becomes a measured quantity and the reported
+result is a distribution rather than an anecdote.
+
+**Baseline versus candidate** — The basic shape of every evaluation decision:
+the configuration currently trusted compared against the one proposing to
+replace it, on the same tasks and fixtures, with uncertainty reported and
+segmented by slice.
+
+**Dataset governance** — Running an evaluation dataset as a product: a named
+owner, an intake gate, immutable versions, access rules per split,
+contamination tracking, and a retirement path.
+
+**Benchmark contamination** — Dataset contamination where the leak is into a
+public or shared benchmark: a task or its answer has reached the model's
+training data, prompts, skills, or memory, so a score no longer measures
+generalization.
+
+**Adversarial evaluation** — Running a candidate against inputs designed to
+make it misbehave, including injected instructions in repository files,
+conflicting tool results, and tasks whose correct answer is to refuse or
+escalate.
+
+**Safety evaluation** — Measuring whether a candidate stays inside its
+authorization envelope under adversarial and ordinary conditions: no
+unauthorized effects, no secret exposure, no evidence fabrication. Its findings
+are hard gates, not scores.
+
+**Shadow testing** — Running a candidate on production-shaped inputs without
+granting it any authoritative effect, so its outputs can be compared to the
+baseline's before anything ships. Also called shadow evaluation.
+
 **Grader** — A versioned deterministic, model-based, or human method that
 evaluates defined assertions and emits criterion-level findings. A grader's
 output is itself subject to calibration, provenance, and independence concerns.
@@ -605,6 +740,17 @@ gate or severe slice regression.
 observed failure under stated conditions with expected and actual behavior. A
 generated reproduction requires independent confirmation before it authorizes
 corrective work.
+
+**Reproduction generation** — The agent workflow that turns an untrusted
+feedback report into a runnable, repeatable failing case the factory owns,
+typically by generating several candidates and verifying them on a separate
+path before any earns standing.
+
+**Difficulty classification** — Triage that assigns severity (how bad for
+users), priority (how soon the organization wants a fix), and difficulty (how
+much work the fix is expected to take). It is an agent task with an evaluation
+behind it and a deterministic correction from the size of the fix that actually
+landed.
 
 **Regression asset** — A retained test or Eval Task derived from a confirmed
 failure and bound to its issue, expected behavior, owner, scope, and lifecycle.
@@ -706,6 +852,11 @@ prove business compatibility.
 subject or declared environment. Quarantine is visible debt with an owner and
 expiry, not permission to treat the test as passing.
 
+**Test-data management** — The discipline of deciding where every fixture, seed
+record, and synthetic dataset comes from, which version a run used, who may see
+it, and how it is reset afterwards, so agents never reach for production data
+because nothing else was supplied.
+
 **Mutation testing** — Evaluation of a test suite by introducing controlled
 faults and measuring whether tests detect them. Surviving mutations identify
 possible weakness but require interpretation.
@@ -742,6 +893,11 @@ under predeclared gates, stop conditions, observation, and rollback.
 artifact and configuration are technically healthy and satisfy defined
 production behavior. It remains distinct from customer-outcome confirmation.
 
+**Post-deployment verification** — Another name for production verification:
+binding a deployment to expected technical and customer outcomes over a defined
+observation window, with rollback, containment, corrective work, or human risk
+acceptance as the outcomes.
+
 **Rollback** — A governed, pre-engineered transition toward a prior safe
 artifact or configuration with verification of data, dependencies, and external
 effects. It is not a universal undo operation.
@@ -770,6 +926,44 @@ provisioned through an API or control service. Remote hosting can improve
 standardization, elasticity, and isolation while introducing network,
 residency, startup, dependency-access, and provider-control tradeoffs.
 
+**Remote development workstation** — A full development machine that lives in a
+data center, provisioned fresh and repeatedly, and reached from a laptop as a
+thin client; the "cloudtop" pattern. Code never leaves the building and every
+service started gets an identity-bound URL.
+
+**Shared development services** — The long-lived, centrally operated databases,
+queues, identity providers, and internal APIs (a "dev cloud") that individual
+sandboxes reach over the network rather than running themselves.
+
+**Private connectivity and egress control** — An authenticated private path
+from a sandbox into shared development services, and an explicit allowlist of
+what the sandbox may reach on the public internet, so package registries work
+and exfiltration does not.
+
+**Identity and credential provisioning** — The step, at environment creation,
+that mints a workload identity for the run and attaches the short-lived, scoped
+credentials that identity is entitled to. It belongs to the environment layer
+and is undone at teardown.
+
+**Toolchain pinning** — Fixing every compiler, runtime, package manager,
+linter, and browser a run can invoke to an exact version recorded by digest, so
+a build cannot silently change because a tool updated underneath it.
+
+**Environment bootstrap** — The scripted sequence that takes bare compute to a
+ready worker: base image, toolchain, checkout, service startup, readiness
+check. It is automated even for persistent workers and proven periodically by
+rebuilding from declared state.
+
+**Dependency and build caching** — Content-addressed caches of restored
+packages and compiled outputs, keyed by the hash of their inputs, so a cache
+hit is provably the same bytes a clean build would produce. Each cache needs an
+explicit invalidation rule.
+
+**Preview environment** — A running instance of the application built from an
+Attempt's exact commit, with a stable Attempt identity, authenticated access,
+bounded lifetime, and deterministic teardown. Its shareable preview URL is an
+interface for gathering evidence, not evidence of correctness.
+
 **Compute Infrastructure** — The machines, processes, containers, VMs, storage,
 network, and capacity pools that host development and execution environments.
 Compute allocation does not prove environment readiness, isolation, or
@@ -794,6 +988,21 @@ upgrades, interoperability, support, and total operating cost.
 workloads and governed by capacity, queue, lease, identity, environment,
 isolation, cost, drain, and recovery policy.
 
+**Runner fleet** — The full set of machines, VMs, or containers on which
+Attempts execute, operated as a production service with queues, quotas, leases,
+autoscaling, backpressure, and reconciliation. Worker pools are its
+interchangeable subdivisions.
+
+**Bring-your-own-compute (BYOC)** — The arrangement in which the organization
+owns the compute (its own cloud account, data center, or rack) while a vendor
+supplies the sandbox API, harness, or orchestration on top of it. It changes
+who owns the resource boundary, not who owns integration.
+
+**Capacity scheduling** — The step after admission that matches each admitted
+Attempt to a worker pool with the right architecture, tools, and network reach,
+in an order that respects priority class and tenant fairness rather than
+arrival time alone.
+
 **Ephemeral environment** — An environment created from declared state for a
 bounded use and destroyed afterward. Disposability reduces persistence but does
 not by itself guarantee reproducibility or containment.
@@ -801,6 +1010,11 @@ not by itself guarantee reproducibility or containment.
 **Persistent environment** — An environment retained across runs to preserve
 checkouts, caches, or warm services. It requires drift detection, cleanup,
 credential rotation, and cross-run isolation.
+
+**Pets versus cattle** — The operations vocabulary for persistent versus
+ephemeral workers. A pet is a named host repaired by hand; cattle are
+interchangeable, provisioned by script, and replaced rather than repaired. Also
+written "pets vs cattle".
 
 **Execution Manifest** — The immutable Attempt contract that freezes lineage,
 repository baseline, scope, workflow, agent and skill bindings, harness, model
@@ -833,6 +1047,16 @@ evidence. Promotion grants only its explicitly scoped eligibility.
 identities, baseline selection, checkout layout, ownership, relationships,
 toolchains, and discovery metadata. It supports multi-repository planning but
 does not grant write access.
+
+**Multi-repository workspace** — One directory tree, materialized for a single
+Attempt, holding checkouts of every repository the work may touch at recorded
+commits, plus a coordination repository that holds instructions, the workspace
+manifest, plans, and shared playbooks.
+
+**Sparse clone** — A partial clone (limited objects fetched) combined with a
+sparse checkout (limited paths materialized), used when one repository is
+larger than the task needs. If the manifest's scope is wrong, the excluded
+material is exactly what would have revealed a dependency.
 
 **Coordinated change set** — A governed collection of repository-scoped
 WorkOrders, candidates, pull requests, dependencies, global invariants,
@@ -871,6 +1095,11 @@ decision.
 queue containing agent-authored pull requests or agentic merge maintenance.
 Use the two precise terms because ordering and validating eligible changes is a
 different authority from modifying a candidate to keep it eligible.
+
+**Merge babysitting** — The practitioners' name for agentic merge maintenance:
+an agent keeps a human-approved candidate eligible against a moving base branch
+by rebasing, rerunning checks, resolving bounded mechanical conflicts, and
+escalating the rest. It never takes the merge decision.
 
 **Worktree** — An isolated Git working directory used to keep concurrent changes
 separate and bind an Attempt to an exact repository state.
@@ -913,6 +1142,19 @@ different objectives.
 for a defined capability after disruption. Authority and audit records often
 require stricter objectives than diagnostic telemetry.
 
+**Regional failover** — Moving the control plane and its authority records to a
+second region when the first is lost. It is the exercise most likely to produce
+two active authorities if fencing was designed for a single region.
+
+**Chaos testing** — Deliberately injecting the failures on the scenario list
+into a running system to confirm that declared degraded modes and recovery
+paths actually engage. Begin with simulation and controlled fault injection.
+
+**Factory postmortem** — An incident review that names which layer failed
+(model, harness, environment, orchestration, policy, evidence, or human
+decision) and whether the factory's authority records stayed truthful
+throughout.
+
 **Break-glass access** — Narrow, time-limited emergency authority protected by
 strong authentication, independent logging, explicit reason, and post-event
 review. It must not become the routine control path.
@@ -920,6 +1162,15 @@ review. It must not become the routine control path.
 **Backpressure** — A mechanism that slows or rejects new work when downstream
 capacity is insufficient. It protects the system from unbounded queues and
 resource exhaustion but requires explicit prioritization and user-visible state.
+
+**Preemption** — Stopping lower-priority work to make room for higher-priority
+work. It is safe only for work with checkpoint or cancellation semantics; non-
+idempotent external effects are never killed blindly, and sunk cost and
+evidence are preserved.
+
+**Provider limits** — The rate, concurrency, token-per-minute, and spend
+ceilings a model or compute vendor enforces on an account. The scheduler treats
+them as shared capacity to allocate rather than a surprise to retry through.
 
 **Admission control** — The fail-closed policy that determines whether work may
 enter or continue in a runtime lane given authority, readiness, capability,
@@ -950,6 +1201,38 @@ silent abandonment.
 events, evidence, and revisions. Corrections create new records rather than
 silently rewriting the past.
 
+**Durable messaging** — Events are written to a persistent log or broker before
+any consumer sees them, delivered at least once, and retained long enough to
+replay, so a consumer that was down when a fact occurred still receives it.
+
+**Event schema** — The versioned definition of what each event payload type
+contains and how it may evolve, kept in a schema registry with advertised
+version ranges.
+
+**Artifact storage** — The object store for logs, diffs, test output, packages,
+and evidence blobs, addressed by content digest. Metadata and the digest remain
+authoritative in the control store; the blob is what the digest names.
+
+**Declarative workflow** — A workflow described as what it consists of (nodes,
+inputs, outputs, dependencies, triggers, timeouts, budgets, gates, completion
+states, required evidence) rather than scripted as how to run it, which makes
+it inspectable before execution and diffable between versions.
+
+**Workflow versioning** — Every change to a workflow contract produces a new
+immutable version with a digest; a running WorkOrder stays bound to the version
+approved when it started, and migrating it is a new decision with its own
+authority.
+
+**Compensation** — A recorded, forward action that neutralizes a completed
+external effect (closing the PR, deleting the branch, posting a retraction)
+when a workflow fails. It is not undo; it has its own authority and its own
+failure path.
+
+**Triggers, schedules, and webhooks** — The three intake shapes: a trigger is
+any authenticated signal that proposes work, a schedule is a trigger that fires
+on a clock, and a webhook is a trigger that fires when an external system
+reports a change. None of them starts execution without admission.
+
 **Attestation** — A typed claim made by an identified producer about one or more
 immutable subjects. A valid attestation does not by itself prove quality.
 
@@ -974,9 +1257,27 @@ runbooks, and maturity. Catalog presence does not establish readiness.
 outcome with defaults, templates, controls, documentation, recovery, ownership,
 and measured adoption. It requires an explicit extension and exception model.
 
+**Extension model** — The published answer to "how do I add something the path
+does not do": which points may be extended, what an extension must declare, and
+what compatibility it must keep. Extensions are versioned and tested; silent
+forks are what it prevents.
+
+**Platform ownership** — A named team accountable for the paved paths, their
+service levels, their deprecations, and the experience of using them, so the
+platform is never an orphan that everyone depends on and nobody answers for.
+
 **Plan preview** — A decision-oriented view of proposed steps, assumptions,
 affected systems, capabilities, tests, cost, uncertainty, rollout, and rollback
 before authority is granted to an exact Plan version.
+
+**Live progress** — The execution view's running account of what a run has done
+and expects to do next, updated as the run proceeds. Its unit is the progress
+event: decisions, discoveries, scope changes, evidence, budget, and next
+transition, written for a person.
+
+**Pause/resume** — The reversible pair of interventions in which pause holds
+the lease and retained state so the run can continue from the same point,
+distinct from cancel, which releases the lease and records a terminal state.
 
 **Review inbox** — A prioritized control surface for decisions requiring human
 authority, showing scope, risk, evidence, recommendation, alternatives,
@@ -994,6 +1295,21 @@ its impact.
 **Memory poisoning** — Insertion of false, adversarial, or unauthorized content
 into durable memory so future runs inherit the attack. Recovery includes
 quarantine, provenance analysis, affected-run inventory, and controlled repair.
+
+**Goal hijacking** — Prompt injection that replaces the task's objective with
+the attacker's while the agent still believes it is doing the assigned work.
+
+**Privilege abuse** — Misuse of a grant the agent legitimately holds for an
+action the grant was never meant to cover, as distinct from escalation to a
+grant it does not hold.
+
+**Excessive agency** — An agent given more authority, tools, or autonomy than
+its task requires, so that a mistake or a hijack has more to reach. The remedy
+is least privilege in every dimension.
+
+**Inter-agent trust** — The assumption that a message from another agent
+carries that agent's authority when it carries only its content. Delegation is
+recorded and verified; peer output is untrusted content.
 
 **Denial of wallet** — Resource exhaustion intended to cause excessive model,
 compute, tool, storage, or human-review cost. Budgets, quotas, backpressure,
@@ -1198,6 +1514,41 @@ not replace their records.
 containment, recovery, downstream reconciliation, independent validation,
 notification decisions, residual risk, and accountable acceptance are
 recorded. Service restoration alone is not closure.
+
+**Trusted core / untrusted extension boundary** — A deterministic core that
+owns state, policy, and reliability, separated from agent-written or user-
+written code that may act only through bounded calls with no path for authority
+to cross back.
+
+**Sandboxed extension API** — The bounded interface through which extensions
+act on a trusted core: an allowlist of calls, no ambient credentials, and
+lifecycle control (publish, activate, revoke) held by the core.
+
+**Agentic shell around a deterministic core** — The shape of extensible
+software in which agents reason and extend in real time around a core that
+enforces contracts. The phrase applies to products and to the factory itself.
+
+**Dynamic code generation** — Code written at run time, for this user and this
+moment, rather than shipped in a release, and executed through the sandboxed
+extension API.
+
+**Agent-generated extension** — A small versioned piece of behavior that an
+agent authored and that the core loads through the sandboxed API with the same
+lifecycle as a human-written plugin.
+
+**Prototype-as-spec** — A large generated prototype used as the specification
+itself, then sliced into reviewed pull requests through the factory.
+
+**Interaction mock** — A clickable, generated approximation of a user interface
+built to test how something should feel before anyone decides how it should
+work.
+
+**Discovery prototype** — A throwaway built to answer one product question and
+discarded once the answer is recorded.
+
+**Tracer bullet** — A thin end-to-end slice through every layer of a proposed
+architecture, built to prove the path is passable rather than to deliver a
+feature. Also called a technical spike.
 
 ## Outcome measures
 

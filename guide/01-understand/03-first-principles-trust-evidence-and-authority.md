@@ -276,6 +276,8 @@ The rules above compress into ten **core factory principles**, which this guide 
 
 Five **platform commitments** sit underneath them and shape how the factory is built rather than how it is governed: builder intent is the interface, so developers first and then product, QA, and design can use the factory without understanding its agent architecture; models are interchangeable execution resources, routed by capability, quality, cost, latency, security, and historical performance; the harness — not the model — creates production reliability, owning tools, state, permissions, recovery, stop conditions, sandboxing, and observability; agents do not certify their own work; and learning can be autonomous while promotion stays governed. The repository's seven governing principles are the same doctrine compressed, adding only that failure must be detectable, bounded, recoverable, and attributable.
 
+All of it serves one aim, and it is worth stating before the mechanics begin. *The goal isn't simply to run more agents. The goal is systems that execute reliably across the 100th or 1,000th run, not just an impressive first demo.* Trust, evidence, and authority are how a factory gets from the demo to the thousandth run without anyone having to hope.
+
 ## How to build it
 
 The first workflow that should prove governed autonomy is **Governed Issue → Validated Pull Request**:
