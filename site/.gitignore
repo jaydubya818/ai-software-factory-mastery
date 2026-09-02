@@ -18,6 +18,9 @@
 /.vinext/
 /out/
 
+# typescript
+*.tsbuildinfo
+
 # misc
 .DS_Store
 *.pem
