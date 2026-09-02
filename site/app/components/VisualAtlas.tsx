@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AtlasIndex } from "./AtlasIndex";
 import { ValueStream } from "./ValueStream";
 
 const productionDisciplines = [
@@ -103,18 +104,7 @@ const attentionLevels = [
 export function VisualAtlas() {
   return (
     <div className="visual-atlas">
-      <nav className="visual-atlas-index" aria-label="Visual guide contents">
-        <a href="#factory-lifecycle">Lifecycle</a>
-        <a href="#production-stack">12 disciplines</a>
-        <a href="#orchestration">Orchestration</a>
-        <a href="#agent-patterns">Agent patterns</a>
-        <a href="#memory">Memory</a>
-        <a href="#loop-engineering">Loops</a>
-        <a href="#governance">Governance</a>
-        <a href="#observability">Observability</a>
-        <a href="#protocols">Protocols</a>
-        <a href="#attention">Attention</a>
-      </nav>
+      <AtlasIndex />
 
       <AtlasSection
         id="factory-lifecycle"

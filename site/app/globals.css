@@ -1159,9 +1159,6 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .visual-guide-note strong { color: var(--green); font-size: 14px; }
 .visual-guide-note span { color: var(--muted); font-size: 15px; }
 .visual-atlas { display: grid; gap: 28px; padding-bottom: 110px; }
-.visual-atlas-index { position: sticky; z-index: 20; top: 99px; display: flex; gap: 5px; overflow-x: auto; padding: 8px; border: 1px solid var(--line); border-radius: 9px; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(14px); scrollbar-width: thin; }
-.visual-atlas-index a { flex: 0 0 auto; padding: 8px 10px; border-radius: 5px; color: var(--muted); font-size: 12px; font-weight: 650; }
-.visual-atlas-index a:hover { background: var(--sage); color: var(--ink); }
 .atlas-section { scroll-margin-top: 155px; padding: 38px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
 .atlas-section > header { display: grid; grid-template-columns: 58px 1fr auto; gap: 24px; align-items: start; margin-bottom: 32px; }
 .atlas-section-number { color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 13px; }
@@ -1300,7 +1297,6 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .guide-reference-callout { grid-template-columns: 1fr; padding: 30px; }
   .guide-reference-callout > div:last-child { grid-column: 1; }
   .visual-guide-note { grid-template-columns: 1fr; gap: 6px; }
-  .visual-atlas-index { top: 57px; }
   .atlas-section { scroll-margin-top: 115px; padding: 24px; }
   .atlas-section > header { grid-template-columns: 40px 1fr; }
   .atlas-section > header > a { grid-column: 2; justify-self: start; }
@@ -1574,3 +1570,20 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .reference-count { margin: 28px 0 0; color: var(--muted); font-size: 14px; }
 .reference-count a { color: var(--green); }
 @media (max-width: 900px) { .shelf-row { grid-template-columns: 48px minmax(0, 1fr); } .shelf-letter { font-size: 32px; } .shelf-use { grid-column: 2; padding: 10px 14px; } .shelf-children span { text-align: left; } .shelf-children a { grid-template-columns: 1fr; gap: 2px; } }
+
+/* Atlas index (sticky map nav) */
+.atlas-index { position: sticky; z-index: 20; top: 92px; display: grid; grid-template-columns: auto 1fr; gap: 0 18px; align-items: center; padding: 10px 14px 0; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(8px); box-shadow: 0 8px 24px -18px rgba(18,32,27,.35); }
+.atlas-index-head { display: flex; align-items: baseline; gap: 10px; padding-right: 18px; border-right: 1px solid var(--line); white-space: nowrap; padding-bottom: 10px; }
+.atlas-index-count { font-family: Georgia, serif; font-size: 26px; line-height: 1; color: var(--green-dark); letter-spacing: -.03em; }
+.atlas-index-count small { margin-left: 4px; font-family: var(--font-geist-mono), monospace; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.atlas-index-current { font-size: 13px; font-weight: 650; color: var(--ink); }
+.atlas-index-list { list-style: none; margin: 0; padding: 0 0 10px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.atlas-index-list::-webkit-scrollbar { display: none; }
+.atlas-index-list a { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; white-space: nowrap; padding: 7px 8px; border-radius: 7px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; transition: background-color 140ms ease, color 140ms ease; }
+.atlas-index-list a span { font-family: var(--font-geist-mono), monospace; font-size: 10.5px; color: var(--amber); letter-spacing: .04em; }
+.atlas-index-list a:hover { background: var(--sage); color: var(--ink); }
+.atlas-index-list a[aria-current] { background: var(--green-dark); color: #fff; }
+.atlas-index-list a[aria-current] span { color: #f0c98a; }
+.atlas-index-track { grid-column: 1 / -1; height: 3px; margin: 0 -14px; background: var(--line); border-radius: 0 0 12px 12px; overflow: hidden; }
+.atlas-index-track span { display: block; height: 100%; background: var(--green); transition: width 240ms ease; }
+@media (max-width: 720px) { .atlas-index { grid-template-columns: 1fr; top: 57px; } .atlas-index-head { border-right: 0; padding-right: 0; padding-bottom: 6px; } }
