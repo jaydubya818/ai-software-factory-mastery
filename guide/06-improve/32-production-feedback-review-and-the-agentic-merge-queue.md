@@ -1,0 +1,513 @@
+---
+title: Production feedback, automated review, and the agentic merge queue
+part: improve
+chapter: 32
+summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
+absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
+infographics: [feedback-to-reproduction, fix-review-loop, agentic-merge-queue]
+---
+
+# 32. Production feedback, automated review, and the agentic merge queue
+
+Part IV showed how the factory proves a change before it ships. This chapter
+follows the change after it ships: a user reports something wrong, the factory
+has to decide whether the report is real, reproduce it, fix it, get the fix
+reviewed, and land it — and the last mile of review and merge is where most of
+the remaining human time quietly goes. After reading it you should be able to
+draw the path from an untrusted bug report to a merged fix and say, at every
+step, which record carries the authority and which does not.
+
+## The problem
+
+User feedback is valuable and incomplete. A report may describe a version that
+was fixed last week, duplicate a symptom someone else already filed, leave out
+the operating conditions that matter, or blame the wrong component. If every
+report becomes an engineering issue, the backlog fills with low-confidence
+work. If an agent is allowed to "just fix" the report as written, an
+unverified observation has been turned into authority to change the codebase.
+
+The pain does not end once a valid fix exists. Automated reviewers post
+comments; the base branch moves; CI takes forty minutes; a conflict appears;
+the merge queue evicts the candidate; someone has to notice and push again.
+One team described this as being buried under an overwhelming number of tiny
+pull requests, each of which would improve the product, each of which costs a
+human a slice of attention to shepherd through review and merge. The factory
+needs a governed path from uncertain feedback to reproducible evidence, and
+then from an approved candidate to a merged commit — without a person polling
+GitHub all afternoon.
+
+## How it works
+
+### Six records, not one
+
+The path from report to merge passes through feedback, issue, reproduction,
+fix, pull request, review, and merge. These are different records, and most of
+the damage in feedback handling comes from collapsing them. Each collapse
+produces a false claim: a report is treated as proof of a defect; a generated
+reproduction is treated as authoritative; a passing reproduction is treated as
+root cause; an automated review comment is treated as an acceptance gate;
+resolving every comment is treated as proof of quality; entering a merge queue
+is treated as permission to merge.
+
+The whole design below is a chain of promotions. Feedback becomes more
+authoritative only as its evidence improves, and every promotion leaves the
+earlier record intact. Think of a hospital triage desk: the patient's own
+description is recorded verbatim, but it is the nurse's observation and then
+the physician's diagnosis that authorize treatment, and the chart keeps all
+three.
+
+### From untrusted feedback to a verified reproduction
+
+<!-- infographic: feedback-to-reproduction -->
+> **Infographic — From untrusted feedback to a verified reproduction.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    Report["Untrusted feedback"] --> Normalize["Normalize, redact, identify version"]
+    Normalize --> Current{"Still present on latest eligible version?"}
+    Current -->|no| Notify["Explain status, notify reporter"]
+    Current -->|unknown| Human["Human investigation"]
+    Current -->|yes| Dedupe["Cluster and deduplicate"]
+    Dedupe --> Repro["Generate N reproductions, verify independently"]
+    Repro -->|insufficient| Human
+    Repro -->|verified| Issue["Promote to governed issue or Mission"]
+    Issue --> Classify["Classify severity, priority, difficulty"]
+    Classify --> Shepherd["Assign human shepherd, ping in Slack"]
+    Shepherd --> Fix["Plan, implement, verify"]
+    Fix --> Regression["Retain regression case, run on every PR"]
+    Regression --> Review["Automated and human review"]
+    Review --> Merge["Bounded merge maintenance"]
+```
+
+The pipeline begins from a stance that sounds cynical and is simply accurate:
+**untrusted feedback intake** treats every report as an observation of unknown
+quality, because users report things however they report them. The first step
+is **feedback normalization** — parse the report into a structured record,
+redact personal data, and pin down the product, build, and version the user was
+actually on.
+
+The second step is **latest-version verification**. Before spending any
+engineering effort, check whether the reported behavior still exists on the
+current eligible version. A surprising fraction of reports describe already-fixed
+behavior, and those users can be told so quickly, which is both the cheapest
+outcome and the one that most improves the reporter's trust. The check can be
+wrong — a flaky defect may look fixed on one run — so the answer is three-way:
+present, absent, or unknown, and "unknown" routes to a person rather than to a
+confident guess.
+
+The third step is **feedback deduplication and clustering**: search for an
+existing reproduction or issue that matches. Clustering may group reports by
+symptom, affected component, error signature, or reproduction, but similar
+text does not prove the same root cause, and deduplication must be kept
+separate from **equivalence**. Record the confidence and rationale for linking
+or separating reports, permit later splitting and merging, and preserve each
+reporter's specific impact so the eventual notification is accurate. Nobody has
+seen a deduplication agent that is good; but an agent that correctly collapses
+half the duplicates saves half the human time, and that is the standard to hold
+it to. The practitioners who built this pipeline attach an expected accuracy to
+each subsystem and accept that each one will be wrong at some cadence.
+Partial automation that safely resolves or routes a large, measurable subset is
+the goal; fictional full autonomy is not.
+
+The fourth step is the one worth the most engineering: **reproduction
+generation**. Because the report cannot be trusted, the factory burns its own
+tokens to produce a **canonical or minimal reproduction** — and it is worth
+generating several candidates and picking the best, then running a separate
+verification path before the reproduction earns any standing. A useful
+reproduction specifies:
+
+- exact product, build, configuration, environment, account or tenant class,
+  and dependency versions;
+- preconditions and test data;
+- minimal ordered actions;
+- expected and observed behavior;
+- deterministic assertions or bounded observation criteria;
+- frequency, timing, and known flakiness;
+- logs, traces, screenshots, or other attributable artifacts;
+- cleanup and isolation requirements; and
+- confidence, limitations, and unresolved external dependencies.
+
+The last item is the **reproduction confidence**. Some distributed or timing
+failures cannot be made fully deterministic, and a bounded statistical
+reproduction ("fails 3 of 20 runs under this load profile") is the honest
+artifact. If no clear reproduction can be established, route to a human rather
+than inventing a confident bug. The line at the top of the practitioners'
+whiteboard said it plainly: this works for issues with clear code reproductions;
+if reproduction is hard, you need something else, and the something else is
+usually a person.
+
+### Issue promotion, classification, and the human shepherd
+
+Only now is an issue created. The rule that organizes the whole pipeline is
+that **issues are created post-feedback**, not from feedback: **issue
+promotion** turns a verified reproduction into a governed issue or Mission, and
+the promoted record retains the original report, affected version, source,
+privacy treatment, deduplication decision, every reproduction Attempt, the
+remaining uncertainty, and a named human owner.
+
+**Issue triage** then classifies **severity, priority, and difficulty**. Difficulty
+classification is an agent task with an evaluation behind it: once a team has
+enough historical issues, those become a dataset, and every version of the
+classifier is measured against it before it is trusted. The practitioners
+building this aimed for roughly 60 percent correct as good enough to be useful,
+with a cheap corrective: measure the fix that actually landed by lines of
+code, and if an issue classified as small produced a 500-line change,
+reclassify it after the fact so the dataset and the routing both improve.
+
+Every promoted issue gets a **human shepherd**. The shepherd is not a queue
+name; the system pings that person in Slack with a specific packet — here is
+the bug, here is the reproduction, here is either the fix to read or, for
+harder issues, a plan you can approve or pull into your own local agent. That
+packet is an **escalation packet**, and its shape matters: the shepherd should
+be spending attention on ambiguity and consequence, not reconstructing
+context. The same rule applied later when review or merge stops: the loop
+produces a packet, not a notification.
+
+From the shepherd's decision, the work is either planned or fixed directly, and
+then enters the ordinary review-and-merge path. Risk policy should also permit
+immediate containment for severe, obvious incidents while the reproduction is
+still being developed; requiring a reproduction before any action would delay
+the cases that matter most.
+
+### Regression assets and every-PR execution
+
+After a defect is confirmed, its minimal reproduction, or a privacy-safe
+derivative, joins the appropriate test or evaluation dataset as an
+**incident-derived eval case**. Bind it to the issue, the fix, the affected
+versions, the expected result, an owner, and a retirement policy.
+
+The cheap, stable cases then run on every relevant pull request —
+**every-PR regression execution**. The practitioners' insight is that this is
+mostly CPU time: checking whether every known issue is still fixed costs almost
+nothing when the reproduction is a code-level test, so the check runs on every
+PR, always. Expensive cases — stateful, browser-driven, or dependent on external
+systems — are scheduled by risk and cost rather than on every push. A case that
+becomes flaky enters quarantine with an owner; it must not silently alternate
+between blocking and being ignored. Two metrics belong on the dashboard from
+day one: **time-to-triage** and **time-to-reproduction**.
+
+The final step closes the loop with the reporter: a notification that says what
+happened — fixed in version X, already fixed, could not reproduce, or under
+investigation — grounded in the records above rather than in a guess.
+
+### Automated review and the bounded fix-review loop
+
+An **Automated PR Review Agent** reads a pull request and identifies potential
+defects, policy violations, maintainability concerns, and requirement gaps.
+CodeRabbit is the current product example, and it is worth treating as a
+**versioned case study** — the enduring architecture is the review agent with a
+versioned configuration and a review contract, and the product behind it will
+change.
+
+**Review-comment ingestion** turns the reviewer's output into records the
+factory can reason about. Every finding needs a **finding identity**: reviewer
+identity and version, target commit, file and line identity, category,
+severity, explanation, suggested action, thread state, resolution, and the
+commit that resolved it. New commits trigger incremental review without
+erasing prior findings, so a finding that moved lines is the same finding, and a
+finding the reviewer stopped reporting is recorded as such rather than
+vanishing.
+
+<!-- infographic: fix-review-loop -->
+> **Infographic — The bounded fix-review loop.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Reviewed: PR opened, review agent runs
+    Reviewed --> Clean: no blocking findings
+    Reviewed --> Fixing: findings, iteration < max
+    Fixing --> Checked: agent applies allowed fixes
+    Checked --> Reviewed: deterministic checks pass, re-review
+    Checked --> Escalate: checks fail or no progress
+    Reviewed --> Escalate: iteration = max (e.g. 3)
+    Reviewed --> Escalate: oscillation detected
+    Clean --> HumanReview: notify human with packet
+    Escalate --> HumanReview: escalation packet
+    HumanReview --> [*]
+```
+
+The **fix-review loop** is a hard-coded while loop, and one team was explicit
+that it is exactly that: fix what the review agent flagged, push, wait for the
+re-review, repeat until the reviewer is satisfied — with a **maximum review
+iteration** count of three, after which the loop boots the PR out to a human.
+The human is not notified until either the reviewer is happy or the budget is
+spent. That is the whole point: the person sees the PR once, in a good state,
+instead of watching each round.
+
+The loop's contract must define which findings may be auto-fixed; maximum
+iterations and spend; no-progress and oscillation detection (the same two
+findings alternating is a stop condition, not progress); how stale comments and
+moved lines are handled; **false-positive handling** and suppression feedback
+so a wrong finding can be marked wrong and fed back into the reviewer's
+calibration; the deterministic checks that must pass after every fix; the
+independence required for consequential findings; and the escalation packet
+produced when the loop stops.
+
+Two rules protect the rest of the factory from the reviewer. First, automated
+reviewer satisfaction is not WorkOrder acceptance — a reviewer with zero open
+comments is a clean input to human review, not a substitute for it. Second,
+**reviewer independence**: a reviewer that suggested a fix cannot be the only
+verifier certifying that fix. Blocking authority should be extended to the
+review agent only as measured precision, recall, severity calibration, and the
+rate of human correction justify it; until then it advises.
+
+### Mergeability and the agentic merge queue
+
+Once a human has approved the candidate, the remaining work is keeping it
+mergeable. That is a distinct state machine and a distinct, narrower authority.
+
+<!-- infographic: agentic-merge-queue -->
+> **Infographic — The agentic merge queue.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Approved: human approval recorded
+    Approved --> Stale: base moved (stale-base detection)
+    Stale --> Updating: update-branch or rebase under frozen scope
+    Updating --> Conflict: conflict detected
+    Conflict --> Updating: mechanical, proven resolution
+    Conflict --> Escalate: semantic conflict
+    Updating --> Checking: rerun required checks
+    Checking --> Eligible: checks pass, approval still valid
+    Checking --> Retry: failure classified base/infra/flaky
+    Retry --> Checking: retry within policy
+    Retry --> Escalate: retry budget exhausted or candidate failure
+    Checking --> Escalate: approval invalidated by material diff
+    Eligible --> Queued: enter platform merge queue
+    Queued --> Stale: evicted, base moved again
+    Queued --> Merged: human merge gate exercised
+    Escalate --> [*]
+    Merged --> [*]
+```
+
+A repository **merge queue** (GitHub's, for instance) orders eligible pull
+requests and evaluates each against the latest target state, often as a
+**merge train** that tests several candidates together. That is platform
+machinery. **Agentic merge maintenance** — the practitioners call it merge
+babysitting, and the resulting system an **agentic merge queue** — is an agent
+that keeps a human-approved candidate eligible: it watches the base branch,
+performs the **update-branch or rebase loop** when policy allows, reruns
+checks, resolves bounded mechanical conflicts, and escalates the rest. The
+motivation was concrete: CI takes a long time, conflicts happen, the queue
+evicts candidates, and a human should say "I am happy, land this" exactly once
+and then walk away.
+
+The **mergeability state machine** above names the mechanics. **Stale-base
+detection** notices that the target branch moved. **CI retry classification**
+sorts a failed check into candidate, base, infrastructure, or flaky, and only
+the last three are retried, and only under an explicit retry policy with a
+budget. **Conflict detection and bounded resolution** distinguishes a
+mechanical conflict — the same import block reordered, a lockfile regenerated —
+from a semantic one where two changes disagree about behavior; the agent may
+resolve the first when it can prove the resolution, and must hand over the
+second. **Dependency-aware merge order** matters when several candidates
+depend on one another: land the migration before the code that reads the new
+column, and land shared library changes before the consumers.
+
+The invariant that makes this safe is short enough to memorize: an agent may
+keep a human-approved candidate mergeable, but it must not silently expand
+scope or replace the human merge decision. "Keep this mergeable" is a much
+narrower and safer authority than "merge this." Concretely, the maintenance
+agent may update the candidate to the current base under a frozen scope,
+classify CI failures, retry within policy, resolve proven mechanical conflicts,
+refresh currentness-bound evidence such as head-SHA checks, and report when the
+approved candidate has materially changed. It may not broaden scope, bypass
+required checks, dismiss blocking evidence, approve its own material changes,
+or exercise the **human merge gate**. The teams running this do not merge
+automatically; a human hits merge.
+
+Merge maintenance trades waiting for a real risk: the artifact can change after
+the human reviewed it. A material diff must invalidate the approval, and the
+loop must stop on scope growth, semantic conflict, new risk, invalidated
+approval, critical review disagreement, or an exhausted retry budget. Every
+stop produces a packet.
+
+### Slicing large changes
+
+The pipeline above assumes reviewable pull requests. Prototyping produces the
+opposite. A common pattern: queue fifteen prompts overnight — implement,
+review, have a second harness review, compact, repeat — and wake up to a
+working 20,000-line branch that clarifies exactly what the feature should be.
+That branch is a **discovery prototype**, sometimes called a slop PR or slot
+PR. It is design evidence and a reference implementation, not an acceptable
+change. Nobody should be asked to review 20,000 lines; the author will not hold
+it to production quality and the reviewer will resent it.
+
+```mermaid
+flowchart LR
+    Idea["Idea and mocks"] --> Spec["Auto-looped spec"]
+    Spec --> Proto["Discovery prototype (slop PR)"]
+    Proto -->|"treat as spec: how would you rebuild this?"| Plan["Independently reviewed production plan"]
+    Plan --> PR1["PR 1: migrations"]
+    Plan --> PR2["PR 2: core"]
+    Plan --> PR3["PR 3: surface"]
+    PR1 --> PR2 --> PR3
+    PR3 --> Ship["1–3k lines merged at a time"]
+```
+
+**PR slicing** uses the prototype as the specification: ask the model how it
+would implement this from scratch, and how it breaks into digestible chunks
+that ship incremental value or are at least independently understandable,
+testable, and reversible. An independently reviewed production plan then
+divides the work into coherent pull requests with explicit dependencies,
+**migration ordering across PRs**, integration invariants, and rollback. In
+practice the result is one to three thousand lines merged at a time, roughly one
+a day, and it is normal for the fifth PR to prompt a colleague to say "I don't
+like how this is architected" — which is a digestible disagreement precisely
+because the slice is small. **Stacked PRs** reduce review size further at the
+cost of base-branch and invalidation complexity: when PR 1 changes, PRs 2 and 3
+must be re-based and their evidence refreshed. About ninety percent of work is
+small enough to do in one pass; slicing is for the large, experimental
+prototype that needs to become a vision before it becomes a change.
+
+## How to build it
+
+Build the pipeline as a chain of records with explicit promotion, and instrument
+every stage with its own accuracy metric.
+
+1. **Define the feedback record.** Fields: source and channel, reporter class,
+   original text (retained verbatim), redaction decisions, product, build,
+   version, environment, timestamp, privacy classification, and linked cluster.
+2. **Implement latest-version verification** as a three-way check (present,
+   absent, unknown) that runs before any other work and can send the "already
+   fixed" notification directly.
+3. **Implement clustering with recorded rationale.** Store link confidence,
+   the basis (symptom, component, error, reproduction), and allow split and
+   merge later. Measure the false-deduplication rate, not just the dedup rate.
+4. **Build the reproduction generator and a separate verifier.** Generate N
+   candidates; verify in a clean environment on a path the generator does not
+   control; store a reproduction manifest using the field list above; route
+   "insufficient" to a human with what was tried.
+5. **Promote explicitly.** Create the issue or Mission only from a verified
+   reproduction; carry forward the report, version, dedup decision, Attempts,
+   uncertainty, and owner.
+6. **Classify with an eval behind it.** Treat historical issues as the dataset;
+   version the classifier; reclassify by landed lines of code; target a useful
+   accuracy (around 60 percent is a reasonable first bar) and improve from
+   measured error.
+7. **Assign and ping a shepherd** with an escalation packet: outcome, risk,
+   evidence, uncertainty, options, recommendation, deadline, resume behavior.
+8. **Retain the regression case** bound to issue, fix, versions, expected
+   result, owner, retirement policy; run cheap cases on every PR; schedule
+   expensive ones; quarantine flaky ones with an owner.
+9. **Ingest review findings** with full finding identity; support incremental
+   review and false-positive feedback.
+10. **Run the fix-review loop** under a written contract: allowed fixes, max
+    iterations (start at three), spend cap, oscillation detection, required
+    deterministic checks after every fix, independence for consequential
+    findings, escalation packet on stop.
+11. **Run merge maintenance** as a separate worker on a sandboxed machine, not a
+    developer workstation, under a written policy: frozen scope, allowed update
+    strategy, retry classification and budget, mechanical-conflict rules,
+    invalidation-on-material-diff, human merge gate.
+12. **Notify the reporter** from the records, and measure triage accuracy,
+    reproduction yield, false-deduplication rate, review precision, human
+    attention per accepted outcome, merge latency, and change-failure rate.
+
+Merge-maintenance policy checklist:
+
+- Scope is frozen at approval; any file outside the approved set stops the loop.
+- Update strategy (merge from base vs rebase) is chosen per repository policy.
+- Retries: only for base, infrastructure, or flaky classifications; budget
+  explicit; every retry recorded with its classification.
+- Mechanical conflict resolution only with a proof (identical result under both
+  orderings, regenerated artifact, or a deterministic tool).
+- A material diff after approval invalidates approval and produces a packet.
+- Required checks are never bypassed; blocking evidence is never dismissed.
+- The merge button belongs to a human.
+
+## Failure modes
+
+| Failure | How to detect it | What to do |
+| --- | --- | --- |
+| Raw feedback creates issues directly | Issue count tracks report count; low reproduction yield | Insert latest-version check and reproduction gate; promote only verified cases |
+| Confident false reproduction | Fix passes repro but incident recurs | Verify reproductions on an independent path; record confidence; route ambiguity to a human |
+| False deduplication hides a distinct defect | Reporter says "still broken" after a linked fix | Record link rationale and confidence; allow split; measure false-merge rate |
+| Flaky regression case toggles between blocking and ignored | Case alternates pass/fail without a code change | Quarantine with owner and retirement date |
+| Reviewer noise and review churn | Rising iteration counts, low finding precision | Measure precision and recall; suppress with feedback; limit blocking authority |
+| Fix-review oscillation | Same findings alternate across iterations | Detect no-progress; stop at max iterations; escalate with packet |
+| Reviewer certifies its own suggestion | Same identity proposed and verified the change | Require an independent verifier for consequential findings |
+| Merge agent expands scope | Files outside approved set in the updated branch | Freeze scope; stop and invalidate approval |
+| Approval silently stale after rebase | Material diff since approval commit | Head-SHA currentness check; invalidate; re-request human review |
+| Infinite CI retry | Retry count climbs; flake rate hides real failure | Classify every failure; enforce retry budget |
+| Semantic conflict "resolved" mechanically | Behavior change with no reviewer awareness | Restrict auto-resolution to proven mechanical cases; escalate the rest |
+| 20k-line PR asked for review | Review latency and resentment | Treat as prototype; slice via reviewed plan; order migrations |
+| Stacked PRs invalidated by upstream change | Downstream evidence older than upstream head | Re-base and refresh evidence automatically; re-review if material |
+| Reproduction required before containment | Severe incident waits on repro | Risk policy permits containment first; reproduction proceeds in parallel |
+
+## In Mission Control
+
+At study commit
+[`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6),
+Mission Control has deterministic learning signals, clusters, improvement
+candidates, dataset and experiment records, GitHub App publication, head-SHA
+currentness checks, PR check ingestion, independent verification, human
+WorkOrder acceptance, and separate merge and release states. V1 doctrine links
+production defects, incidents, and rollbacks to governed issues bound to an
+exact repository and commit. Those pieces are real substrate for this chapter,
+and the currentness check in particular is the seed of stale-base detection.
+
+The studied evidence does not establish a general feedback intake service, a
+current-version checker, a reproduction generator and independent verifier, an
+issue-difficulty classifier, a CodeRabbit or other review-agent integration, a
+bounded automated fix-review loop, or an agentic merge-maintenance worker. The
+feedback pipeline and the agentic merge queue described here are the intended
+shape — drawn from practitioners who are running them — not proven Mission
+Control capability. When built, the operator should see confidence, impact,
+affected versions, reproduction evidence, linked reports, and the exact decision
+required; and production promotion of the pipeline itself should require
+measured triage accuracy, reproduction yield, false-deduplication rate, review
+precision, human attention, merge latency, and change-failure outcomes.
+
+## Retain this
+
+- Feedback is untrusted evidence about an observation. It becomes more
+  authoritative only through explicit promotion, and every earlier record is
+  kept.
+- Check the latest version first, deduplicate second, reproduce third. Issues
+  are created after reproduction, never from raw feedback.
+- A verified reproduction is one of the highest-leverage assets in an
+  autonomous maintenance loop; spend tokens generating several and verify on an
+  independent path. If none is clear, a human gets it.
+- Every subsystem has an accuracy number. Sixty percent useful is worth
+  shipping; measure by landed lines of code and reclassify.
+- Cheap regression cases run on every PR; expensive ones by risk; flaky ones are
+  quarantined with an owner.
+- The fix-review loop is a while loop with a maximum of three iterations, then
+  a human. Reviewer satisfaction is not acceptance, and a reviewer cannot
+  certify its own fix.
+- An agent may keep a human-approved candidate mergeable; it must not expand
+  scope or take the merge decision. A material diff invalidates approval.
+- A 20,000-line prototype is a specification, not a PR. Slice it through a
+  reviewed plan with migrations ordered first.
+
+## Go deeper
+
+- [Chapter 20 — Autonomous engineering workflows](../03-build/20-autonomous-engineering-workflows.md)
+  for the issue-to-PR wedge this chapter extends.
+- [Chapter 22 — Testing strategy for agentic change](../04-prove/22-testing-strategy-for-agentic-change.md)
+  and [Chapter 24 — Quality contracts, proof packages, and certificates](../04-prove/24-quality-contracts-proof-packages-and-certificates.md)
+  for why reviewer satisfaction is not acceptance.
+- [Chapter 25 — CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md)
+  for release, production feedback, and factory SRE.
+- [Chapter 29 — Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md)
+  for containment-first incident handling.
+- [Chapter 33 — Governed learning and compounding engineering](./33-governed-learning-and-compounding-engineering.md)
+  for what the factory learns from this pipeline.
+- [Chapter 9 — Multi-repository design](../02-design/09-multi-repository-design.md)
+  for coordinated PRs and merge ordering across repositories.
+- Lab: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md)
+  and [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md).
+- [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
+- [Glossary](../appendix/glossary.md).
+- Sources: HumanLayer (Dexter) and BAML (Vaibhav), "Software factory design
+  patterns" livestream — the feedback-to-reproduction pipeline, the
+  fix-CodeRabbit-until-mergeable loop, the agentic merge queue, and
+  prototype-to-sliced-PR workflow; "The 12-layer production AI agent stack"
+  coverage audit, sections 8 and 9.
+- CodeRabbit pull-request review documentation and review commands (accessed
+  2026-08-30); GitHub, "Managing a merge queue" and "About stacked pull
+  requests" (accessed 2026-08-30).

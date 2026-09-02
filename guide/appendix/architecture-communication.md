@@ -196,9 +196,9 @@ without agent assistance.
 - [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/product/mission-control-north-star.md)
 - [V1 Product Strategy](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/product/mission-control-v1-product-strategy.md)
 - [AI Software Factory V1 decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/decisions/ai-software-factory-v1-decisions.md)
-- [Golden-path assessment](../10-labs/evidence/2026-08-08-golden-path/README.md)
-- [Guide writing standard](../writing-standard.md)
-- [Platform Blueprint and Operating Playbook](../00-overview/03-platform-blueprint-and-operating-playbook.md)
+- [Golden-path assessment](./labs/evidence/2026-08-08-golden-path/README.md)
+- [Guide writing standard](../../archive/guide-v1/writing-standard.md)
+- [Platform Blueprint and Operating Playbook](../01-understand/02-the-factory-in-one-view.md)
 
 ## 8. Notes and lessons learned
 

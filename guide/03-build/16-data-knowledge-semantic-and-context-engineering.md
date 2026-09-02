@@ -1,0 +1,241 @@
+---
+title: Data, knowledge, semantic, and context engineering
+part: build
+chapter: 16
+summary: Four disciplines stand between a raw source and a model's context window — data understanding decides whether data is usable, knowledge engineering prepares a governed corpus, semantic engineering makes terms mean one thing, and context engineering selects the smallest sufficient subset for this attempt.
+absorbs: [06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md, 06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md]
+infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer]
+---
+
+# 16. Data, knowledge, semantic, and context engineering
+
+The previous chapter ended with a context compiler that retrieves candidates in step four and packs a briefing folder in step eight. This chapter is about everything that has to be true before that retrieval can be trusted: whether the underlying data is fit for the decision, how sources become a governed corpus, how the words in that corpus are made to mean the same thing everywhere, and how a permission-filtered, attributable, reproducible context package is compiled from it. After reading it you should be able to say which of four layers failed when an agent "missed" something, and to specify the pipeline and records that let you prove it.
+
+## The problem
+
+An agent cannot reliably compensate for missing, stale, contradictory, or misunderstood information. If a source omits the latest policy, if two systems use different meanings for the same word, or if retrieval picks the wrong document, the model receives a defective decision environment before it reasons at all. Many agent failures are therefore data, knowledge, semantic, or context failures wearing a model's face. Calling all four "RAG" hides which engineering system has to be fixed.
+
+The problem exists because operational information is scattered across repositories, requirements, design documents, tickets, incidents, conversations, telemetry, and databases, each with its own authority, freshness, permissions, structure, and failure modes. Retrieval can return a relevant but obsolete document. A correct document can use language the agent maps to the wrong concept. A large context window can hold all of it and still emphasize the wrong evidence. And when the audit of the earlier curriculum looked for these layers, it found data understanding and semantic engineering missing entirely and knowledge engineering collapsed into context selection. The highest-value correction it recommended was to separate what had been compressed together: knowledge preparation, then context selection, then harness execution, then workflow governance.
+
+## How it works
+
+### Four disciplines, four moments
+
+The 12-layer production stack in [chapter 19](./19-the-12-layer-production-ai-agent-stack.md) names four of its layers for these disciplines, and each works at a different moment.
+
+**Data Understanding** profiles completeness, missingness, quality, freshness, and provenance. It decides whether source data is fit for use at all. **Knowledge Engineering** turns raw information into structured, retrievable, traceable knowledge; it prepares the corpus. **Semantic Engineering** normalizes terminology and resolves meaning so the system operates on concepts rather than raw strings; it makes "customer," "account," "workspace," or "release" mean one thing across agents, repositories, datasets, and tools. **Context Engineering** selects the right subset of knowledge for each decision; it chooses for this attempt.
+
+Two sentences carry the distinctions. *Knowledge Engineering prepares the corpus; Context Engineering selects the subset for this attempt.* And: *provenance tells you where data came from; data understanding tells you whether it is usable for this decision.* A library is the analogy. Acquisitions decides which books are worth shelving (data understanding). Cataloguing shelves and indexes them (knowledge engineering). The subject thesaurus makes sure "automobiles" and "cars" land on the same shelf (semantic engineering). The reference librarian pulls the three books you need for today's question and leaves the rest where they are (context engineering).
+
+### The handoff from source fact to model context
+
+Every handoff along the path must retain source identity, version or observation time, authority class, sensitivity, tenant, transformation lineage, and the reason for selection. A model citation is worth something only when the system can resolve it back to the exact material that was used.
+
+<!-- infographic: knowledge-pipeline -->
+> **Infographic — From registered source to frozen context package.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    R["Register"] --> D["Discover"] --> X["Extract"] --> P["Parse and sanitize"]
+    P --> N["Normalize and enrich"] --> S["Segment"] --> I["Embed and index"]
+    I --> Q["Understand query"] --> F["Permission filter"] --> C["Generate candidates"]
+    C --> K["Rerank and diversify"] --> A["Assemble context"] --> Z["Freeze package"]
+    Z --> E["Evaluate outcomes"]
+    Sem["Vocabulary, identities, ontology, mappings"] --> N
+    Con["Intent, policy, task, budget"] --> A
+    U["Correct, delete, or revoke"] --> R
+    U --> I
+    U --> Z
+```
+
+The pipeline registers approved sources, ingests and transforms their content, maintains searchable representations, retrieves eligible candidates, and compiles the smallest sufficient context for one attempt. It does not grant tool authority, redefine business intent, or make untrusted source instructions governing. Ownership is split: the knowledge owner is accountable for source, connector, transformation, index, retrieval, and revocation contracts; source owners keep authority over the underlying facts; security owns access policy; workflow owners define task relevance; quality owns independent evaluation.
+
+### Data understanding: is this usable for this decision?
+
+**Data profiling** is the act of measuring a source before trusting it. A source profile should answer eight questions: Is required data present, or missing? Is it current enough for this decision? Are its schema and meaning stable? Is it duplicated or contradictory? Which system and owner are authoritative? Which tenants, identities, and purposes may use it? Which transformations have been applied? How are correction, retention, and deletion propagated?
+
+The vocabulary behind those questions is worth having exactly. **Completeness and missingness** measure whether required fields and records exist. The **data quality dimensions** are completeness, validity, consistency, accuracy, timeliness, and uniqueness. **Freshness and staleness** describe how far the observed value lags the real one; a **freshness SLO** puts a bound on it. **Source authority** and **system of record** name which system is allowed to be right when two disagree. **Data lineage** records the transformations applied; **provenance** records the origin. **Schema drift** is an unannounced change in structure or meaning; **duplication and inconsistency** are the same fact appearing twice with different values. **Sensitivity and classification** determine who may see the data and where it may travel, and **retention and deletion** determine how long it lives and how removal propagates. **Data-quality gates** block a workflow when thresholds fail; **missing-data handling** defines what happens when required facts are absent; **data observability** monitors all of this continuously rather than at onboarding.
+
+A **Data Contract** makes the expectations explicit: schema, semantics, quality thresholds, freshness, owner, sensitivity, lineage, allowed uses, and failure behavior. The rule that matters most is about absence: missing data must produce an explicit unknown or blocked state when the workflow cannot proceed safely. It must never be converted into a confident default.
+
+### Knowledge engineering: a governed lifecycle
+
+Knowledge engineering covers source registration, connector identity, checkpointed ingestion, parsing, normalization, chunking, metadata enrichment, indexing, correction, reprocessing, and retirement. The system should know which source version and transformation produced every indexed unit.
+
+The **source registry** is the list of approved sources with owner, authority class, classification, tenant scope, allowed purposes, freshness SLO, retention, and correction behavior. A source moves through states: `proposed`, `approved`, `active`, `degraded`, `suspended`, `revoked`, `retiring`, `deleted`. The **ingestion pipeline** extracts content through an identified connector; **incremental ingestion** with **checkpoints** binds connector version, source cursor, schema, transformation, and content digest so that reprocessing the same source version under the same pipeline version is idempotent. **Parsing and normalization** turn each format into clean, sanitized text and structure. A **chunking strategy** segments documents into retrievable units; fine-grained chunks improve targeted retrieval but can strip necessary context, while large chunks preserve narrative and consume budget and blur ranking. **Metadata enrichment** attaches authority, classification, semantic identifiers, permissions, and lineage to each unit. Each unit, a **knowledge artifact**, has its own states: `processing`, `indexed`, `stale`, `invalid`, `quarantined`, `deleted`. **Corpus freshness** is the aggregate lag between sources and index.
+
+Retrieval combines several methods, and none is universally best. **BM25** and other **lexical search** find exact names, identifiers, and uncommon tokens; **embeddings** turn content into vectors and **vector search** finds conceptual similarity; **metadata filtering** applies scope and authority; **hybrid retrieval** fuses lexical and vector candidate sets, for example with reciprocal rank fusion; **graph traversal** follows explicit relationships and lineage, which is what a **knowledge graph** and **GraphRAG** add; **query rewriting** expands or reformulates the question before any of that; and **reranking** reorders candidates for the actual task. Code symbols and policy identifiers reward lexical search, natural-language concepts reward embeddings, and blast-radius questions reward graphs. Hybrid retrieval is justified by measured improvement, not by default complexity.
+
+Two properties are not optional. **Permission-aware retrieval** filters by requester, tenant, purpose, lifecycle, and freshness before content reaches ranking or generation, so that an unauthorized document can never be "very relevant." **Citation and source attribution** tie every excerpt to its artifact, source version, and permission; a citation without source identity, version, and permission is decoration.
+
+### Semantic engineering: executable meaning
+
+<!-- infographic: semantic-layer -->
+> **Infographic — The semantic layer.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    Src1["Repo A: 'workspace_id'"] --> ER["Entity resolution"]
+    Src2["CRM: 'account'"] --> ER
+    Src3["Ticket: 'customer org'"] --> ER
+    ER --> Canon["Canonical identifier: org:1234"]
+    Vocab["Controlled vocabulary + aliases"] --> ER
+    Tax["Taxonomy"] --> Onto["Ontology: typed relationships, constraints"]
+    Onto --> Canon
+    Canon --> Contract["Semantic contract v3"]
+    Contract --> Ingest["Ingestion enrichment"]
+    Contract --> Query["Query understanding"]
+    Amb["Unresolved term"] -.->|"stays ambiguous, never silently mapped"| Contract
+```
+
+A **controlled vocabulary** defines preferred terms, aliases, and deprecated terms; a **domain lexicon** is the same idea scoped to one business domain. A **taxonomy** organizes concepts into a hierarchy. An **ontology** adds typed relationships and constraints between them. A **canonical identifier** is the one stable ID a concept or entity has regardless of which system named it, and **entity resolution** maps the different source identifiers onto it while preserving the source-specific identities. **Synonym and alias mapping** and **semantic normalization** collapse variant spellings and phrasings; **schema and field mapping** does the same for column and property names across systems. **Disambiguation** decides which of several meanings applies, and the rule is that an unresolved term stays ambiguous rather than being silently mapped. A **terminology registry** holds all of this under ownership and version. **Concept drift** is meaning changing over time; **semantic versioning** of the contract is how you detect and manage it, because semantic changes can invalidate retrieval results, context packages, evaluations, and downstream evidence.
+
+This is not the cryptographic canonicalization that the evidence chapters use to hash records. That makes bytes identical; this makes meanings identical.
+
+A **Semantic Contract** defines canonical concepts, identifiers, allowed relationships, disambiguation rules, source mappings, owner, version, and compatibility policy. Keep the layer as small as possible and as explicit as necessary. An ontology earns its cost when several sources repeatedly disagree about meaning; it is premature when a small controlled vocabulary and stable identifiers solve the actual problem. Semantic engineering removes measured ambiguity; it does not build a speculative enterprise model of everything.
+
+### Context engineering: compile for the decision, not the corpus
+
+The context compiler starts from task requirements, policy, risk, actor, repository scope, model limits, and a token budget, then selects, deduplicates, orders, compresses, and attributes material according to explicit rules. The controls it needs are authority tiers separating approved contracts from reference material; recency and lifecycle filters; permission-aware retrieval before ranking; diversity controls that stop ten near-identical chunks from crowding out a governing counterexample; contradiction detection and source comparison; token allocation by context class; compaction that retains decisions and unresolved issues; cache keys bound to source and policy versions; and "why retrieved" metadata for inspection and evaluation.
+
+Allocation has separate budgets for governing contracts, task facts, repository content, tool results, history, examples, and optional reference material. Governing material cannot be compressed below its required clauses. Summaries keep source links and uncertainty. Cache keys include tenant, requester authorization class, purpose, normalized query, source, index, and policy versions, compiler version, and model profile, and a context cache is never shared across a permission boundary.
+
+Context is an Attempt input, not an authority record. Retrieved text cannot alter the approved Mission, policy, tool grants, or acceptance criteria.
+
+### Evaluate each layer separately, then together
+
+<!-- infographic: retrieval-evaluation -->
+> **Infographic — Layered evaluation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    DE["Data evals: completeness, freshness, validity, consistency, permission"] --> RE
+    RE["Retrieval evals: Recall@k, Precision@k, MRR, NDCG, source coverage"] --> SE
+    SE["Semantic evals: aliases, identity resolution, ambiguity, relationships"] --> CE
+    CE["Context evals: sufficient, minimal, current, attributable, no governing contradiction"] --> E2E
+    E2E["End-to-end task outcome"] -->|"necessary, not diagnostic"| Root["Which layer to fix?"]
+    Root --> DE
+```
+
+**Retrieval evaluation** has its own measures. **Precision@k** is the share of the top k results that are relevant; **Recall@k** is the share of all relevant items that appear in the top k; **MRR** (mean reciprocal rank) rewards putting the first relevant result near the top; **NDCG** (normalized discounted cumulative gain) rewards ranking the most relevant items highest. **Groundedness** and **faithfulness** measure whether the generated answer is supported by, and only by, the retrieved material. A **retrieval failure taxonomy** classifies misses: source never registered, not yet ingested, chunked apart, filtered by permission, outranked, contradicted, stale, or mis-resolved semantically.
+
+Data evaluations measure completeness, freshness, validity, consistency, and permission correctness. Semantic evaluations test aliases, identity resolution, ambiguity, and relationship correctness. Context evaluations test whether the final package is sufficient, minimal, current, attributable, and free of governing contradictions. End-to-end task success remains necessary but is not diagnostic; a system that records only the final outcome cannot tell whether to fix the source, the ingestion, the semantics, the retrieval, the context policy, the model, or the tool. Slice everything by workflow, repository, language, persona, tenant, risk, and source class.
+
+### Correction and revocation are first-class paths
+
+A corrected, deleted, reclassified, or compromised source must invalidate its derived artifacts, index entries, caches, context packages, and dependent evidence under explicit policy. New work stops selecting the affected material immediately. Running work is paused, cancelled, or allowed to finish only through a recorded risk decision. Historical packages remain reproducible under restricted retention but are marked ineligible for new decisions.
+
+That requires both **forward lineage** (what did this source produce?) and **reverse lineage** (which runs, decisions, and releases depended on it?). Without both, revocation is an announcement rather than a control. Deletion removes active copies and derived representations, emits receipts, and keeps only policy-approved tombstones and restricted audit evidence. Where content cannot be retained for privacy or legal reasons, reproducibility is preserved through protected digests and minimal lineage.
+
+Poisoning defense follows the same shape. External content is untrusted: sanitize active content, separate data from instructions, validate provenance and signing where available, watch for unexpected authority changes and embedding or index drift, and monitor retrieval for abnormal dominance by one source. A suspected source or connector is suspended, its artifacts and caches quarantined, and the affected packages, attempts, evidence, and releases found through reverse lineage.
+
+## How to build it
+
+### The records
+
+Four reference schemas anchor the pipeline. Two are shown as documents; two as required-field lists.
+
+```yaml
+# SourceRegistration
+id: source:engineering-policy
+owner: role:policy-owner
+authority_class: governing
+connector_identity: workload://connector/policy
+location: system://policy-service
+classification: confidential
+tenant_scope: [tenant-a]
+allowed_purposes: [software-delivery]
+freshness_slo: PT1H
+retention_policy: retention:policy@2
+correction_and_deletion: source-authoritative
+state: active
+```
+
+```yaml
+# KnowledgeArtifact
+id: ka:8f73
+source_id: source:engineering-policy
+source_version: 31
+observed_at: 2026-08-30T18:00:00Z
+pipeline_version: ingest@8
+content_digest: sha256:...
+segment_locator: section:release-controls
+semantic_ids: [concept:consequential-release]
+classification: confidential
+permissions_ref: acl:policy-31
+lineage: [extract:90, sanitize:22, segment:15]
+state: indexed
+```
+
+| Record | Required fields |
+|---|---|
+| `RetrievalRequest` | Requester and workload identity, tenant, purpose, query, task type, repositories, required authority classes, time boundary, classification ceiling, token budget, retrieval policy version |
+| `RetrievalCandidate` | Artifact and source versions, candidate method, raw and normalized scores, permission decision, freshness, authority, contradiction group, exclusion reason, lineage |
+| `ContextSelection` | Request, selected and excluded candidates, reranker version, diversity and contradiction decisions, token allocation, selection rationale, evaluator signals |
+| `ContextPackage` | Immutable digest, attempt and manifest, instruction hierarchy, exact excerpts, citations, source and policy versions, classification, expiry, cache key, unresolved missing or conflicting facts |
+
+### The retrieval contract
+
+The ordering is the contract. Authenticate first, filter second, rank third.
+
+1. Resolve requester, workload, tenant, purpose, and data ceiling.
+2. Parse entities, exact identifiers, constraints, time, and required facts.
+3. Apply source eligibility, permission, tenant, lifecycle, and freshness filters before any content reaches ranking or generation.
+4. Generate lexical, vector, graph, and metadata candidates under pinned index versions.
+5. Fuse and rerank with a versioned strategy appropriate to the task.
+6. Enforce diversity and group contradictions; never discard governing counterevidence because it scored lower.
+7. Compile context by authority and token allocation, preserving citations and the reason each item was included or excluded.
+8. Freeze the package and bind it to the Attempt.
+
+### Operating objectives
+
+Define SLOs for ingestion lag, retrieval availability and latency, permission false-allow (target zero), deletion propagation, revocation propagation, and package reproducibility. Track storage, embedding, indexing, retrieval, reranking, and context-token cost per accepted outcome. Offline evaluation covers source completeness, permission correctness, freshness, exact-match recall, candidate recall, ranking quality, citation accuracy, contradiction coverage, diversity, latency, and cost; runtime evaluation connects packages to task completion, policy denials, corrections, incidents, and accepted outcomes.
+
+Version everything that can change an answer: schemas, connectors, parsers, semantic mappings, embedding models, indexes, rankers, context policies, and the package format. Migrate with shadow indexes and representative comparisons. Semantic or permission changes invalidate prior compatibility assumptions. Keep decoders for retained packages, and emit explicit deprecation and revocation events.
+
+### Choosing between live and indexed
+
+Centralizing knowledge simplifies governance and discovery but can create a stale copy of systems that already have authoritative APIs. Live retrieval preserves currentness at the cost of latency and dependency risk. The usual answer is hybrid: index discovery metadata, and resolve consequential facts from the source at decision time. Knowledge graphs buy explicit traversal and lineage with modeling, ingestion, and consistency work; add one when queries need graph structure, not because it sounds thorough.
+
+## Failure modes
+
+| Failure | Detection | Runtime behavior | Recovery proof |
+|---|---|---|---|
+| Connector lag | Freshness SLO | Mark degraded; block freshness-critical tasks | Checkpoint catches up and gap scan passes |
+| Schema change | Parser or contract error | Stop the affected partition, preserve checkpoint | New parser version and reprocessing comparison |
+| Permission mismatch | Negative authorization test | Deny candidate before ranking | ACL reconciliation and tenant-isolation suite |
+| Stale governing source | Authority and freshness rule | Exclude, and block if required | Current source retrieved and package regenerated |
+| Contradictory authorities | Contradiction group | Surface uncertainty and escalate | Named owner resolves or workflow records an exception |
+| Poisoning signal | Provenance, dominance, behavior anomaly | Suspend source and affected packages | Root cause, clean rebuild, red-team and regression tests |
+| Index unavailable | Health or circuit state | Approved fallback or explicit unavailable state | Index restored and missed-change reconciliation |
+| Missing authoritative data | Data-quality gate | Explicit blocked state, never a confident default | Owner supplies data; gate passes |
+| Silent alias mapping | Semantic evaluation | Term stays ambiguous; escalate | Contract updated and versioned |
+| Obsolete document ranks first | Authority tier and lifecycle filter | Excluded before compilation | Retrieval evaluation case added |
+
+The diagnostic habit is the one from the evaluation section: "the model missed it" is not a root cause until the source, ingestion, semantic, and retrieval layers have been ruled out in that order.
+
+## In Mission Control
+
+At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control has provenance-backed retrieval, graph relationships, planning, Attempt-bound Context Packages, context evaluations, configuration drift scans, versioned context manifests, and content-hash checks. Factory Memory is advisory and cannot satisfy acceptance. Those mechanisms are a strong context-governance foundation.
+
+**Partial or future.** The studied evidence does not establish a complete production source registry, a connector and checkpoint lifecycle, a data-quality gate, a semantic-contract registry, a permission-aware hybrid retrieval service, or an independently benchmarked reranking pipeline. The graph and memory mechanisms should not be presented as a general enterprise knowledge system. The specification in this chapter likewise does not claim a production source registry, benchmarked ranker, deletion guarantee, or poisoning defense; it is the target. The target state is that Mission Control registers sources with ownership, authority, classification, retention, and ingestion policy; produces versioned knowledge artifacts and semantic contracts; evaluates retrieval by workflow and persona; freezes the resulting selection into each execution manifest; and lets an operator inspect missing required data, stale sources, semantic ambiguity, retrieval candidates, reranking decisions, excluded sources, token allocation, citations, and the exact package an Attempt used. Promotion of that system requires tenant-isolation tests, correction propagation, deletion tests, representative retrieval evaluations, and end-to-end outcome evidence.
+
+## Retain this
+
+- Data understanding asks whether data is usable for this decision; knowledge engineering prepares the corpus; semantic engineering makes terms mean one thing; context engineering selects the subset for this attempt.
+- Provenance says where data came from; data understanding says whether you can use it. Missing data becomes an explicit unknown or blocked state, never a confident default.
+- The pipeline is register → profile → ingest → normalize → index → retrieve → permission-filter → rank → compile → freeze → evaluate → revoke, and every handoff keeps source, version, authority, sensitivity, tenant, lineage, and selection reason.
+- Permission and tenant filters run before ranking or model exposure; a citation without source identity, version, and permission is decoration.
+- No retrieval method wins everywhere: lexical for identifiers, vectors for concepts, graphs for relationships, hybrid only when measured.
+- The semantic layer is as small as possible and as explicit as necessary; unresolved terms stay ambiguous.
+- Retrieved text is an Attempt input, not authority; it cannot change intent, policy, tool grants, or acceptance criteria.
+- Evaluate each layer separately with its own measures (Recall@k, MRR, NDCG, groundedness among them); end-to-end success is necessary but not diagnostic.
+- Revocation needs forward and reverse lineage or it is only an announcement.
+
+## Go deeper
+
+- Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the compiler and the five trust categories; [19. The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [26. Security](../04-prove/26-security.md) for poisoning and injection; [28. Observability](../05-operate/28-observability-telemetry-and-forensics.md) for lineage; [5. Authoritative records](../02-design/05-authoritative-records.md) for the systems of record this pipeline must not shadow.
+- Lab: [Knowledge poisoning, revocation, and retrieval](../appendix/labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md), which proves permission denial before ranking, poisoning detection, reverse-lineage impact analysis, revocation, clean rebuild, and reproducible packages on a synthetic corpus.
+- Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
+- Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness).
+- [Glossary](../appendix/glossary.md).

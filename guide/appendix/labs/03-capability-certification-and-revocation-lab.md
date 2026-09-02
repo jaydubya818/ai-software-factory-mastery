@@ -20,7 +20,7 @@ Prove that an agent capability can be packaged, evaluated, certified for a bound
 - A disposable local repository.
 - One read-only repository-analysis agent, one skill, one typed tool, one model profile, and one evaluator represented by manifests.
 - No production credentials or production registry.
-- Read the three [Agent Factory](../agent-factory/01-capability-supply-chain-and-registries.md) chapters.
+- Read the three [Agent Factory](../../03-build/10-the-agent-factory.md) chapters.
 
 ## Required implementation
 

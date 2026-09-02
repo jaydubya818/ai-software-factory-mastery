@@ -79,5 +79,5 @@ merged change, or passing agent report is insufficient on its own.
 Use the [public Coverage view](https://ai-software-factory-mastery.vercel.app/coverage)
 to inspect guide emphasis, maturity, and implementation evidence boundaries.
 Use the
-[Reviewer Guide](09-reviewer-guide.md) when providing feedback and the
-[Changelog](10-changelog.md) to see which claims moved.
+[Reviewer Guide](reviewer-guide.md) when providing feedback and the
+[Changelog](changelog.md) to see which claims moved.
