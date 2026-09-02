@@ -11,9 +11,15 @@ infographics: []
 
 ## What this is
 
-This is a field guide to the **AI Software Factory**: an engineering system in which humans define intent and accept risk while bounded agents plan, implement, validate, and recover, and independent evidence decides what advances. It is written to be read front to back and retained, the way a good engineering handbook is retained: not as a list of features, but as a working model you can redraw on a whiteboard, defend to a skeptic, and use to make design decisions.
+Software is now written by two kinds of workers: people, and agents that can plan, write, test, and repair code faster than any team can read it. Most organizations have bolted the second kind onto a process built for the first. The result is familiar — more pull requests, less certainty, and nobody who can say with evidence why a given change was safe to ship.
 
-It is written down once and in order, drawing on what was learned building **Mission Control** — a control plane for human-directed, agent-executed software delivery — and on what the wider field has learned in parallel. It is written for anyone with the same problem: engineers who will build a factory, architects who must draw its boundaries, and executives who must decide whether to fund one and how to hold it accountable. The chapters do not talk down to any of these readers. They explain each idea in plain English first and then give it its precise name.
+An **AI Software Factory** is the engineering system that fixes this. Humans define intent and accept risk. Bounded agents plan, implement, validate, and recover inside a harness that owns their tools, state, budgets, and stop conditions. Independent evidence, not the agent's own report, decides what advances. Every step leaves a durable record that names who decided, what was proven, and against which exact version.
+
+This guide is the complete working model of that system: every component, the records they produce, the contracts between them, the ways each one fails, and the reasons it exists at all. It is not a tool comparison, a vendor pitch, or a list of prompts. When you finish it you should be able to draw the whole factory on a whiteboard from memory, defend every box to a skeptic, and decide what to build first in your own organization and what to leave out.
+
+It draws on two sources: the experience of building **Mission Control**, a control plane for human-directed, agent-executed software delivery, and the wider field — research, production case studies, and the protocols and harnesses that now define the practice. Where Mission Control has done something, the guide says so and pins it to a commit. Where it has not, the guide says that too.
+
+It is written for three readers with the same problem. Engineers who will build a factory and need the mechanisms. Architects who must draw its boundaries and defend them. Executives who must decide whether to fund one and how to hold it accountable. Every idea is explained in plain English first, then given its precise name, so all three can read the same page and mean the same thing by it.
 
 ## The factory in one line
 
