@@ -10,7 +10,7 @@ topics: [coverage, maturity, review-status]
 
 # Capability Coverage and Maturity
 
-This page prevents curriculum breadth, editorial maturity, and implementation
+This page prevents guide breadth, editorial maturity, and implementation
 proof from being mistaken for one another. A subject may be well explained and
 not implemented. A mechanism may exist in code and lack accepted operating
 evidence. Review every claim along all three axes.
@@ -32,7 +32,7 @@ repository class, risk level, environment, version, and observation window.
 
 ## Current coverage map
 
-| Capability area | Curriculum status | Implementation evidence boundary |
+| Capability area | Guide status | Implementation evidence boundary |
 |---|---|---|
 | Factory definition and operating model | Draft and canonical coverage | Partial case-study evidence |
 | Detailed architecture ownership and four synchronized views | Review ready | Architecture trace is documented; complete implementation conformance is unproven |
@@ -77,7 +77,7 @@ merged change, or passing agent report is insufficient on its own.
 ## How to use this map
 
 Use the [public Coverage view](https://ai-software-factory-mastery.vercel.app/coverage)
-to filter the curriculum by section,
-persona, lifecycle phase, maturity, and risk. Use the
+to inspect guide emphasis, maturity, and implementation evidence boundaries.
+Use the
 [Reviewer Guide](09-reviewer-guide.md) when providing feedback and the
 [Changelog](10-changelog.md) to see which claims moved.

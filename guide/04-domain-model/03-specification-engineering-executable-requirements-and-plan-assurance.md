@@ -135,7 +135,7 @@ Mission Control should compile an approved Plan and active Factory Configuration
 - Testability must be designed into requirements. Evidence cannot repair an unobservable claim later.
 - The approved specification, not the builder narrative, controls acceptance.
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. How would you translate an ambiguous CEO request into a governed Mission without creating heavyweight bureaucracy?
 2. What is the difference among a requirement, acceptance criterion, assertion, and test?

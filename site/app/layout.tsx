@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
-import { ProgressProvider } from "./components/ProgressProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -9,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
   const title = "AI Software Factory Mastery";
-  const description = "A practical curriculum for governed, evidence-backed autonomous software delivery.";
+  const description = "The complete field guide to designing, building, operating, governing, and improving an AI software factory.";
   const image = new URL("/og-v2.png", origin).toString();
 
   return {
@@ -28,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body><ProgressProvider>{children}</ProgressProvider></body>
+      <body>{children}</body>
     </html>
   );
 }

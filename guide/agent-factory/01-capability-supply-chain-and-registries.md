@@ -104,7 +104,7 @@ Promotion into current capability requires registry APIs, signed immutable manif
 
 Capability reuse becomes safe only after ownership, identity, evidence, and retirement are as easy to inspect as the capability itself. The useful analogy is not an app store; it is a package registry combined with policy, qualification, and operational inventory.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is a searchable list not necessarily a registry?
 2. Which metadata belongs in the shared capability envelope?

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { documents } from "../../lib/content";
-import { lifecycleStages } from "../../lib/curriculum";
+import { lifecycleStages } from "../../lib/lifecycle";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { StatusBadge } from "../components/StatusBadge";
 
 export const metadata: Metadata = {
   title: "Coverage & Maturity · AI Software Factory Mastery",
-  description: "See what the autonomous software factory curriculum covers, how mature each document is, and what remains unproven.",
+  description: "See what the autonomous software factory guide covers, how mature each document is, and what remains unproven.",
 };
 
 const maturity = [
@@ -30,7 +30,7 @@ const areas = [
   ["Security & governance", "Agentic threats, policy, identity, secrets, privacy, provenance, licensing, and compliance.", "Core controls and review-ready additions exist; full adversarial evidence remains unproven.", "/topics?section=Security%20%26%20Governance"],
   ["Control & operations", "Emergency control, decision rights, SLOs, cost, continuity, drift, triage, response, and verified closure.", "Review-ready contracts; exercised fleet-scale operating proof remains unproven.", "/topics?q=operations"],
   ["Evaluation & learning", "Datasets, graders, uncertainty, experiments, optimization, regression control, and human promotion.", "Architecture is review ready; production optimization and rollback remain unproven.", "/topics?q=evaluation"],
-  ["Hands-on mastery", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited.", "/topics?type=lab"],
+  ["Hands-on practice", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited.", "/topics?section=Labs"],
 ];
 
 export default function CoveragePage() {
@@ -48,10 +48,10 @@ export default function CoveragePage() {
     return counts;
   }, new Map<string, number>()).entries()].sort((a, b) => b[1] - a[1]);
   const activityCounts = [
-    ["Labs", documents.filter((document) => document.hasLab).length, "/topics?type=lab"],
+    ["Labs", documents.filter((document) => document.hasLab).length, "/topics?section=Labs"],
     ["Whiteboards", documents.filter((document) => document.hasWhiteboardExercise).length, "/topics?q=whiteboard"],
-    ["Interview material", documents.filter((document) => document.hasInterviewQuestions).length, "/topics?q=interview"],
     ["Evidence references", documents.filter((document) => document.hasImplementationEvidence).length, "/topics?q=evidence"],
+    ["Failure scenarios", documents.filter((document) => /failure|incident|recovery/i.test(document.text)).length, "/topics?q=failure"],
   ] as const;
 
   return (
@@ -66,7 +66,7 @@ export default function CoveragePage() {
           <div>
             <p>Use this map to separate documented architecture, editorial maturity, validation, and operational evidence.</p>
             <div className="coverage-intro-actions">
-              <Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Review the curriculum</Link>
+              <Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Review the guide</Link>
               <Link className="button button-secondary" href="/architecture">Explore architecture</Link>
             </div>
           </div>
@@ -79,17 +79,17 @@ export default function CoveragePage() {
             <p>A review-ready chapter is ready for external scrutiny. It does not imply that the described implementation is operationally proven.</p>
           </div>
           <div className="status-counts">
-            {statusCounts.map(([status, count]) => <Link href={`/topics?status=${encodeURIComponent(status)}`} key={status}><StatusBadge status={status} /><span><strong>{count}</strong><small>Open →</small></span></Link>)}
+            {statusCounts.map(([status, count]) => <div key={status}><StatusBadge status={status} /><span><strong>{count}</strong><small>documents</small></span></div>)}
           </div>
         </section>
 
         <section className="coverage-dashboard" aria-labelledby="coverage-dashboard-title">
-          <header><div><span className="section-kicker">Metadata-derived dashboard</span><h2 id="coverage-dashboard-title">See where the curriculum carries weight.</h2></div><p>Every number below comes from generated frontmatter and content signals. Select any segment to inspect its source material.</p></header>
+          <header><div><span className="section-kicker">Metadata-derived dashboard</span><h2 id="coverage-dashboard-title">See where the guide carries weight.</h2></div><p>Every number below comes from generated frontmatter and content signals. The bars show emphasis; they do not claim implementation proof.</p></header>
           <div className="coverage-activity-grid">{activityCounts.map(([label, count, href]) => <Link href={href} key={label}><span>{label}</span><strong>{count}</strong><small>Open source material →</small></Link>)}</div>
           <div className="coverage-matrices">
-            <article><header><span>Lifecycle coverage</span><small>Documents may cover multiple stages</small></header><div>{lifecycleCounts.map((stage) => <Link href={`/topics?lifecycle=${stage.id}`} key={stage.id}><span>{stage.label}</span><i><b style={{ width: `${Math.round((stage.count / documents.length) * 100)}%` }} /></i><strong>{stage.count}</strong></Link>)}</div></article>
-            <article><header><span>Architecture coverage</span><small>Section-derived layers</small></header><div>{architectureCounts.map(([layer, count]) => <Link href={`/topics?architecture=${encodeURIComponent(layer)}`} key={layer}><span>{layer}</span><i><b style={{ width: `${Math.round((count / Math.max(...architectureCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></Link>)}</div></article>
-            <article><header><span>Persona coverage</span><small>Declared audiences</small></header><div>{personaCounts.slice(0, 12).map(([persona, count]) => <Link href={`/topics?audience=${encodeURIComponent(persona)}`} key={persona}><span>{persona.replaceAll("-", " ")}</span><i><b style={{ width: `${Math.round((count / Math.max(...personaCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></Link>)}</div></article>
+            <article><header><span>Lifecycle coverage</span><small>Documents may cover multiple stages</small></header><div>{lifecycleCounts.map((stage) => <div className="coverage-matrix-row" key={stage.id}><span>{stage.label}</span><i><b style={{ width: `${Math.round((stage.count / documents.length) * 100)}%` }} /></i><strong>{stage.count}</strong></div>)}</div></article>
+            <article><header><span>Architecture coverage</span><small>Section-derived layers</small></header><div>{architectureCounts.map(([layer, count]) => <div className="coverage-matrix-row" key={layer}><span>{layer}</span><i><b style={{ width: `${Math.round((count / Math.max(...architectureCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></div>)}</div></article>
+            <article><header><span>Audience coverage</span><small>Declared readers</small></header><div>{personaCounts.slice(0, 12).map(([persona, count]) => <div className="coverage-matrix-row" key={persona}><span>{persona.replaceAll("-", " ")}</span><i><b style={{ width: `${Math.round((count / Math.max(...personaCounts.map(([, value]) => value))) * 100)}%` }} /></i><strong>{count}</strong></div>)}</div></article>
           </div>
         </section>
 
@@ -116,7 +116,7 @@ export default function CoveragePage() {
         <section className="coverage-review-callout">
           <span className="section-kicker">For external reviewers</span>
           <h2>Challenge the boundary, claim, failure, or evidence.</h2>
-          <p>Use the reviewer guide for focused architecture, builder, operations, security, or curriculum feedback.</p>
+          <p>Use the reviewer guide for focused architecture, builder, operations, security, or guide feedback.</p>
           <div><Link className="button button-primary" href="/docs/00-overview/09-reviewer-guide">Open reviewer guide</Link><Link className="button button-secondary" href="/docs/00-overview/10-changelog">See the changelog</Link><a className="button button-secondary" href="https://github.com/jaydubya818/ai-software-factory-mastery/issues/new" target="_blank" rel="noreferrer">Report feedback ↗</a></div>
         </section>
       </main>

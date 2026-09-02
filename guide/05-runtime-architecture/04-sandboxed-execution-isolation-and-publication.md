@@ -148,7 +148,7 @@ Local uncommitted sources studied on 2026-08-11:
 Disposable is not synonymous with safe. The decisive boundary is that the
 untrusted executor cannot publish its own result or certify its own evidence.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What does a worktree isolate, and what does it not isolate?
 2. Why should the sandbox lack GitHub write credentials?

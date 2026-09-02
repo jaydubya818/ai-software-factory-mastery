@@ -94,7 +94,7 @@ Adding a repository should launch a read-only discovery workflow that produces a
 
 Repository onboarding is not administrative setup. It is the first assurance case: evidence that the factory understands enough of the target to grant a particular kind of execution authority.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which repository facts may be inferred, and which require an owner?
 2. How should readiness expire?

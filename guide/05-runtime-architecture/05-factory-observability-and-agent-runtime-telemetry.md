@@ -99,7 +99,7 @@ Define a versioned factory telemetry contract and instrument one golden path fir
 - The most valuable alert identifies the human decision now required.
 - Evidence freshness is an operational SLO, not a documentation concern.
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. How do audit events, evidence, and telemetry differ?
 2. What would you put on an operator dashboard for 20 parallel Missions?

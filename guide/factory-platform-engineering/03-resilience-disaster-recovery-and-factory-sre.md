@@ -116,7 +116,7 @@ The factory should publish a dependency and recovery map, automate backups and r
 
 Factory reliability is a safety control. When the system cannot prove current authority, configuration, or evidence, availability should yield to containment.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which factory components require an RPO of zero?
 2. How do fencing tokens prevent split-brain execution?

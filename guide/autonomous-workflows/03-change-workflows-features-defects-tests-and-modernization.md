@@ -73,7 +73,7 @@ Workflow templates should generate task-specific plans, validators, risk gates, 
 
 Workflow specialization should live in explicit contracts and verification, not in opaque agent personalities. That makes the same runtime useful without pretending every engineering claim is identical.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What evidence distinguishes a defect fix from symptom suppression?
 2. How do you prove an agent-generated test is useful?

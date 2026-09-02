@@ -15,8 +15,8 @@ const labels: Record<string, string> = {
 };
 
 const definitions: Record<string, string> = {
-  "canonical-navigation": "Canonical curriculum navigation or terminology.",
-  "canonical-overview": "Canonical curriculum overview.",
+  "canonical-navigation": "Canonical guide navigation or terminology.",
+  "canonical-overview": "Canonical guide overview.",
   "current-assessment": "A point-in-time assessment tied to the sources and dates named in the chapter.",
   "current-case-study": "A current, scoped implementation case study; not proof of the complete factory.",
   "draft-for-study": "Useful working material awaiting full technical and editorial review.",
@@ -27,7 +27,7 @@ const definitions: Record<string, string> = {
   validated: "Defined review and evidence checks are complete for the stated scope.",
   "operationally-proven": "Repeatable evidence exists for an exact implementation and operating scope.",
   active: "An actively maintained navigation, journal, or operating record.",
-  reference: "Reference material supporting the curriculum.",
+  reference: "Reference material supporting the guide.",
 };
 
 export function statusLabel(status: string) {
@@ -36,7 +36,7 @@ export function statusLabel(status: string) {
 
 export function StatusBadge({ status, prefix = false }: { status: string; prefix?: boolean }) {
   return (
-    <span className={`status-badge status-${status}`} title={definitions[status] ?? "Curriculum status; separate from implementation maturity and evidence."}>
+    <span className={`status-badge status-${status}`} title={definitions[status] ?? "Guide status; separate from implementation maturity and evidence."}>
       {prefix ? "Status: " : ""}{statusLabel(status)}
     </span>
   );

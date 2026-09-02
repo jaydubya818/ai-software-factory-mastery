@@ -86,7 +86,7 @@ The registry should continuously calculate certification freshness and affected-
 
 Certification is not a trophy attached to an agent. It is a temporary, scoped statement that a particular capability graph has sufficient evidence for particular use under particular controls.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why should certification expire?
 2. Which changes trigger immediate reevaluation?

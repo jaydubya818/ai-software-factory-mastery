@@ -79,7 +79,7 @@ A builder should begin with an outcome, see eligible paths, understand authority
 
 Platform adoption is evidence about product fit. Requiring training and support may be reasonable; requiring specialists for routine use is a platform defect.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. When does a portal become a shadow control plane?
 2. What makes a golden path a product rather than a template?

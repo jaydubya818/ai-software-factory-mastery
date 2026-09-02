@@ -370,7 +370,7 @@ External standards and current interoperability references, accessed
   artifact may contribute to both only when its producer, subject, method,
   provenance, and policy meaning are explicit.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is an exact model route more than a provider and model name?
 2. Which admission checks are hard constraints, and which signals may influence

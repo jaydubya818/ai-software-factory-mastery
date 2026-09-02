@@ -213,7 +213,7 @@ test, reordered merge, partial rollback, and recovery without losing lineage.
   designed separately.
 - The integration candidate is a versioned set of artifacts and commits.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is a multi-repository change not one atomic transaction?
 2. How would you let an agent discover relevant repositories safely?

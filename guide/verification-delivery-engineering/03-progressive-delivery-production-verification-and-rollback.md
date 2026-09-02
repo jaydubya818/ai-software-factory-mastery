@@ -81,7 +81,7 @@ The factory should generate a risk-specific release plan, obtain material approv
 
 The factory’s strongest claim is not that it generated correct code. It is that it maintained an explainable, recoverable line from intent to an independently observed outcome.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which signals should stop a canary automatically?
 2. Why is technical health not customer value?

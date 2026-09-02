@@ -446,7 +446,7 @@ The target sequence is:
 - A small governed agent is usually safer and easier to improve than a large
   agent whose tools, memory, and context continually expand.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What makes an agent different from a model invocation or provider-managed
    conversation?

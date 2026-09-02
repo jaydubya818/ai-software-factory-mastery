@@ -239,7 +239,7 @@ Implementation order:
 - Revocation is part of issuance design, not an afterthought.
 - A human-readable report can change presentation; the canonical signed payload cannot.
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. What exactly does a Quality Certificate guarantee?
 2. How do evidence expiry and subject change differ?

@@ -5,7 +5,7 @@ import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Search · AI Software Factory Mastery",
-  description: "Search the complete AI Software Factory curriculum.",
+  description: "Search the complete AI Software Factory guide.",
 };
 
 export default function SearchPage() {
@@ -14,7 +14,7 @@ export default function SearchPage() {
       <SiteHeader />
       <main className="interior-page search-page">
         <header className="page-intro compact-intro">
-          <span className="eyebrow">Curriculum search</span>
+          <span className="eyebrow">Guide search</span>
           <h1>Search the whole system.</h1>
         </header>
         <SearchExperience />

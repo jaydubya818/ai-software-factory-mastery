@@ -1,29 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { adjacentDocuments, contentForMode, documents, getDocument, markdownSections, quickReadContent, relatedDocuments, sections, withoutQuickRead } from "../../../lib/content";
-import { ChapterActivityCard } from "../../components/ChapterActivityCard";
-import { ChapterProgress } from "../../components/ChapterProgress";
-import { ChapterReviewCard } from "../../components/ChapterReviewCard";
+import { adjacentDocuments, documents, getDocument, quickReadContent, relatedDocuments, sections, withoutQuickRead } from "../../../lib/content";
 import { ChapterTOC } from "../../components/ChapterTOC";
 import { DocumentNav } from "../../components/DocumentNav";
 import { EvidenceCard } from "../../components/EvidenceCard";
 import { Markdown } from "../../components/Markdown";
-import { ModeSwitcher } from "../../components/ModeSwitcher";
 import { QuickRead } from "../../components/QuickRead";
 import { RelatedContent } from "../../components/RelatedContent";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { StatusBadge } from "../../components/StatusBadge";
 
-type PageProps = { params: Promise<{ slug: string[] }>; searchParams: Promise<{ mode?: string }> };
-const validModes = new Set(["read", "architecture", "study"]);
-
-function requestedMode(value: unknown) {
-  if (!value || typeof value !== "object") return "read";
-  const candidate = value as { mode?: unknown; get?: (key: string) => unknown };
-  const raw = typeof candidate.get === "function" ? candidate.get("mode") : candidate.mode;
-  return typeof raw === "string" && validModes.has(raw) ? raw as keyof typeof modeDescriptions : "read";
-}
+type PageProps = { params: Promise<{ slug: string[] }> };
 
 export function generateStaticParams() {
   return documents.map((document) => ({ slug: document.slug.split("/") }));
@@ -37,54 +26,39 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title, description: document.description, openGraph: { title, description: document.description, images: [] }, twitter: { card: "summary", title, description: document.description, images: [] } };
 }
 
-const modeDescriptions = {
-  read: "Complete source chapter",
-  architecture: "A focused view of boundaries, contracts, state, authority, failure paths, and tradeoffs drawn from this chapter.",
-  study: "A rapid review of the chapter’s existing Quick Read, principles, definitions, lessons, and review material.",
-};
+export default async function DocumentPage({ params }: PageProps) {
+  const { slug } = await params;
+  const currentSlug = slug.join("/");
+  const document = getDocument(currentSlug);
+  if (!document) notFound();
 
-export default async function DocumentPage({ params, searchParams }: PageProps) {
-  const { slug } = await params; const query = await searchParams; const currentSlug = slug.join("/");
-  const document = getDocument(currentSlug); if (!document) notFound();
-  const mode = requestedMode(query);
   const quickRead = quickReadContent(document.content);
-  const filteredContent = contentForMode(document.content, mode);
-  const bodyContent = quickRead ? withoutQuickRead(filteredContent) : filteredContent;
-  const headings = document.headings.filter((heading) => heading.depth === 2 && (mode === "read" || bodyContent.includes(`## ${heading.text}`)));
+  const bodyContent = quickRead ? withoutQuickRead(document.content) : document.content;
+  const headings = document.headings.filter((heading) => heading.depth === 2 && !/^quick read$/i.test(heading.text));
   const { previous, next } = adjacentDocuments(currentSlug);
-  const related = relatedDocuments(currentSlug).map((item) => ({ slug: item.slug, title: item.title, section: item.section, status: item.status, contentType: item.contentType, readingMinutes: item.readingMinutes }));
+  const related = relatedDocuments(currentSlug).map((item) => ({ slug: item.slug, title: item.title, section: item.section, contentType: item.contentType }));
   const navSections = sections.map((section) => ({ key: section.key, label: section.label, documents: section.documents.map((item) => ({ slug: item.slug, title: item.title })) }));
-  const validationHeading = document.headings.find((heading) => /pass criteria|validation criteria|required evidence/i.test(heading.text));
   const isCaseStudy = String(document.sectionKey) === "09-mission-control-case-studies";
-  const sourceSections = markdownSections(document.content);
-  const whiteboardSection = sourceSections.find((section) => /whiteboard/i.test(section.title));
-  const activityContent = (section?: { content: string }) => section?.content.replace(/^##\s+.+$/m, "").trim();
-  const activityMeta = [...document.architectureLayers.slice(0, 3).map((layer) => layer.replaceAll("-", " ")), `${document.readingMinutes} min chapter`];
 
   return (
     <>
       <SiteHeader />
-      <ChapterProgress slug={currentSlug} title={document.title} />
       <main className="docs-layout">
         <DocumentNav currentSlug={currentSlug} sections={navSections} />
         <article className="document-article">
-          <div className="document-breadcrumb"><a href="/topics">Curriculum</a><span>/</span><a href={`/topics?section=${encodeURIComponent(document.section)}`}>{document.section}</a><span>/</span><span>{modeDescriptions[mode]}</span></div>
+          <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href="/guide">Guide</Link><span>/</span><Link href={`/topics?section=${encodeURIComponent(document.section)}`}>{document.section}</Link></nav>
           <header className="document-header">
-            <div className="document-labels"><span>{document.section}</span><span>{document.readingMinutes} min read</span><span>{document.contentType}</span>{document.hasQuickRead && <span>Quick Read</span>}{document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}</div>
-            <h1>{document.title}</h1><p>{document.description}</p>
-            <div className="document-status"><StatusBadge status={document.status} prefix /><span>Risk: {document.risk.replaceAll("-", " ")}</span>{document.lifecycle.length > 0 && <span>Lifecycle: {document.lifecycle.join(" · ")}</span>}{document.lastVerified && <span>Content reviewed {document.lastVerified}</span>}<a href="/coverage#maturity-title">Maturity guide →</a></div>
-            <div className="document-scope-note"><strong>Claim boundary</strong><span>{isCaseStudy ? "This case study carries scoped implementation evidence. Follow its pinned sources, dates, and stated gaps." : document.hasImplementationEvidence ? "This chapter references implementation evidence. Inspect its evidence boundary before treating a claim as proven." : "This is curriculum guidance. It does not by itself prove a production implementation."}</span></div>
+            <div className="document-labels"><span>{document.section}</span><span>{document.contentType === "interview" ? "reference" : document.contentType}</span>{document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}</div>
+            <h1>{document.title}</h1>
+            <p>{document.description}</p>
+            <div className="document-status"><StatusBadge status={document.status} prefix /><span>Risk: {document.risk.replaceAll("-", " ")}</span>{document.lastVerified && <span>Reviewed {document.lastVerified}</span>}<Link href="/coverage#maturity-title">How to interpret evidence →</Link></div>
+            <div className="document-scope-note"><strong>Evidence boundary</strong><span>{isCaseStudy ? "This case study carries scoped implementation evidence. Follow its pinned sources, dates, and stated gaps." : document.hasImplementationEvidence ? "This chapter references implementation evidence. Inspect its exact source, subject, version, and remaining gaps before treating a claim as proven." : "This chapter explains architecture and operating practice. It does not by itself prove that a production implementation exists."}</span></div>
           </header>
-          <ModeSwitcher slug={currentSlug} active={mode} />
-          {mode !== "read" && <div className="mode-context"><span>{mode} mode</span><p>{modeDescriptions[mode]}</p></div>}
-          {quickRead && (mode === "read" || mode === "study") && <QuickRead content={quickRead} sourcePath={document.sourcePath} readingMinutes={document.readingMinutes} />}
-          {document.hasLab && <ChapterActivityCard slug={currentSlug} description={document.description} kind="lab" meta={activityMeta} validationAnchor={validationHeading?.id} />}
-          {document.hasWhiteboardExercise && <ChapterActivityCard slug={currentSlug} description="Reconstruct and defend this chapter’s architecture." kind="whiteboard" meta={activityMeta} validationAnchor={validationHeading?.id}>{activityContent(whiteboardSection) && <Markdown content={activityContent(whiteboardSection) ?? ""} sourcePath={document.sourcePath} />}</ChapterActivityCard>}
+          {quickRead && <QuickRead content={quickRead} sourcePath={document.sourcePath} />}
           <div className="markdown-body"><Markdown content={bodyContent} sourcePath={document.sourcePath} /></div>
           {(document.hasImplementationEvidence || isCaseStudy) && <EvidenceCard status={document.status} isCaseStudy={isCaseStudy} />}
-          <ChapterReviewCard slug={currentSlug} title={document.title} />
           <RelatedContent documents={related} />
-          <nav className="document-pagination" aria-label="Adjacent documents">{previous ? <a href={`/docs/${previous.slug}`}><span>Previous</span><strong>{previous.title}</strong></a> : <span />}{next ? <a className="next-document" href={`/docs/${next.slug}`}><span>Next</span><strong>{next.title}</strong></a> : <span />}</nav>
+          <nav className="document-pagination" aria-label="Adjacent guide chapters">{previous ? <Link href={`/docs/${previous.slug}`}><span>Previous</span><strong>{previous.title}</strong></Link> : <span />}{next ? <Link className="next-document" href={`/docs/${next.slug}`}><span>Next</span><strong>{next.title}</strong></Link> : <span />}</nav>
         </article>
         <ChapterTOC headings={headings.map((heading) => ({ id: heading.id, text: heading.text }))} />
       </main>

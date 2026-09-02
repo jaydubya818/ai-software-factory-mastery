@@ -11,23 +11,24 @@ export function SiteHeader() {
           <span className="brand-mark" aria-hidden="true">AF</span>
           <span className="brand-copy">
             <strong>AI Software Factory</strong>
-            <small>Mastery Console</small>
+            <small>Field Guide</small>
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
+          <Link href="/guide">Guide</Link>
+          <Link href="/visuals">Visuals</Link>
           <Link href="/architecture">Architecture</Link>
-          <Link href="/learn">Learn</Link>
-          <Link href="/topics">Topics</Link>
-          <Link href="/coverage">Coverage</Link>
+          <Link href="/topics">Reference</Link>
           <Link href="/docs/00-overview/02-canonical-glossary">Glossary</Link>
         </nav>
         <div className="header-tools"><CommandPalette /><ThemeToggle /></div>
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
           <nav aria-label="Mobile navigation">
+            <Link href="/guide">Complete guide</Link>
+            <Link href="/visuals">Visual guide</Link>
             <Link href="/architecture">Architecture</Link>
-            <Link href="/learn">Learning paths</Link>
-            <Link href="/topics">Topics</Link>
+            <Link href="/topics">Reference index</Link>
             <Link href="/coverage">Coverage</Link>
             <Link href="/docs/00-overview/02-canonical-glossary">Glossary</Link>
             <Link href="/search">Full search</Link>

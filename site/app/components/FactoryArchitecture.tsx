@@ -201,9 +201,9 @@ export function FactoryArchitecture() {
           </div>
 
           <nav className="factory-inspector-links" aria-label={`Explore ${active.label}`}>
-            <Link href={active.href}>Learn</Link>
+            <Link href={active.href}>Open guide</Link>
             <Link href="/architecture">Architecture</Link>
-            <Link href={practiceHref}>Practice</Link>
+            <Link href={practiceHref}>Apply it</Link>
             <Link href="/docs/07-quality-engineering/03-continuous-quality-contracts-proof-packages-and-certificates">Evidence</Link>
             <Link href="/docs/09-mission-control-case-studies/01-implementation-maturity-and-evidence-map">Implementation</Link>
           </nav>

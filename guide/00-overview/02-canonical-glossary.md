@@ -179,6 +179,36 @@ into reliable systems through data, knowledge, semantics, context, agents,
 tools, structured outputs, routing, loops, evaluations, and runtime controls.
 Model prompting is one technique within the discipline.
 
+**Business Understanding** — The discipline of defining the decision, user,
+owner, outcome, constraints, risk, acceptance criteria, non-goals, and
+escalation path before designing agent behavior. It prevents technical success
+from being mistaken for business success.
+
+**Model Engineering** — The discipline of qualifying and operating versioned
+model profiles for specific generation, classification, routing, extraction,
+verification, and reasoning tasks. Model selection is a measured eligibility
+decision, not a popularity contest.
+
+**Agent Engineering** — The discipline of binding a role, bounded objective,
+model profile, tools, skills, context, state, policy, budgets, stop conditions,
+handoffs, and evaluation into a reproducible Agent Definition. Capability does
+not grant permission to act.
+
+**Harness Engineering** — The discipline of controlling and recording complete
+agent sessions through lifecycle hooks, state, checkpoints, tool events,
+artifacts, receipts, replay, and run comparison. A transcript alone is not a
+reproducible run record.
+
+**Infrastructure Engineering** — The discipline of providing environments,
+compute, queues, concurrency, timeouts, backoff, circuit breaking, failover,
+idempotency, reconciliation, and recovery for agent execution. It separates
+platform failure from model or task failure.
+
+**Continual Learning** — The governed process that converts production signals
+and feedback into versioned candidate changes, representative evaluations,
+human promotion decisions, progressive rollout, observation, and rollback. It
+does not authorize a production system to rewrite itself.
+
 **Agent Orchestration** — The governed sequencing, routing, coordination, and
 recovery of agent and deterministic workflow steps through typed state and
 handoffs. It must preserve scope, authority, budgets, evidence, and stop
@@ -324,6 +354,25 @@ Compaction is lossy and must not silently rewrite authority.
 **Memory** — Durable information retained across runs, such as accepted
 decisions, outcomes, failures, preferences, and recovery patterns. Memory is a
 potentially stale or poisoned context source, not an authority record.
+
+**Working Memory** — Short-lived task and conversation state required for the
+current run, including intermediate artifacts and tool results. It should be
+cleared, compacted, or deliberately persisted when the run ends.
+
+**Episodic Memory** — Attributable records of past events and experiences,
+including when they occurred and which outcome followed. A prior episode is
+evidence about history, not a universal instruction.
+
+**Semantic Memory** — Durable facts, concepts, and relationships retrieved by
+meaning. Similarity does not prove truth, freshness, permission, or authority.
+
+**Procedural Memory** — Versioned reusable knowledge about how to perform a
+task, normally expressed as a skill, workflow, runbook, or instruction set. It
+must be evaluated and lifecycle governed.
+
+**Temporal Memory** — Time-aware facts and relationships that preserve when a
+claim was valid and how it changed. It prevents a current answer from silently
+combining incompatible historical states.
 
 **Model gateway** — The governed interface that normalizes provider access,
 identity, credentials, policy, telemetry, quotas, and failure handling. It
@@ -474,6 +523,12 @@ accountability, incident response, and promotion authority still apply.
 **Attention Budget** — The expected and permitted human effort for a workflow,
 including review, correction, approvals, escalation, and context reconstruction.
 It is an operating metric, not permission to skip consequential judgment.
+
+**Engineering Attention Altitude** — The level at which a human inspects and
+directs work, ranging from implementation details through components,
+workflows, systems, and business outcomes. Attention moves upward only when
+risk, evaluated coverage, evidence, and recovery justify reduced direct
+inspection; it moves downward when novelty or consequence increases.
 
 ## Quality and assurance concepts
 

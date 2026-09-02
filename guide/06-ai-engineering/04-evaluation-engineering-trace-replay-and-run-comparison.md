@@ -229,7 +229,7 @@ window in addition to offline results.
 - The most dangerous aggregate metric is one that hides the slice where
   consequence is highest.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What is the correct evaluation subject for an engineering agent?
 2. How do a trial, grader, Evaluation Run, and Verification Run differ?

@@ -1,129 +1,74 @@
 import Link from "next/link";
 import { documents } from "../lib/content";
-import { learningPathBlueprints, lifecycleStages } from "../lib/curriculum";
-import { ContinueLearning } from "./components/ContinueLearning";
+import { guideParts } from "../lib/guide";
+import { lifecycleStages } from "../lib/lifecycle";
 import { FactoryArchitecture } from "./components/FactoryArchitecture";
-import { LearningPathPreview } from "./components/LearningPathPreview";
-import { LifecycleExplorer } from "./components/LifecycleExplorer";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 
-const topics = [
-  ["01", "Capability supply chain", "Registries, packaging, versioning, certification, discovery, and revocation.", "/docs/agent-factory/01-capability-supply-chain-and-registries"],
-  ["02", "Autonomous workflows", "Repository onboarding plus feature, defect, test, security, incident, and knowledge work.", "/docs/autonomous-workflows/02-autonomous-engineering-workflow-catalog"],
-  ["03", "Runtime and platform", "Harnesses, environments, scheduling, cost, resilience, and human control surfaces.", "/docs/factory-platform-engineering/02-scheduling-capacity-cost-and-fairness"],
-  ["04", "Verification and delivery", "Testing, artifacts, migrations, progressive delivery, rollback, and production outcomes.", "/docs/verification-delivery-engineering/01-software-testing-strategy-for-agentic-change"],
-  ["05", "Security and identity", "Agentic threats, workload identity, secrets, privacy, provenance, and policy.", "/docs/08-security-and-governance/04-agentic-threat-model-and-adversarial-defense"],
-  ["06", "Evaluation and learning", "Datasets, calibrated graders, controlled experiments, optimization, and regression control.", "/docs/06-ai-engineering/06-evaluation-science-and-controlled-experimentation"],
-];
+const domains = [
+  ["System design", "Purpose, operating model, domain records, lifecycle, boundaries, economics, and adoption.", "/guide#understand"],
+  ["Agent and capability engineering", "Agents, skills, tools, models, context, memory, protocols, evaluation, and the Agent Factory.", "/guide#build"],
+  ["Runtime and infrastructure", "Control plane, orchestration, harnesses, environments, compute, state, recovery, and cost.", "/docs/05-runtime-architecture/06-ai-software-factory-reference-architecture"],
+  ["Quality and delivery", "Independent verification, evidence, testing, pull requests, CI/CD, rollout, rollback, and outcomes.", "/guide#prove"],
+  ["Security and governance", "Identity, least privilege, data boundaries, prompt injection, supply chain, authority, and emergency control.", "/docs/08-security-and-governance/06-agentic-governance-control-framework"],
+  ["Operations and improvement", "Observability, SLOs, capacity, incidents, feedback, compounding engineering, and controlled learning.", "/guide#operate"],
+] as const;
 
 export default function Home() {
-  const stageContent = lifecycleStages.map((stage) => ({
-    id: stage.id,
-    chapters: documents.filter((document) => document.lifecycle.some((value) => value === stage.id)).slice(0, 3).map((document) => ({ title: document.title, href: `/docs/${document.slug}`, meta: `${document.section} · ${document.readingMinutes} min` })),
-  }));
-  const paths = learningPathBlueprints.map((path) => {
-    const pathDocuments = path.id === "deep-study" ? documents : documents.filter((document) => path.slugs.some((slug) => slug === document.slug));
-    return { ...path, chapterCount: pathDocuments.length, labCount: pathDocuments.filter((document) => document.hasLab).length };
-  });
-
   return (
     <>
       <SiteHeader />
       <main>
-
-      <section className="hero premium-hero">
-        <div className="hero-status"><span>Mastery console</span><i>96-source curriculum</i><i>Governed architecture</i></div>
-        <div className="eyebrow">Engineering autonomous delivery beyond the coding agent</div>
-        <h1>Build the system <em>around</em> the agent.</h1>
-        <div className="hero-bottom"><p className="hero-copy">Learn how human intent becomes validated software through bounded authority, durable execution, independent evidence, controlled delivery, and governed improvement.</p><div className="hero-actions"><Link className="button button-primary" href="/learn">Start learning</Link><Link className="button button-secondary" href="#factory-architecture">Explore architecture</Link></div></div>
-        <ContinueLearning />
-      </section>
-
-      <section className="thesis-console" aria-label="Product thesis">
-        <div><span>01 / System</span><strong>The agent executes.</strong><p>It reasons, proposes, and acts inside a bounded runtime.</p></div>
-        <div><span>02 / Governance</span><strong>The factory authorizes.</strong><p>It owns policy, state, admission, recovery, and decisions.</p></div>
-        <div><span>03 / Proof</span><strong>Independent evidence decides readiness.</strong><p>The producer cannot certify its own material work.</p></div>
-      </section>
-
-      <FactoryArchitecture />
-
-      <LifecycleExplorer content={stageContent} />
-
-      <section className="path-preview" aria-labelledby="path-title">
-        <div className="section-heading">
-          <div>
-            <span className="section-kicker">Start at the right altitude</span>
-            <h2 id="path-title">Four paths. One system.</h2>
+        <section className="hero guide-home-hero">
+          <div className="hero-status"><span>AI software factory field guide</span><i>{documents.length} full chapters</i><i>10 visual system maps</i></div>
+          <div className="eyebrow">Designing autonomous delivery beyond the coding agent</div>
+          <h1>Build, operate, and master the <em>whole</em> factory.</h1>
+          <div className="hero-bottom">
+            <p className="hero-copy">A complete technical guide to turning human intent into validated production software through reusable capabilities, bounded agents, durable execution, independent evidence, explicit authority, and governed improvement.</p>
+            <div className="hero-actions"><Link className="button button-primary" href="/guide">Read the complete guide</Link><Link className="button button-secondary" href="/visuals">Open the visual guide</Link></div>
           </div>
-          <Link className="text-link" href="/learn">Compare the paths <span aria-hidden="true">→</span></Link>
-        </div>
-        <LearningPathPreview paths={paths} />
-      </section>
+        </section>
 
-      <section className="topics-section">
-        <div className="section-heading">
-          <div>
-            <span className="section-kicker">Explore the curriculum</span>
-            <h2>Find the layer behind the failure.</h2>
-          </div>
-          <Link className="text-link" href="/topics">View the topic index <span aria-hidden="true">→</span></Link>
-        </div>
-        <div className="topic-grid">
-          {topics.map(([number, title, description, href]) => (
-            <Link className="topic-card" href={href} key={number}>
-              <span>{number}</span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
+        <section className="definition-band" aria-label="Core definitions">
+          <Link href="/docs/agent-factory/01-capability-supply-chain-and-registries"><span>Capability supply</span><h2>Agent Factory</h2><p>Creates, versions, evaluates, publishes, and governs reusable agents, skills, tools, model profiles, and configurations.</p></Link>
+          <Link href="/docs/01-vision/01-what-is-an-ai-software-factory"><span>Delivery system</span><h2>AI Software Factory</h2><p>Composes people, policy, capabilities, execution, proof, delivery, operations, and learning from intent through production value.</p></Link>
+          <Link href="/docs/09-mission-control-case-studies/03-capability-workflow-and-admission-map"><span>Living implementation</span><h2>Mission Control</h2><p>Implements control-plane responsibilities for governed missions, execution admission, evidence, verification, and human authority.</p></Link>
+        </section>
 
-      <section className="principles-section">
-        <div className="principle-statement">
-          <span className="section-kicker">The core thesis</span>
-          <blockquote>
-            Reliable autonomy comes from a trustworthy system around fallible agents.
-          </blockquote>
-        </div>
-        <div className="principle-list">
-          <div><strong>Humans</strong><span>Intent, judgment, and material risk</span></div>
-          <div><strong>Agents</strong><span>Bounded reasoning and execution</span></div>
-          <div><strong>Software</strong><span>Policy, state, recovery, and control</span></div>
-          <div><strong>Evidence</strong><span>Independent proof of readiness</span></div>
-        </div>
-      </section>
+        <section className="home-guide-map" aria-labelledby="home-guide-title">
+          <header><div><span className="section-kicker">The complete guide</span><h2 id="home-guide-title">Follow the decisions required to build a real factory.</h2></div><p>Read every chapter in one stable sequence or enter at the part that matches the system you are designing now.</p></header>
+          <ol>{guideParts.map((part) => <li key={part.id}><Link href={`/guide#${part.id}`}><span>{part.number}</span><div><strong>{part.verb}</strong><small>{part.title}</small></div><b aria-hidden="true">→</b></Link></li>)}</ol>
+        </section>
 
-      <section className="coverage-home-callout">
-        <div>
-          <span className="section-kicker">Truth before breadth</span>
-          <h2>See what is covered—and what is not yet proven.</h2>
-        </div>
-        <p>Every document carries a maturity label. The coverage map separates review-ready architecture from validated and operational evidence.</p>
-        <Link className="button button-primary" href="/coverage">Inspect coverage and maturity</Link>
-      </section>
+        <section className="home-lifecycle" aria-labelledby="home-lifecycle-title">
+          <header><div><span className="section-kicker">Factory lifecycle</span><h2 id="home-lifecycle-title">Control flows down. Evidence flows back up.</h2></div><Link className="text-link" href="/visuals#factory-lifecycle">Study the lifecycle map →</Link></header>
+          <ol>{lifecycleStages.map((stage, index) => <li key={stage.id}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage.label}</strong><p>{stage.detail}</p></li>)}</ol>
+          <div><span>Intent and authority</span><i aria-hidden="true">↓</i><span>Bounded execution</span><i aria-hidden="true">↑</i><span>Evidence and outcomes</span></div>
+        </section>
 
-      <section className="architecture-home-callout">
-        <div>
-          <span className="section-kicker">Reference depth</span>
-          <h2>From one map to every contract.</h2>
-        </div>
-        <p>Trace lifecycle, planes, runtime components, governance, inventory, autonomy patterns, monitoring, data flow, and evidence—then open the canonical specification behind each item.</p>
-        <Link className="button button-secondary" href="/architecture">Explore the architecture hub</Link>
-      </section>
+        <FactoryArchitecture />
 
-      <section className="case-study-callout">
-        <span className="section-kicker">Living case study</span>
-        <h2>Vision stays separate from proof.</h2>
-        <p>
-          Mission Control grounds the curriculum in a versioned implementation while
-          keeping current capability, enduring architecture, and future vision distinct.
-        </p>
-        <Link className="button button-secondary" href="/docs/09-mission-control-case-studies/03-capability-workflow-and-admission-map">
-          Inspect the evidence map
-        </Link>
-      </section>
+        <section className="visual-atlas-callout">
+          <div><span className="section-kicker">Original, readable infographics</span><h2>Ten maps for retaining the system—not ten screenshots to squint at.</h2><p>The visual guide covers the lifecycle, twelve production-AI disciplines, orchestration, agent patterns, memory, loop engineering, governance, observability, interoperability, and engineering-attention altitude.</p><Link className="button button-primary" href="/visuals">Explore the visual atlas</Link></div>
+          <div className="visual-atlas-preview" aria-hidden="true"><span>Intent</span><span>Capabilities</span><span>Runtime</span><span>Evidence</span><span>Delivery</span><span>Outcomes</span></div>
+        </section>
+
+        <section className="topics-section home-domains">
+          <div className="section-heading"><div><span className="section-kicker">Complete knowledge map</span><h2>Every discipline the factory depends on.</h2></div><Link className="text-link" href="/topics">Open the reference index →</Link></div>
+          <div className="topic-grid">{domains.map(([title, description, href], index) => <Link className="topic-card" href={href} key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{description}</p></Link>)}</div>
+        </section>
+
+        <section className="principles-section">
+          <div className="principle-statement"><span className="section-kicker">The durable thesis</span><blockquote>Reliable autonomy comes from a trustworthy system around fallible agents.</blockquote></div>
+          <div className="principle-list"><div><strong>Humans</strong><span>Own intent, judgment, policy, and material risk</span></div><div><strong>Agents</strong><span>Reason and execute inside bounded authority</span></div><div><strong>Software</strong><span>Owns durable state, policy, recovery, and control</span></div><div><strong>Evidence</strong><span>Proves whether exact work is ready to progress</span></div></div>
+        </section>
+
+        <section className="guide-reference-callout home-reference-callout">
+          <div><span className="section-kicker">Depth without confusion</span><h2>Read the full guide. Inspect the architecture. Verify the claims.</h2></div>
+          <p>The guide keeps enduring design, a living Mission Control case study, and implementation evidence distinct so architecture does not become an unsupported capability claim.</p>
+          <div><Link className="button button-primary" href="/guide">Read the guide</Link><Link className="button button-secondary" href="/coverage">Inspect coverage</Link></div>
+        </section>
       </main>
       <SiteFooter />
     </>

@@ -396,7 +396,7 @@ My current conclusions are:
 - Logical separation should exist even when every component initially runs on
   one laptop.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Define the control plane without naming a technology.
 2. Define the execution plane without naming a model or agent framework.

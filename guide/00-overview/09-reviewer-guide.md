@@ -16,7 +16,7 @@ unclear explanation, or exercise that cannot produce the evidence it promises.
 
 ## What this review is evaluating
 
-Review the material as a curriculum and architecture reference. Do not assume a
+Review the material as a field guide and architecture reference. Do not assume a
 `review-ready` chapter describes a production-proven implementation. Current
 implementation, future vision, and enduring principles are deliberately
 separate claims.
@@ -35,8 +35,8 @@ Choose one path rather than trying to read everything:
   production verification, and incident response.
 - **Governance and control:** decision rights, control evidence, emergency
   actions, recertification, drift, and verified closure.
-- **Curriculum and usability:** learning paths, topic discovery, terminology,
-  progressive disclosure, exercises, and accessibility.
+- **Guide and usability:** navigation, concept discovery, terminology,
+  readability, visual explanation, exercises, and accessibility.
 
 ## Review checklist
 
@@ -62,7 +62,7 @@ Use one of these labels in the issue title or first line:
 - `claim` — inaccurate, unsupported, stale, or overstated statement;
 - `architecture` — missing or incorrect boundary, state, contract, or failure;
 - `security` — threat, control, identity, data, or compliance issue;
-- `curriculum` — missing prerequisite, sequencing, depth, or exercise;
+- `guide` — missing prerequisite, sequencing, depth, visual, or exercise;
 - `usability` — navigation, readability, accessibility, or interaction problem;
 - `terminology` — ambiguous, duplicate, inconsistent, or missing definition; or
 - `source` — missing, weak, obsolete, or conflicting reference.

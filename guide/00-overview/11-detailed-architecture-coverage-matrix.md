@@ -17,7 +17,7 @@ topics: [architecture, coverage, ownership, evidence, maturity]
 - **Use it when:** Reviewing scope, assigning an architecture question, or
   checking whether a diagram creates a competing taxonomy.
 - **Core rule:** One responsibility may have many implementations, but it has
-  one accountable curriculum location.
+  one accountable guide location.
 - **Evidence boundary:** Coverage records documentation ownership. It does not
   prove that an implementation operates as described.
 

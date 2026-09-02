@@ -217,7 +217,7 @@ review, scope approval, canary use, rollback, and an observation window.
 - Compounding should make the next correction less likely, not merely make the
   next generation longer.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What distinguishes compounding engineering from uncontrolled self-learning?
 2. How should a personal preference become—or not become—a team rule?

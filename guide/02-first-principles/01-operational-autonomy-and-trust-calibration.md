@@ -470,7 +470,7 @@ Open questions:
 4. How should a trust scope be reset after a material Factory Configuration
    change?
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is autonomy an operational property rather than a model property?
 2. Explain each Factory Operational Autonomy Level in one sentence.

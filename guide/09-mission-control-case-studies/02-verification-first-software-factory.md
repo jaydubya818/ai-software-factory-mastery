@@ -188,7 +188,7 @@ After studying the code, replace or expand these statements in your own words.
 Record at least one disagreement with the current architecture and defend the
 alternative.
 
-## Interview questions
+## Design review questions
 
 ### Architecture
 

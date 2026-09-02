@@ -218,7 +218,7 @@ consistency, cost, human attention, policy compliance, and recovery.
 - The best router often filters with deterministic policy before asking a model
   to rank eligible choices.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. When should a deterministic workflow replace an agent?
 2. What belongs in a Task-Specific Agent Profile?

@@ -71,7 +71,7 @@ Evaluation runs should be reproducible experiments with registered hypotheses, f
 
 Evaluation engineering builds the machinery to run and compare systems. Evaluation science establishes whether the comparison supports the decision being made.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How do you detect benchmark contamination?
 2. When do repeated trials matter?

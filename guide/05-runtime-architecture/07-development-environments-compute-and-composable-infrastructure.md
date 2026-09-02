@@ -214,7 +214,7 @@ failover.
   who owns the resource boundary.
 - A preview is a temporary review surface, not an acceptance decision.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How does a development environment differ from a sandbox and from compute?
 2. When should agent workers be persistent instead of ephemeral?

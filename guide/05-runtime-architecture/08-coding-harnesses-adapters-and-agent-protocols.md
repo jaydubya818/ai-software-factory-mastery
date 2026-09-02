@@ -221,7 +221,7 @@ tests, cancellation races, content-redaction tests, and live canaries.
 - Product names belong in dated case studies; contract vocabulary belongs in
   the canon.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How do inner and outer harness responsibilities differ?
 2. What must a headless coding harness emit for reliable orchestration?

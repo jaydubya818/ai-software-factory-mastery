@@ -141,7 +141,7 @@ bypass those controls.
 Recursive improvement should be ordinary governed engineering applied to the
 factory itself. The recursive object changes; accountability does not.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What may the factory learn automatically?
 2. Why must promotion remain human-owned?

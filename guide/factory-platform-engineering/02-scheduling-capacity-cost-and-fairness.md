@@ -117,7 +117,7 @@ Operators should forecast demand by workflow and capability, reserve recovery ca
 
 A queue is where business priority becomes runtime reality. If its policy is implicit, the factory has an invisible governance system.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why are admission and scheduling different decisions?
 2. Which resources require separate budgets?

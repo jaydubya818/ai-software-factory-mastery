@@ -116,7 +116,7 @@ Operators should move from a customer outcome back through release, artifact, ev
 
 Observability becomes architecture when semantic choices determine whether runs, providers, workflows, and outcomes can be compared. Instrumentation without a shared subject model produces expensive anecdotes.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which identifiers should propagate through every boundary?
 2. How do you control high-cardinality dimensions?

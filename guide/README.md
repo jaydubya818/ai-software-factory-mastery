@@ -1,22 +1,22 @@
-# AI Software Factory Mastery Curriculum
+# AI Software Factory Mastery Guide
 
-The curriculum moves from the purpose of the factory to its operating model,
-domain, runtime, assurance systems, implementation, and leadership use. The
-sequence matters. Runtime mechanisms make sense only after the learner
-understands the authority and outcome model they serve.
+This field guide moves from the purpose of the factory to its operating model,
+domain records, capability supply, runtime, AI engineering stack, assurance,
+production operation, and governed improvement. The sequence matters: runtime
+mechanisms make sense only after the reader understands the authority and
+outcome model they serve.
 
 ## Start here
 
-Begin with the [high-level reading guide](./00-overview/README.md), then choose
-the [Executive, Architect, Builder, or Deep Study path](./00-overview/06-reading-paths.md).
-Use the [Topic Index](./00-overview/07-topic-index.md) for question-led discovery
-and the [Canonical Glossary](./00-overview/02-canonical-glossary.md) for precise
-terms.
+Begin with [AI Software Factory and Mission Control](./00-overview/01-ai-software-factory-and-mission-control.md),
+then continue through the system in sequence. Use the [Topic Index](./00-overview/07-topic-index.md)
+for direct lookup and the [Canonical Glossary](./00-overview/02-canonical-glossary.md)
+for precise terms.
 
 Before treating breadth as maturity, inspect the
 [Capability Coverage and Maturity map](./00-overview/08-capability-coverage-and-maturity.md).
 External reviewers should use the [Reviewer Guide](./00-overview/09-reviewer-guide.md)
-and [Curriculum Changelog](./00-overview/10-changelog.md).
+and [Guide Changelog](./00-overview/10-changelog.md).
 
 ## Content types
 
@@ -28,8 +28,9 @@ and [Curriculum Changelog](./00-overview/10-changelog.md).
 - **Lab** converts understanding into demonstrated capability.
 - **Reference** supports lookup rather than sequential reading.
 
-Each priority chapter begins with a **Quick Read**. Use it to decide whether the
-full chapter is relevant to the decision in front of you.
+Each priority chapter begins with an **At a glance** orientation. The full
+chapter contains the design, tradeoffs, failures, evidence, and operating
+detail.
 
 ## 1. Vision
 
@@ -81,6 +82,7 @@ Chapters:
 - [Enterprise Adoption and Factory Maturity Model](./03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md)
 - [Compounding Engineering and Human Attention](./03-operating-model/05-compounding-engineering-and-human-attention.md)
 - [Enterprise Governance Operating Model and Decision Rights](./03-operating-model/06-enterprise-governance-operating-model-and-decision-rights.md)
+- [Engineering Attention Altitude and Governed Control](./03-operating-model/07-engineering-attention-altitude-and-control.md)
 
 ## 4. Domain Model
 
@@ -155,6 +157,7 @@ Chapters:
 - [Knowledge, Context, and Retrieval Pipeline Specification](./06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md)
 - [Multi-Agent Topologies and Collaboration Contracts](./06-ai-engineering/09-multi-agent-topologies-and-collaboration-contracts.md)
 - [Agentic Architecture Patterns and Autonomy Selection](./06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection.md)
+- [Production AI Agent Engineering Stack](./06-ai-engineering/11-production-ai-agent-engineering-stack.md)
 
 ## 8. Autonomous Engineering Workflows
 
@@ -244,7 +247,7 @@ Current case studies:
 - [Verification-First Software Factory — Mission Control Case Study](./09-mission-control-case-studies/02-verification-first-software-factory.md)
   — explains the assurance architecture, traces the implemented P0 at an exact
   Mission Control commit, distinguishes proposed completion work, and provides
-  interview questions, whiteboard exercises, and hands-on mastery labs.
+  architecture questions, whiteboard exercises, and hands-on validation labs.
 - [Mission Control Capability, Workflow, and Admission Map](./09-mission-control-case-studies/03-capability-workflow-and-admission-map.md)
   — maps the current checked-out implementation across the complete
   Intent-to-Delivery Lifecycle, explains production execution admission,
@@ -276,20 +279,17 @@ Labs:
 - [Knowledge Poisoning, Revocation, and Retrieval](./10-labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md)
 - [External Capability Intake and Recertification](./10-labs/13-external-capability-intake-and-recertification-lab.md)
 
-## Supplemental: Interview Practice
+## Supplemental: Architecture Communication
 
-Prepare for CTO, VP Engineering, Head of AI Engineering, Principal Engineer,
-and AI startup leadership conversations. Include system-design interviews,
-whiteboard exercises, executive explanations, technical deep dives, objections,
-and evidence-backed stories.
+Explain the system to executives, architects, builders, reviewers, and
+operators. Practice system-design reviews, whiteboard reconstruction, executive
+explanations, technical deep dives, objections, and evidence-backed stories.
 
 Chapter:
 
-- [Executive and Interview Mastery](./11-interview-mastery/01-executive-and-interview-mastery.md)
+- [Executive Explanation and Architecture Defense](./11-interview-mastery/01-executive-and-interview-mastery.md)
 
-The existing directory prefixes are retained to avoid breaking published
-links. Interview practice is supplemental; the Research Journal remains the
-eleventh core curriculum area.
+The existing directory prefix is retained to avoid breaking published links.
 
 ## Supplemental: Research Journal
 
@@ -301,17 +301,17 @@ Start with the [initial research canon](./12-research-journal/initial-canon.md).
 
 ## Governing standard
 
-All full chapters follow the [chapter writing standard](./writing-standard.md).
-The original planning and interview drafts remain in
+All full chapters follow the [guide writing standard](./writing-standard.md).
+The original planning and architecture-communication drafts remain in
 [source material](../source-material/README.md).
 
-## Core curriculum status
+## Guide status
 
-The foundation and second-layer architecture sequence are drafted. Chapters
-remain `draft-for-study` until the learner completes their labs, teach-backs,
-and independent review. Draft completion is not mastery.
+The foundation and second-layer architecture sequence are drafted. Each chapter
+labels its editorial and evidence maturity. Documentation breadth is not proof
+of an operational implementation.
 
-Mission Control changes independently of this curriculum. Use the versioned
+Mission Control changes independently of this guide. Use the versioned
 [current capability, workflow, and admission map](./09-mission-control-case-studies/03-capability-workflow-and-admission-map.md),
 the historical
 [implementation maturity map](./09-mission-control-case-studies/01-implementation-maturity-and-evidence-map.md),

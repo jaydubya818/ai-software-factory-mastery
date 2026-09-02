@@ -160,7 +160,7 @@ The scheduler is an instructive example of progressive hardening. It proves
 Attempt identity and reasoned retry without pretending that state inspection is
 a lease. That precise language is more valuable than a broader autonomy claim.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is a retry a new Attempt?
 2. What does a fencing token prevent?

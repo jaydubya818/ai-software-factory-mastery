@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { lifecycleStages } from "../../lib/curriculum";
+import { lifecycleStages } from "../../lib/lifecycle";
 
 export function LifecycleNav() {
   return (
@@ -11,7 +11,7 @@ export function LifecycleNav() {
         {lifecycleStages.map((stage, index) => (
           <li key={stage.id}>
             <Link
-              href={`/topics?lifecycle=${stage.id}`}
+              href={`/visuals#phase-${stage.id}`}
               title={`${stage.canonical}: ${stage.detail}`}
             >
               <small>{String(index + 1).padStart(2, "0")}</small>

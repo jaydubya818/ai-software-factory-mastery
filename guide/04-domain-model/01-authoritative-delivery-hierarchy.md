@@ -344,7 +344,7 @@ My current conclusions are:
 - A schema can represent the right model while the supported product journey
   remains incomplete.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is a WorkOrder not simply a Task?
 2. What does Plan approval authorize, and what does it not authorize?

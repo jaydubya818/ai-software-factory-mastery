@@ -82,7 +82,7 @@ The learning system should surface recurring, attributable patterns and propose 
 
 The best improvement often removes an agent decision by making a rule deterministic, a tool clearer, or required context reliably available.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. When should a correction become a skill versus code?
 2. How do you learn from successful runs without copying accidents?

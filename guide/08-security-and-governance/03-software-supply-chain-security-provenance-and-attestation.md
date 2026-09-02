@@ -121,7 +121,7 @@ Add a supply-chain verifier that ingests native attestations, normalizes subject
 - Tags locate; digests identify.
 - The factory itself is part of the software supply chain and must be governed accordingly.
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. What does SLSA provenance prove, and what does it not prove?
 2. How are SBOM, attestation, signature, and transparency log different?

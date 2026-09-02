@@ -173,7 +173,7 @@ Mission Control’s strongest security design choice is identity separation. Its
 most important current limitation is incomplete enforcement across the full
 golden path. Both facts belong in the same explanation.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is an agent identity not a human identity?
 2. What is the confused-deputy problem in a software factory?

@@ -148,7 +148,7 @@ organization operates the model.
 - [Governance, Policy, and Risk-Proportional Approval](../08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md)
 - [Factory System Inventory](../04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md)
 
-## 11. Interview and lab
+## 11. Design review and lab
 
 Run a tabletop for a high-risk release followed by a security incident. Assign
 real decision owners, inject an absent approver and conflicting evidence, then

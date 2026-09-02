@@ -536,4 +536,4 @@ execution control, independent evidence, and governed improvement.
 - [Release, Production Feedback, and Factory SRE](../07-quality-engineering/02-release-production-feedback-and-factory-sre.md)
 - [Security and Identity Architecture](../08-security-and-governance/02-security-and-identity-architecture.md)
 - [Software Supply Chain Security, Provenance, and Attestation](../08-security-and-governance/03-software-supply-chain-security-provenance-and-attestation.md)
-- [Executive and Interview Mastery](../11-interview-mastery/01-executive-and-interview-mastery.md)
+- [Executive Explanation and Architecture Defense](../11-interview-mastery/01-executive-and-interview-mastery.md)

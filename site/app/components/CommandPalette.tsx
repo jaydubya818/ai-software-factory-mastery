@@ -3,21 +3,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
-import { learningPathBlueprints, lifecycleStages } from "../../lib/curriculum";
-import { useProgress } from "./ProgressProvider";
+import { lifecycleStages } from "../../lib/lifecycle";
 
-type PaletteGroup = "Continue" | "Concepts" | "Architecture" | "Labs" | "Mission Control" | "Glossary" | "Chapters";
+type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Labs" | "Mission Control" | "Glossary" | "Chapters";
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
 
 const utilityItems: PaletteItem[] = [
+  { id: "guide", label: "Read the complete guide", meta: "Field guide", href: "/guide", text: "guide design build operate improve complete", group: "Guide" },
+  { id: "visuals", label: "Open the visual guide", meta: "Ten system maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
   { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map", group: "Architecture" },
-  { id: "topics", label: "Browse topics", meta: "Curriculum", href: "/topics", text: "topics curriculum concepts", group: "Concepts" },
+  { id: "topics", label: "Browse the reference index", meta: "All chapters", href: "/topics", text: "topics guide concepts reference", group: "Concepts" },
   { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence", group: "Architecture" },
-  { id: "review", label: "Review the curriculum", meta: "External reviewer guide", href: "/docs/00-overview/09-reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
-  { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics?type=lab", text: "labs exercises hands on", group: "Labs" },
+  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/00-overview/09-reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
+  { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics?section=Labs", text: "labs exercises hands on", group: "Labs" },
 ];
 
-const groupOrder: PaletteGroup[] = ["Continue", "Concepts", "Architecture", "Labs", "Mission Control", "Glossary", "Chapters"];
+const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Labs", "Mission Control", "Glossary", "Chapters"];
 
 function groupForDocument(document: (typeof paletteIndex)[number]): PaletteGroup {
   if (document.title === "Canonical Glossary") return "Glossary";
@@ -34,7 +35,6 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { lastVisited } = useProgress();
 
   function openPalette() {
     setQuery("");
@@ -56,11 +56,9 @@ export function CommandPalette() {
       text: [document.title, document.section, document.description, ...document.headings, ...document.lifecycle, ...document.architectureLayers].join(" ").toLowerCase(),
       group: groupForDocument(document),
     }));
-    const paths: PaletteItem[] = learningPathBlueprints.map((path) => ({ id: `path-${path.id}`, label: `${path.title} path`, meta: "Learning path", href: `/learn#${path.id}`, text: `${path.title} ${path.goal} ${path.outcome}`.toLowerCase(), group: "Concepts" }));
-    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `${stage.label} lifecycle`, meta: stage.canonical, href: `/topics?lifecycle=${stage.id}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
-    const continued: PaletteItem[] = lastVisited ? [{ id: "continue", label: lastVisited.title, meta: "Continue learning", href: lastVisited.href, text: `continue ${lastVisited.title}`.toLowerCase(), group: "Continue" }] : [];
-    return [...continued, ...utilityItems, ...paths, ...lifecycle, ...documents];
-  }, [lastVisited]);
+    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `${stage.label} lifecycle`, meta: stage.canonical, href: `/visuals#phase-${stage.id}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
+    return [...utilityItems, ...lifecycle, ...documents];
+  }, []);
 
   const results = useMemo(() => {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -114,7 +112,7 @@ export function CommandPalette() {
         <div className="command-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closePalette()}>
           <section className="command-palette" id="command-palette" role="dialog" aria-modal="true" aria-label="Command palette">
             <label className="command-input">
-              <span className="sr-only">Search the curriculum and navigate</span>
+              <span className="sr-only">Search the guide and navigate</span>
               <input
                 ref={inputRef}
                 value={query}
@@ -124,7 +122,7 @@ export function CommandPalette() {
                   if (event.key === "ArrowUp") { event.preventDefault(); setActive((value) => Math.max(value - 1, 0)); }
                   if (event.key === "Enter") { event.preventDefault(); choose(active); }
                 }}
-                placeholder="Search architecture, labs, chapters, or paths…"
+                placeholder="Search architecture, concepts, failures, or chapters…"
                 role="combobox"
                 aria-controls="command-results"
                 aria-expanded="true"
@@ -152,7 +150,7 @@ export function CommandPalette() {
                   ))}
                 </section>
               ))}
-              {results.length === 0 && <div className="command-empty"><strong>No matching command</strong><span>Try a chapter title, architecture layer, lifecycle stage, lab, or learning path.</span></div>}
+              {results.length === 0 && <div className="command-empty"><strong>No matching result</strong><span>Try a chapter title, architecture layer, lifecycle stage, failure, or contract.</span></div>}
             </div>
           </section>
         </div>

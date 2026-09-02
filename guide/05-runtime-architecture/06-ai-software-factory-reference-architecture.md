@@ -279,7 +279,7 @@ Do not add more planes or top-level products. Complete one vertical slice: gover
 - Agent-native parity should improve composability without erasing human accountability.
 - V1 should be a vertical proof, not a catalog of horizontal platforms.
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. Why separate control and execution planes?
 2. Is the quality plane a service, a team, or a responsibility boundary?

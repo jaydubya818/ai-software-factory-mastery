@@ -71,7 +71,7 @@ Operational signals should enter a typed intake service, correlate to exact rele
 
 Operational autonomy is valuable when it shortens time to reliable understanding, not merely time to action. A fast, unsupported causal story is a new incident risk.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which incident actions can be safely preauthorized?
 2. How do you distinguish an observation from a root-cause claim?

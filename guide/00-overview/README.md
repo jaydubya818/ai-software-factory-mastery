@@ -82,21 +82,21 @@ Agents may recommend, implement, validate, and explain. Humans remain
 accountable for business intent, material exceptions, risk acceptance,
 promotion of authority, merge, and consequential production decisions.
 
-## Choose a reading path
+## Use the guide at the right depth
 
 Do not treat the repository as one long checklist. Start at the altitude your
 current decision requires:
 
-| Path | Best for | Outcome |
+| Route | Best for | Outcome |
 | --- | --- | --- |
-| [Executive](./06-reading-paths.md#executive-path--20-minutes) | Leaders evaluating value, risk, and adoption | Explain the operating model in 20 minutes |
-| [Architect](./06-reading-paths.md#architect-path--3-hours) | System, platform, security, and quality architects | Whiteboard the full system and its authority boundaries |
-| [Builder](./06-reading-paths.md#builder-path--hands-on) | Engineers implementing agent workflows | Build and debug one governed delivery path |
-| [Deep Study](./06-reading-paths.md#deep-study-path--complete-curriculum) | Readers seeking complete mastery | Follow every curriculum area, lab, and teach-back |
+| [Executive](./06-reading-paths.md#executive-route) | Leaders evaluating value, risk, and adoption | Explain value, accountability, evidence, and staged adoption |
+| [Architect](./06-reading-paths.md#architect-route) | System, platform, security, and quality architects | Whiteboard the full system and its authority boundaries |
+| [Builder](./06-reading-paths.md#builder-route) | Engineers implementing agent workflows | Build and debug one governed delivery path |
+| [Complete guide](./06-reading-paths.md#complete-guide) | Readers designing the complete system | Follow every guide area and use practice material where relevant |
 
 Use the [Topic Index](./07-topic-index.md) when you already know the concept you
 need. Use the [Canonical Glossary](./02-canonical-glossary.md) when a term is
-unclear. Use the [complete curriculum map](../README.md) when you want every
+unclear. Use the [complete guide map](../README.md) when you want every
 chapter in sequence.
 Use the [Detailed Architecture Coverage Matrix](./11-detailed-architecture-coverage-matrix.md)
 when you need the accountable owner, specification, evidence boundary, and
@@ -104,7 +104,7 @@ validation path for a component or control.
 Use [Capability Coverage and Maturity](./08-capability-coverage-and-maturity.md)
 to see what is documented, review ready, validated, or operationally proven.
 Use the [External Reviewer Guide](./09-reviewer-guide.md) when sharing the
-curriculum for feedback.
+guide for feedback.
 
 For the shortest foundation pass, read:
 
@@ -123,7 +123,7 @@ This guide uses three labels deliberately:
   changes.
 - **Current Mission Control Implementation** describes behavior supported by a
   cited commit, source path, test, or observed browser journey.
-- **Future Vision** describes desired behavior that has not met the current
+- **Planned Capability** describes desired behavior that has not met the current
   evidence bar.
 
 The distinction prevents a compelling product vision from being mistaken for

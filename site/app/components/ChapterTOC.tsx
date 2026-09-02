@@ -13,5 +13,5 @@ export function ChapterTOC({ headings }: { headings: Heading[] }) {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [headings]);
-  return <aside className="table-of-contents" aria-label="In this chapter"><span>In this chapter</span><ol>{headings.map((heading) => <li className={active === heading.id ? "is-active" : undefined} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol></aside>;
+  return <aside className="table-of-contents" aria-label="On this page"><span>On this page</span><ol>{headings.map((heading) => <li className={active === heading.id ? "is-active" : undefined} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol></aside>;
 }

@@ -96,7 +96,7 @@ Every Attempt should carry a machine-readable resolution lock whose digest conne
 
 Reproducibility is a graph property. Pinning the model while leaving tools, prompt fragments, skills, or runtime images mutable produces a precise-looking identifier for an imprecise system.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which changes require a new capability version?
 2. When is a provider fallback compatible, and when is it a new experiment?

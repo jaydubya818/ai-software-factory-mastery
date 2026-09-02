@@ -82,7 +82,7 @@ Workflow definitions, event schemas, and projections should have compatibility t
 
 An event is evidence that a producer reported something. The control plane still decides whether that report is authentic, current, relevant, and sufficient for an authoritative transition.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How do you migrate an active workflow version?
 2. Why is exactly-once delivery not the same as exactly-once outcome?

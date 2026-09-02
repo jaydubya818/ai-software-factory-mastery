@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { searchIndex } from "../../lib/search.generated";
-import { StatusBadge } from "./StatusBadge";
 
 function score(document: (typeof searchIndex)[number], terms: string[]) {
   const title = document.title.toLowerCase();
@@ -62,7 +61,7 @@ export function SearchExperience() {
   return (
     <div className="search-experience">
       <label className="search-box">
-        <span className="sr-only">Search the curriculum</span>
+        <span className="sr-only">Search the guide</span>
         <input
           ref={inputRef}
           type="search"
@@ -87,7 +86,7 @@ export function SearchExperience() {
       <div className="search-results" id="search-results" role="listbox">
         {results.map((result, index) => (
           <a aria-selected={index === active} className={`search-result ${index === active ? "is-active" : ""}`} href={`/docs/${result.slug}`} id={`search-result-${result.slug.replaceAll("/", "-")}`} key={result.slug} onMouseEnter={() => setActive(index)} role="option">
-            <div className="search-result-meta"><span>{result.section}</span><StatusBadge status={result.status} /><span>{result.contentType}</span><span>{result.readingMinutes} min</span></div>
+            <div className="search-result-meta"><span>{result.section}</span><span>{result.contentType}</span></div>
             <h2>{highlighted(result.title)}</h2>
             <p>{highlighted(result.description)}</p>
             <small>{[...result.lifecycle, ...result.architectureLayers].join(" · ")}</small>

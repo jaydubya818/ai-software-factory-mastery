@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { lifecycleStages } from "../../lib/curriculum";
+import { lifecycleStages } from "../../lib/lifecycle";
 
 type StageContent = { id: string; chapters: { title: string; href: string; meta: string }[] };
 
@@ -34,7 +34,7 @@ export function LifecycleExplorer({ content }: { content: StageContent[] }) {
           <span>Canonical mapping</span><code>{stage.canonical}</code>
           <h3>{stage.label}</h3><p>{stage.detail}</p>
           <div className="concept-chips">{stage.concepts.map((concept) => <span key={concept}>{concept}</span>)}</div>
-          <Link href={`/topics?lifecycle=${stage.id}`}>Explore all {stage.label.toLowerCase()} material <span aria-hidden="true">→</span></Link>
+          <Link href={`/visuals#phase-${stage.id}`}>Open the {stage.label.toLowerCase()} system map <span aria-hidden="true">→</span></Link>
         </div>
         <div className="lifecycle-stage-reading">
           <span>Start with these chapters</span>

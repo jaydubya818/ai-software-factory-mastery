@@ -132,7 +132,7 @@ Model capability does not grant autonomy. Routing selects an eligible component
 inside the operating system; policy, evidence, and human accountability still
 govern the result.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why should cost break ties only after quality eligibility?
 2. What must a routing decision retain?

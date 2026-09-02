@@ -483,7 +483,7 @@ Questions to revisit after the capstone:
 4. Which production-equivalent environments provide sufficient evidence for
    workloads that cannot safely be validated against live customers?
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is an AI Software Factory an operating model rather than a tool?
 2. What bottleneck appears when code generation becomes dramatically faster?

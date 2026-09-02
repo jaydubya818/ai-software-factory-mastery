@@ -1,15 +1,15 @@
 ---
-title: Reading Paths
+title: Using the Complete Guide
 status: canonical-navigation
 audience: [all]
 last_verified: 2026-08-30
 ---
 
-# Reading Paths
+# Using the Complete Guide
 
-The curriculum is a reference system, not a book everyone must read in the
-same order. Choose the path that matches the decision you need to make. Every
-path uses the same canonical architecture and vocabulary.
+The guide is one connected reference system. The six-part sequence is the most
+complete route, but a reader may enter at the decision in front of them. Every
+route uses the same canonical architecture and vocabulary.
 
 ## The system you are learning
 
@@ -34,12 +34,13 @@ The control path delegates bounded capability downward. Evidence and outcomes
 flow upward. No lower layer can grant itself new authority or certify its own
 material result.
 
-## Executive path — 20 minutes
+## Executive route
 
 **Outcome:** Explain the business value, risk model, human accountability, and
 adoption sequence without needing implementation detail.
 
-Read only the **Quick Read** section in this order:
+Start with the **At a glance** section in this order, then open the full chapter
+where a decision requires its design and evidence detail:
 
 1. [AI Software Factory and Mission Control](./01-ai-software-factory-and-mission-control.md)
 2. [What Is an AI Software Factory?](../01-vision/01-what-is-an-ai-software-factory.md)
@@ -52,7 +53,7 @@ You should be able to answer: Why is this larger than a coding agent? What
 remains a human responsibility? What evidence justifies more autonomy? Which
 outcome should the organization measure?
 
-## Architect path — 3 hours
+## Architect route
 
 **Outcome:** Whiteboard the complete system, name each authority boundary, and
 identify the failure owner for execution, evidence, environment, and delivery.
@@ -75,7 +76,7 @@ identify the failure owner for execution, evidence, environment, and delivery.
 Finish by redrawing the canonical map from memory. For every arrow, state the
 contract, identity, failure behavior, telemetry, and authority that crosses it.
 
-## Builder path — hands-on
+## Builder route
 
 **Outcome:** Implement and debug one governed path from repository onboarding
 and capability resolution through verified delivery, recovery, and learning.
@@ -103,28 +104,29 @@ Do not stop at a successful agent run or pull request. Complete capability
 resolution, evidence, failure, cancellation, delivery, rollback, production
 verification, learning, cleanup, and human-decision paths required by the labs.
 
-## Deep Study path — complete curriculum
+## Complete guide
 
 **Outcome:** Design, build, operate, evaluate, and defend an AI Software Factory
 from first principles.
 
-Follow the numbered sequence in the [curriculum map](../README.md): Vision,
+Follow the numbered sequence in the [guide map](../README.md): Vision,
 First Principles, Operating Model, Domain Model, Agent Factory, Runtime
 Architecture, AI Engineering, Autonomous Engineering Workflows, Verification
 and Delivery Engineering, Factory Platform Engineering, Quality Engineering,
-and Security and Governance. Then complete the case studies, labs, interview
-practice, and research journal.
+and Security and Governance. Use the case studies, labs, architecture-
+communication chapter, and research journal when the decision needs them.
 
 After each area:
 
 1. explain it without notes;
 2. redraw its core system or state transition;
-3. complete the chapter's interview questions and whiteboard exercise;
-4. perform the lab or evidence exercise; and
+3. inspect its failure, recovery, and evidence model;
+4. perform a relevant lab or evidence exercise when making an implementation
+   claim; and
 5. record which current claims are implemented, proposed, or still unproven.
 
 Use the [Topic Index](./07-topic-index.md) when a question cuts across the
-curriculum rather than following its chapter order.
+guide rather than following its chapter order.
 Check [Capability Coverage and Maturity](./08-capability-coverage-and-maturity.md)
 before interpreting a documented architecture as operational proof.
 

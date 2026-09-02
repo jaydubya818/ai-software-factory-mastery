@@ -488,7 +488,7 @@ My current quality doctrine is:
 The factory produces software plus an assurance case. That is stronger than
 “CI is green” and more honest than promising defect-free software.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What can an AI Software Factory legitimately guarantee about quality?
 2. How does a Quality Contract differ from acceptance criteria or a test plan?

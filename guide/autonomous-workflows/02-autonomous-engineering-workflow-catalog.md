@@ -91,7 +91,7 @@ Operators should see a workflow catalog with owner, eligible scope, volume, serv
 
 The unit of autonomy is not “the agent” or even “the repository.” It is a defined workflow operating on a bounded scope under measurable conditions.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Which workflow should an organization automate first, and why?
 2. Who owns autonomous backlog selection?

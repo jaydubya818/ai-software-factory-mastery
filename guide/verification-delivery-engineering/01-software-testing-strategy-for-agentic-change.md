@@ -87,7 +87,7 @@ The factory should propose a test plan from repository intelligence and change i
 
 Test quantity is an activity metric. The important question is whether independent methods can detect the plausible faults introduced by this exact change.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How do you validate an agent-generated test?
 2. When is targeted test selection safe?

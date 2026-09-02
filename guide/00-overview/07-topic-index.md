@@ -8,7 +8,7 @@ last_verified: 2026-08-30
 # AI Software Factory Topic Index
 
 Use this map when you have a topic in mind but do not know where it belongs in
-the curriculum. “Start here” gives the shortest useful orientation. “Deep
+the guide. “Start here” gives the shortest useful orientation. “Deep
 dive” supplies the production architecture. “Practice” points to a lab or
 exercise where one exists.
 

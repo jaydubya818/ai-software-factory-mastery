@@ -182,7 +182,7 @@ teardown, publication separation, and independent verification.
 - Swappability must be proven at the contract level. A generic adapter name is
   not evidence of behavioral parity.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What is the difference between an AI coding agent and an AI Software Factory?
 2. Which responsibilities belong in the inner and outer harnesses?

@@ -225,7 +225,7 @@ merge latency, and change-failure outcomes.
   polling review and merge state.
 - “Keep this mergeable” is a narrower and safer authority than “merge this.”
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why should raw feedback not create implementation authority directly?
 2. What makes a reproduction good enough to promote into an issue?

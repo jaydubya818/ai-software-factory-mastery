@@ -398,7 +398,7 @@ is reliable, observable, secure, and accepted by builders.
 - The improvement loop is part of the factory, but promotion is a delivery
   decision for factory configuration—not an agent privilege.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why are skills shown as a lifecycle stage if they execute inside the harness?
 2. Which changes force a new execution manifest and invalidate prior evidence?

@@ -1,5 +1,5 @@
 ---
-title: Curriculum Changelog
+title: Guide Changelog
 status: active
 audience: [all]
 last_verified: 2026-08-30
@@ -8,7 +8,7 @@ risk: variable
 topics: [changelog, releases, review]
 ---
 
-# Curriculum Changelog
+# Guide Changelog
 
 Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be

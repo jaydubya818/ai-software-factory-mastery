@@ -84,7 +84,7 @@ Every release candidate should resolve to an immutable artifact and compatibilit
 
 The delivery subject should become more precise as it moves forward: source commit, build recipe, artifact digest, deployment, active configuration, and observed outcome. Reusing “version” for all of them hides failure boundaries.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why should the same artifact digest move through environments?
 2. When is forward correction safer than rollback?

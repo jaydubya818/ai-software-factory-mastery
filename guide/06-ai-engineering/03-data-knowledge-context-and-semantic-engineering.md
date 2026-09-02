@@ -240,7 +240,7 @@ evidence.
   necessary.
 - “The model missed it” is not a root cause until upstream layers are ruled out.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How do Data Understanding, Knowledge Engineering, Semantic Engineering, and
    Context Engineering differ?

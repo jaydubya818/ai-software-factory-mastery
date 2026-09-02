@@ -90,7 +90,7 @@ Create a maturity evidence dashboard by controlled repository and workflow. It s
 - Shadow mode is a learning phase only when disagreement and calibration are measured.
 - The credible executive message is “we expand proven corridors,” not “AI transforms everything.”
 
-## 9. Interview questions
+## 9. Design review questions
 
 1. How would you assess an enterprise that has widespread Copilot use but no governed WorkOrders?
 2. What proof is needed before moving from delegated execution to governed autonomy?

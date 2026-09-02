@@ -371,7 +371,7 @@ My current conclusions are:
   merge.
 - Strong quality systems create the conditions for greater autonomy.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is an artifact not automatically evidence?
 2. What fields make a verification receipt trustworthy?

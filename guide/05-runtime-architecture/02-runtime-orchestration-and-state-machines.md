@@ -203,7 +203,7 @@ Mission Control already contains several sound mechanisms, but they do not yet
 compose into the completed production path. Architecture diagrams must not
 collapse “adapter exists” into “factory execution works end to end.”
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is exactly-once delivery usually the wrong promise?
 2. What must be committed before an executor starts?

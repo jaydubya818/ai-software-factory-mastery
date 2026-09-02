@@ -566,7 +566,7 @@ Questions to revisit after todo 024 and the next lab run:
 - Is the policy decision trace understandable to an operator without reading
   source code?
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What is the difference between permission, policy, authorization, approval,
    acceptance, and exception?

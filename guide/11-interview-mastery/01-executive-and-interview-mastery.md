@@ -1,12 +1,12 @@
 ---
-title: Executive and Interview Mastery
+title: Executive Explanation and Architecture Defense
 status: draft-for-study
 audience: [executive, architect, senior-engineer, product, all]
 last_verified: 2026-08-25
 mission_control_commit: b31e27564deb1c03c167e61b5ee094567c2ba7b1
 ---
 
-# Executive and Interview Mastery
+# Executive Explanation and Architecture Defense
 
 ## 1. The problem
 
@@ -18,9 +18,10 @@ and failure behavior. A single memorized pitch fails all three audiences.
 ## 2. Why the problem exists
 
 AI discussions invite vague claims. Terms such as agent, autonomy, factory,
-trust, and learning are used inconsistently. Interviewers test whether a leader
-can separate vision from implementation, respond to skepticism, quantify value,
-and make a hard tradeoff without hiding behind jargon.
+trust, and learning are used inconsistently. Reviewers and decision-makers test
+whether a leader can separate vision from implementation, respond to
+skepticism, quantify value, and make a hard tradeoff without hiding behind
+jargon.
 
 ## 3. Enduring Principle
 
@@ -179,16 +180,16 @@ calibration, first-class Risk Review, governed MCP, production memory, complete
 deployment governance, and intent-to-customer-value economics remain partial or
 future.
 
-The strongest interview posture is to explain both the implemented foundation
+The strongest review posture is to explain both the implemented foundation
 and the unproven boundary without embarrassment. Accurate limitation is an
 architecture skill.
 
-## 6. Future Vision
+## 6. Ongoing practice
 
-The mastery guide should accumulate accepted lab evidence, recorded
-whiteboards, timed explanations, objection drills, and post-interview
-retrospectives. A claim graduates only when it can be traced, operated, broken,
-recovered, and taught without agent assistance.
+The guide maintains accepted lab evidence, recorded whiteboards, timed
+explanations, objection drills, and post-review retrospectives. A claim
+graduates only when it can be traced, operated, broken, recovered, and taught
+without agent assistance.
 
 ## 7. Versioned references
 
@@ -206,7 +207,7 @@ the operating system makes probabilistic execution governable. The hardest
 executive discipline is refusing to convert a roadmap into a present-tense
 claim.
 
-## 9. Interview and discussion questions
+## 9. Architecture defense questions
 
 ### Executive
 
@@ -239,12 +240,12 @@ adoption. Then erase the vendor names and prove the architecture still works.
 ## 11. Hands-on lab
 
 Record three explanations—30 seconds, two minutes, and ten minutes—without
-notes. Then complete a 45-minute mock CTO system-design interview and a
-20-minute skeptical CEO discussion. A reviewer should score conceptual
+notes. Then complete a 45-minute CTO system-design review and a 20-minute
+skeptical CEO discussion. A reviewer should score conceptual
 accuracy, causal reasoning, evidence boundaries, tradeoffs, audience fit, and
 clarity.
 
 Pass only when you can connect every major claim to an enduring principle,
 Mission Control implementation evidence, or an explicitly labeled future
 vision. Agent-generated answers may support preparation but cannot be used
-during the mastery assessment.
+during the architecture review.

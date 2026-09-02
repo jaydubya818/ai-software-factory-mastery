@@ -336,7 +336,7 @@ My current conclusions are:
   independence.
 - Humans govern policy and risk even when they stop reviewing every action.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What does human-led, agent-executed engineering mean in practice?
 2. Which decisions must never belong to an agent?

@@ -65,6 +65,6 @@ export const sectionGuidance: Record<string, string> = {
   "factory-platform-engineering": "Operate the factory as a reliable internal platform with capacity, cost, SLOs, and incident ownership.",
   "09-mission-control-case-studies": "Compare enduring architecture with a versioned control-plane implementation and its evidence boundaries.",
   "10-labs": "Exercise failure, recovery, security, delivery, and improvement paths against observable outcomes.",
-  "11-interview-mastery": "Practice explaining the architecture, its tradeoffs, and its evidence boundaries to different audiences.",
+  "11-interview-mastery": "Explain and defend the architecture, its tradeoffs, and its evidence boundaries to different audiences.",
   "12-research-journal": "Trace the source canon, open questions, and evolving conclusions behind the guide.",
 };

@@ -208,7 +208,7 @@ mastery challenge is to preserve that distinction. Current operational records
 support flow and diagnostic decisions; complete factory ROI still requires
 sustained intent-to-production outcome evidence and full cost attribution.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. When exactly does lead time start and stop?
 2. Why is time to merge insufficient?

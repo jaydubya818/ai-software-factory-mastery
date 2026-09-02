@@ -135,7 +135,7 @@ autonomy reductions driven by reliability.
 not a claim that Mission Control currently automates every stage. Today’s proven
 boundary and tomorrow’s operating model must be spoken in different tenses.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is merge not customer value?
 2. How can the factory govern an external deployment platform?

@@ -81,7 +81,7 @@ Every operator should receive a calm, decision-ready view tailored to role and r
 
 Trustworthy autonomy should feel calm. The interface does not need to dramatize reasoning; it needs to make state, uncertainty, authority, evidence, and recovery legible.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. What belongs in a progress event?
 2. Why are pause and cancel different?

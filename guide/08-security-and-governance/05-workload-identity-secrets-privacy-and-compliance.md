@@ -78,7 +78,7 @@ Every Attempt should receive a cryptographically verifiable workload identity an
 
 The useful question is not “which agent did this?” It is “which accountable chain delegated which exact authority to which workload, using which credential, for which subject and purpose?”
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. How does workload identity differ from an API token?
 2. Why should a secret bypass the model context?

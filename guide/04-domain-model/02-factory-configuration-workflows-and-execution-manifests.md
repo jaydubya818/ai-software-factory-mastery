@@ -137,7 +137,7 @@ The Factory Configuration answers “which operating system is approved for this
 repository?” The execution manifest answers “what exactly governed this try?”
 Both are necessary; neither replaces the WorkOrder’s authority.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why is a WorkOrder insufficient as an execution manifest?
 2. Which changes must alter the Factory digest?

@@ -87,7 +87,7 @@ Every workflow and capability should carry an updated threat model and adversari
 
 Prompt injection is not merely a text-filtering problem. It is an authority-confusion problem whose impact depends on tools, identity, memory, and the surrounding control system.
 
-## 9. Interview and discussion questions
+## 9. Design review questions
 
 1. Why can tool output be an attack vector?
 2. How does memory poisoning change incident scope?

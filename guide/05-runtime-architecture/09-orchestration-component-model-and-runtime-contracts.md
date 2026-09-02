@@ -195,7 +195,7 @@ graphs and isolated probabilistic steps. This review-ready specification does
 not prove throughput, failover, state correctness, or cost behavior in an
 implementation.
 
-## 13. Interview and hands-on lab
+## 13. Design review and hands-on lab
 
 Whiteboard a task that times out after an external mutation. Explain why an
 immediate retry is unsafe, how reconciliation works, which state owner decides,

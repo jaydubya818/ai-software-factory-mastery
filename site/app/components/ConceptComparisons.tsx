@@ -153,7 +153,7 @@ export function ConceptComparisons() {
           )}
           {depth === "deep-dive" && (
             <div className="comparison-deep-dive">
-              <span>Canonical curriculum</span>
+              <span>Canonical guide</span>
               <p>Use the chapters below for contracts, failure behavior, examples, and evidence boundaries. They remain the source of truth for this comparison.</p>
               <div>{active.links.map((link) => <Link href={link.href} key={link.href}>{link.label}<span aria-hidden="true">→</span></Link>)}</div>
             </div>
