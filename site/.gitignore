@@ -44,3 +44,4 @@ yarn-error.log*
 /lib/search.generated.ts
 /lib/palette.generated.ts
 *.tsbuildinfo
+public/infographics/

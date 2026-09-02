@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir, copyFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
@@ -9,105 +9,34 @@ const guideRoot = path.join(repositoryRoot, "guide");
 const outputRoot = path.join(siteRoot, "lib");
 
 const sectionNames = {
-  "00-overview": "Start Here",
-  "01-vision": "Vision",
-  "02-first-principles": "First Principles",
-  "03-operating-model": "Operating Model",
-  "04-domain-model": "Domain Model",
-  "agent-factory": "Agent Factory",
-  "05-runtime-architecture": "Runtime Architecture",
-  "06-ai-engineering": "AI Engineering",
-  "autonomous-workflows": "Autonomous Workflows",
-  "verification-delivery-engineering": "Verification & Delivery",
-  "factory-platform-engineering": "Factory Platform",
-  "07-quality-engineering": "Quality Engineering",
-  "08-security-and-governance": "Security & Governance",
-  "09-mission-control-case-studies": "Case Studies",
-  "10-labs": "Labs",
-  "11-interview-mastery": "Architecture Communication",
-  "12-research-journal": "Research Journal",
+  "00-front-matter": "Front matter",
+  "01-understand": "Part I — Understand",
+  "02-design": "Part II — Design",
+  "03-build": "Part III — Build",
+  "04-prove": "Part IV — Prove",
+  "05-operate": "Part V — Operate",
+  "06-improve": "Part VI — Improve",
+  appendix: "Appendix",
 };
 
 const sectionOrder = [
-  "00-overview",
-  "01-vision",
-  "02-first-principles",
-  "03-operating-model",
-  "04-domain-model",
-  "agent-factory",
-  "05-runtime-architecture",
-  "06-ai-engineering",
-  "autonomous-workflows",
-  "verification-delivery-engineering",
-  "factory-platform-engineering",
-  "07-quality-engineering",
-  "08-security-and-governance",
-  "09-mission-control-case-studies",
-  "10-labs",
-  "11-interview-mastery",
-  "12-research-journal",
-  "reference",
+  "00-front-matter",
+  "01-understand",
+  "02-design",
+  "03-build",
+  "04-prove",
+  "05-operate",
+  "06-improve",
+  "appendix",
 ];
 
-const lifecycleDefaults = {
-  "00-overview": ["intent", "plan", "execute", "verify", "deliver", "learn"],
-  "01-vision": ["intent", "learn"],
-  "02-first-principles": ["intent", "verify", "learn"],
-  "03-operating-model": ["intent", "plan", "verify", "learn"],
-  "04-domain-model": ["intent", "plan"],
-  "agent-factory": ["define", "verify", "learn"],
-  "05-runtime-architecture": ["execute"],
-  "06-ai-engineering": ["plan", "execute", "verify", "learn"],
-  "autonomous-workflows": ["intent", "plan", "execute", "verify", "deliver", "learn"],
-  "verification-delivery-engineering": ["verify", "deliver"],
-  "factory-platform-engineering": ["execute", "deliver", "learn"],
-  "07-quality-engineering": ["verify", "deliver", "learn"],
-  "08-security-and-governance": ["intent", "execute", "verify", "deliver"],
-  "09-mission-control-case-studies": ["execute", "verify"],
-  "10-labs": ["execute", "verify", "learn"],
-  "11-interview-mastery": ["learn"],
-  "12-research-journal": ["learn"],
+const appendixGroups = {
+  labs: "Labs",
+  "mission-control": "Mission Control case studies",
+  research: "Research",
 };
 
-const riskDefaults = {
-  "00-overview": "variable",
-  "01-vision": "variable",
-  "02-first-principles": "high",
-  "03-operating-model": "high",
-  "04-domain-model": "high",
-  "agent-factory": "high",
-  "05-runtime-architecture": "high",
-  "06-ai-engineering": "high",
-  "autonomous-workflows": "variable",
-  "verification-delivery-engineering": "high",
-  "factory-platform-engineering": "high",
-  "07-quality-engineering": "high",
-  "08-security-and-governance": "critical",
-  "09-mission-control-case-studies": "high",
-  "10-labs": "high",
-  "11-interview-mastery": "variable",
-  "12-research-journal": "variable",
-};
-
-const architectureDefaults = {
-  "00-overview": ["factory system"],
-  "01-vision": ["human intent", "factory system"],
-  "02-first-principles": ["governance", "authority"],
-  "03-operating-model": ["governance", "human authority"],
-  "04-domain-model": ["control plane", "contracts"],
-  "agent-factory": ["agent factory", "capability supply"],
-  "05-runtime-architecture": ["runtime", "harness", "environment"],
-  "06-ai-engineering": ["agent runtime", "models", "context"],
-  "autonomous-workflows": ["orchestration", "workflow"],
-  "verification-delivery-engineering": ["verification", "delivery"],
-  "factory-platform-engineering": ["platform", "operations"],
-  "07-quality-engineering": ["quality", "evidence"],
-  "08-security-and-governance": ["security", "governance"],
-  "09-mission-control-case-studies": ["control plane", "evidence"],
-  "10-labs": ["practice"],
-  "11-interview-mastery": ["explanation"],
-  "12-research-journal": ["learning"],
-};
+const appendixGroupOrder = ["Reference", "Labs", "Mission Control case studies", "Research"];
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -116,7 +45,7 @@ async function walk(directory) {
   for (const entry of entries) {
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === "evidence") continue;
+      if (entry.name === "evidence" || entry.name === "assets") continue;
       files.push(...(await walk(fullPath)));
     } else if (entry.isFile() && entry.name.endsWith(".md")) {
       files.push(fullPath);
@@ -128,7 +57,7 @@ async function walk(directory) {
 
 function cleanSlug(relativePath) {
   const withoutExtension = relativePath.replace(/\.md$/, "");
-  if (withoutExtension === "README") return "curriculum";
+  if (withoutExtension === "README") return "guide";
   if (withoutExtension.endsWith("/README")) {
     return `${withoutExtension.replace(/\/README$/, "")}/start-here`;
   }
@@ -142,6 +71,7 @@ function stripFirstHeading(content) {
 function plainText(markdown) {
   return markdown
     .replace(/```[\s\S]*?```/g, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .replace(/<[^>]+>/g, " ")
@@ -151,26 +81,12 @@ function plainText(markdown) {
 }
 
 function extractDescription(markdown) {
-  const purpose = markdown.match(/- \*\*Purpose:\*\*\s+([\s\S]*?)(?=\n- \*\*|\n\n)/);
-  if (purpose) return plainText(purpose[1]);
-
   const paragraphs = markdown.split(/\n\s*\n/);
   const first = paragraphs.find((paragraph) => {
     const value = paragraph.trim();
-    return value && !value.startsWith("#") && !value.startsWith("```") && !value.startsWith("|");
+    return value && !value.startsWith("#") && !value.startsWith("```") && !value.startsWith("|") && !value.startsWith("<!--") && !value.startsWith(">");
   });
   return plainText(first ?? "").slice(0, 240);
-}
-
-function normalizeDate(value) {
-  if (!value) return null;
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return String(value).slice(0, 10);
-}
-
-function readingMinutes(markdown, words) {
-  const declared = markdown.match(/- \*\*Reading time:\*\*\s+(\d+)\s+minutes?/i);
-  return declared ? Number(declared[1]) : Math.max(1, Math.ceil(words / 220));
 }
 
 function slugify(value) {
@@ -184,6 +100,7 @@ function slugify(value) {
 
 function extractHeadings(markdown) {
   return markdown
+    .replace(/```[\s\S]*?```/g, "")
     .split("\n")
     .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
     .filter(Boolean)
@@ -194,12 +111,70 @@ function extractHeadings(markdown) {
     }));
 }
 
-function contentType(sectionKey, sourcePath) {
-  if (sectionKey === "10-labs") return "lab";
-  if (sectionKey === "11-interview-mastery") return "reference";
-  if (sectionKey === "09-mission-control-case-studies") return "case study";
-  if (sourcePath.endsWith("README.md")) return "overview";
+function sectionKeyFor(sourcePath) {
+  if (!sourcePath.includes("/")) return "appendix";
+  return sourcePath.split("/")[0];
+}
+
+function groupFor(sectionKey, sourcePath) {
+  if (sectionKey !== "appendix") return null;
+  const parts = sourcePath.split("/");
+  return parts.length > 2 ? (appendixGroups[parts[1]] ?? "Reference") : "Reference";
+}
+
+function contentType(sectionKey, group, sourcePath) {
+  if (sourcePath === "README.md") return "overview";
+  if (group === "Labs") return "lab";
+  if (group === "Mission Control case studies") return "case study";
+  if (sectionKey === "appendix") return "appendix";
   return "chapter";
+}
+
+function lenientFrontmatter(raw) {
+  // Fallback for chapters whose YAML has an unquoted colon in a scalar value.
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!match) return { data: {}, content: raw };
+  const data = {};
+  for (const line of match[1].split(/\r?\n/)) {
+    const pair = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
+    if (!pair) continue;
+    const [, key, value] = pair;
+    const trimmed = value.trim();
+    if (/^\[.*\]$/.test(trimmed)) {
+      data[key] = trimmed.slice(1, -1).split(",").map((entry) => entry.trim().replace(/^["']|["']$/g, "")).filter(Boolean);
+    } else if (/^-?\d+$/.test(trimmed)) {
+      data[key] = Number(trimmed);
+    } else {
+      data[key] = trimmed.replace(/^["']|["']$/g, "");
+    }
+  }
+  return { data, content: match[2] };
+}
+
+function parseFrontmatter(raw, sourcePath) {
+  try {
+    return matter(raw);
+  } catch (error) {
+    console.warn(`Lenient frontmatter parse for ${sourcePath}: ${error.reason ?? error.message}`);
+    return lenientFrontmatter(raw);
+  }
+}
+
+function stringList(value) {
+  return Array.isArray(value) ? value.map((entry) => String(entry)) : [];
+}
+
+// Infographic assets: guide/assets/infographics/<slot>.(png|svg|jpg|webp) -> /infographics/<slot>.<ext>
+const assetRoot = path.join(guideRoot, "assets", "infographics");
+const publicAssetRoot = path.join(siteRoot, "public", "infographics");
+await rm(publicAssetRoot, { recursive: true, force: true });
+await mkdir(publicAssetRoot, { recursive: true });
+const infographicAssets = {};
+for (const name of (await readdir(assetRoot).catch(() => [])).sort()) {
+  const match = name.match(/^(.+)\.(png|svg|jpe?g|webp)$/i);
+  if (!match) continue;
+  await copyFile(path.join(assetRoot, name), path.join(publicAssetRoot, name));
+  infographicAssets[match[1]] = `/infographics/${name}`;
 }
 
 const files = (await walk(guideRoot)).sort();
@@ -208,12 +183,14 @@ const documents = [];
 for (const file of files) {
   const sourcePath = path.relative(guideRoot, file).split(path.sep).join("/");
   const raw = await readFile(file, "utf8");
-  const parsed = matter(raw);
+  const parsed = parseFrontmatter(raw, sourcePath);
   const body = stripFirstHeading(parsed.content);
   const title = parsed.data.title ?? parsed.content.match(/^#\s+(.+)$/m)?.[1] ?? sourcePath;
-  const sectionKey = sourcePath.includes("/") ? sourcePath.split("/")[0] : "reference";
-  const section = sectionNames[sectionKey] ?? "Reference";
-  const words = plainText(body).split(/\s+/).filter(Boolean).length;
+  const sectionKey = sectionKeyFor(sourcePath);
+  const section = sectionNames[sectionKey] ?? "Appendix";
+  const group = groupFor(sectionKey, sourcePath);
+  const summary = parsed.data.summary ? String(parsed.data.summary).trim() : "";
+  const chapter = typeof parsed.data.chapter === "number" ? parsed.data.chapter : null;
 
   documents.push({
     slug: cleanSlug(sourcePath),
@@ -221,26 +198,16 @@ for (const file of files) {
     title,
     section,
     sectionKey,
-    status: parsed.data.status ?? "reference",
-    audience: Array.isArray(parsed.data.audience) ? parsed.data.audience : [],
-    lifecycle: Array.isArray(parsed.data.lifecycle)
-      ? parsed.data.lifecycle
-      : (lifecycleDefaults[sectionKey] ?? []),
-    risk: String(parsed.data.risk ?? riskDefaults[sectionKey] ?? "variable"),
-    topics: Array.isArray(parsed.data.topics) ? parsed.data.topics : [],
-    architectureLayers: Array.isArray(parsed.data.architecture_layers)
-      ? parsed.data.architecture_layers
-      : (architectureDefaults[sectionKey] ?? []),
-    contentType: contentType(sectionKey, sourcePath),
-    labType: parsed.data.lab_type ? String(parsed.data.lab_type) : null,
-    lastVerified: normalizeDate(parsed.data.last_verified),
-    description: extractDescription(body),
-    readingMinutes: readingMinutes(body, words),
-    hasQuickRead: /^## Quick Read$/m.test(body),
-    hasLab: sectionKey === "10-labs",
-    hasInterviewQuestions: /^## .*Interview/im.test(body) || sectionKey === "11-interview-mastery",
-    hasWhiteboardExercise: /^## .*Whiteboard/im.test(body),
-    hasImplementationEvidence: /^## .*Evidence/im.test(body) || sectionKey === "09-mission-control-case-studies",
+    group,
+    part: parsed.data.part ? String(parsed.data.part) : null,
+    chapter,
+    summary,
+    infographics: stringList(parsed.data.infographics),
+    infographicAssets: Object.fromEntries(
+      stringList(parsed.data.infographics).filter((slot) => infographicAssets[slot]).map((slot) => [slot, infographicAssets[slot]]),
+    ),
+    contentType: contentType(sectionKey, group, sourcePath),
+    description: summary || extractDescription(body),
     headings: extractHeadings(body),
     content: body,
   });
@@ -255,27 +222,25 @@ documents.sort((a, b) => {
     if (normalizedA !== normalizedB) return normalizedA - normalizedB;
     return a.sectionKey.localeCompare(b.sectionKey);
   }
+  if (a.sectionKey === "appendix") {
+    // Book map first, then reference appendices, labs, case studies, research.
+    if (a.contentType === "overview" || b.contentType === "overview") return a.contentType === "overview" ? -1 : 1;
+    const aGroup = appendixGroupOrder.indexOf(a.group);
+    const bGroup = appendixGroupOrder.indexOf(b.group);
+    if (aGroup !== bGroup) return aGroup - bGroup;
+  }
+  if (a.chapter !== null && b.chapter !== null && a.chapter !== b.chapter) return a.chapter - b.chapter;
   return a.sourcePath.localeCompare(b.sourcePath);
 });
 
 const searchIndex = documents.map((document) => ({
   slug: document.slug,
   title: document.title,
-    section: document.section,
-    status: document.status,
-    audience: document.audience,
-    lifecycle: document.lifecycle,
-    risk: document.risk,
-    topics: document.topics,
-    architectureLayers: document.architectureLayers,
-    contentType: document.contentType,
-    readingMinutes: document.readingMinutes,
-    hasQuickRead: document.hasQuickRead,
-    hasLab: document.hasLab,
-    hasInterviewQuestions: document.hasInterviewQuestions,
-    hasWhiteboardExercise: document.hasWhiteboardExercise,
-    hasImplementationEvidence: document.hasImplementationEvidence,
-    description: document.description,
+  section: document.section,
+  group: document.group,
+  chapter: document.chapter,
+  contentType: document.contentType,
+  description: document.description,
   headings: document.headings.map((heading) => heading.text),
   text: plainText(document.content),
 }));
@@ -284,11 +249,12 @@ const paletteIndex = documents.map((document) => ({
   slug: document.slug,
   title: document.title,
   section: document.section,
+  sectionKey: document.sectionKey,
+  group: document.group,
+  chapter: document.chapter,
   contentType: document.contentType,
   description: document.description,
   headings: document.headings.map((heading) => heading.text),
-  lifecycle: document.lifecycle,
-  architectureLayers: document.architectureLayers,
 }));
 
 await mkdir(outputRoot, { recursive: true });

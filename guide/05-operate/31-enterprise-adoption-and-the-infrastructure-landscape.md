@@ -140,7 +140,7 @@ flowchart TB
 
 ### The enterprise control checklist
 
-The security questionnaire arrives whether or not the factory is ready for it. The controls it asks about fall into a stable set, and each maps to a chapter that explains how the factory provides it.
+The security questionnaire arrives whether or not the factory is ready for it. What it is really asking is whether your **AI Infrastructure** (the shared model, data, knowledge, tool, identity, runtime, environment, compute, telemetry, and evaluation services used to build and operate AI systems) has become **Enterprise AI Infrastructure**: the same services operated with explicit organizational identity, tenant isolation, data classification and residency, private networking, audit, policy, quota, support, lifecycle, and accountability requirements. Infrastructure supplies capabilities while product and control-plane contracts determine their authorized use, and "enterprise" names an operating obligation, not a product tier. The controls the questionnaire asks about fall into a stable set, and each maps to a chapter that explains how the factory provides it.
 
 | Control | What the enterprise asks | Where the factory answers |
 | --- | --- | --- |

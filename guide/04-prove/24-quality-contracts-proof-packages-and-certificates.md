@@ -211,7 +211,7 @@ Together they determine the maximum eligible autonomy. A trusted agent making a 
 
 ### Scores prioritize; hard gates protect
 
-A quality-confidence score can summarize dimensions for trend analysis and operator attention:
+**Quality confidence** is a multidimensional assessment of the strength, coverage, independence, freshness, provenance, and reproducibility of the evidence for one artifact. A numeric projection of it may aid trending but cannot replace hard gates. With that caveat, a quality-confidence score can summarize dimensions for trend analysis and operator attention:
 
 `Q = f(requirements, tests, security, architecture, performance, observability, independent evaluation, provenance)`
 
@@ -452,6 +452,8 @@ quality_certificate:
 The human-readable certificate is a projection. The signed machine-readable statement is canonical. A report can change presentation; the signed payload cannot.
 
 ### Revocation and suspension
+
+**Certificate revocation** is an authorized declaration that a previously issued certificate must no longer be relied upon. It does not delete the certificate's history; the record of what was issued, by whom, and on what evidence stays intact so the revocation itself can be audited. It sits alongside three neighbouring transitions.
 
 - **Suspend** when an investigation is active and continued reliance may be unsafe.
 - **Revoke** for a compromised signer, tampering, a material false claim, an invalid subject binding, or critical contradictory evidence.

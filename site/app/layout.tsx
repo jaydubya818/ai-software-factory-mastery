@@ -7,8 +7,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const title = "AI Software Factory Mastery";
-  const description = "The complete field guide to designing, building, operating, governing, and improving an AI software factory.";
+  const title = "The AI Software Factory Guide";
+  const description = "How to design, build, prove, operate, and improve an AI Software Factory.";
   const image = new URL("/og-v2.png", origin).toString();
 
   return {

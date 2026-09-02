@@ -41,7 +41,7 @@ export function SearchExperience() {
 
   const results = useMemo(() => {
     const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    if (!terms.length) return searchIndex.slice(0, 12);
+    if (!terms.length) return searchIndex.filter((document) => document.contentType !== "overview").slice(0, 12);
     return searchIndex
       .map((document) => ({ document, relevance: score(document, terms) }))
       .filter((result) => result.relevance >= 0)
@@ -86,10 +86,9 @@ export function SearchExperience() {
       <div className="search-results" id="search-results" role="listbox">
         {results.map((result, index) => (
           <a aria-selected={index === active} className={`search-result ${index === active ? "is-active" : ""}`} href={`/docs/${result.slug}`} id={`search-result-${result.slug.replaceAll("/", "-")}`} key={result.slug} onMouseEnter={() => setActive(index)} role="option">
-            <div className="search-result-meta"><span>{result.section}</span><span>{result.contentType}</span></div>
+            <div className="search-result-meta"><span>{result.section}</span><span>{result.chapter ? `Chapter ${result.chapter}` : (result.group as string | null) ?? result.contentType}</span></div>
             <h2>{highlighted(result.title)}</h2>
             <p>{highlighted(result.description)}</p>
-            <small>{[...result.lifecycle, ...result.architectureLayers].join(" · ")}</small>
           </a>
         ))}
         {results.length === 0 && (

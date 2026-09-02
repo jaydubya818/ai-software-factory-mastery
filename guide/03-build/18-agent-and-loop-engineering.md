@@ -138,7 +138,7 @@ Two operating choices carry over directly. **Serial execution with targeted inte
 
 ### Collaboration contracts
 
-Conversational memory is not a reliable handoff. Every delegated assignment declares parent work, delegator identity, delegate profile and version, purpose, owned scope, allowed tools and data, maximum delegation depth, input package, expected output schema, completion criteria, deadline, budget, evidence requirement, failure policy, and return channel. The delegate cannot widen scope, re-delegate unless explicitly allowed, or claim acceptance.
+Conversational memory is not a reliable handoff. The handoff is a **Delegation Record**: a durable, versioned assignment from one authorized participant to another that binds purpose, scope, capability, context, authority, budget, completion, failure, and return contracts, and that can never widen the authority the delegator holds. Every delegated assignment declares parent work, delegator identity, delegate profile and version, purpose, owned scope, allowed tools and data, maximum delegation depth, input package, expected output schema, completion criteria, deadline, budget, evidence requirement, failure policy, and return channel. The delegate cannot widen scope, re-delegate unless explicitly allowed, or claim acceptance.
 
 ```yaml
 delegation:

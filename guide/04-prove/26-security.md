@@ -78,7 +78,7 @@ flowchart LR
     Agent -.->|"escalation, exfiltration"| Effects
 ```
 
-Prompt injection is not merely a text-filtering problem. It is an authority-confusion problem whose impact depends on the tools, identity, memory, and control system surrounding the model.
+Prompt injection is not merely a text-filtering problem. It is an authority-confusion problem whose impact depends on the tools, identity, memory, and control system surrounding the model. The variant that matters most in a factory is **indirect prompt injection**: adversarial instructions embedded in content the agent retrieves or observes (a README, an issue comment, a web page, a tool result) rather than supplied as the direct user request. Untrusted content cannot grant authority or alter policy, however imperative its phrasing, and the runtime is what enforces that.
 
 ### Authenticate the principal, authorize the action, attest the execution
 

@@ -7,7 +7,7 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Architecture · AI Software Factory Mastery",
+  title: "Architecture · The AI Software Factory Guide",
   description: "Explore the autonomous software factory across lifecycle, planes, components, governance, inventory, patterns, monitoring, data flow, and evidence.",
 };
 
@@ -29,8 +29,8 @@ export default function ArchitecturePage() {
               risk, failure, recovery, and proof without turning the model into the system.
             </p>
             <div>
-              <Link className="button button-primary" href="/docs/05-runtime-architecture/06-ai-software-factory-reference-architecture">Read the reference architecture</Link>
-              <Link className="button button-secondary" href="/docs/00-overview/11-detailed-architecture-coverage-matrix">Open the coverage matrix</Link>
+              <Link className="button button-primary" href="/docs/01-understand/02-the-factory-in-one-view">Read the reference architecture</Link>
+              <Link className="button button-secondary" href="/docs/appendix/coverage-and-maturity">Open the coverage matrix</Link>
             </div>
           </div>
         </header>

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -7,7 +8,7 @@ async function render(pathname = "/") {
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" }, redirect: "manual" }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
@@ -17,32 +18,70 @@ async function htmlFor(pathname) {
   const response = await render(pathname);
   assert.equal(response.status, 200, `${pathname} should render successfully`);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-  return response.text();
+  // React separates adjacent text nodes with empty comments; strip them so copy assertions read naturally.
+  return (await response.text()).replaceAll("<!-- -->", "");
 }
 
-test("renders the guide-first landing page", async () => {
-  const html = await htmlFor("/");
+async function generatedDocuments() {
+  const source = await readFile(new URL("../lib/content.generated.ts", import.meta.url), "utf8");
+  const json = source.replace(/^[\s\S]*?export const documents = /, "").replace(/ as const;\s*$/, "");
+  return JSON.parse(json);
+}
 
-  assert.match(html, /Build, operate, and master the/);
-  assert.match(html, /whole/);
-  assert.match(html, /Read the complete guide/);
-  assert.match(html, /Open the visual guide/);
-  assert.match(html, /Agent Factory/);
-  assert.match(html, /AI Software Factory/);
-  assert.match(html, /Mission Control/);
-  assert.match(html, /Follow the decisions required to build a real factory/);
-  assert.match(html, /Control flows down\. Evidence flows back up\./);
-  assert.match(html, /Ten maps for retaining the system/);
-  assert.match(html, /Reliable autonomy comes from a trustworthy system/);
-  assert.doesNotMatch(html, /Choose your path|Four paths\. One system|Continue learning|course progress/i);
+function docLinks(html) {
+  return [...new Set([...html.matchAll(/href="(\/docs\/[^"#?]+)/g)].map((match) => decodeURIComponent(match[1])))];
+}
+
+const chapterSlugs = {
+  1: "01-understand/01-why-software-engineering-is-changing",
+  2: "01-understand/02-the-factory-in-one-view",
+  3: "01-understand/03-first-principles-trust-evidence-and-authority",
+  19: "03-build/19-the-12-layer-production-ai-agent-stack",
+  36: "06-improve/36-where-this-is-going",
+};
+
+test("generated content reflects the book structure", async () => {
+  const documents = await generatedDocuments();
+  const chapters = documents.filter((document) => document.chapter !== null && document.chapter > 0);
+  assert.equal(chapters.length, 36, "36 numbered chapters");
+  assert.deepEqual(chapters.map((document) => document.chapter), Array.from({ length: 36 }, (_, index) => index + 1));
+  assert.ok(documents.some((document) => document.slug === "00-front-matter/00-how-to-read-this-guide" && document.chapter === 0));
+  assert.ok(documents.some((document) => document.slug === "guide" && document.contentType === "overview"));
+  assert.ok(documents.some((document) => document.slug === "appendix/glossary"));
+  assert.equal(documents.filter((document) => document.contentType === "lab").length, 13);
+  assert.ok(documents.filter((document) => document.contentType === "case study").length >= 3);
+  for (const key of ["readingMinutes", "hasQuickRead", "hasInterviewQuestions", "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
+    assert.ok(!(key in documents[0]), `${key} should not be generated`);
+  }
+  for (const chapter of chapters) {
+    assert.ok(Array.isArray(chapter.infographics), `${chapter.slug} has infographics`);
+    assert.ok(chapter.summary.length > 0, `${chapter.slug} has a summary`);
+    assert.ok(chapter.part, `${chapter.slug} has a part`);
+  }
 });
 
-test("renders every primary guide surface", async () => {
+test("renders the book landing page", async () => {
+  const html = await htmlFor("/");
+
+  assert.match(html, /The AI Software Factory Guide/);
+  assert.match(html, /Start reading/);
+  assert.match(html, /How to read this guide/);
+  assert.match(html, /Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software/);
+  assert.match(html, /Agent Factory/);
+  assert.match(html, /Mission Control/);
+  for (const part of ["Understand", "Design", "Build", "Prove", "Operate", "Improve"]) assert.match(html, new RegExp(part));
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`));
+  assert.match(html, /href="\/visuals"/);
+  assert.match(html, /href="\/topics"/);
+  assert.doesNotMatch(html, /learning path|reading time|Quick Read|course progress|min read|Choose your path|status-badge/i);
+});
+
+test("renders every primary surface", async () => {
   const routes = [
-    ["/guide", /Six parts\. One end-to-end operating system\./],
+    ["/guide", /Table of contents/],
     ["/visuals", /Ten original, readable system maps/],
     ["/architecture", /Trace the factory from intent to evidence\./],
-    ["/topics", /Find the exact concept without navigating a course\./],
+    ["/topics", /The reference shelf\./],
     ["/coverage", /Coverage is not proof\./],
     ["/search", /Search the whole system\./],
   ];
@@ -50,86 +89,110 @@ test("renders every primary guide surface", async () => {
   for (const [route, expected] of routes) assert.match(await htmlFor(route), expected);
 });
 
-test("renders the complete six-part guide without course mechanics", async () => {
+test("guide table of contents lists front matter and all 36 chapters with summaries", async () => {
   const html = await htmlFor("/guide");
+  const documents = await generatedDocuments();
+  const chapters = documents.filter((document) => document.chapter !== null);
 
-  for (const part of ["Understand", "Design", "Build", "Prove", "Operate", "Improve"]) assert.match(html, new RegExp(part));
-  assert.match(html, /Production AI Agent Engineering Stack/);
-  assert.match(html, /Engineering Attention Altitude and Governed Control/);
-  assert.match(html, /Architecture Communication/);
-  assert.doesNotMatch(html, /reading time|mark complete|selected path|interview mode/i);
+  for (const chapter of chapters) {
+    assert.match(html, new RegExp(`href="/docs/${chapter.slug}"`), `TOC links ${chapter.slug}`);
+  }
+  assert.match(html, /How to read this guide/);
+  assert.match(html, /Why software engineering is changing/);
+  assert.match(html, /Where this is going/);
+  assert.match(html, /Part I — Understand/);
+  assert.match(html, /Part VI — Improve/);
+  assert.match(html, /Appendices/);
+  assert.match(html, /href="\/docs\/appendix\/glossary"/);
+  assert.equal(docLinks(html).filter((link) => /^\/docs\/0[1-6]-/.test(link)).length, 36);
+  assert.doesNotMatch(html, /reading time|mark complete|selected path|interview mode|learning path/i);
 });
 
-test("renders all ten first-party visual maps", async () => {
-  const html = await htmlFor("/visuals");
-  const expected = [
-    "From governed intent to confirmed outcome",
-    "The twelve disciplines around the agent",
-    "Orchestration connects intelligence to controlled execution",
-    "Choose the simplest architecture that can safely solve the problem",
-    "Memory is a governed write, retrieval, update, and forgetting system",
-    "Every attempt ends in verify, correct, retry, stop, or escalate",
-    "Govern the system through seven connected control pillars",
-    "Observe behavior without confusing telemetry with authority",
-    "Use protocols for connection",
-    "Move your attention to the level the risk and evidence justify",
-  ];
-  for (const title of expected) assert.match(html, new RegExp(title));
-  assert.match(html, /No screenshots with tiny labels/);
+test("chapter 2 renders with part label, chapter number, TOC, and prev/next", async () => {
+  const html = await htmlFor(`/docs/${chapterSlugs[2]}`);
+
+  assert.match(html, /<title>The factory in one view · The AI Software Factory Guide<\/title>/i);
+  assert.match(html, /Part I — Understand/);
+  assert.match(html, /Chapter 2/);
+  assert.match(html, /2\. The factory in one view/);
+  for (const heading of ["The problem", "How it works", "How to build it", "Failure modes", "In Mission Control", "Retain this", "Go deeper"]) {
+    assert.match(html, new RegExp(heading), `renders ${heading}`);
+  }
+  assert.match(html, /On this page/);
+  assert.match(html, /Infographic placeholder/);
+  assert.match(html, /Infographic slots in this chapter/);
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "previous links to chapter 1");
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[3]}"`), "next links to chapter 3");
+  assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|Interview practice|\d+ min read|status-badge|document-status/i);
 });
 
-test("renders full chapters as one readable source", async () => {
-  const html = await htmlFor("/docs/00-overview/05-software-factory-stack-boundaries");
+test("reading sequence runs front matter → chapters → appendices", async () => {
+  const frontMatter = await htmlFor("/docs/00-front-matter/00-how-to-read-this-guide");
+  assert.match(frontMatter, /Front matter/);
+  assert.match(frontMatter, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "front matter links forward to chapter 1");
 
-  assert.match(html, /<title>Software Factory Stack Boundaries · AI Software Factory Mastery<\/title>/i);
-  assert.match(html, /At a glance/);
-  assert.match(html, /Name a layer by the responsibility it owns/);
-  assert.match(html, /Independent quality and evidence path/);
-  assert.match(html, /Related guide chapters/);
-  assert.doesNotMatch(html, /mode-switcher|Mark chapter complete|Interview practice|\d+ min read/i);
+  const last = await htmlFor(`/docs/${chapterSlugs[36]}`);
+  assert.match(last, /Chapter 36/);
+  assert.match(last, /href="\/docs\/appendix\//, "chapter 36 links forward into the appendix");
+
+  const glossary = await htmlFor("/docs/appendix/glossary");
+  assert.match(glossary, /Canonical Glossary/);
 });
 
-test("legacy mode URLs still render the complete chapter without mode UI", async () => {
-  const html = await htmlFor("/docs/00-overview/02-canonical-glossary?mode=interview");
-  assert.match(html, /Canonical Glossary/);
-  assert.match(html, /Business Understanding/);
-  assert.match(html, /Harness Engineering/);
-  assert.match(html, /Temporal Memory/);
-  assert.doesNotMatch(html, /Interview mode|Mark interview complete|Questions and framing|mode-switcher/i);
+test("legacy routes redirect or disappear", async () => {
+  const learn = await render("/learn");
+  assert.ok(learn.status === 404 || (learn.status >= 300 && learn.status < 400), `/learn should be gone or redirect, got ${learn.status}`);
+
+  const glossary = await render("/glossary");
+  assert.ok(glossary.status >= 300 && glossary.status < 400, `/glossary should redirect, got ${glossary.status}`);
+  assert.match(glossary.headers.get("location") ?? "", /\/docs\/appendix\/glossary$/);
+
+  const old = await render("/docs/00-overview/02-canonical-glossary");
+  assert.equal(old.status, 404);
 });
 
-test("reference index uses only search and one area selector", async () => {
+test("reference shelf lists the appendices with a plain search box", async () => {
   const html = await htmlFor("/topics");
   assert.match(html, /Search the guide/);
-  assert.match(html, /All guide areas/);
-  assert.match(html, /chapters/);
-  assert.doesNotMatch(html, /topic-more-filters-toggle|All personas|All statuses|All risk levels/i);
+  for (const slug of ["appendix/glossary", "appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/research/initial-canon", "appendix/labs/01-governed-issue-to-validated-pull-request", "appendix/mission-control/02-verification-first-software-factory"]) {
+    assert.match(html, new RegExp(`href="/docs/${slug}"`), `lists ${slug}`);
+  }
+  assert.match(html, /Labs/);
+  assert.match(html, /Mission Control case studies/);
+  assert.doesNotMatch(html, /topic-more-filters-toggle|All personas|All statuses|All risk levels|All guide areas/i);
 });
 
-test("coverage distinguishes guide maturity from implementation proof", async () => {
-  const html = await htmlFor("/coverage");
-  assert.match(html, /See where the guide carries weight\./);
-  assert.match(html, /What is covered\. What is not proven\./);
-  assert.match(html, /Lifecycle coverage/);
-  assert.match(html, /Architecture coverage/);
-  assert.match(html, /Audience coverage/);
-  assert.doesNotMatch(html, /href="\/topics\?status=|Interview material|curriculum feedback/i);
+test("atlas links resolve to existing chapters", async () => {
+  const html = await htmlFor("/visuals");
+  const documents = await generatedDocuments();
+  const slugs = new Set(documents.map((document) => document.slug));
+  const links = docLinks(html);
+  assert.ok(links.length >= 10, "atlas has at least ten chapter links");
+  for (const link of links) assert.ok(slugs.has(link.replace(/^\/docs\//, "")), `${link} resolves`);
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[19]}"`), "12-layer stack links to chapter 19");
+  assert.match(html, /href="\/docs\/03-build\/13-coding-harnesses-and-agent-protocols"/);
+  assert.match(html, /href="\/docs\/02-design\/07-governance-policy-and-risk-proportional-approval"/);
+  assert.match(html, /href="\/docs\/05-operate\/28-observability-telemetry-and-forensics"/);
+  assert.match(html, /href="\/docs\/02-design\/08-economics-metrics-and-human-attention"/);
+  assert.match(html, /href="\/docs\/03-build\/15-agent-architecture"/);
+  assert.match(html, /href="\/docs\/03-build\/18-agent-and-loop-engineering"/);
 });
 
-test("renders the new production engineering and attention chapters", async () => {
-  const stack = await htmlFor("/docs/06-ai-engineering/11-production-ai-agent-engineering-stack");
-  const attention = await htmlFor("/docs/03-operating-model/07-engineering-attention-altitude-and-control");
-
-  assert.match(stack, /The twelve disciplines/);
-  assert.match(stack, /Building the agent is one layer/);
-  assert.match(stack, /Diagnose failures by owner/);
-  assert.match(attention, /Five attention levels/);
-  assert.match(attention, /Direct control and governed control/);
-  assert.match(attention, /Evaluated coverage and out-of-distribution work/);
+test("every internal /docs link on rendered pages resolves to a generated document", async () => {
+  const documents = await generatedDocuments();
+  const slugs = new Set(documents.map((document) => document.slug));
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", `/docs/${chapterSlugs[2]}`, `/docs/${chapterSlugs[19]}`, "/docs/appendix/glossary", "/docs/appendix/labs/01-governed-issue-to-validated-pull-request"];
+  const broken = [];
+  for (const route of routes) {
+    for (const link of docLinks(await htmlFor(route))) {
+      if (!slugs.has(link.replace(/^\/docs\//, ""))) broken.push(`${route} -> ${link}`);
+    }
+  }
+  assert.deepEqual(broken, []);
 });
 
 test("keeps requested exclusions out of public routes", async () => {
-  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/docs/00-overview/02-canonical-glossary"];
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/docs/appendix/glossary"];
   const terms = [
     [87, 111, 114, 107, 100, 97, 121],
     [72, 111, 112, 112, 101, 114],

@@ -9,22 +9,23 @@ type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Labs" | "Mission Co
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
 
 const utilityItems: PaletteItem[] = [
-  { id: "guide", label: "Read the complete guide", meta: "Field guide", href: "/guide", text: "guide design build operate improve complete", group: "Guide" },
-  { id: "visuals", label: "Open the visual guide", meta: "Ten system maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
+  { id: "guide", label: "Table of contents", meta: "The guide", href: "/guide", text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
+  { id: "visuals", label: "Open the atlas", meta: "System maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
   { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map", group: "Architecture" },
-  { id: "topics", label: "Browse the reference index", meta: "All chapters", href: "/topics", text: "topics guide concepts reference", group: "Concepts" },
+  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: "/topics", text: "reference appendix glossary labs case studies research", group: "Concepts" },
+  { id: "search", label: "Search the whole guide", meta: "Full text", href: "/search", text: "search full text find", group: "Guide" },
   { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence", group: "Architecture" },
-  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/00-overview/09-reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
-  { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics?section=Labs", text: "labs exercises hands on", group: "Labs" },
+  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/appendix/reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
+  { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics#labs", text: "labs exercises hands on", group: "Labs" },
 ];
 
 const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Labs", "Mission Control", "Glossary", "Chapters"];
 
 function groupForDocument(document: (typeof paletteIndex)[number]): PaletteGroup {
-  if (document.title === "Canonical Glossary") return "Glossary";
-  if (document.section === "Labs") return "Labs";
-  if (document.section === "Case Studies" || document.title.includes("Mission Control")) return "Mission Control";
-  if (["Runtime Architecture", "Factory Platform", "Agent Factory", "Domain Model", "Verification & Delivery"].includes(document.section)) return "Architecture";
+  if (document.slug === "appendix/glossary") return "Glossary";
+  if (document.contentType === "lab") return "Labs";
+  if (document.contentType === "case study") return "Mission Control";
+  if (document.sectionKey === "03-build" || document.sectionKey === "05-operate") return "Architecture";
   return "Chapters";
 }
 
@@ -50,10 +51,10 @@ export function CommandPalette() {
   const items = useMemo(() => {
     const documents: PaletteItem[] = paletteIndex.map((document) => ({
       id: document.slug,
-      label: document.title,
-      meta: `${document.section} · ${document.contentType}`,
+      label: document.chapter ? `${document.chapter}. ${document.title}` : document.title,
+      meta: document.chapter !== null ? document.section : `${document.section} · ${(document.group as string | null) ?? document.contentType}`,
       href: `/docs/${document.slug}`,
-      text: [document.title, document.section, document.description, ...document.headings, ...document.lifecycle, ...document.architectureLayers].join(" ").toLowerCase(),
+      text: [document.title, document.section, document.description, ...document.headings].join(" ").toLowerCase(),
       group: groupForDocument(document),
     }));
     const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `${stage.label} lifecycle`, meta: stage.canonical, href: `/visuals#phase-${stage.id}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));

@@ -4,7 +4,7 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Search · AI Software Factory Mastery",
+  title: "Search · The AI Software Factory Guide",
   description: "Search the complete AI Software Factory guide.",
 };
 

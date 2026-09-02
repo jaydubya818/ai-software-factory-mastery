@@ -1,23 +1,63 @@
 import path from "node:path";
 import { documents } from "./content.generated";
+import { guideParts } from "./guide";
 
 export type DocumentRecord = (typeof documents)[number];
 
+/** The book map (guide/README.md). Served at /docs/guide but kept out of the reading sequence. */
+export const bookMap = documents.find((document) => document.contentType === "overview");
+
+/** Front matter and the 36 numbered chapters, in reading order. */
+export const chapters = documents.filter((document) => document.chapter !== null);
+
+/** Everything that is reference material: appendices, labs, case studies, research. */
+export const appendices = documents.filter((document) => document.sectionKey === "appendix" && document.contentType !== "overview");
+
+/** Reading sequence for previous/next: front matter → chapters 1..36 → appendices. */
+export const readingSequence = [...chapters, ...appendices];
+
 export const sections = Array.from(
-  documents.reduce((map, document) => {
-    const existing = map.get(document.sectionKey) ?? {
-      key: document.sectionKey,
-      label: document.section,
-      documents: [] as DocumentRecord[],
-    };
-    existing.documents.push(document);
-    map.set(document.sectionKey, existing);
-    return map;
-  }, new Map<string, { key: string; label: string; documents: DocumentRecord[] }>()).values(),
+  documents
+    .filter((document) => document.contentType !== "overview")
+    .reduce((map, document) => {
+      const existing = map.get(document.sectionKey) ?? {
+        key: document.sectionKey,
+        label: document.section,
+        documents: [] as DocumentRecord[],
+      };
+      existing.documents.push(document);
+      map.set(document.sectionKey, existing);
+      return map;
+    }, new Map<string, { key: string; label: string; documents: DocumentRecord[] }>())
+    .values(),
 );
+
+export const appendixGroups = Array.from(
+  appendices
+    .reduce((map, document) => {
+      const label = document.group ?? "Reference";
+      map.set(label, [...(map.get(label) ?? []), document]);
+      return map;
+    }, new Map<string, DocumentRecord[]>())
+    .entries(),
+).map(([label, groupDocuments]) => ({ label, documents: groupDocuments }));
 
 export function getDocument(slug: string) {
   return documents.find((document) => document.slug === slug);
+}
+
+export function getChapter(number: number) {
+  return chapters.find((document) => document.chapter === number);
+}
+
+export function partForDocument(document: DocumentRecord) {
+  return guideParts.find((part) => (part.sectionKeys as readonly string[]).includes(document.sectionKey));
+}
+
+export function chaptersForPart(partId: string) {
+  const part = guideParts.find((candidate) => candidate.id === partId);
+  if (!part) return [];
+  return chapters.filter((document) => (part.sectionKeys as readonly string[]).includes(document.sectionKey));
 }
 
 function normalizeAnchor(value: string) {
@@ -42,73 +82,11 @@ export function resolveDocumentHref(sourcePath: string, href?: string) {
 }
 
 export function adjacentDocuments(slug: string) {
-  const index = documents.findIndex((document) => document.slug === slug);
+  const index = readingSequence.findIndex((document) => document.slug === slug);
   return {
-    previous: index > 0 ? documents[index - 1] : undefined,
-    next: index >= 0 && index < documents.length - 1 ? documents[index + 1] : undefined,
+    previous: index > 0 ? readingSequence[index - 1] : undefined,
+    next: index >= 0 && index < readingSequence.length - 1 ? readingSequence[index + 1] : undefined,
   };
-}
-
-export function relatedDocuments(slug: string, limit = 5) {
-  const current = getDocument(slug);
-  if (!current) return [];
-  const currentLifecycle = new Set<string>(current.lifecycle);
-  const currentTopics = new Set<string>(current.topics);
-  const currentArchitecture = new Set<string>(current.architectureLayers);
-
-  return documents
-    .filter((document) => document.slug !== slug)
-    .map((document) => {
-      const sameSection = document.sectionKey === current.sectionKey ? 5 : 0;
-      const lifecycleOverlap = document.lifecycle.filter((stage) => currentLifecycle.has(stage)).length * 2;
-      const topicOverlap = document.topics.filter((topic) => currentTopics.has(topic)).length * 3;
-      const architectureOverlap = document.architectureLayers
-        .filter((layer) => currentArchitecture.has(layer)).length * 2;
-      return { document, score: sameSection + lifecycleOverlap + topicOverlap + architectureOverlap };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score || a.document.title.localeCompare(b.document.title))
-    .slice(0, limit)
-    .map(({ document }) => document);
-}
-
-export function markdownSections(content: string) {
-  const matches = [...content.matchAll(/^##\s+(.+)$/gm)];
-  if (matches.length === 0) return [{ title: "Chapter", content }];
-
-  const introduction = content.slice(0, matches[0].index).trim();
-  const result = matches.map((match, index) => {
-    const start = match.index ?? 0;
-    const end = matches[index + 1]?.index ?? content.length;
-    return { title: match[1].replace(/[*_`]/g, "").trim(), content: content.slice(start, end).trim() };
-  });
-  return introduction ? [{ title: "Introduction", content: introduction }, ...result] : result;
-}
-
-export function contentForMode(content: string, mode: string) {
-  if (mode === "read") return content;
-  const sections = markdownSections(content);
-  const patterns = {
-    architecture: /architecture|boundary|contract|flow|state|control|authority|failure|tradeoff|diagram|model/i,
-    study: /quick read|principle|definition|lesson|distinction|summary|review|glossary|question/i,
-  } as const;
-  const pattern = patterns[mode as keyof typeof patterns];
-  if (!pattern) return content;
-  const selected = sections.filter((section) => pattern.test(section.title));
-  return selected.length > 0 ? selected.map((section) => section.content).join("\n\n") : content;
-}
-
-export function quickReadContent(content: string) {
-  return markdownSections(content).find((section) => /^quick read$/i.test(section.title))?.content
-    .replace(/^##\s+Quick Read\s*/i, "")
-    .trim();
-}
-
-export function withoutQuickRead(content: string) {
-  return markdownSections(content)
-    .filter((section) => !/^quick read$/i.test(section.title))
-    .map((section) => section.content)
-    .join("\n\n");
 }
 
 export { documents };

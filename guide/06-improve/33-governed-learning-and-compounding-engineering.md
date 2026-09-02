@@ -264,6 +264,17 @@ hypotheses, and only then chooses the smallest durable remedy:
 - evaluator or dataset change for a measurement failure; or
 - workflow change for incorrect decomposition, authority, or recovery.
 
+Two of those remedies have names worth keeping. **Prompt optimization** is
+controlled experimentation that changes instructions or prompt composition to
+improve defined outcomes without widening authority; it requires holdout
+evaluation, regression controls, and versioned promotion, or it is just
+editing. **Skill improvement** is a governed update to a reusable task method
+based on diagnosed evidence, followed by evaluation, certification, promotion,
+and rollback planning. Whichever remedy the diagnosis selects, its output is a
+**promotion recommendation**: the evidence-backed suggestion that a validated
+improvement be adopted into the standing factory configuration. It remains a
+recommendation until a human with the relevant authority accepts it.
+
 Learning from success needs the same care. Compare successful runs to matched
 baselines and identify the strategies associated with acceptance, low retry,
 low cost, low review effort, and safe recovery. Do not copy private data,

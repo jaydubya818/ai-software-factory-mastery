@@ -135,7 +135,7 @@ evaluation_profile: repository-change-v7
 
 ### The AI concepts an architect must actually hold
 
-You do not need a history of model architectures to design a governed delivery system. You need enough model literacy to bound context, select inference profiles, evaluate behavior, control data, and plan capacity. The useful question is never "which model is smartest?" but "which qualified configuration meets this task's quality, safety, latency, availability, data, and cost contract?" The concepts that change factory decisions are these.
+The discipline this chapter belongs to is **AI Engineering**: the engineering practice that turns model capability into reliable systems through data, knowledge, semantics, context, agents, tools, structured outputs, routing, loops, evaluations, and runtime controls. Model prompting is one technique within that discipline, not the discipline itself. You do not need a history of model architectures to design a governed delivery system. You need enough model literacy to bound context, select inference profiles, evaluate behavior, control data, and plan capacity. The useful question is never "which model is smartest?" but "which qualified configuration meets this task's quality, safety, latency, availability, data, and cost contract?" The concepts that change factory decisions are these.
 
 | Concept | Practical meaning | Factory decision it changes |
 |---|---|---|
@@ -194,6 +194,8 @@ MCP's primitives carry different control expectations, and a factory should trea
 | Sampling | Server requests model generation through the client | Client-controlled, with user oversight | Constrain model access, tool loops, context, cost, and approvals |
 | Elicitation | Server requests additional user input | User-controlled | Make the requesting server visible; protect sensitive-data boundaries |
 | Tasks | Deferred, durable request execution | Negotiated; experimental in `2025-11-25` | Bind task state to authorization context; set TTL, cancellation, polling, audit rules |
+
+One naming collision needs flagging. An **MCP Task** is a protocol-extension handle used to manage a long-running MCP operation, and it is not the same thing as the factory's Task: the domain Task organizes authorized WorkOrder execution and retains business and acceptance lineage, whereas the MCP Task tracks a single deferred request on one server connection. Do not let the former stand in for the latter in records or policy.
 
 Every MCP server is three things at once: a software supply-chain dependency, an identity boundary, and a potential data-egress path. So the factory governs the connection, not only the individual call. An enterprise MCP gateway should demand a connection contract that answers ten questions.
 
@@ -264,6 +266,8 @@ Good context architecture keeps five categories visibly separate: **instructions
 | Episodic | What happened in prior runs | Copying a past solution into a different case | Artifact links, outcome, time, similarity evidence |
 | Semantic | Claims, entities, terminology, relationships | Stale or contradictory knowledge | Provenance, confidence, validity interval, contradiction links |
 | Procedural | Skills, prompts, workflows, runbooks | Promoting an unsafe behavior | Evaluation, ownership, approval, versioning, rollback |
+
+The table's rows have precise meanings. Session memory is **Working Memory**: the short-lived task and conversation state required for the current run, including intermediate artifacts and tool results, which should be cleared, compacted, or deliberately persisted when the run ends. **Episodic Memory** is the attributable record of past events and experiences, including when they occurred and which outcome followed; a prior episode is evidence about history, not a universal instruction. **Semantic Memory** holds durable facts, concepts, and relationships retrieved by meaning, and similarity there does not prove truth, freshness, permission, or authority. **Procedural Memory** is versioned reusable knowledge about how to perform a task, normally expressed as a skill, workflow, runbook, or instruction set, and it must be evaluated and lifecycle governed. Cutting across the semantic row is **Temporal Memory**: time-aware facts and relationships that preserve when a claim was valid and how it changed, so that a current answer does not silently combine incompatible historical states.
 
 A safe memory lifecycle is a write-admission flow, and memory quality depends far more on it than on vector search quality.
 

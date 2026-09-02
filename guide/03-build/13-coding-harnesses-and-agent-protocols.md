@@ -23,6 +23,8 @@ Protocols promise to fix this and partly do, but each one standardizes a single 
 
 ### Two harnesses around one loop
 
+Two terms need pinning down before the split. An **AI Coding Harness** is an agent harness specialized for repository work: code search, file edits, commands, tests, Git operations, and development feedback. What it enables is **Autonomous Coding**, bounded software-engineering work that the agent may pursue across several tool-use steps without continuous human input. That phrase describes execution autonomy only; it never means autonomous approval, merge, or release, and a product integration that claims the label must still identify which inner- and outer-harness responsibilities it implements.
+
 The word "harness" hides two different jobs. The **inner harness** owns one model-tool loop. It prepares model input, manages context, exposes tools, executes tool calls under its own permission model, streams observations, compacts or resumes the session, and decides when the loop stops. That is what Claude Code or Codex does when you type a prompt.
 
 The **outer harness** makes that loop operable inside the factory. It validates the frozen manifest, provisions the environment, starts or resumes the inner harness, converts native events into the factory's schema, enforces budgets and timeouts, requests policy decisions, captures artifacts, classifies completion, and tears down resources. It is the thing HumanLayer's Dexter calls the outer harness and the thing many teams have quietly built as a pile of shell scripts.

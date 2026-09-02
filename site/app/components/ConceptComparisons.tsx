@@ -24,8 +24,8 @@ const comparisons: Comparison[] = [
     left: { name: "Agent Factory", owns: "Capability creation, versioning, evaluation, certification, publishing, and retirement.", boundary: "It does not own a mission, approve its own use, or deliver a production outcome." },
     right: { name: "AI Software Factory", owns: "The governed value stream from human intent through production outcome and learning.", boundary: "It consumes capabilities; it does not redefine their identity or silently bypass their admission controls." },
     links: [
-      { label: "Factory boundaries", href: "/docs/00-overview/05-software-factory-stack-boundaries" },
-      { label: "Agent Factory supply chain", href: "/docs/agent-factory/01-capability-supply-chain-and-registries" },
+      { label: "Factory boundaries", href: "/docs/01-understand/02-the-factory-in-one-view" },
+      { label: "Agent Factory supply chain", href: "/docs/03-build/10-the-agent-factory" },
     ],
   },
   {
@@ -36,8 +36,8 @@ const comparisons: Comparison[] = [
     left: { name: "Agent", owns: "Task reasoning, bounded choices, tool requests, and candidate production.", boundary: "It cannot expand its permissions, certify material work, or decide organizational policy." },
     right: { name: "Harness", owns: "Execution control, session state, budgets, tool mediation, recovery, and run capture.", boundary: "It does not own business intent or turn a completed run into an accepted outcome." },
     links: [
-      { label: "Agent architecture", href: "/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory" },
-      { label: "Coding harnesses", href: "/docs/05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols" },
+      { label: "Agent architecture", href: "/docs/03-build/15-agent-architecture" },
+      { label: "Coding harnesses", href: "/docs/03-build/13-coding-harnesses-and-agent-protocols" },
     ],
   },
   {
@@ -48,8 +48,8 @@ const comparisons: Comparison[] = [
     left: { name: "Inner Harness", owns: "One coding session: context assembly, model/tool loop, local state, and session completion.", boundary: "It does not own cross-run durability, organizational approval, or release coordination." },
     right: { name: "Outer Harness", owns: "Cross-run supervision: task lifecycle, policy envelope, budgets, recovery, and durable run records.", boundary: "It does not grant mission authority or independently certify its own candidate." },
     links: [
-      { label: "Stack boundaries", href: "/docs/00-overview/05-software-factory-stack-boundaries" },
-      { label: "Harness adapters", href: "/docs/05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols" },
+      { label: "Stack boundaries", href: "/docs/01-understand/02-the-factory-in-one-view" },
+      { label: "Harness adapters", href: "/docs/03-build/13-coding-harnesses-and-agent-protocols" },
     ],
   },
   {
@@ -59,7 +59,7 @@ const comparisons: Comparison[] = [
     distinction: "The control plane resolves policy, identity, capabilities, budgets, scheduling, and required proof before execution. The execution plane receives a frozen contract, runs in an isolated environment, and returns artifacts plus receipts. Separating them prevents an executor from silently changing the rules that govern its own work.",
     left: { name: "Control Plane", owns: "Admission, policy, routing, scheduling, authority, budgets, and lifecycle coordination.", boundary: "It should not perform mutable repository work inside the candidate-producing session." },
     right: { name: "Execution Plane", owns: "Bounded tool use and candidate production inside the admitted execution contract.", boundary: "It cannot rewrite admission policy, exceed its autonomy ceiling, or approve its own output." },
-    links: [{ label: "Control and execution planes", href: "/docs/05-runtime-architecture/01-control-plane-and-execution-plane" }],
+    links: [{ label: "Control and execution planes", href: "/docs/03-build/11-control-plane-orchestrator-and-execution-plane" }],
   },
   {
     id: "assurance",
@@ -69,8 +69,8 @@ const comparisons: Comparison[] = [
     left: { name: "Evaluation", owns: "Repeatable cases, measures, baselines, comparisons, and capability-level fitness signals.", boundary: "It does not by itself prove that the exact release candidate satisfies every delivery obligation." },
     right: { name: "Verification", owns: "Independent checks against the exact subject, quality contract, and proof obligations.", boundary: "It reports eligible evidence; named human or policy authority still owns the acceptance decision." },
     links: [
-      { label: "Evaluation engineering", href: "/docs/06-ai-engineering/04-evaluation-engineering-trace-replay-and-run-comparison" },
-      { label: "Quality and evidence", href: "/docs/07-quality-engineering/01-quality-and-evidence-architecture" },
+      { label: "Evaluation engineering", href: "/docs/04-prove/23-evaluation-engineering" },
+      { label: "Quality and evidence", href: "/docs/04-prove/21-quality-and-evidence-architecture" },
     ],
   },
   {
@@ -81,8 +81,8 @@ const comparisons: Comparison[] = [
     left: { name: "Context", owns: "Task-specific selection, ranking, budgeting, provenance, freshness, and prompt assembly.", boundary: "It is temporary input, not an authoritative long-term system of record." },
     right: { name: "Memory", owns: "Governed persistence, update, retrieval, retention, conflict resolution, and deletion.", boundary: "Stored similarity does not establish currentness, correctness, permission, or acceptance." },
     links: [
-      { label: "Agent context and memory", href: "/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory" },
-      { label: "Knowledge and retrieval", href: "/docs/06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification" },
+      { label: "Agent context and memory", href: "/docs/03-build/15-agent-architecture" },
+      { label: "Knowledge and retrieval", href: "/docs/03-build/16-data-knowledge-semantic-and-context-engineering" },
     ],
   },
   {
@@ -94,7 +94,7 @@ const comparisons: Comparison[] = [
     right: { name: "Acceptance", owns: "A governed decision that the named subject meets its quality contract and authority conditions.", boundary: "It cannot be inferred from agent confidence or producer-generated evidence alone." },
     links: [
       { label: "Walk the failed run", href: "/architecture#factory-run-explorer" },
-      { label: "Quality certificates", href: "/docs/07-quality-engineering/04-quality-contract-and-certificate-technical-specification" },
+      { label: "Quality certificates", href: "/docs/04-prove/24-quality-contracts-proof-packages-and-certificates" },
     ],
   },
   {
@@ -105,8 +105,8 @@ const comparisons: Comparison[] = [
     left: { name: "Capability", owns: "The qualified ability to reason, use a tool, execute a procedure, or produce an artifact.", boundary: "Being able to act does not establish permission, accountability, or decision rights." },
     right: { name: "Authority", owns: "Permission to exercise capability under an explicit scope, policy, owner, and consequence level.", boundary: "It should be delegated minimally, recorded durably, and never inferred from technical access alone." },
     links: [
-      { label: "Authority and emergency control", href: "/docs/08-security-and-governance/07-authority-autonomy-and-emergency-control" },
-      { label: "Decision rights", href: "/docs/03-operating-model/06-enterprise-governance-operating-model-and-decision-rights" },
+      { label: "Authority and emergency control", href: "/docs/02-design/07-governance-policy-and-risk-proportional-approval" },
+      { label: "Decision rights", href: "/docs/02-design/04-the-human-agent-operating-model" },
     ],
   },
 ];

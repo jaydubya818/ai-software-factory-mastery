@@ -104,7 +104,7 @@ export function VisualAtlas() {
         kicker="End-to-end value stream"
         title="From governed intent to confirmed outcome"
         description="The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority."
-        href="/docs/00-overview/04-intent-to-delivery-lifecycle"
+        href="/docs/01-understand/02-the-factory-in-one-view"
       >
         <ol className="atlas-lifecycle">
           {lifecycleStages.map((stage, index) => (
@@ -125,7 +125,7 @@ export function VisualAtlas() {
         kicker="Production AI engineering"
         title="The twelve disciplines around the agent"
         description="Building the agent is one layer. Production reliability comes from the connected engineering disciplines that define inputs, meaning, behavior, proof, recovery, and improvement."
-        href="/docs/06-ai-engineering/11-production-ai-agent-engineering-stack"
+        href="/docs/03-build/19-the-12-layer-production-ai-agent-stack"
       >
         <ol className="atlas-discipline-grid">
           {productionDisciplines.map(([number, title, description, prevention]) => (
@@ -140,7 +140,7 @@ export function VisualAtlas() {
         kicker="Runtime coordination"
         title="Orchestration connects intelligence to controlled execution"
         description="The orchestrator coordinates models, state, tools, knowledge, policy, reliability, observability, and budgets. Each component owns a narrow decision."
-        href="/docs/05-runtime-architecture/09-orchestration-component-model-and-runtime-contracts"
+        href="/docs/03-build/11-control-plane-orchestrator-and-execution-plane"
         dark
       >
         <div className="atlas-orchestration-frame">
@@ -158,7 +158,7 @@ export function VisualAtlas() {
         kicker="Minimum sufficient autonomy"
         title="Choose the simplest architecture that can safely solve the problem"
         description="This is a selection ladder, not a maturity score. Higher levels add power and new obligations; they are not automatically better."
-        href="/docs/06-ai-engineering/10-agentic-architecture-patterns-and-autonomy-selection"
+        href="/docs/03-build/18-agent-and-loop-engineering"
       >
         <ol className="atlas-patterns">
           {patterns.map(([number, title, flow, use, controls]) => <li key={number}><span>{number}</span><div><h3>{title}</h3><code>{flow}</code><p>{use}</p><small>{controls}</small></div></li>)}
@@ -171,7 +171,7 @@ export function VisualAtlas() {
         kicker="State, knowledge, and time"
         title="Memory is a governed write, retrieval, update, and forgetting system"
         description="A vector database is one retrieval mechanism. Memory architecture decides what should persist, why it remains valid, who may retrieve it, and when it must be corrected or deleted."
-        href="/docs/06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory"
+        href="/docs/03-build/15-agent-architecture"
       >
         <div className="atlas-memory-grid">
           {memoryTypes.map(([title, purpose, content, rule]) => <article key={title}><span>{purpose}</span><h3>{title} memory</h3><p>{content}</p><small>{rule}</small></article>)}
@@ -184,7 +184,7 @@ export function VisualAtlas() {
         kicker="Convergent execution"
         title="Every attempt ends in verify, correct, retry, stop, or escalate"
         description="A production loop does not merely call the model again. It diagnoses the failure class, changes only eligible state, enforces budgets, and preserves every attempt."
-        href="/docs/06-ai-engineering/05-agent-and-loop-engineering-patterns"
+        href="/docs/03-build/18-agent-and-loop-engineering"
         dark
       >
         <div className="atlas-loop">
@@ -206,7 +206,7 @@ export function VisualAtlas() {
         kicker="Enterprise operating model"
         title="Govern the system through seven connected control pillars"
         description="Governance is not a sign-off at the end. It follows the system from inventory and classification through authority, monitoring, incidents, and retirement."
-        href="/docs/08-security-and-governance/06-agentic-governance-control-framework"
+        href="/docs/02-design/07-governance-policy-and-risk-proportional-approval"
       >
         <ol className="atlas-governance">
           {governancePillars.map(([title, description], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{description}</p></li>)}
@@ -220,7 +220,7 @@ export function VisualAtlas() {
         kicker="Observe → evaluate → detect → respond → improve"
         title="Observe behavior without confusing telemetry with authority"
         description="Traces, logs, metrics, cost, latency, and quality explain system behavior. They influence decisions only through explicit validators and governed records."
-        href="/docs/factory-platform-engineering/06-observability-semantics-cost-and-forensics"
+        href="/docs/05-operate/28-observability-telemetry-and-forensics"
       >
         <div className="atlas-observability">
           {observabilitySignals.map(([title, description], index) => <article key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{description}</p></article>)}
@@ -234,7 +234,7 @@ export function VisualAtlas() {
         kicker="Interoperability boundaries"
         title="Use protocols for connection—not as substitutes for governance"
         description="Each protocol joins a different boundary. The factory still owns identity, policy, scope, evidence, failure, versioning, and lifecycle."
-        href="/docs/05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols"
+        href="/docs/03-build/13-coding-harnesses-and-agent-protocols"
       >
         <div className="atlas-protocol-grid">
           {protocols.map(([name, boundary, description, nonclaim]) => <article key={name}><span>{boundary}</span><h3>{name}</h3><p>{description}</p><small>{nonclaim}</small></article>)}
@@ -247,7 +247,7 @@ export function VisualAtlas() {
         kicker="Leverage and direct inspection"
         title="Move your attention to the level the risk and evidence justify"
         description="Higher altitude can create leverage, but it reduces direct inspection. Governed control comes from contracts, evidence, and authority—not from assuming higher abstraction is safer."
-        href="/docs/03-operating-model/07-engineering-attention-altitude-and-control"
+        href="/docs/02-design/08-economics-metrics-and-human-attention"
         dark
       >
         <ol className="atlas-attention-levels">
