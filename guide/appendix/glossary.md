@@ -1519,6 +1519,37 @@ the attacker's while the agent still believes it is doing the assigned work.
 action the grant was never meant to cover, as distinct from escalation to a
 grant it does not hold.
 
+**Workload identity** — A cryptographically issued identity for a non-human
+principal (an agent, worker, or service) — SPIFFE, OIDC, mTLS — with
+short-lived credentials, so that authorisation and audit attach to the
+workload itself and never to a borrowed human credential.
+
+**Just-in-time access** — Authority granted for one bounded purpose, one scope,
+and one window, then withdrawn. In the factory it is granted to an Attempt
+through the frozen execution manifest, not to an agent standing.
+
+**Separation of duties** — The rule that the actor who produces a change may
+not be the sole authority that verifies, accepts, publishes, or releases it;
+enforced by identity and policy, not by convention.
+
+**Agent kill switch** — The standing ability to disable or quarantine an agent
+or a session immediately, revoking its tokens and leases. It stops the
+bleeding; it is not recovery, which is a new Attempt from a known-good
+checkpoint.
+
+**UEBA for agents** — Behaviour analytics applied to non-human principals: a
+baseline of normal tool use, data access, and timing per agent, with anomaly,
+privilege-escalation, exfiltration, and goal-drift detection against it.
+
+**Agent trust score** — A diagnostic composite of an agent's policy
+violations, anomaly rate, evidence currentness, and outcome history. It may
+trigger demotion or review; it never grants autonomy, which requires evidence
+through the promotion gate.
+
+**Zero trust (for agents)** — Verify explicitly, least privilege, assume
+breach, encrypt end to end, monitor continuously, automate security — applied
+to agents, tools, memory, and models as principals in their own right.
+
 **Guardrails** — Predefined rules that limit what an agent can do or say,
 applied at the input, the tool call, and the output. Guardrails constrain;
 they do not verify — a guarded agent can still be confidently wrong, which is
