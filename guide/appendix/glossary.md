@@ -772,6 +772,26 @@ workflows, systems, and business outcomes. Attention moves upward only when
 risk, evaluated coverage, evidence, and recovery justify reduced direct
 inspection; it moves downward when novelty or consequence increases.
 
+**Change classification** — Typing a change before review — kind, surface
+touched, size, blast radius — from the diff and the codebase index, so that
+the risk tier, the reviewers, and the budget are selected by what the change
+is rather than applied uniformly.
+
+**Hierarchical context** — Review or execution context assembled in layers —
+organisation-wide standards, product-line conventions, repository-specific
+rules and history — with the more specific layer overriding the general one
+and every layer versioned.
+
+**Budget-aware escalation** — A reviewer or agent that runs under a token,
+time, and cost budget set by risk tier and, when the budget is exhausted or
+confidence is below threshold, stops and hands what it found to a person
+rather than manufacturing a verdict.
+
+**Structured finding** — A typed review record: location, category, severity
+from consequence × likelihood, evidence, suggested fix, and the reviewer and
+index versions that produced it. Countable, deduplicable, evaluable, and
+usable by the next agent; a free-text comment is none of these.
+
 **Change-risk policy** — A repository-owned, executable rule that decides
 whether a pull request needs a human reviewer, judging the change (blast
 radius, paths touched, novelty) rather than the code. It is the risk-tier

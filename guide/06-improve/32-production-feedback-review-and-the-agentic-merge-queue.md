@@ -4,7 +4,7 @@ part: improve
 chapter: 32
 summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
 absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
-infographics: [feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
+infographics: [review-at-scale, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
 ---
 
 # 32. Production feedback, automated review, and the agentic merge queue
@@ -401,6 +401,30 @@ identifier, no migration lacks a down step), emitted as CI annotations. The
 first routes; the second verifies. Merging them into one score reproduces the
 composite-score failure Chapter 23 warns about.
 
+### Scaling automated review across a large estate
+
+One repository with one reviewer agent is a demo. A large organisation has hundreds of repositories, some of them decades-old products with millions of lines and their own conventions, and the design question is how automated review stays accurate, cheap, and governable across all of them at once. The answer is ten mechanisms that work together; each one removes a specific way the naive design fails.
+
+<!-- infographic: review-at-scale -->
+> **Infographic — Review at scale: profile, index, classify, tier, contextualise, specialise, evaluate, escalate, report, govern.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Mechanism | What it does | The failure it removes |
+| --- | --- | --- |
+| **Repository profiling** | A readiness record per repository: languages, build and test commands, ownership, conventions, hot paths, historical defect density, risk classification, which workflows are admitted ([Chapter 20](../03-build/20-autonomous-engineering-workflows.md)) | One reviewer configuration applied to every repository, wrong for most of them |
+| **Incremental code indexing** | A codebase index (symbols, dependencies, ownership, tests-to-code mapping) updated per commit rather than rebuilt per review, with the index version recorded on every finding | Re-reading the repository on every pull request; reviews that cost more than the change |
+| **Change classification** | Every PR classified before review: kind (bug fix, feature, refactor, migration, security or policy change, dependency update), surface touched (public API, schema, auth, payments, infrastructure), size, and blast radius, from the diff plus the index | Treating a typo fix and a schema migration as the same review job |
+| **Risk-tiered review** | The classification selects a tier, and the tier selects depth: which reviewers run, which checks are mandatory, whether a human is required, and the request-changes threshold (see "Risk-tiered review" above) | Uniform depth: too shallow for the dangerous change, too expensive for the trivial one |
+| **Hierarchical context** | Context assembled in layers — global engineering standards, product-line conventions, repository-specific rules and recent history — with the more specific layer overriding the general one, and the layers versioned ([Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)) | A single prompt that is either too generic to catch product-specific mistakes or too large to fit |
+| **Specialised reviewers** | Separate reviewers for security, performance, accessibility, API compatibility, data migration, and domain logic, each with its own rubric and eval set, routed by classification ([Chapter 10](../03-build/10-the-agent-factory.md)) | One generalist reviewer that is mediocre at everything and cannot be improved in one dimension without regressing another |
+| **Evaluation by repository or workload class** | Precision, recall, false-positive rate, cost, and latency measured per repository class and per change kind, against benchmarks built from that class's real PRs with known defects ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md), [Chapter 23](../04-prove/23-evaluation-engineering.md)) | A fleet-wide average that hides the repository where the reviewer is worse than nothing |
+| **Budget-aware escalation** | Each review runs under a token, time, and cost budget set by tier; when the budget is exhausted or confidence is below threshold, the reviewer stops and escalates to a human with what it found rather than guessing ([Chapter 8](../02-design/08-economics-metrics-and-human-attention.md)) | Reviews that burn unbounded tokens on a hard change, or that fabricate a verdict to finish |
+| **Structured findings with evidence** | Every finding is a typed record: location, category, severity from consequence × likelihood, the evidence (failing test, trace, rule, prior incident), the suggested fix, and the reviewer and index versions that produced it | Free-text review comments that cannot be counted, deduplicated, evaluated, or acted on by the next agent |
+| **Global, product, and repository policy layers** | Policy as code in three layers — organisation-wide (always), product line (inherits and tightens), repository (inherits and tightens) — with the tightest applicable rule winning and every layer versioned and audited ([Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md)) | Policy that is either centrally rigid or locally chaotic; exceptions that nobody can trace |
+
+Read together, the ten form a pipeline: *profile* the repository once, *index* it continuously, *classify* each change, pick the *tier*, assemble *hierarchical context*, dispatch the *specialised reviewers* under a *budget*, emit *structured findings*, and *evaluate* the whole thing per class against *layered policy*. The order matters because each step narrows the next one's work; the cost of review then scales with the risk of the change, not with the size of the estate.
+
+What makes the design governable rather than merely scalable is that every step leaves a record the control plane can act on: the profile is a readiness gate, the classification is an input to the risk tier, the findings are evidence in the decision packet, and the per-class evaluation is what earns a reviewer more autonomy or demotes it. The reviewer never decides its own tier, never widens its own budget, and never grades its own findings.
+
 ### Mergeability and the agentic merge queue
 
 Once a human has approved the candidate, the remaining work is keeping it
@@ -633,6 +657,7 @@ precision, human attention, merge latency, and change-failure outcomes.
 
 ## Retain this
 
+- Review at scale is ten mechanisms in order: repository profiling, incremental indexing, change classification, risk-tiered depth, hierarchical context, specialised reviewers, per-class evaluation, budget-aware escalation, structured findings with evidence, and layered policy. Cost then scales with the risk of the change, not the size of the estate.
 - Feedback is untrusted evidence about an observation. It becomes more
   authoritative only through explicit promotion, and every earlier record is
   kept.
