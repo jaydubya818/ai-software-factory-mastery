@@ -11,6 +11,8 @@ const definitions = [
   ["Living implementation", "Mission Control", "The living control-plane implementation and case study for governing execution, evidence, and human authority.", 34],
 ] as const;
 
+const updated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" });
+
 export default function Home() {
   const firstChapter = getChapter(1);
   const numbered = chapters.filter((chapter) => chapter.chapter !== null && chapter.chapter > 0);
@@ -20,16 +22,20 @@ export default function Home() {
       <SiteHeader />
       <main>
         <section className="hero guide-home-hero">
-          <div className="hero-status"><span>A book, read front to back</span><i>{numbered.length} chapters</i><i>Six parts</i><i>Appendices and labs</i></div>
           <div className="eyebrow">The AI Software Factory Guide</div>
           <h1>Design, build, prove, operate, and improve the <em>software factory</em>.</h1>
-          <div className="hero-bottom">
-            <p className="hero-copy">How to design, build, prove, operate, and improve an engineering system in which humans define intent and accept risk while bounded agents plan, implement, validate, and recover — and independent evidence decides what advances.</p>
-            <div className="hero-actions">
-              {firstChapter && <Link className="button button-primary" href={`/docs/${firstChapter.slug}`}>Start reading</Link>}
-              <Link className="button button-secondary" href="/docs/00-front-matter/00-how-to-read-this-guide">How to read this guide</Link>
-            </div>
+          <p className="hero-copy">A field guide for engineering leaders building governed agentic delivery systems — from intent and bounded execution to evidence, recovery, and production.</p>
+          <div className="hero-actions">
+            {firstChapter && <Link className="button button-primary" href={`/docs/${firstChapter.slug}`}>Start with Chapter 1</Link>}
+            <Link className="button button-secondary" href="/guide">Browse all {numbered.length} chapters</Link>
+            <Link className="hero-tertiary" href="/docs/00-front-matter/00-how-to-read-this-guide">How to read this guide →</Link>
           </div>
+          <p className="hero-credibility">
+            <span>By Jay West</span><i aria-hidden="true">·</i>
+            <span>2026 edition, updated {updated}</span><i aria-hidden="true">·</i>
+            <span>Eight stages, {numbered.length} chapters, seven appendices</span><i aria-hidden="true">·</i>
+            <a href="https://github.com/jaydubya818/ai-software-factory-mastery" rel="noreferrer" target="_blank">Open source on GitHub (MIT)</a>
+          </p>
         </section>
 
         <section className="home-value-stream" aria-labelledby="value-stream-title">
@@ -39,9 +45,9 @@ export default function Home() {
               <h2 id="value-stream-title">From governed intent to confirmed outcome</h2>
               <p className="factory-one-line" aria-label="The factory in one line">Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</p>
             </div>
-            <p>The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority. Click any stage for the technical deep dive: what enters, what leaves, who decides, and how it is built.</p>
+            <p>A closed loop: every stage receives an explicit contract, produces durable records, and returns evidence to a named authority. Click a stage for the technical deep dive.</p>
           </header>
-          <ValueStream />
+          <ValueStream compact />
         </section>
 
         <section className="definition-band" aria-label="Three definitions">

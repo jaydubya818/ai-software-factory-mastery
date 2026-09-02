@@ -1417,3 +1417,20 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .value-stream-cta { display: block; margin-top: 14px; font-style: normal; font-size: 12px; font-weight: 600; color: var(--green); }
 @media (max-width: 1000px) { .value-stream-eight { grid-template-columns: repeat(2, 1fr); } .value-stream-eight > li:nth-child(4n) { border-right: 1px solid var(--line); } .value-stream-eight > li:nth-child(2n) { border-right: 0; } .value-stream-eight > li:nth-last-child(-n+4) { border-bottom: 1px solid var(--line); } .value-stream-eight > li:nth-last-child(-n+2) { border-bottom: 0; } }
 @media (max-width: 600px) { .value-stream-eight { grid-template-columns: 1fr; } .value-stream-eight > li { border-right: 0 !important; border-bottom: 1px solid var(--line) !important; } .value-stream-eight > li:last-child { border-bottom: 0 !important; } }
+
+/* Homepage hero: compact, CTA above the fold */
+.guide-home-hero { padding-top: 56px; padding-bottom: 48px; }
+.guide-home-hero h1 { font-size: clamp(48px, 6.6vw, 84px); line-height: 0.98; margin-bottom: 22px; }
+.guide-home-hero .hero-copy { max-width: 640px; margin: 0; font-size: 19px; line-height: 1.5; }
+.guide-home-hero .hero-actions { margin-top: 26px; }
+.hero-credibility { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 26px 0 0; font-family: var(--font-geist-mono), monospace; font-size: 11px; letter-spacing: 0.02em; color: var(--muted); }
+.hero-credibility i { font-style: normal; opacity: 0.5; }
+.hero-credibility a { color: var(--green); text-decoration: none; }
+.hero-credibility a:hover { text-decoration: underline; }
+.value-stream-compact .atlas-lifecycle > li > a { padding: 16px 18px 18px; }
+.value-stream-compact .atlas-lifecycle p { margin-bottom: 0; }
+.value-stream-compact .value-stream-canonical { margin-top: 18px; }
+.value-stream-compact .value-stream-cta { margin-top: 12px; }
+@media (max-width: 600px) { .guide-home-hero { padding-top: 40px; padding-bottom: 36px; } .guide-home-hero h1 { font-size: 42px; } }
+.hero-tertiary { align-self: center; margin-left: 6px; font-size: 14px; font-weight: 600; color: var(--green); text-decoration: none; }
+.hero-tertiary:hover { text-decoration: underline; }

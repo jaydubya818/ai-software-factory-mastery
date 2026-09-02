@@ -25,7 +25,7 @@ export function ValueStream({ compact = false }: { compact?: boolean }) {
               <small className="value-stream-canonical">Stage {n}</small>
               <h3>{meta.verb}</h3>
               <p>{meta.detail}</p>
-              <ul>{meta.concepts.map((concept) => <li key={concept}>{concept}</li>)}</ul>
+              {!compact && <ul>{meta.concepts.map((concept) => <li key={concept}>{concept}</li>)}</ul>}
               <em className="value-stream-cta">How it works →</em>
             </Link>
           </li>

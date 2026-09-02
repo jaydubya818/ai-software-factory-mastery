@@ -64,7 +64,7 @@ test("renders the book landing page", async () => {
   const html = await htmlFor("/");
 
   assert.match(html, /The AI Software Factory Guide/);
-  assert.match(html, /Start reading/);
+  assert.match(html, /Start with Chapter 1/);
   assert.match(html, /How to read this guide/);
   assert.match(html, /Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software/);
   assert.match(html, /Agent Factory/);
