@@ -139,6 +139,22 @@ authority.
 **Coding assistant** — A system that suggests, explains, or generates code under
 direct human control. It does not own a governed delivery lifecycle.
 
+**Agentic AI** — Systems in which a model plans, acts through tools, observes
+the result, and continues toward a goal without a person driving every step.
+The label says nothing about trust: an agent is only as reliable as the harness,
+evidence, and authority around it. Not a chatbot, and not a synonym for
+autonomy.
+
+**Agent lifecycle** — Build, deploy, monitor, improve, retire — the same
+lifecycle any production component has, applied to an Agent Definition.
+In this guide each transition is a governed state with an owner, evidence,
+and a promotion or deprecation record; nothing moves because time passed.
+
+**Multi-agent system** — Several specialised agents working toward one goal
+through explicit handoffs, shared typed state, and bounded authority per
+agent. Every extra agent is tokens, latency, and failure surface; the guide's
+rule is one agent until a boundary demands a second (Chapter 18).
+
 **Agent** — A model-driven worker that can reason, choose tools, act, observe the
 result, and continue toward a bounded objective. Capability does not imply
 authority.
@@ -301,6 +317,13 @@ recovery of agent and deterministic workflow steps through typed state and
 handoffs. It must preserve scope, authority, budgets, evidence, and stop
 conditions across every participant.
 
+**Five-layer tech stack** — The vendor-landscape view of an enterprise agentic
+system: (1) reliability, evaluation, security, and delivery; (2) knowledge,
+retrieval, and memory; (3) models, tools, and execution; (4) agent
+orchestration and runtime; (5) experience and interface. Products fill the
+layers; the control plane and the Agent Factory sit above them and are owned,
+not bought (Chapter 31).
+
 **AI Infrastructure** — The shared model, data, knowledge, tool, identity,
 runtime, environment, compute, telemetry, and evaluation services used to build
 and operate AI systems. Infrastructure supplies capabilities; product and
@@ -348,6 +371,10 @@ scoped and reviewable.
 **Tool** — A typed executable capability through which an agent observes or
 changes an external system. A tool supplies capability; policy and credentials
 determine whether a particular call is authorized.
+
+**Tool calling** — The moment an agent asks for an external action — a search,
+a query, a file write, a message — as a typed call the harness executes on
+its behalf. The call is where authority is checked; the model only proposes it.
 
 **Tool gateway** — A single entry point through which every tool and MCP
 server, internal or third-party, is reached, so that authentication, policy,
@@ -489,6 +516,17 @@ combining incompatible historical states.
 **Model gateway** — The governed interface that normalizes provider access,
 identity, credentials, policy, telemetry, quotas, and failure handling. It
 separates product workflows from provider-specific APIs.
+
+**Reasoning effort** — The thinking budget granted to a model invocation.
+Output and reasoning tokens bill at multiples of input tokens, so the effort
+default is a cost lever set by policy per task class, raised only where
+measured quality demands it (Chapter 18).
+
+**Hallucination** — A confident, fluent output that is not grounded in the
+context or the world. In a factory it is treated as an evidence problem, not
+a model problem: nothing a model asserts is accepted until an independent
+check has proven it, and grounding through trusted context is the first
+control.
 
 **Model catalog** — A scoped inventory of available model routes and their
 capabilities, constraints, cost, latency, availability, security classification,
@@ -663,6 +701,29 @@ required, why automation stopped, affected scope, risk, available and missing
 evidence, safe options, recommendation, uncertainty, deadline, and what resumes
 after the decision.
 
+**Supervised autonomy** — The operating mode in which an agent proposes an
+action and waits for human approval before it takes effect. The default for
+consequential or irreversible actions; the approval is a server-enforced
+authority boundary, never a decorative UI state.
+
+**Escalation design** — The rules for when an agent stops and hands the
+decision to a person: which conditions trigger it, who receives it, what
+evidence travels with it, and what the agent may do meanwhile. See Escalation
+UX for the surface; see Risk Review for the record.
+
+**Consent fatigue** — The failure mode in which people approve so many prompts
+that they stop reading them, turning human approval into a rubber stamp.
+The remedy is risk-proportional review — fewer, richer decision packets —
+not more prompts.
+
+**Governance agent** — An agent whose job is to check other agents against
+policy: scope, budgets, evidence currentness, prohibited actions. It observes
+and flags; it never becomes the authority that accepts, promotes, or waives.
+
+**Scope boundary** — The exact set of systems, data, repositories, code paths,
+and actions an agent may touch, resolved before execution and enforced at the
+gateway. Anything outside it does not exist for the agent.
+
 **Human-in-the-loop** — An operating mode in which a person performs a required
 decision, approval, correction, or risk judgment inside the workflow. Human
 presence is useful only when the decision and evidence are explicit.
@@ -740,6 +801,11 @@ or materially unsafe trajectory.
 **Verification Run** — One immutable evaluation of a versioned verification
 contract against an exact candidate and manifest. A rerun creates a new record;
 it does not replace the history of an errored or failing run.
+
+**Evals** — Shorthand for structured evaluation: representative tasks, graders,
+and comparisons that measure whether an agent, skill, or model change actually
+works, with and without the change. See Evaluation Engineering, Eval Task,
+Evaluation Run, and Context eval.
 
 **Evaluation Engineering** — The discipline of designing representative tasks,
 fixtures, datasets, trials, graders, metrics, comparisons, and promotion rules
@@ -1452,6 +1518,26 @@ the attacker's while the agent still believes it is doing the assigned work.
 **Privilege abuse** — Misuse of a grant the agent legitimately holds for an
 action the grant was never meant to cover, as distinct from escalation to a
 grant it does not hold.
+
+**Guardrails** — Predefined rules that limit what an agent can do or say,
+applied at the input, the tool call, and the output. Guardrails constrain;
+they do not verify — a guarded agent can still be confidently wrong, which is
+why evidence sits behind them.
+
+**Agent identity** — A non-human identity assigned to an agent or workload so
+that every action it takes is attributable, authorised, and revocable
+separately from any person's credentials. Short-lived tokens, least
+privilege, and an audit trail follow from it.
+
+**Audit trail** — The durable, tamper-evident record of every agent action,
+why it happened, and who authorised it. It is how agent-executed work stays
+explainable after the fact; see Audit export for the packaged form.
+
+**Ontological bias** — The way a model's training and the context it is shown
+shape what gets imagined and what gets excluded — which options are proposed,
+which risks are named, which users are assumed. Countered by explicit
+constraints, diverse evaluation sets, and human review of framing, not only of
+output.
 
 **Excessive agency** — An agent given more authority, tools, or autonomy than
 its task requires, so that a mistake or a hijack has more to reach. The remedy
