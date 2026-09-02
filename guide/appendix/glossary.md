@@ -495,6 +495,12 @@ repositories, configuration, and factory records.
 **Repository** — The registered source-control target against which work may be
 authorized. A repository record does not itself permit modification.
 
+**Portable repository identity** — A repository identity owned by the
+organization and separate from any developer's local checkout, so that scope,
+policy, readiness, and lineage attach to the repository rather than to a
+path on one machine. It is what lets many workers, hosts, and sandboxes refer
+to the same governed target.
+
 **Repository Readiness Record** — A versioned assessment of repository
 identity, ownership, instructions, architecture, dependencies, build, tests,
 delivery, data, security, environment, and eligible workflow classes. It is
@@ -588,6 +594,19 @@ owner, and validity window.
 
 **Acceptance** — The governed decision that an outcome satisfies its defined
 criteria. Execution completion and acceptance are different events.
+
+**Builder loop** — The delivery chain seen from the builder's chair: Intent →
+Plan → Configure agents, harnesses, skills, and tools → Execute → Verify and
+evaluate → Deliver → Observe → Improve. It is the same chain the governed
+delivery lifecycle enforces record by record, at a coarser zoom; each arrow
+is a gate, not an optimistic handoff.
+
+**Exception-first (operator surface)** — The design rule that a default
+operator view shows decisions, blockers, failed or stale evidence, unsafe
+conditions, and aging work first, ranked by risk, urgency, age, and evidence
+state, while routine activity remains available for inspection. Its opposite
+is an activity feed, which measures messages, tokens, or generated code and
+trains the operator to stop looking.
 
 **Independent validation** — Evaluation performed through a separate execution
 and evidence path from the implementation that produced the change. Different
@@ -1248,6 +1267,11 @@ immutable version with a digest; a running WorkOrder stays bound to the version
 approved when it started, and migrating it is a new decision with its own
 authority.
 
+**Workflow snapshot** — The copy of a versioned workflow definition frozen onto
+the run that uses it, so that later edits to the workflow never rewrite the
+execution contract of a historical Attempt. It is the mechanism that makes
+workflow versioning hold for runs that have already happened.
+
 **Compensation** — A recorded, forward action that neutralizes a completed
 external effect (closing the PR, deleting the branch, posting a retraction)
 when a workflow fails. It is not undo; it has its own authority and its own
@@ -1430,6 +1454,21 @@ baseline, expected benefit, risk, evaluation, promotion, and rollback.
 **Factory maturity level** — An evidence-backed description of the operating
 capability achieved by a specific workflow, repository, risk class, and
 environment. It is not a permanent organization-wide badge.
+
+**Guarded Auto** — A routing mode in which the platform may choose the model,
+harness, and backend tuple for a run automatically, but only once sample
+size, quality margin, cost coverage, and hard eligibility meet policy. Until
+then routing stays advisory or pinned. In Mission Control it is disabled at
+the pinned commits; a routing decision never widens the authority of the work
+routed.
+
+**Capability Maturity Ledger** — The single canonical record of each
+capability's status, evidence, limitation, owner, and next promotion gate,
+maintained at the current revision. Architecture documents define intended
+contracts and plans describe proposed work; when a status claim disagrees
+with current source or retained evidence, the ledger is what gets corrected.
+It is the document to read for what a capability *is* rather than what it
+was designed to be.
 
 ## Context and configuration concepts
 

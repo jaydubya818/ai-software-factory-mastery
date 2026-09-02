@@ -287,4 +287,22 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **Mission Control isn't trying to make agents maximally autonomous. It's trying to make increased autonomy operationally trustworthy.** → [Appendix C. Mission Control case studies](./mission-control/01-implementation-maturity-and-evidence-map.md)
 
+**A chat interface scales conversations; a control plane scales governed work.** The coordination problem, not the generation problem, is what stops one-to-one agent use from scaling. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Each arrow is a gate, not an optimistic handoff.** Whether you draw the chain as the Builder loop or as the governed delivery lifecycle, no stage completes the next one. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Intent over activity.** The primary object is the desired outcome, not an agent session, a message, a token count, or a generated task list. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Exceptions over feeds.** Decisions, blockers, failed or stale evidence, unsafe conditions, and aging work come first; routine activity stays inspectable without competing for attention. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Evidence over assertions.** A worker report or a `COMPLETED` status is not proof; completion needs source-linked artifacts and independently produced evidence against the approved criteria. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Durable state over conversation.** Intent, plans, decisions, execution state, events, artifacts, receipts, and approvals survive context limits, restarts, retries, model changes, and handoffs. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Policy before autonomy.** Scope, identity, tools, secrets, capabilities, risk, budgets, and recovery limits are resolved before execution begins; unknown or stale authority fails closed. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**Independent validation.** The actor that produced a material change cannot be the sole authority that certifies it. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+**One authoritative lifecycle.** Mission, Plan, WorkOrder, Task, Attempt, evidence, pull request, acceptance, merge, deployment, and production verification stay separate; no lower state silently completes its parent. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
 For the terms these principles rely on, see the [glossary](./glossary.md).

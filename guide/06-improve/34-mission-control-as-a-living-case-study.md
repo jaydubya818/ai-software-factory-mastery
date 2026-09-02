@@ -25,8 +25,10 @@ The three appendix case studies remain the full reference: the
 [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md)
 (at `ff0524e`), and the
 [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md)
-(at `d902fae`). This chapter condenses them into one narrative and adds the
-Production Factory Pilot V3 evidence published at `b3dfcee`.
+(at `d902fae`). This chapter condenses them into one narrative, adds the
+Production Factory Pilot V3 evidence published at `b3dfcee`, and takes the
+project's own public statement of what it is, what it has proven, and where
+it stops from the README at `af414acf` (2026-08-31).
 
 ## The problem
 
@@ -95,6 +97,28 @@ contract.
 > The harness executes. Mission Control governs. The coding agent is
 > replaceable; the governed delivery contract isn't.
 
+The README at `af414acf` sharpens the negatives into a list worth keeping,
+because each item names a product that is easy to build by accident when the
+goal is "manage many agents". Mission Control is deliberately not:
+
+- an autonomous software executive;
+- a general-purpose multi-agent chat application;
+- a replacement for GitHub, CI, or code review;
+- a model leaderboard that can bypass security eligibility;
+- a test runner whose green result silently authorizes a merge;
+- an agent-activity dashboard optimized for messages, tokens, or generated
+  code;
+- a self-modifying system that can promote its own policies or workflows; or
+- a claim of production operation at hundred-agent or enterprise-fleet scale.
+
+Read the list as a set of failure modes rather than a set of disclaimers. A
+leaderboard that routes around eligibility, a test runner whose green
+authorizes, and a dashboard that measures tokens are the three most common
+ways a control plane quietly becomes something else. The purpose statement
+the README pairs with the list is one sentence: turn approved software intent
+into independently verified, review-ready pull requests without giving agents
+authority to approve their own work.
+
 ### Three layers
 
 <!-- infographic: three-layers -->
@@ -139,6 +163,73 @@ is an instance of it.
 > Agents propose and execute. Deterministic systems validate and govern.
 > Humans retain the decisions whose consequences require judgment or
 > authority.
+
+The three-way split is the principle. In the running system it resolves into
+eight named actors, and the README at `af414acf` ("Who owns each decision")
+states each one twice: what it owns, and what it cannot do on its own. The
+second column is the useful one. A responsibility model that only lists
+what each actor owns leaves the gaps to be filled by whoever is most
+convenient, which in practice means the agent.
+
+| Actor | Owns | Cannot independently do |
+| --- | --- | --- |
+| Human operator | Intent, Plan approval, risk decisions, acceptance, merge, release, and waivers within assigned authority | Bypass server-side policy or invent missing evidence |
+| Planning agent | Repository research, implementation options, risk identification, and proposed Plans | Approve its own Plan or dispatch consequential work |
+| Execution harness | Bounded code changes and structured result production inside one frozen Attempt | Expand scope, verify itself, publish, accept, merge, or deploy |
+| Worker runtime | Admission, leasing, heartbeats, execution coordination, candidate collection, and recovery | Grant itself broader authority or accept output |
+| Independent verifier | Execute the frozen Verification Plan against the exact candidate and produce evidence | Change the candidate, publish it, or accept the WorkOrder |
+| GitHub App publisher | Publish an exact permitted candidate with a short-lived installation token | Verify, accept, merge, or deploy |
+| Deterministic control plane | Identity, policy, budgets, digests, currentness, isolation, state transitions, and authority gates | Replace product judgment or silently waive a failed gate |
+| Memory, observability, and learning systems | Advisory context, diagnostics, traces, scores, signals, and proposals | Gain execution, verification, acceptance, or promotion authority |
+
+Notice that even the human row has a "cannot" entry. An operator can accept,
+merge, and release, and cannot bypass server-side policy or conjure evidence
+that was never produced. That is the sentence behind a line the README
+insists on: human approval is not a decorative UI state; it is a
+server-enforced authority boundary. Passing execution and passing
+verification make a WorkOrder *eligible* for acceptance. They do not accept
+it, and neither does a button in a browser — only the server-side mutation
+that re-checks scope, approval, and currentness before writing.
+
+### Seven operating principles
+
+The README states the product's non-negotiable rules as seven principles.
+Every chapter of this book has argued for them in general form; here they are
+in Mission Control's own words, each with the one sentence that makes it
+operational.
+
+**Intent over activity.** The primary object is the desired outcome, never an
+agent session, a chat message, a token count, or a generated task list.
+
+**Exceptions over feeds.** Default operator surfaces put decisions, blockers,
+failed or stale evidence, unsafe conditions, and aging work first; routine
+activity stays available for inspection without competing for attention.
+
+**Evidence over assertions.** A worker report or a `COMPLETED` status is not
+proof; completion requires source-linked artifacts and independently produced
+evidence against the approved acceptance criteria.
+
+**Durable state over conversation.** Intent, plans, decisions, execution
+state, events, artifacts, receipts, and approvals survive context limits,
+process restarts, retries, model changes, and agent handoffs.
+
+**Policy before autonomy.** Repository scope, identity, tools, secrets,
+capabilities, risk, budgets, and recovery limits are resolved before execution
+begins, and unknown or stale authority fails closed.
+
+**Independent validation.** The actor that produced a material change cannot
+be the sole authority that certifies it.
+
+**One authoritative lifecycle.** Mission, Plan, WorkOrder, Task, Attempt,
+evidence, pull request, acceptance, merge, deployment, and production
+verification remain separate states, and no lower state silently completes
+its parent.
+
+The seventh is the one that holds the other six together. Most of the failures
+in this book's Failure modes sections are a lower state completing its parent:
+a completion report accepting a WorkOrder, a green check merging a PR, a merge
+counting as production. Keeping the states separate is what gives the other
+principles somewhere to attach.
 
 ### What Mission Control is made of
 
@@ -295,8 +386,50 @@ authority**: Plan approval does not dispatch; the harness does not verify;
 verification does not publish; publication does not merge; merge does not
 prove the production outcome. The North Star states the same ladder as work
 attempted, completed, validated, approved, merged, deployed, and verified in
-production — different states, never interchangeable. The rest of this
-section walks the chain one record at a time.
+production — different states, never interchangeable.
+
+The same chain can be said at two zoom levels, and it helps to have both.
+Seen from the builder's chair it is the **Builder loop**: Intent → Plan →
+Configure agents, harnesses, skills, and tools → Execute → Verify and
+evaluate → Deliver → Observe → Improve. Seen from the control plane it is the
+**governed delivery lifecycle**: Mission → approved Plan → WorkOrder → Task →
+Attempt → candidate → independent evidence → pull request → human decision →
+release → observed outcome → governed learning. The loop is what a person
+experiences; the lifecycle is what the records enforce. The sentence that
+joins them is the one to memorize:
+
+> Each arrow is a gate, not an optimistic handoff.
+
+The README lays the lifecycle out as eleven stages, and for each one states
+what it does *not* authorize. That third column is the design, in the same
+way the "cannot independently do" column was the design of the ownership
+table. It is reproduced here because it is the most compact statement of
+negative authority in the repository.
+
+| Stage | What happens | What it does not authorize |
+| --- | --- | --- |
+| Define | A human records the desired outcome, business reason, constraints, scope, risks, stop condition, and acceptance criteria | Planning or execution |
+| Specify | Immutable Mission Spec and Project Constitution revisions make requirements attributable and testable | Plan approval |
+| Plan | An agent or operator proposes a versioned implementation plan, dependencies, WorkOrder blueprints, validation assertions, budget, and rollback approach | WorkOrder release or dispatch |
+| Approve | An authorized human approves one exact Plan revision and its compiled Quality Contract | Agent execution |
+| Release | Mission Control materializes governed WorkOrders idempotently from the approved Plan | Dispatch or acceptance |
+| Preflight | Repository identity, code scope, Factory Version, executor capability, host health, policy, credentials, capacity, and budget are checked | Bypassing a failed or unknown readiness check |
+| Execute | An admitted harness performs a bounded Attempt under a fenced lease in a local worktree or approved remote sandbox | Self-verification, publication, or acceptance |
+| Recover | Failures are classified; immutable retries use a new Attempt; recovery is bounded by policy and budget | Repeating failed work indefinitely |
+| Verify | A separate verifier evaluates the exact immutable candidate against a frozen Verification Plan and records criterion-level evidence | WorkOrder acceptance or merge |
+| Publish | A candidate-bound permit and a short-lived GitHub App credential create or reconcile an exact-current pull request | Merge or release |
+| Accept | An authorized human reviews the evidence package and accepts, rejects, or requests revision | Automatic merge or deployment |
+| Learn | Accepted evidence may become advisory signals, experiments, and improvement proposals | Automatic policy, workflow, or repository mutation |
+
+Two stages deserve a second look because they are the ones most factories
+skip. **Preflight** is a fail-closed check of everything the manifest binds —
+identity, scope, Factory Version, executor capability, host health, policy,
+credentials, capacity, budget — before a lease is granted, and an unknown
+readiness state is treated exactly like a failed one. **Recover** is a stage
+with its own row rather than an exception path, because bounded, immutable
+retry is part of the contract rather than something a worker improvises.
+
+The rest of this section walks the chain one record at a time.
 
 ### Project Constitution
 
@@ -540,8 +673,26 @@ After acceptance the ladder continues: merge → deployment → activation →
 production verification, each a distinct stage with its own record, none
 implied by the one before it. Code complete is not factory complete.
 
-> Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠
-> production verified.
+The README writes the same rule as a chain of inequalities, and its version
+has one more link than the short form used elsewhere in this book, because
+it separates passing verification from being *exact-current* and eligible at
+the gate:
+
+```text
+execution completed ≠ verification passed
+verification passed ≠ exact-current gate eligible
+gate eligible ≠ WorkOrder accepted
+WorkOrder accepted ≠ pull request merged
+pull request merged ≠ production verified
+```
+
+The extra link matters. Evidence can be complete and correct and still be
+evidence for a SHA that is no longer the head of the branch; "verification
+passed" is a fact about the past, and "gate eligible" is a fact about now.
+The full six-term line is the one to carry:
+
+> Execution completed ≠ verification passed ≠ gate eligible ≠ WorkOrder
+> accepted ≠ PR merged ≠ production verified.
 
 ### The assurance records and what each does not prove
 
@@ -609,6 +760,40 @@ weakening, cross-tenant evidence — and the Failure modes section below shows
 how each is prevented and detected. Nothing an agent reads, including
 retrieved memory, can widen its permissions.
 
+The README's "Security model" section starts from a single assumption that
+the rest follows from: repository content, external text, memory, tool
+output, model output, and worker result payloads are all **untrusted data**.
+Not "untrusted unless it looks fine" — untrusted as a category, the way a web
+server treats a request body. From that assumption it names twelve core
+boundaries:
+
+1. server-side human and service identity resolution;
+2. company, workspace, repository, environment, and code-scope authorization;
+3. named capabilities and default-deny admission;
+4. separate human and service command surfaces;
+5. HMAC-verified webhook and service-command ingress;
+6. idempotency, replay protection, and durable audit records;
+7. short-lived GitHub and inference credentials;
+8. secrets excluded from browser configuration, events, artifacts, and logs;
+9. repository classification and risk-proportional execution policy;
+10. immutable candidates and exact-subject independent verification;
+11. candidate-bound publication permits; and
+12. bounded retries, budgets, cancellation, pause, and kill controls, under
+    human acceptance, merge, release, and risk authority.
+
+Three of these are easy to underestimate. Just-in-time GitHub App
+**installation tokens** are minted for one publication and never persisted in
+delivery records, so a leaked evidence package does not leak a credential.
+Webhooks are signed and replay-protected, and when a delivery cannot be
+matched to a WorkOrder and Attempt, the evidence is shown as *uncorrelated*
+rather than attached to a guessed lineage. And **portable repository
+identity** is separate from any developer's local checkout, so scope,
+policy, and lineage attach to the repository the organization owns rather than
+to the path on someone's laptop. Remote execution is not considered generally
+certified: sensitive remote work fails closed unless the exact Factory and
+sandbox profile satisfy the classification, isolation, credential, egress,
+runtime, cleanup, and evidence requirements.
+
 ### Failure and recovery
 
 When something goes wrong the workflow is: detect → classify as policy,
@@ -637,6 +822,49 @@ making progress is not news, and a view that shows it as news trains the
 operator to stop looking.
 
 > The scarce resource isn't agents. It's human attention.
+
+The README's "Operator experience" section describes the person this is for
+as a developer becoming an operator of multiple concurrent delivery streams,
+and defines the default experience by the questions it must answer rather than
+by the screens it has:
+
+1. What outcome matters most right now?
+2. Which work is blocked, and what exact decision will unblock it?
+3. Which worker may change which repository and code scope?
+4. What changed relative to the approved Plan?
+5. Which acceptance criteria passed, failed, became stale, or were waived?
+6. How much execution, retry, time, and cost budget remains?
+7. Can the work be paused, cancelled, retried, or recovered safely?
+8. What is actually ready for review, acceptance, merge, or release?
+
+These are a good acceptance test for any operator surface. If a screen cannot
+answer one of them from durable records, it is either decorative or it is
+asking the human to reconstruct state from logs. The Command Center ranks
+attention by risk, urgency, age, and evidence state; WorkOrders show scope,
+risk, assignment, approval, execution, verification, and the next valid
+action; the audit surface retains approvals, denials, lifecycle changes,
+deployment events, and policy decisions so the work stays explainable after
+the fact. The primary V1 routes map onto those jobs:
+
+| Route | Operator job |
+| --- | --- |
+| `/v2/command-center` | Triage decisions, blockers, risk, and delivery attention |
+| `/v2/missions` | Define outcomes and manage Mission planning |
+| `/v2/mission-detail` | Inspect Plan, WorkOrders, execution, evidence, and acceptance |
+| `/v2/factory` | Select a governed recipe and inspect recent Factory execution |
+| `/v2/control-work-orders` | Govern, dispatch, verify, and accept WorkOrders |
+| `/v2/tasks` | Inspect operational Tasks and Attempts |
+| `/v2/projects` | Configure workspaces, repositories, code scopes, GitHub App readiness, and Factory versions |
+| `/v2/trace-inspector` | Inspect execution trees, timelines, observations, evals, and datasets |
+| `/v2/memory` | Inspect provenance-backed Memory, graph data, and Context Packages |
+| `/v2/audit` | Review decisions, denials, policy outcomes, and lifecycle history |
+
+One rule about the routes carries beyond this product. Preview and Demo
+routes are explicitly labeled and can be hidden, because a component does not
+become a production feature merely by existing in the codebase. The same
+honesty that governs evidence governs the navigation. A `mc` command-line
+client reaches the same Convex functions as the browser, which is the
+authorized-action parity described below applied to the CLI.
 
 ### Observability and evals are diagnostic, not authority
 
@@ -744,6 +972,63 @@ evals, observability, tracing, provenance, currentness, and deterministic
 gates in the assurance plane. Nothing on that list is exotic, which is the
 point: the difficulty of a factory is in the contracts between the pieces,
 not in the pieces.
+
+The README's repository map shows how the pieces are cut, and the cut follows
+the responsibility model rather than the technology:
+
+| Path | Owns |
+| --- | --- |
+| `apps/mission-control-ui/` | React operator application and the EOS V2 shell |
+| `apps/orchestration-server/` | Hono ingress, signed service commands, the canonical Factory worker, harness adapters, sandbox runtime, verifier, and GitHub publisher |
+| `apps/workflow-executor/` | Standalone executor for versioned workflow graphs |
+| `convex/` | Authoritative schema, lifecycle commands, policy, GitHub ingress, evidence, schedules, and projections |
+| `packages/workflow-engine/` | Workflow graph, Generic Harness, Verification Subject and Plan, independence, and currentness contracts |
+| `packages/policy-engine/` | Risk and policy evaluation primitives |
+| `packages/agent-runtime/` | Agent lifecycle and heartbeat behavior |
+| `packages/memory/` | Provider-neutral Memory ingestion, retrieval, graph, Context Package, and eval algorithms |
+| `packages/context-router/`, `packages/context-tools/` | Context selection, routing, manifests, and activation |
+| `packages/model-router/` | Model and executable Factory tuple routing |
+| `workflows/` | Versioned YAML workflow definitions |
+| `skills/` | Agent integration skills |
+| `scripts/mc` | The `mc` CLI |
+| `tests/e2e/` | Browser-operated critical paths and accessibility checks |
+| `docs/testing/evidence/` | Revision-specific qualification and browser evidence |
+
+The `convex/` row is the whole architecture in one line: schema, lifecycle
+commands, policy, ingress, evidence, and projections all live in the one
+place that can make a record true. Everything under `apps/` is a client of it
+or a worker for it.
+
+### Versioned workflows and the runtime contract
+
+Two small rules in the README's "Development and verification" section are
+the kind that only look small. The first concerns workflows. Seven versioned
+YAML workflows live in `workflows/` — `bug-fix`, `code-review`,
+`continuous-research`, `feature-dev`, `loop-engineering`, `quality-audit`,
+and `security-audit` — and a workflow definition is **snapshotted onto the
+run** that uses it. Editing a workflow later never rewrites the execution
+contract of a historical Attempt. Without that rule, "what did this Attempt
+actually run?" has an answer that changes every time someone improves the
+workflow, and the frozen execution manifest is frozen in name only.
+
+The second concerns the boundary between clients and the backend. The public
+client/backend **runtime contract** is a single versioned number (v34 at
+`af414acf`, v30 at `b3dfcee`), guarded by a test, and it changes only when
+deployed clients and backend functions can no longer safely interoperate. Not
+on every schema change, not on every new field — only on incompatibility. The
+discipline is the same as an API version: bump it rarely, and when you do,
+make it impossible to miss.
+
+A third rule is operational rather than architectural, and it is printed as a
+warning. The canonical `codex/v1` Factory worker is disabled by default, and
+the README says not to enable it until the target repository, GitHub App
+installation, Factory Version, worker identity, code scope, policy, host, and
+verification readiness are all current and verified. The orchestration
+process holds server-only credentials — the service auth token, service-command
+secrets, GitHub App private keys, installation tokens, provider-management and
+sandbox credentials — and none of them may ever appear in a browser-facing
+`VITE_*` variable. A factory whose production worker starts on by default has
+made the unsafe path the fast one.
 
 ### The key decisions and why
 
@@ -863,6 +1148,17 @@ is not an admitted path, a completion message is not acceptance evidence,
 telemetry is not proof, a learning proposal is not an approved change, and a
 protocol task is not the governed Task record.
 
+The README adds a precedence rule for the documents themselves, and it is the
+rule this chapter has followed. Architecture documents define *intended*
+contracts. Plans describe proposed or historical work. Evidence packages prove
+behavior at an exact revision. When a status claim in one of them disagrees
+with another, current source and retained evidence take precedence, and the
+**Capability Maturity Ledger** — the single canonical record of each
+capability's status, evidence, limitation, owner, and next promotion gate —
+is what gets corrected. The ledger is the one place a reader should go to
+find out what a capability is, rather than what it was designed to be or what
+someone hoped it would become.
+
 ## Failure modes
 
 The failures below are the ones Mission Control's own history exhibits or
@@ -935,9 +1231,71 @@ Because this whole chapter is about Mission Control, this section only pins
 the evidence.
 
 **Pinned commits.** `b31e275` (main, 2026-08-11), `ff0524e` (verification-first
-P0, PR #75), `d902fae` (capability and admission map, 2026-08-28), and
+P0, PR #75), `d902fae` (capability and admission map, 2026-08-28),
 `b3dfcee` (Production Factory Pilot V3 evidence; execution baseline
-`db44819`, runtime contract v30).
+`db44819`, runtime contract v30), and `af414acf` (public README,
+2026-08-31, runtime contract v34).
+
+**The honest current claim at `af414acf`.** The README states it in one
+sentence, and this chapter adopts it as the ceiling on every present-tense
+claim below: Mission Control is a strong, human-governed production-pilot
+architecture with a qualified delivery kernel; it is not yet a fleet-scale
+autonomous software factory or a generally certified Remote Sandbox platform.
+The project describes itself as in active V1 development.
+
+**What the README lists as proven at `af414acf`.** A browser-operated path
+from Mission and approved Plan through WorkOrder, Task, Attempt, evidence,
+pull request, and human acceptance. Real GitHub App pull requests with exact
+repository, branch, commit, changed-file, check, Attempt, and Mission
+lineage. Immutable cancellation, failure, retry, and recovery history.
+Process restart and browser refresh without losing terminal state or creating
+duplicate pull requests. Independent verification and exact-current evidence
+before acceptance. The deterministic V3 qualification of 15 accepted
+controlled workloads across bug fixes, features, refactors, security and
+policy changes, and migrations. Seventeen deliberate failure injections that
+failed closed. A bounded 3/3 live Remote Sandbox cohort with Attempt-scoped
+credentials and verified cleanup. The evidence is retained in the real
+Codex-to-GitHub golden path, the System Factory E2E V2 qualification, the
+Production Factory Pilot V3 package, and the Capability Maturity Ledger.
+
+**What the README lists as current limitations at `af414acf`.** The README
+prefaces the list with the sentence this book's Prove part is built on:
+qualification evidence proves contracts at exact revisions, and does not
+prove general production safety, sustained organizational adoption, provider
+economics, or operation at arbitrary scale. Then, in its own order:
+
+- *Real product pilot pending.* The V3 population used controlled, disposable
+  workload repositories and the real GitHub golden path was deliberately
+  narrow; sustained consequential work on a named product repository is the
+  next promotion gate.
+- *Remote Sandbox: production-pilot eligible; Preview.* The status includes a
+  3/3 live cohort, but outbound egress is not yet provider-enforced and the
+  Codex installation is ephemeral — bounded live pilot evidence, not general
+  certification.
+- *Guarded Auto is disabled.* Model, harness, and backend routing stays
+  advisory or pinned until sample size, quality margin, cost coverage, and
+  hard eligibility meet policy.
+- *Merge and deployment remain human decisions.* V1 stops at evidence-backed
+  acceptance and review-ready pull requests.
+- *Cost attribution is incomplete.* Token and latency data exist; complete
+  model, provider, sandbox, and cost-per-accepted-outcome coverage does not.
+- *Tool and MCP authority is incomplete.* Native allowlists exist, but there
+  is no generally admitted, versioned MCP runtime; the README says the next
+  proof should be one default-deny, read-only internal integration, not a
+  connector catalog.
+- *Incident response is fragmented.* Alerts, traces, run failures, and
+  operator controls exist; the canonical browser-operable Factory Incident
+  lifecycle is not complete.
+- *Enterprise tenancy is not fully qualified.* Company, workspace, repository,
+  and server-side authorization boundaries exist; sustained cross-company and
+  service-identity evidence is still required before public multi-tenant
+  claims.
+- *Adoption is not production-proven.* No sustained design-partner cohort,
+  onboarding baseline, satisfaction series, or fleet-scale reliability record.
+
+The Capability Maturity Ledger is the canonical source for each capability's
+status, evidence, limitation, and next promotion gate; where this chapter and
+the ledger disagree, the ledger at the current revision wins.
 
 **Retained evidence.** Golden Path 01 (partial, control plane only). PR #61,
 #62, and #63: three App-authored PRs proving clean recovered Mission lineage,
@@ -1015,6 +1373,17 @@ only then extend proof into deployment and production outcome.
 - Three layers: the harness executes, the factory produces trusted change,
   Mission Control governs authority and attention. The coding agent is
   replaceable; the governed delivery contract isn't.
+- Seven operating principles: intent over activity; exceptions over feeds;
+  evidence over assertions; durable state over conversation; policy before
+  autonomy; independent validation; one authoritative lifecycle. The last one
+  holds the rest together: no lower state silently completes its parent.
+- Two zoom levels of the same chain: the Builder loop a person experiences
+  and the governed delivery lifecycle the records enforce. Each arrow is a
+  gate, not an optimistic handoff.
+- Eight actors, each with a "cannot independently do" column — including the
+  human. Human approval is a server-enforced authority boundary, not a UI
+  state; passing execution and verification make a WorkOrder eligible, not
+  accepted.
 - Mission Control is a control plane, not a coding agent: React for operators,
   Convex as the only source of truth and the only place transitions happen,
   Hono for orchestration and provider boundaries, executors in worktrees or
@@ -1034,8 +1403,9 @@ only then extend proof into deployment and production outcome.
 - Candidate identity is the join key. A green result for the wrong SHA proves
   nothing; verification on commit A doesn't authorize merge of commit B; a
   moved head invalidates eligibility, not history.
-- Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠
-  production verified. Correctness and authority are separate concerns.
+- Execution completed ≠ verification passed ≠ gate eligible ≠ WorkOrder
+  accepted ≠ PR merged ≠ production verified. Correctness and authority are
+  separate concerns, and currentness is a third.
 - A model can reason about authority; it should never grant itself authority.
   Scope, budget, data classification, and capability are frozen into the
   manifest and enforced outside the model.
@@ -1054,6 +1424,16 @@ only then extend proof into deployment and production outcome.
 - The evidence at `b3dfcee` is a bounded, human-governed production pilot:
   15/15 accepted, 17 fail-closed drills, 3/3 live remote, `workOrders.accept`
   by a human, no merge. It authorizes nothing beyond that.
+- The honest claim at `af414acf`: a strong, human-governed production-pilot
+  architecture with a qualified delivery kernel — not yet a fleet-scale
+  autonomous factory or a certified Remote Sandbox platform. Architecture
+  docs define intent, plans describe proposals, evidence proves a revision;
+  the Capability Maturity Ledger is the canonical status and gets corrected
+  when they disagree.
+- Repository content, external text, memory, tool output, model output, and
+  worker results are untrusted data. Workflows are snapshotted onto runs;
+  the runtime contract changes only on incompatibility; the production
+  worker is off by default.
 - The most valuable habit in the repository is refusing to fabricate evidence
   when prerequisites are absent.
 
@@ -1107,6 +1487,25 @@ only then extend proof into deployment and production outcome.
   and [final validation](https://github.com/jaydubya818/MissionControl/blob/d902fae7032c0696b531c44ae88829c652516fc6/docs/testing/evidence/production-execution-admission-foundation-v1/final-validation.md).
 - At `b3dfcee`: [Production Factory Pilot V3 final readiness gate](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/docs/testing/evidence/production-factory-pilot-v3/README.md)
   and the [real Codex-to-GitHub browser proof](https://github.com/jaydubya818/MissionControl/blob/b3dfcee/docs/testing/evidence/real-codex-github-pr-golden-path/README.md).
+- At `af414acf` (2026-08-31): the public
+  [README](https://github.com/jaydubya818/MissionControl/blob/af414acf/README.md),
+  by section — "What Mission Control is" (the three layers and the
+  deliberately-not list), "Operating principles" (the seven), "The governed
+  delivery lifecycle" (hierarchy, two-level summary, eleven-stage table,
+  inequality chain), "Who owns each decision" (eight actors), "Core
+  capabilities", "Operator experience" (eight questions, routes, the
+  Preview/Demo rule), "System architecture", "Project status and proof",
+  "Current limitations", "Development and verification" (workflows, snapshot
+  rule, runtime contract, production-worker warning), "Security model"
+  (untrusted-data assumption and the twelve boundaries), "Repository map",
+  and "Documentation" (the precedence rule). Linked from it: the
+  [Capability Maturity Ledger](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/product/software-factory-capability-maturity.md),
+  the [System Factory E2E V2 qualification](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/testing/evidence/system-factory-e2e-v2/README.md),
+  the [Remote Sandbox threat model](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/security/remote-sandbox-threat-model.md),
+  the [GitHub App connection model](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/security/github-app-connection.md),
+  the [evidence retention policy](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/security/evidence-retention-policy.md),
+  the [human and service authorization matrix](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/security/human-service-authorization-matrix.md),
+  and `convex/lib/runtimeContract.ts`.
 - Standards referenced by the admission map (accessed 2026-08-28): Model
   Context Protocol 2026-07-28 release; OpenTelemetry GenAI semantic
   conventions; NIST SP 800-218A; SLSA Provenance 1.2; OWASP Top 10 for Agentic

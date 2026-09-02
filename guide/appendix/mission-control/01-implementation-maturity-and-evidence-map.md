@@ -106,8 +106,58 @@ study findings. Mission Control product documentation was not copied.
 4. What evidence would promote remote sandboxing from proposal to Preview?
 5. Which current mastery chapters must be reverified after PR #64 changes?
 
+## Status at af414acf
+
+*Added 2026-09-02 from the public README at commit `af414acf` (2026-08-31).
+The assessment above is left as written at `b31e275`; this section records
+where the project stood twenty days later, in the project's own words, so
+the two can be compared.*
+
+The README's honest current claim: Mission Control is a strong,
+human-governed production-pilot architecture with a qualified delivery
+kernel; it is not yet a fleet-scale autonomous software factory or a
+generally certified Remote Sandbox platform. Status is active V1
+development; public client/backend runtime contract v34.
+
+**Proven, per the README.** A browser-operated path from Mission and approved
+Plan through WorkOrder, Task, Attempt, evidence, pull request, and human
+acceptance; real GitHub App pull requests with exact repository, branch,
+commit, changed-file, check, Attempt, and Mission lineage; immutable
+cancellation, failure, retry, and recovery history; process restart and
+browser refresh without lost terminal state or duplicate pull requests;
+independent verification and exact-current evidence before acceptance; a
+deterministic V3 qualification of 15 accepted controlled workloads across
+bug fixes, features, refactors, security/policy changes, and migrations;
+seventeen deliberate failure injections that failed closed; a bounded 3/3
+live Remote Sandbox cohort with Attempt-scoped credentials and verified
+cleanup. Several rows of the capability map above ("Durable lease and
+heartbeat: not on main", "Real Codex-to-GitHub PR: not on main", "Remote
+sandbox: not implemented") are therefore superseded.
+
+**Limitations, per the README.** Real product pilot pending (V3 used
+disposable workload repositories; the real GitHub path was deliberately
+narrow). Remote Sandbox is production-pilot eligible and Preview, with
+egress not yet provider-enforced and an ephemeral Codex installation.
+Guarded Auto is disabled. Merge and deployment remain human decisions. Cost
+attribution is incomplete. Tool and MCP authority is incomplete, with the
+next proof named as one default-deny, read-only internal integration rather
+than a connector catalog. Incident response is fragmented. Enterprise
+tenancy is not fully qualified. Adoption is not production-proven.
+
+**Canonical source.** The
+[Capability Maturity Ledger](https://github.com/jaydubya818/MissionControl/blob/af414acf/docs/product/software-factory-capability-maturity.md)
+is the authoritative record of each capability's status, evidence,
+limitation, owner, and next promotion gate. Architecture documents define
+intended contracts; plans describe proposed or historical work; evidence
+packages prove behavior at an exact revision; where a status claim
+disagrees, current source and retained evidence win and the ledger is
+corrected. This case study, including this section, is subordinate to it.
+The narrative treatment is in
+[Chapter 34](../../06-improve/34-mission-control-as-a-living-case-study.md).
+
 ## Versioned references
 
+- [Mission Control README at `af414acf`](https://github.com/jaydubya818/MissionControl/blob/af414acf/README.md)
 - [Mission Control main baseline](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1)
 - [Mission Control study commit](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8)
 - [Draft PR #64](https://github.com/jaydubya818/MissionControl/pull/64)

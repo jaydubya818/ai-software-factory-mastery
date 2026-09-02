@@ -75,6 +75,8 @@ flowchart LR
     D -.->|"denial, budget stop, stale evidence"| A
 ```
 
+In a running control plane the three parties resolve into more specific actors — a human operator, a planning agent, an execution harness, a worker runtime, an independent verifier, a publisher, the deterministic control plane, and the advisory memory, observability, and learning systems — and the discipline that keeps the model honest is to write down, for each one, not only what it owns but what it cannot do on its own. That second column is where the leaks show up, and it applies to the human row too: an operator can accept, merge, and release, and cannot bypass server-side policy or invent missing evidence, which is why approval is a server-enforced authority boundary rather than a state a UI can set. [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) gives the eight-actor table as Mission Control keeps it.
+
 ### The daily rhythm: business hours and overnight
 
 The model has a clock. During business hours developers do the work that needs judgment: defining problems, outcomes, and acceptance criteria; reviewing and refining plans; weighing architectural and technical tradeoffs; reviewing code changes and test results; approving pull requests; resolving ambiguity, risk, and escalations; and improving the tools, workflows, and guardrails agents use. Agents do the execution: researching the codebase, drafting plans, writing and modifying code, creating and updating tests, running builds, tests, lint, security scans, and validations, investigating failures and correcting defects, preparing pull requests with evidence, responding to review feedback — and continuing through the day and overnight.
