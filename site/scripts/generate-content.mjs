@@ -33,12 +33,11 @@ const sectionOrder = [
 ];
 
 const appendixGroups = {
-  labs: "Labs",
   "mission-control": "Mission Control case studies",
   research: "Research",
 };
 
-const appendixGroupOrder = ["Reference", "Labs", "Mission Control case studies", "Research"];
+const appendixGroupOrder = ["Reference", "Mission Control case studies", "Research"];
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -126,7 +125,6 @@ function groupFor(sectionKey, sourcePath) {
 
 function contentType(sectionKey, group, sourcePath) {
   if (sourcePath === "README.md") return "overview";
-  if (group === "Labs") return "lab";
   if (group === "Mission Control case studies") return "case study";
   if (sectionKey === "appendix") return "appendix";
   if (sectionKey === "stages") return "stage";
@@ -227,7 +225,7 @@ documents.sort((a, b) => {
     return a.sectionKey.localeCompare(b.sectionKey);
   }
   if (a.sectionKey === "appendix") {
-    // Book map first, then reference appendices, labs, case studies, research.
+    // Book map first, then reference appendices, case studies, research.
     if (a.contentType === "overview" || b.contentType === "overview") return a.contentType === "overview" ? -1 : 1;
     const aGroup = appendixGroupOrder.indexOf(a.group);
     const bGroup = appendixGroupOrder.indexOf(b.group);

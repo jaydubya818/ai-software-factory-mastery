@@ -270,7 +270,7 @@ The intended direction is a versioned repository graph, Plans that create a coor
 - [Chapter 14. Development environments, sandboxes, and compute](../03-build/14-development-environments-sandboxes-and-compute.md) for pets versus cattle and the cloning tradeoff.
 - [Chapter 24. Quality contracts, proof packages, and certificates](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) for evidence bound to digests.
 - [Chapter 32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) for stacked PRs and dependency-aware merge order.
-- [Appendix B, Lab 4: Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md); the two-repository provider/consumer exercise (manifest, backward-compatible change, dependent PRs, integration-candidate digest, deliberate skew in both directions, rollback) is the natural extension of it.
+- To prove you have understood this chapter, walk a two-repository provider/consumer change end to end: manifest, backward-compatible change, dependent PRs, integration-candidate digest, deliberate skew in both directions, rollback.
 - [Glossary](../appendix/glossary.md).
 - HumanLayer × BAML livestream, "Software factory design patterns" (Dexter Horthy and Vaibhav Gupta): the multi-repository segment on coordination repositories, submodules, subtrees, and the sandbox cloning tradeoff.
 - "The 12-layer production AI agent stack" coverage audit, section 10, for the multi-repository term list this chapter defines.

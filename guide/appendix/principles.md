@@ -5,7 +5,7 @@ chapter: null
 summary: The guide's one-line principles, grouped by concern, each with a plain-English gloss and a link to the chapter that earns it.
 ---
 
-# Appendix G. Principles to have cold
+# Appendix F. Principles to have cold
 
 Every chapter in this guide argues for a handful of sentences. This appendix collects them in one place so a reader can carry them without the argument. Each principle is followed by one or two sentences of plain English and a link to the chapter that develops it. If a line here surprises you, that is the chapter to reread.
 

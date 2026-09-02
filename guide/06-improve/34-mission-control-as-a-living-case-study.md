@@ -869,7 +869,7 @@ The failures below are the ones Mission Control's own history exhibits or
 guards against. Each is detectable from records.
 
 **Control-plane path mistaken for a factory.** The
-[Golden Path 01 run](../appendix/labs/evidence/2026-08-08-golden-path/README.md)
+[Golden Path 01 run](../appendix/mission-control/evidence/2026-08-08-golden-path/README.md)
 of 2026-08-08 proved, through the browser, Mission definition, repository
 connection, versioned planning, a human plan decision, WorkOrder release, and
 enforcement of a separate Validator WorkOrder (Mission Control refused to
@@ -1070,13 +1070,10 @@ only then extend proof into deployment and production outcome.
   for the assurance records in full.
 - [Chapter 33 — Governed learning and compounding engineering](./33-governed-learning-and-compounding-engineering.md)
   for the learning plane.
-- Appendix C: [implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md),
+- Appendix B: [implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md),
   [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md),
   [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md).
-- Retained evidence: [Golden Path 01 assessment](../appendix/labs/evidence/2026-08-08-golden-path/README.md).
-- Labs: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md),
-  [Authority, containment, and decision replay](../appendix/labs/10-authority-containment-and-decision-replay-lab.md),
-  [Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md).
+- Retained evidence: [Golden Path 01 assessment](../appendix/mission-control/evidence/2026-08-08-golden-path/README.md).
 - [Glossary](../appendix/glossary.md).
 - Mission Control sources: [main baseline `b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1),
   [study commit `9d5f8e3` and draft PR #64](https://github.com/jaydubya818/MissionControl/pull/64),

@@ -5,25 +5,23 @@ import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
 import { lifecycleStages } from "../../lib/lifecycle";
 
-type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Labs" | "Mission Control" | "Glossary" | "Chapters";
+type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Mission Control" | "Glossary" | "Chapters";
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
 
 const utilityItems: PaletteItem[] = [
   { id: "guide", label: "Table of contents", meta: "The guide", href: "/guide", text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
   { id: "visuals", label: "Open the atlas", meta: "System maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
   { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map", group: "Architecture" },
-  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: "/topics", text: "reference appendix glossary labs case studies research", group: "Concepts" },
+  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: "/topics", text: "reference appendix glossary case studies research", group: "Concepts" },
   { id: "search", label: "Search the whole guide", meta: "Full text", href: "/search", text: "search full text find", group: "Guide" },
   { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence", group: "Architecture" },
   { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/appendix/reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
-  { id: "labs", label: "Find labs", meta: "Hands-on", href: "/topics#labs", text: "labs exercises hands on", group: "Labs" },
 ];
 
-const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Labs", "Mission Control", "Glossary", "Chapters"];
+const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Mission Control", "Glossary", "Chapters"];
 
 function groupForDocument(document: (typeof paletteIndex)[number]): PaletteGroup {
   if (document.slug === "appendix/glossary") return "Glossary";
-  if (document.contentType === "lab") return "Labs";
   if (document.contentType === "case study") return "Mission Control";
   if (document.sectionKey === "03-build" || document.sectionKey === "05-operate") return "Architecture";
   return "Chapters";

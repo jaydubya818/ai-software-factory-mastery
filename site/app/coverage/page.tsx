@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { appendices, chapters } from "../../lib/content";
+import { appendices, chapters, stages } from "../../lib/content";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
@@ -27,12 +27,10 @@ const areas = [
   ["Security & governance", "Agentic threats, policy, identity, secrets, privacy, provenance, licensing, and compliance.", "Core controls and review-ready additions exist; full adversarial evidence remains unproven.", "/docs/04-prove/26-security"],
   ["Control & operations", "Emergency control, decision rights, SLOs, cost, continuity, drift, triage, response, and verified closure.", "Review-ready contracts; exercised fleet-scale operating proof remains unproven.", "/docs/05-operate/29-resilience-incidents-and-the-control-tower"],
   ["Evaluation & learning", "Datasets, graders, uncertainty, experiments, optimization, regression control, and human promotion.", "Architecture is review ready; production optimization and rollback remain unproven.", "/docs/04-prove/23-evaluation-engineering"],
-  ["Hands-on practice", "Executable labs for certification, onboarding, attack containment, release recovery, incidents, learning, and disaster recovery.", "Specifications are review ready; accepted execution evidence is still limited.", "/topics#labs"],
 ];
 
 export default function CoveragePage() {
   const numbered = chapters.filter((chapter) => chapter.chapter !== null && chapter.chapter > 0);
-  const labs = appendices.filter((document) => document.contentType === "lab");
   const caseStudies = appendices.filter((document) => document.contentType === "case study");
   const infographicSlots = numbered.reduce((count, chapter) => count + chapter.infographics.length, 0);
 
@@ -57,12 +55,12 @@ export default function CoveragePage() {
         <section className="coverage-summary" aria-labelledby="coverage-summary-title">
           <div>
             <span className="section-kicker">Published corpus</span>
-            <h2 id="coverage-summary-title">{numbered.length} chapters, {labs.length} labs, {caseStudies.length} case studies.</h2>
+            <h2 id="coverage-summary-title">{numbered.length} chapters, {stages.length} stages, {caseStudies.length} case studies.</h2>
             <p>A review-ready chapter is ready for external scrutiny. It does not imply that the described implementation is operationally proven.</p>
           </div>
           <div className="coverage-activity-grid">
             <Link href="/guide"><span>Chapters</span><strong>{numbered.length}</strong><small>Table of contents →</small></Link>
-            <Link href="/topics#labs"><span>Labs</span><strong>{labs.length}</strong><small>Reference shelf →</small></Link>
+            <Link href="/guide#stages"><span>Stages</span><strong>{stages.length}</strong><small>The factory in one line →</small></Link>
             <Link href="/topics#mission-control-case-studies"><span>Mission Control case studies</span><strong>{caseStudies.length}</strong><small>Reference shelf →</small></Link>
             <Link href="/visuals"><span>Infographic slots</span><strong>{infographicSlots}</strong><small>Atlas →</small></Link>
           </div>

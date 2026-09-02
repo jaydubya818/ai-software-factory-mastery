@@ -19,7 +19,7 @@ cannot explain. After reading it you should have a program — fluency levels,
 audiences, objections, a build plan, and a weekly rhythm — that you can run
 on yourself for a year.
 
-[Appendix F, Architecture communication](../appendix/architecture-communication.md),
+[Appendix E, Architecture communication](../appendix/architecture-communication.md),
 keeps the reference form of the timed explanations, defense questions, and the
 twenty-minute whiteboard. This chapter absorbs it into a program.
 
@@ -110,7 +110,7 @@ draw them and say what breaks. Parts II and III.
 workflow, define agent roles, write WorkOrder contracts, define approval
 policies, identify failure modes, design evidence requirements, define
 metrics, review a prototype, and explain architectural tradeoffs. Parts IV
-and V, and the labs.
+and V.
 
 **Executive mastery** (continuous) means you connect architecture to business
 value, lead organizational transformation, make build-versus-buy decisions,
@@ -237,7 +237,7 @@ quality of decisions.
 
 ### Three lengths, one shape
 
-Appendix F keeps the full texts; the shapes are what to internalize.
+Appendix E keeps the full texts; the shapes are what to internalize.
 
 **Thirty seconds, CEO.** A factory turns a governed business objective into
 validated software through bounded agent execution; it controls planning,
@@ -802,7 +802,7 @@ at least four, and the lines under four are next week's Monday agenda.
 | Personal credibility | connect the vision to my own experience? |
 | Delivery | answer clearly without rambling? |
 
-Add the questions from Appendix F that a reviewer would put to you: why now,
+Add the questions from Appendix E that a reviewer would put to you: why now,
 and what evidence would slow adoption; how the factory changes economics and
 organization design; which risks always stay human-owned; what a ninety-day
 proving program must demonstrate; how you would design for a hundred
@@ -840,7 +840,7 @@ cure for the second is Wednesday.
 
 ## In Mission Control
 
-Appendix F was written against Mission Control at
+Appendix E was written against Mission Control at
 [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1):
 the Mission-to-Attempt hierarchy, versioned Factory Configuration and
 readiness, policy and approval primitives, WorkflowRuns and events,
@@ -928,11 +928,9 @@ governable.
   for the maturity model behind progressive proof.
 - [Chapter 34 — Mission Control as a living case study](./34-mission-control-as-a-living-case-study.md)
   for the evidence you cite.
-- [Appendix F — Architecture communication](../appendix/architecture-communication.md)
+- [Appendix E — Architecture communication](../appendix/architecture-communication.md)
   for the full timed explanations, defense questions, twenty-minute
-  whiteboard, and the recorded-review lab.
-- Labs: [Capstone architecture and executive defense](../appendix/labs/02-capstone-architecture-and-executive-defense.md)
-  and [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md).
+  whiteboard.
 - [Glossary](../appendix/glossary.md).
 - Mission Control sources at `b31e275`: [North Star](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/product/mission-control-north-star.md),
   [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/product/mission-control-v1-product-strategy.md),

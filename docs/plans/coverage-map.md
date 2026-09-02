@@ -83,3 +83,8 @@ One line per absorbed v1 chapter. "Condensed" notes anything intentionally short
 
 - Added `guide/00-front-matter/01-what-this-guide-covers.md`: the organized coverage map (four separated disciplines, eleven canonical stack definitions, thirteen vocabulary areas with every term, P0/P1/P2 capability table, six requested sections, nine closed gaps, twelve-item checklist, reading order).
 - 416 audit terms checked across chapters, stage pages, and glossary: all present; ~75 glossary entries added; the three-actors framing and the "100th or 1,000th run" principle added to chapters 3 and 4.
+
+
+## Pass 4 — labs removed (2026-09-02)
+
+At Jay's request the thirteen executable labs (`guide/appendix/labs/`) were removed from the book. Every "Go deeper" lab pointer, the coverage-page lab links, the reference shelf entry, the command-palette group, the coverage-page lab counter, and the hands-on/mastery-lab sections inside Appendix E (architecture communication) and the Mission Control case studies were removed. Content the labs carried that readers still need (the external-capability acceptance bar, the two-repository walk-through, the golden-path evidence) was folded into Chapter 10, Chapter 9, and `guide/appendix/mission-control/evidence/`. Appendices re-lettered A–F. The lab texts remain in git history and in `archive/guide-v1/` where they originated.

@@ -442,10 +442,9 @@ repository's own labels, and this chapter does not promote them.
   for prototype-as-spec and the input control plane.
 - [Chapter 34 — Mission Control as a living case study](./34-mission-control-as-a-living-case-study.md)
   and [Chapter 35 — Mastering the factory](./35-mastering-the-factory.md).
-- [Appendix D — Research canon](../appendix/research/initial-canon.md) —
+- [Appendix C — Research canon](../appendix/research/initial-canon.md) —
   the sources to study, and the maintenance rule that links are reviewed
   quarterly and specification versions pinned.
-- Lab: [External capability intake and recertification](../appendix/labs/13-external-capability-intake-and-recertification-lab.md).
 - [Glossary](../appendix/glossary.md).
 - Sources: HumanLayer (Dexter) and BAML (Vaibhav), "Software factory design
   patterns" livestream — where the pattern is evolving, why interfaces matter,
@@ -457,4 +456,4 @@ repository's own labels, and this chapter does not promote them.
   Mission" — the five-year roadmap.
 - Primary references for the interfaces named here: Agent Client Protocol;
   AG-UI documentation; Model Context Protocol specification 2026-07-28; Claude
-  Code hooks reference (all listed in Appendix D).
+  Code hooks reference (all listed in Appendix C).

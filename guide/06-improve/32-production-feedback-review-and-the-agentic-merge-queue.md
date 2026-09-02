@@ -617,8 +617,6 @@ precision, human attention, merge latency, and change-failure outcomes.
   for what the factory learns from this pipeline.
 - [Chapter 9 — Multi-repository design](../02-design/09-multi-repository-design.md)
   for coordinated PRs and merge ordering across repositories.
-- Lab: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md)
-  and [Incident remediation and postmortem](../appendix/labs/07-incident-remediation-and-postmortem-lab.md).
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
 - [Glossary](../appendix/glossary.md).
 - Sources: HumanLayer (Dexter) and BAML (Vaibhav), "Software factory design

@@ -63,7 +63,7 @@ The **"In Mission Control" rule** is an honesty rule. Everything the guide claim
 
 ## The appendices
 
-The appendices are reference, not sequence. The glossary is the canonical vocabulary. The labs are thirteen executable exercises that chapters point to when an idea is best learned by doing; they are deliberately kept out of the chapter bodies. The Mission Control case studies hold the versioned, evidence-mapped assessments that the "In Mission Control" sections summarize. The research canon lists the primary sources and source transcripts the book draws on. Coverage, maturity, changelog, and reviewer guide track the state of the guide itself, and the architecture communication appendix collects the ways of explaining all of this to a board, a CEO, a CFO, a CTO, and a developer.
+The appendices are reference, not sequence. The glossary is the canonical vocabulary.  The Mission Control case studies hold the versioned, evidence-mapped assessments that the "In Mission Control" sections summarize. The research canon lists the primary sources and source transcripts the book draws on. Coverage, maturity, changelog, and reviewer guide track the state of the guide itself, and the architecture communication appendix collects the ways of explaining all of this to a board, a CEO, a CFO, a CTO, and a developer.
 
 Read the chapters in order. Reach for the appendices when a chapter sends you there or when you already know what you are looking for.
 

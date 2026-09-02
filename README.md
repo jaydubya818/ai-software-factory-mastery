@@ -77,7 +77,7 @@ human authority. It is not the definition of the complete factory.
 ## Repository layout
 
 - `guide/` — the book: front matter, six parts (36 chapters), appendices
-  (glossary, labs, Mission Control case studies, research canon, coverage and
+  (glossary, Mission Control case studies, research canon, coverage and
   maturity, changelog, reviewer guide, architecture communication).
 - `archive/guide-v1/` — the previous curriculum, preserved unchanged for
   provenance. `docs/plans/coverage-map.md` records where every v1 chapter went.

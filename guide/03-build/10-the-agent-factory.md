@@ -522,7 +522,7 @@ The intended direction is a registry that continuously calculates certification 
 - [Chapter 23. Evaluation engineering](../04-prove/23-evaluation-engineering.md) for trace replay and run comparison.
 - [Chapter 26. Security](../04-prove/26-security.md) for supply-chain provenance and attestation.
 - [Chapter 33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for how skills absorb the meta loop.
-- [Appendix B, Lab 3: Capability certification and revocation](../appendix/labs/03-capability-certification-and-revocation-lab.md) and [Lab 13: External capability intake and recertification](../appendix/labs/13-external-capability-intake-and-recertification-lab.md). A passing Lab 13 demonstrates negative authorization, duplicate invocation, timeout after a side effect, reconciliation, revocation, dependency change, recertification, and independent reconstruction of the resulting evidence.
+- The acceptance bar for an external capability, in one line: it must demonstrate negative authorization, duplicate invocation, timeout after a side effect, reconciliation, revocation, dependency change, recertification, and independent reconstruction of the resulting evidence before it is admitted.
 - [Glossary](../appendix/glossary.md).
 - Dru Knox (Tessl), AI Engineer SF talk on harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
 - David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, Pi, and Hermes.

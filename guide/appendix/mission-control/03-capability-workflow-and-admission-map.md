@@ -259,7 +259,7 @@ Detect failure
 
 The workflow contract rejects heuristic `STATUS: done` completion and requires
 structured status for non-gate steps. Historical runs are projected read-only
-as current, legacy-but-valid, malformed, incomplete, stale-schema, or genuinely
+as current, legacy-but-valid, malformed, incomplete, stale-schema, or truly
 invalid. Compatibility logic does not rewrite history or invent a terminal
 outcome.
 
@@ -392,22 +392,3 @@ authoritative record, digest or version, hard policy check, emitted evidence,
 failure state, recovery path, and human-only authority. Circle every place
 where telemetry could be mistaken for evidence or registration for promotion.
 
-## 11. Hands-on lab
-
-**Prerequisite:** a read-only Mission Control checkout at
-`d902fae7032c0696b531c44ae88829c652516fc6`. Do not configure production or
-create canaries for this study.
-
-1. Trace one WorkOrder from its revision through `buildFactoryExecutionManifest`.
-2. Record every frozen identity, capability, scope, budget, and digest.
-3. Trace exact model-route and Sandbox Profile production eligibility.
-4. Trace worker admission and identify where a mismatched Factory Version fails.
-5. Trace the candidate into the independent verification and publication path.
-6. Inspect the production admission evidence and explain why qualification
-   passes while production remains blocked.
-7. Build a ten-row UI-action-to-governed-capability map for one operator surface.
-8. Mark each row `agent-capable`, `human-only`, or `gap`, and define one outcome
-   test plus one authorization-negative test.
-
-The lab passes when another engineer can reproduce the map from exact source
-and explain every claim boundary without relying on README status labels alone.

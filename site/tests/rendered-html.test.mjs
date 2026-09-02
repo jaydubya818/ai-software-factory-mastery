@@ -48,7 +48,8 @@ test("generated content reflects the book structure", async () => {
   assert.ok(documents.some((document) => document.slug === "00-front-matter/00-how-to-read-this-guide" && document.chapter === 0));
   assert.ok(documents.some((document) => document.slug === "guide" && document.contentType === "overview"));
   assert.ok(documents.some((document) => document.slug === "appendix/glossary"));
-  assert.equal(documents.filter((document) => document.contentType === "lab").length, 13);
+  assert.equal(documents.filter((document) => document.contentType === "lab").length, 0, "labs removed");
+  assert.equal(documents.filter((document) => document.contentType === "stage").length, 8, "8 stages");
   assert.ok(documents.filter((document) => document.contentType === "case study").length >= 3);
   for (const key of ["readingMinutes", "hasQuickRead", "hasInterviewQuestions", "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
     assert.ok(!(key in documents[0]), `${key} should not be generated`);
@@ -160,10 +161,9 @@ test("legacy routes redirect or disappear", async () => {
 test("reference shelf lists the appendices with a plain search box", async () => {
   const html = await htmlFor("/topics");
   assert.match(html, /Search the guide/);
-  for (const slug of ["appendix/glossary", "appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/research/initial-canon", "appendix/labs/01-governed-issue-to-validated-pull-request", "appendix/mission-control/02-verification-first-software-factory"]) {
+  for (const slug of ["appendix/glossary", "appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/research/initial-canon", "appendix/mission-control/02-verification-first-software-factory"]) {
     assert.match(html, new RegExp(`href="/docs/${slug}"`), `lists ${slug}`);
   }
-  assert.match(html, /Labs/);
   assert.match(html, /Mission Control case studies/);
   assert.doesNotMatch(html, /topic-more-filters-toggle|All personas|All statuses|All risk levels|All guide areas/i);
 });
@@ -187,7 +187,7 @@ test("atlas links resolve to existing chapters", async () => {
 test("every internal /docs link on rendered pages resolves to a generated document", async () => {
   const documents = await generatedDocuments();
   const slugs = new Set(documents.map((document) => document.slug));
-  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", `/docs/${chapterSlugs[2]}`, `/docs/${chapterSlugs[19]}`, "/docs/appendix/glossary", "/docs/appendix/labs/01-governed-issue-to-validated-pull-request"];
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", `/docs/${chapterSlugs[2]}`, `/docs/${chapterSlugs[19]}`, "/docs/appendix/glossary"];
   const broken = [];
   for (const route of routes) {
     for (const link of docLinks(await htmlFor(route))) {

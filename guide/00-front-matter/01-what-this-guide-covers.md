@@ -178,9 +178,9 @@ Capability areas are what a factory has to be able to do; the table ranks them. 
 
 An earlier draft was strong on control-plane theory and thin on the surrounding engineering. Six sections were added, each in a specific place rather than as a bolt-on.
 
-**Agent Factory and capability supply chain.** The factory that builds the parts: how a capability is authored, packaged, versioned, evaluated against a dataset, certified, published to a registry, discovered, admitted into a run, deprecated, and revoked, and how an external capability is taken in and recertified. It lives in [Chapter 10](../03-build/10-the-agent-factory.md) and [Stage 5](../stages/05-apply-skills.md), with the certification and intake mechanics exercised in the [capability certification lab](../appendix/labs/03-capability-certification-and-revocation-lab.md) and the [external capability intake lab](../appendix/labs/13-external-capability-intake-and-recertification-lab.md).
+**Agent Factory and capability supply chain.** The factory that builds the parts: how a capability is authored, packaged, versioned, evaluated against a dataset, certified, published to a registry, discovered, admitted into a run, deprecated, and revoked, and how an external capability is taken in and recertified. It lives in [Chapter 10](../03-build/10-the-agent-factory.md) and [Stage 5](../stages/05-apply-skills.md), with the certification and intake mechanics in Chapter 10's "How to build it".
 
-**Repository intelligence and onboarding.** What a repository must expose before agents may work in it: the readiness record, the build and test commands, the codebase intelligence that lets an agent find its way, and the onboarding gates that say when the repository is ready for which workflow. It lives in [Chapter 20](../03-build/20-autonomous-engineering-workflows.md), with [Chapter 9](../02-design/09-multi-repository-design.md) for the multi-repository case and the [repository onboarding lab](../appendix/labs/04-repository-onboarding-and-readiness-lab.md).
+**Repository intelligence and onboarding.** What a repository must expose before agents may work in it: the readiness record, the build and test commands, the codebase intelligence that lets an agent find its way, and the onboarding gates that say when the repository is ready for which workflow. It lives in [Chapter 20](../03-build/20-autonomous-engineering-workflows.md), with [Chapter 9](../02-design/09-multi-repository-design.md) for the multi-repository case.
 
 **Autonomous engineering workflow patterns.** The catalog of workflows a factory supports, from issue-to-validated-pull-request through dependency updates, migrations, incident remediation, and the autonomous backlog, each with its contract, its autonomy ceiling, and its escalation path. It lives in [Chapter 20](../03-build/20-autonomous-engineering-workflows.md), with the loop mechanics in [Chapter 18](../03-build/18-agent-and-loop-engineering.md) and the durable substrate in [Chapter 12](../03-build/12-durable-execution.md).
 
@@ -188,7 +188,7 @@ An earlier draft was strong on control-plane theory and thin on the surrounding 
 
 **Factory platform engineering.** The factory run as a product: scheduling and economics, observability and forensics, resilience and incidents, control surfaces and storage, and enterprise adoption. It is Part V, [Chapters 27](../05-operate/27-the-factory-as-a-platform.md) through [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md).
 
-**Agentic security, privacy, and compliance.** The threat model specific to agents, identity and secrets, supply chain and attestation, retention and residency, license compliance, and policy as code. It lives in [Chapter 26](../04-prove/26-security.md), with the adoption and compliance material in [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) and the [security attack and containment lab](../appendix/labs/05-agentic-security-attack-and-containment-lab.md).
+**Agentic security, privacy, and compliance.** The threat model specific to agents, identity and secrets, supply chain and attestation, retention and residency, license compliance, and policy as code. It lives in [Chapter 26](../04-prove/26-security.md), with the adoption and compliance material in [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md).
 
 ## The nine gaps this edition closed
 
@@ -238,4 +238,4 @@ Front to back remains the best route. A reader who already has the operating mod
 7. **The enterprise and open-source landscape.** What to buy, what to build, and what to keep replaceable: [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) and [Chapter 27](../05-operate/27-the-factory-as-a-platform.md).
 8. **Prototype and extensible-software patterns.** The adjacent material for what comes next: [Chapter 36](../06-improve/36-where-this-is-going.md) and the prototype-as-specification passage in [Stage 1](../stages/01-builder-intent.md).
 
-If a chapter sends you to the glossary, go; the glossary is where the words are pinned. If it sends you to a lab, the [labs index](../appendix/labs/01-governed-issue-to-validated-pull-request.md) starts with the one most readers should do first.
+If a chapter sends you to the glossary, go; the glossary is where the words are pinned.

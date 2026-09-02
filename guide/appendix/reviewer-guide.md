@@ -30,7 +30,7 @@ Choose one path rather than trying to read everything:
 - **Reference contracts:** architecture views, inventory, orchestration,
   knowledge, tool and integration, multi-agent, and operating contracts.
 - **Builder:** repository onboarding, capability resolution, workflow patterns,
-  testing, delivery, and executable labs.
+  testing, and delivery.
 - **Operations and risk:** scheduling, resilience, threat model, identity,
   production verification, and incident response.
 - **Governance and control:** decision rights, control evidence, emergency
@@ -47,12 +47,11 @@ For each chapter, ask:
 3. Are enduring principle, current implementation, and future vision kept apart?
 4. Is any current claim stronger than its source or evidence?
 5. Which threat, operational failure, or tradeoff is missing?
-6. Can the lab be executed safely and produce reviewable proof?
-7. Is terminology consistent with the canonical glossary?
-8. Can a reader explain what the component does not own?
-9. Does every diagram have a complete text or table equivalent?
-10. Does the chosen autonomy pattern prove why a simpler design is insufficient?
-11. Can an operator trace one failure through containment, reconciliation,
+6. Is terminology consistent with the canonical glossary?
+7. Can a reader explain what the component does not own?
+8. Does every diagram have a complete text or table equivalent?
+9. Does the chosen autonomy pattern prove why a simpler design is insufficient?
+10. Can an operator trace one failure through containment, reconciliation,
     recovery, and verified closure?
 
 ## Feedback labels

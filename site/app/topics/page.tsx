@@ -7,16 +7,15 @@ import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Reference · The AI Software Factory Guide",
-  description: "The reference shelf: glossary, labs, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.",
+  description: "The reference shelf: glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.",
 };
 
 const featured = [
   ["appendix/glossary", "A. Canonical glossary", "Every term defined by the responsibility it owns."],
-  ["appendix/labs/01-governed-issue-to-validated-pull-request", "B. Labs", "Thirteen executable labs for failure, recovery, security, delivery, and improvement paths."],
-  ["appendix/mission-control/01-implementation-maturity-and-evidence-map", "C. Mission Control case studies", "What is implemented, partial, or future, with pinned commits."],
-  ["appendix/research/initial-canon", "D. Research canon", "The source canon and transcripts behind the guide."],
-  ["appendix/coverage-and-maturity", "E. Coverage and maturity", "What the guide covers and how strong the evidence is."],
-  ["appendix/architecture-communication", "F. Architecture communication", "Explaining and defending the architecture to different audiences."],
+  ["appendix/mission-control/01-implementation-maturity-and-evidence-map", "B. Mission Control case studies", "What is implemented, partial, or future, with pinned commits."],
+  ["appendix/research/initial-canon", "C. Research canon", "The source canon and transcripts behind the guide."],
+  ["appendix/coverage-and-maturity", "D. Coverage and maturity", "What the guide covers and how strong the evidence is."],
+  ["appendix/architecture-communication", "E. Architecture communication", "Explaining and defending the architecture to different audiences."],
 ] as const;
 
 export default function ReferencePage() {
@@ -30,7 +29,7 @@ export default function ReferencePage() {
             <h1>The reference shelf.</h1>
           </div>
           <div>
-            <p>Appendices are reference, not sequence: the glossary, labs, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.</p>
+            <p>Appendices are reference, not sequence: the glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.</p>
             <div className="topic-intro-actions">
               <Link className="button button-primary" href="/search">Search the whole guide</Link>
               <Link className="button button-secondary" href="/guide">Table of contents</Link>

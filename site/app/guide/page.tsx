@@ -104,7 +104,7 @@ export default function GuidePage() {
           <section className="guide-part toc-part" id="appendices">
             <header>
               <span>A–F</span>
-              <div><small>Appendices</small><h2>Reference, not sequence</h2><p>Glossary, labs, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.</p></div>
+              <div><small>Appendices</small><h2>Reference, not sequence</h2><p>Glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.</p></div>
               <Link href="/topics">Open the reference shelf →</Link>
             </header>
             <div className="toc-appendix-groups">

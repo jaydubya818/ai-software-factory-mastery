@@ -84,12 +84,11 @@ Click a stage for the technical deep dive on how it works.
 ## Appendices (reference)
 
 - [A. Canonical glossary](./appendix/glossary.md)
-- [B. Labs](./appendix/labs/01-governed-issue-to-validated-pull-request.md) — thirteen executable labs
-- [C. Mission Control case studies](./appendix/mission-control/01-implementation-maturity-and-evidence-map.md)
-- [D. Research canon](./appendix/research/initial-canon.md)
-- [E. Coverage and maturity](./appendix/coverage-and-maturity.md) · [Changelog](./appendix/changelog.md) · [Reviewer guide](./appendix/reviewer-guide.md)
-- [F. Architecture communication](./appendix/architecture-communication.md)
-- [G. Principles to have cold](./appendix/principles.md)
+- [B. Mission Control case studies](./appendix/mission-control/01-implementation-maturity-and-evidence-map.md)
+- [C. Research canon](./appendix/research/initial-canon.md)
+- [D. Coverage and maturity](./appendix/coverage-and-maturity.md) · [Changelog](./appendix/changelog.md) · [Reviewer guide](./appendix/reviewer-guide.md)
+- [E. Architecture communication](./appendix/architecture-communication.md)
+- [F. Principles to have cold](./appendix/principles.md)
 
 The v1 curriculum chapters are preserved unchanged in
 [`archive/guide-v1/`](../archive/guide-v1/README.md).

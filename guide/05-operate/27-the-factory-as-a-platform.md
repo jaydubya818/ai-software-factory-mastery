@@ -243,6 +243,5 @@ What is not implemented, and what this chapter should therefore be read as desig
 - [Chapter 17, Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for prequalified fallbacks and circuit breakers.
 - [Chapter 28, Observability, telemetry, and forensics](./28-observability-telemetry-and-forensics.md) for how usage and cost are captured.
 - [Chapter 31, Enterprise adoption and the infrastructure landscape](./31-enterprise-adoption-and-the-infrastructure-landscape.md) for quotas, chargeback, and showback as enterprise requirements.
-- Labs: [Repository onboarding and readiness](../appendix/labs/04-repository-onboarding-and-readiness-lab.md); [Orchestration failure, recovery, and cost](../appendix/labs/11-orchestration-failure-recovery-and-cost-lab.md).
 - Primary references: Backstage Software Catalog documentation (accessed 2026-08-30); DORA, platform engineering capability (accessed 2026-08-30).
 - Sources: Jay West, platform operating model and adoption metrics notes ("Factory in one line"); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on cost-by-model dashboards and the control plane as the underserved layer.

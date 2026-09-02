@@ -10,7 +10,7 @@ export const bookMap = documents.find((document) => document.contentType === "ov
 /** Front matter and the 36 numbered chapters, in reading order. */
 export const chapters = documents.filter((document) => document.chapter !== null);
 
-/** Everything that is reference material: appendices, labs, case studies, research. */
+/** Everything that is reference material: appendices, case studies, research. */
 export const appendices = documents.filter((document) => document.sectionKey === "appendix" && document.contentType !== "overview");
 
 /** The eight stage pages of the factory's one-line value stream. */

@@ -112,4 +112,4 @@ study findings. Mission Control product documentation was not copied.
 - [Mission Control study commit](https://github.com/jaydubya818/MissionControl/tree/9d5f8e36aff45a001a8848cc0516b3dc800e29b8)
 - [Draft PR #64](https://github.com/jaydubya818/MissionControl/pull/64)
 - [Real publication proof PR #61](https://github.com/jaydubya818/MissionControl/pull/61)
-- [Original Golden Path 01 assessment](../labs/evidence/2026-08-08-golden-path/README.md)
+- [Original Golden Path 01 assessment](./evidence/2026-08-08-golden-path/README.md)

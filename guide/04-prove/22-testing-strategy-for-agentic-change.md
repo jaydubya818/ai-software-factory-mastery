@@ -202,7 +202,6 @@ Mission Control does not yet provide a complete test taxonomy, an impact-analysi
 
 - Before this: [21. Quality and evidence architecture](./21-quality-and-evidence-architecture.md). After this: [23. Evaluation engineering](./23-evaluation-engineering.md) for model-based and behavioral evaluation, and [24. Quality contracts, proof packages, and certificates](./24-quality-contracts-proof-packages-and-certificates.md) for the contract that selects these methods.
 - Where escapes come back: [32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md). Where the tests run: [14. Development environments, sandboxes, and compute](../03-build/14-development-environments-sandboxes-and-compute.md).
-- Lab: [Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md) — introduce a bounded change, generate a risk-based test plan, add a property or mutation check, plant a weak agent-authored test, and prove the validator rejects it.
 - Terms: [Glossary](../appendix/glossary.md).
 - Sources: Jay West, *AI Software Factory mission* ("Your quality stack": test selection based on change impact, failure classification, historical defect learning).
 - External: [DORA — test automation capability](https://dora.dev/capabilities/test-automation/), accessed 2026-08-30.

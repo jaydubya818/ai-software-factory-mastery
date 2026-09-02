@@ -259,7 +259,7 @@ More specification reduces rework but delays learning and can create false preci
 
 **Step 9 — Wire invalidation.** On any specification revision, compute and display the set of affected WorkOrders, Attempts, evidence, approvals, and release decisions before the revision is approved.
 
-A minimal specification package for a small feature, the kind used in the lab, includes: stable IDs; UI, API, and schema behaviour; empty and whitespace cases; authorisation; backward compatibility; a browser-level assertion; the evidence method; risk; and rollback.
+A minimal specification package for a small feature includes: stable IDs; UI, API, and schema behaviour; empty and whitespace cases; authorisation; backward compatibility; a browser-level assertion; the evidence method; risk; and rollback.
 
 ## Failure modes
 
@@ -320,7 +320,6 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 - [19. The 12-layer production AI agent stack](../03-build/19-the-12-layer-production-ai-agent-stack.md) for Business Understanding in context; [20. Autonomous engineering workflows](../03-build/20-autonomous-engineering-workflows.md) for the issue-to-PR path that consumes these specifications.
 - [21. Quality and evidence architecture](../04-prove/21-quality-and-evidence-architecture.md) and [24. Quality contracts, proof packages, and certificates](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) for what happens to assertions and evidence downstream; [22. Testing strategy for agentic change](../04-prove/22-testing-strategy-for-agentic-change.md).
 - [32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) for the merge side of the sliced-PR workflow.
-- Labs: [1. Governed issue to validated pull request](../appendix/labs/01-governed-issue-to-validated-pull-request.md) (build a specification package for "Add Business Justification to Mission creation" without agent help, then run an agent critique and record accepted and rejected findings); [2. Capstone architecture and executive defence](../appendix/labs/02-capstone-architecture-and-executive-defense.md).
 - [Glossary](../appendix/glossary.md).
 - External canon: NASA Systems Engineering Handbook, Appendix C and Product Realization; NASA SWE-055 Requirements Validation; NIST SSDF 1.1.
 - Mission Control sources at the pinned commits: `convex/missions.ts`, `convex/schema.ts`, `apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx`, `docs/software-factory/domain-contracts.md`, `docs/plans/2026-08-11-feat-continuous-quality-proof-plan.md`.

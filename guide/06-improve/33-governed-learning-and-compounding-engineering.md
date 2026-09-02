@@ -685,9 +685,6 @@ a self-operating learning factory.
 - [Chapter 32 — Production feedback, automated review, and the agentic merge queue](./32-production-feedback-review-and-the-agentic-merge-queue.md)
   for the feedback-to-reproduction pipeline that feeds this loop.
 - [Chapter 34 — Mission Control as a living case study](./34-mission-control-as-a-living-case-study.md).
-- Labs: [Continual improvement promotion](../appendix/labs/08-continual-improvement-promotion-lab.md);
-  [Knowledge poisoning, revocation, and retrieval](../appendix/labs/12-knowledge-poisoning-revocation-and-retrieval-lab.md);
-  [Capability certification and revocation](../appendix/labs/03-capability-certification-and-revocation-lab.md).
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
 - [Glossary](../appendix/glossary.md).
 - Mission Control references: Loop Engineering and Graph Engineering docs and

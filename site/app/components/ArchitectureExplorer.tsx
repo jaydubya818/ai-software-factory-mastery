@@ -156,7 +156,7 @@ const views: ArchitectureView[] = [
       item(["01", "Register and ingest", "Approve source ownership, connector identity, classification, freshness, and correction policy.", "Knowledge and source owners", "SourceRegistration", "High", "Checkpoint, source version, transformation lineage"], "/docs/03-build/16-data-knowledge-semantic-and-context-engineering", ["authority", "runtime"]),
       item(["02", "Filter and retrieve", "Apply tenant, purpose, permission, lifecycle, and freshness before ranking.", "Security and knowledge owners", "RetrievalRequest", "Critical", "Permission decisions, candidates, exclusions"], "/docs/03-build/16-data-knowledge-semantic-and-context-engineering", ["runtime", "assurance"]),
       item(["03", "Rank and compile", "Rerank, diversify, preserve contradiction, allocate tokens, and freeze the package.", "Context owner", "ContextSelection", "High", "Why selected, citations, digest, unresolved facts"], "/docs/03-build/16-data-knowledge-semantic-and-context-engineering", ["runtime", "assurance"]),
-      item(["04", "Evaluate and revoke", "Connect context to outcomes and propagate correction, deletion, or compromise.", "Knowledge and quality owners", "Revocation event", "Critical", "Reverse lineage, affected work, deletion and rebuild receipts"], "/docs/appendix/labs/12-knowledge-poisoning-revocation-and-retrieval-lab", ["operations", "assurance"]),
+      item(["04", "Evaluate and revoke", "Connect context to outcomes and propagate correction, deletion, or compromise.", "Knowledge and quality owners", "Revocation event", "Critical", "Reverse lineage, affected work, deletion and rebuild receipts"], "/docs/03-build/16-data-knowledge-semantic-and-context-engineering", ["operations", "assurance"]),
     ],
   },
   {
