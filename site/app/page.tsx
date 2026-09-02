@@ -58,16 +58,17 @@ export default function Home() {
         </section>
 
         <section className="home-guide-map" aria-labelledby="home-guide-title">
-          <header><div><span className="section-kicker">Six parts</span><h2 id="home-guide-title">Understand → Design → Build → Prove → Operate → Improve</h2></div><p>Read it front to back, or enter at the part that matches your question. Each part opens at its first chapter.</p></header>
-          <ol className="home-part-cards">
+          <header><div><span className="section-kicker">Six parts</span><h2 id="home-guide-title">One arc, from first principles to a factory that improves itself.</h2></div><p>Each part answers one question and hands its answer to the next. Read front to back, or enter at the question you have — every part opens at its first chapter.</p></header>
+          <ol className="home-part-track">
             {guideParts.map((part) => {
               const partChapters = chaptersForPart(part.id);
               const first = partChapters[0];
               const last = partChapters[partChapters.length - 1];
+              const numeral = ["I", "II", "III", "IV", "V", "VI"][part.number - 1] ?? String(part.number);
               return (
                 <li key={part.id}>
                   <Link href={first ? `/docs/${first.slug}` : `/guide#${part.id}`}>
-                    <span>Part {part.number}</span>
+                    <span className="part-node" aria-hidden="true">{numeral}</span>
                     <strong>{part.verb}</strong>
                     <em>{part.question}</em>
                     <small>{first && last ? `Chapters ${first.chapter}–${last.chapter}` : ""}</small>

@@ -1482,3 +1482,18 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .pipeline-flows > div { grid-template-columns: auto 1fr; }
   .pipeline-flows span { grid-column: 2; }
 }
+
+/* Home: six-part track */
+.home-part-track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; position: relative; border-top: 0 !important; }
+.home-part-track::before { content: ""; position: absolute; left: 22px; right: 60px; top: 22px; height: 2px; background: var(--line); }
+.home-part-track li { position: relative; min-width: 0; }
+.home-part-track li:not(:last-child)::after { content: ""; position: absolute; right: 30px; top: 17px; width: 8px; height: 8px; border-top: 2px solid var(--line); border-right: 2px solid var(--line); transform: rotate(45deg); }
+.home-part-track li a { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 10px; min-height: 0; height: 100%; box-sizing: border-box; padding: 0 26px 26px 0; border: 0; border-radius: 0; background: transparent; color: inherit; text-decoration: none; }
+.home-part-track li a:hover { background: transparent; }
+.home-part-track li a:hover strong { color: var(--green); }
+.home-part-track .part-node { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--green-dark); color: var(--paper); font-family: Georgia, serif; font-size: 17px; letter-spacing: .02em; position: relative; z-index: 1; margin-bottom: 14px; }
+.home-part-track strong { font-family: Georgia, serif; font-weight: 500; font-size: clamp(24px, 2.2vw, 30px); line-height: 1.05; letter-spacing: -.03em; }
+.home-part-track em { font-style: normal; color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+.home-part-track small { margin-top: auto; padding-top: 8px; color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+@media (max-width: 1080px) { .home-part-track { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 40px; } .home-part-track::before { display: none; } .home-part-track li::after { display: none; } }
+@media (max-width: 640px) { .home-part-track { grid-template-columns: 1fr; row-gap: 28px; } .home-part-track li a { padding-right: 0; } .home-part-track li a { padding-right: 0; } }
