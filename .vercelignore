@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+site/dist
+site/.next
+site/.wrangler
+site/.vercel
+.git
+/archive
+/todos
+/docs
+*.bundle
