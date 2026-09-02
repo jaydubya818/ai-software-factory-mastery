@@ -10,7 +10,7 @@ topics: [review, feedback, evidence]
 
 # External Reviewer Guide
 
-Thank you for reviewing AI Software Factory Mastery. The most valuable review
+This guide is reviewed against its own standard. The most valuable review
 identifies an incorrect boundary, missing failure mode, unsupported claim,
 unclear explanation, or exercise that cannot produce the evidence it promises.
 

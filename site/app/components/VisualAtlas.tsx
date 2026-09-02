@@ -58,6 +58,15 @@ const governancePillars = [
   ["Continuous monitoring", "Quality, drift, safety, cost, incidents, violations, outcomes, and verified closure."],
 ] as const;
 
+const correlationSpine = ["Mission", "Plan rev", "WorkOrder rev", "Task", "Attempt", "Trace", "Span · tool call", "Evidence", "PR", "Release"] as const;
+
+const healthFamilies = [
+  ["Outcome health", "Did the factory deliver value?", "Lead time to validated value, throughput, change-failure rate, rework, acceptance rate, customer signal."],
+  ["Control health", "Is authority holding?", "Blocked gates, policy denials, exception age, approval latency, stale or conflicting evidence, unauthorised attempts, autonomy demotions."],
+  ["Runtime health", "Is the machine moving?", "Queue age, lease expiry, heartbeat lag, retry rate, timeouts, cancellation latency, sandbox and publication failures, reconciliation backlog."],
+  ["AI economics & quality", "What did reasoning cost and return?", "Model and provider, tokens, latency, cost, tool-call success, eval success, human override rate, routing outcome."],
+] as const;
+
 const observabilitySignals = [
   ["Traces", "How one governed run moved across models, tools, services, retries, and decisions."],
   ["Logs", "What each component reported, with correlation, redaction, retention, and access policy."],
@@ -65,6 +74,15 @@ const observabilitySignals = [
   ["Cost", "Tokens, models, tools, environments, compute, people, and cost per accepted outcome."],
   ["Latency", "Queue, model, tool, validation, approval, delivery, and customer-value time."],
   ["Quality", "Task success, groundedness, correctness, safety, completeness, regression, and user outcome."],
+] as const;
+
+const responseLoop = [
+  ["Detect", "Anomaly, SLO breach, drift, or silence"],
+  ["Alert the owner", "Names the human decision now required"],
+  ["Investigate", "Walk the spine from outcome back to intent"],
+  ["Contain / reconfigure", "Pause, demote autonomy, revoke, roll back"],
+  ["Verify recovery", "Independent evidence, not the agent's report"],
+  ["Evaluated improvement", "A governed candidate, not an auto-applied fix"],
 ] as const;
 
 const protocols = [
@@ -212,10 +230,49 @@ export function VisualAtlas() {
         description="Traces, logs, metrics, cost, latency, and quality explain system behavior. They influence decisions only through explicit validators and governed records."
         href="/docs/05-operate/28-observability-telemetry-and-forensics"
       >
-        <div className="atlas-observability">
-          {observabilitySignals.map(([title, description], index) => <article key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{description}</p></article>)}
+        <div className="atlas-obs">
+          <div className="atlas-obs-block">
+            <div className="atlas-obs-label"><span>1</span><strong>The correlation spine</strong><em>Every signal carries this chain of identifiers. Start from a customer outcome and walk back to the intent that caused it.</em></div>
+            <ol className="atlas-spine">{correlationSpine.map((node) => <li key={node}>{node}</li>)}</ol>
+            <p className="atlas-obs-note">Correlation never grants access — carrying a Mission ID does not mean every viewer of that Mission may read the signal.</p>
+          </div>
+
+          <div className="atlas-obs-block">
+            <div className="atlas-obs-label"><span>2</span><strong>Four kinds of health</strong><em>A dashboard for twenty parallel Missions needs all four. The temptation is to show only the last.</em></div>
+            <div className="atlas-health">
+              {healthFamilies.map(([title, question, signals]) => <article key={title}><h3>{title}</h3><b>{question}</b><p>{signals}</p></article>)}
+            </div>
+          </div>
+
+          <div className="atlas-obs-block">
+            <div className="atlas-obs-label"><span>3</span><strong>Telemetry explains. Records decide.</strong><em>Signals reach a decision only through an explicit validator that writes a governed record.</em></div>
+            <div className="atlas-boundary">
+              <div className="atlas-boundary-pane">
+                <small>Telemetry · explains behavior</small>
+                <ul>{observabilitySignals.map(([title, description]) => <li key={title}><strong>{title}</strong><span>{description}</span></li>)}</ul>
+              </div>
+              <div className="atlas-boundary-gate" aria-hidden="true"><span>explicit validator</span><b>→</b></div>
+              <div className="atlas-boundary-pane atlas-boundary-pane-dark">
+                <small>Governed records · decide</small>
+                <ul>
+                  <li><strong>Evidence</strong><span>Independent proof bound to an exact SHA and manifest digest.</span></li>
+                  <li><strong>Decision</strong><span>Who approved, blocked, or demoted, and on what evidence.</span></li>
+                  <li><strong>Authority history</strong><span>What each identity was allowed to do, and when that changed.</span></li>
+                  <li><strong>Outcome</strong><span>What production actually did after the change.</span></li>
+                </ul>
+                <p>Token volume and agent activity are diagnostic inputs, never productivity measures.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="atlas-obs-block">
+            <div className="atlas-obs-label"><span>4</span><strong>The response loop</strong><em>The most valuable alert is the one that names the human decision now required.</em></div>
+            <ol className="atlas-loop">
+              {responseLoop.map(([title, detail], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><strong>{title}</strong><em>{detail}</em></li>)}
+            </ol>
+            <div className="atlas-loop-return" aria-hidden="true"><span>↩ improvements must beat a baseline before they change production</span></div>
+          </div>
         </div>
-        <div className="atlas-response-flow"><span>Normal</span><b>or</b><span>Detect anomaly</span><span>Alert owner</span><span>Investigate</span><span>Contain / reconfigure</span><span>Verify recovery</span><span>Feed evaluated improvement</span></div>
       </AtlasSection>
 
       <AtlasSection

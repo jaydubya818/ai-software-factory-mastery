@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { appendixGroups, appendices } from "../../lib/content";
+import { appendices } from "../../lib/content";
 import { ReferenceSearch } from "../components/ReferenceSearch";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -10,52 +10,61 @@ export const metadata: Metadata = {
   description: "The reference shelf: glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.",
 };
 
-const featured = [
-  ["appendix/glossary", "A. Canonical glossary", "Every term defined by the responsibility it owns."],
-  ["appendix/mission-control/01-implementation-maturity-and-evidence-map", "B. Mission Control case studies", "What is implemented, partial, or future, with pinned commits."],
-  ["appendix/research/initial-canon", "C. Research canon", "The source canon and transcripts behind the guide."],
-  ["appendix/coverage-and-maturity", "D. Coverage and maturity", "What the guide covers and how strong the evidence is."],
-  ["appendix/architecture-communication", "E. Architecture communication", "Explaining and defending the architecture to different audiences."],
-] as const;
+type ShelfChild = { slug: string; title: string; note: string };
+type ShelfRow = { letter: string; slug: string; title: string; description: string; use: string; children?: ShelfChild[] };
+
+const shelf: ShelfRow[] = [
+  { letter: "A", slug: "appendix/glossary", title: "Canonical glossary", description: "Every term the book uses, defined by the responsibility it owns and by what it does not prove or authorize.", use: "When a chapter uses a word you want pinned down." },
+  {
+    letter: "B", slug: "appendix/mission-control/01-implementation-maturity-and-evidence-map", title: "Mission Control case studies", description: "Three versioned assessments of the reference control plane — what is implemented, partial, or future, pinned to exact commits.", use: "When you want to see the ideas as running code, gaps included.",
+    children: [
+      { slug: "appendix/mission-control/01-implementation-maturity-and-evidence-map", title: "Implementation maturity and evidence map", note: "Four evidence states, kept apart" },
+      { slug: "appendix/mission-control/02-verification-first-software-factory", title: "Verification-first software factory", note: "Quality contracts, receipts, certificates in practice" },
+      { slug: "appendix/mission-control/03-capability-workflow-and-admission-map", title: "Capability, workflow, and admission map", note: "What agents may do, and how a run is admitted" },
+    ],
+  },
+  { letter: "C", slug: "appendix/research/initial-canon", title: "Research canon", description: "The primary sources, papers, protocols, and transcripts the book draws on, with what each one is for.", use: "When you want the source behind a claim." },
+  { letter: "D", slug: "appendix/coverage-and-maturity", title: "Coverage and maturity", description: "What the guide covers, how strong the evidence is for each area, and what remains unproven.", use: "When deciding how much to trust a chapter's claims.",
+    children: [
+      { slug: "appendix/changelog", title: "Changelog", note: "Material changes to scope, terms, and maturity" },
+      { slug: "appendix/reviewer-guide", title: "Reviewer guide", note: "How to review the book and what a useful finding looks like" },
+    ],
+  },
+  { letter: "E", slug: "appendix/architecture-communication", title: "Architecture communication", description: "How to explain and defend the factory to a board, a CEO, a CFO, a CTO, and a developer — timed explanations, defense questions, the whiteboard.", use: "Before you have to present or defend the design." },
+  { letter: "F", slug: "appendix/principles", title: "Principles to have cold", description: "The book's one-line principles, grouped by concern, each with a plain-English gloss and the chapter that earns it.", use: "When you want the whole book in fifty lines." },
+];
 
 export default function ReferencePage() {
   return (
     <>
       <SiteHeader />
       <main className="interior-page topics-page">
-        <header className="page-intro split-intro">
-          <div>
-            <span className="eyebrow">Reference</span>
-            <h1>The reference shelf.</h1>
-          </div>
-          <div>
-            <p>Appendices are reference, not sequence: the glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.</p>
-            <div className="topic-intro-actions">
-              <Link className="button button-primary" href="/search">Search the whole guide</Link>
-              <Link className="button button-secondary" href="/guide">Table of contents</Link>
-            </div>
-          </div>
+        <header className="page-intro shelf-intro">
+          <span className="eyebrow">Reference</span>
+          <h1>The reference shelf.</h1>
+          <p>Six appendices you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
         </header>
 
         <ReferenceSearch />
 
-        <section className="reference-featured" aria-label="Appendices">
-          <div className="topic-grid">
-            {featured.map(([slug, title, description], index) => <Link className="topic-card" href={`/docs/${slug}`} key={slug}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{description}</p></Link>)}
-          </div>
-        </section>
-
-        <div className="section-index">
-          {appendixGroups.map((group, index) => (
-            <section className="section-group" id={group.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")} key={group.label}>
-              <header><span>{String(index + 1).padStart(2, "0")}</span><h2>{group.label}</h2><small>{group.documents.length} {group.documents.length === 1 ? "document" : "documents"}</small></header>
-              <div className="section-documents">
-                {group.documents.map((document) => <Link href={`/docs/${document.slug}`} key={document.slug}><div><div className="document-card-meta"><span>{document.contentType}</span></div><h3>{document.title}</h3><p>{document.description}</p></div><span aria-hidden="true">→</span></Link>)}
+        <ol className="shelf">
+          {shelf.map((row) => (
+            <li className="shelf-row" key={row.letter} id={row.slug.split("/")[1]}>
+              <span className="shelf-letter" aria-hidden="true">{row.letter}</span>
+              <div className="shelf-body">
+                <Link className="shelf-title" href={`/docs/${row.slug}`}><h2>{row.title}</h2><span aria-hidden="true">→</span></Link>
+                <p>{row.description}</p>
+                {row.children && (
+                  <ul className="shelf-children">
+                    {row.children.map((child) => <li key={child.slug}><Link href={`/docs/${child.slug}`}><strong>{child.title}</strong><span>{child.note}</span></Link></li>)}
+                  </ul>
+                )}
               </div>
-            </section>
+              <div className="shelf-use"><small>Reach for it</small><span>{row.use}</span></div>
+            </li>
           ))}
-        </div>
-        <p className="reference-count">{appendices.length} reference documents.</p>
+        </ol>
+        <p className="reference-count">{appendices.length} reference documents. Chapters live in the <Link href="/guide">table of contents</Link>.</p>
       </main>
       <SiteFooter />
     </>

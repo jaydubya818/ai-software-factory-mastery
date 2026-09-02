@@ -64,11 +64,10 @@ export default function Home() {
               const partChapters = chaptersForPart(part.id);
               const first = partChapters[0];
               const last = partChapters[partChapters.length - 1];
-              const numeral = ["I", "II", "III", "IV", "V", "VI"][part.number - 1] ?? String(part.number);
               return (
                 <li key={part.id}>
                   <Link href={first ? `/docs/${first.slug}` : `/guide#${part.id}`}>
-                    <span className="part-node" aria-hidden="true">{numeral}</span>
+                    <span className="part-node" aria-hidden="true">{part.number}</span>
                     <strong>{part.verb}</strong>
                     <em>{part.question}</em>
                     <small>{first && last ? `Chapters ${first.chapter}–${last.chapter}` : ""}</small>
