@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { lifecycleStages } from "../../lib/lifecycle";
+import { ValueStream } from "./ValueStream";
 
 const productionDisciplines = [
   ["01", "Business understanding", "Define the decision, owner, constraints, risk, and success criteria.", "Prevents solving the wrong problem."],
@@ -106,17 +106,7 @@ export function VisualAtlas() {
         description="The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority."
         href="/docs/01-understand/02-the-factory-in-one-view"
       >
-        <ol className="atlas-lifecycle">
-          {lifecycleStages.map((stage, index) => (
-            <li id={`phase-${stage.id}`} key={stage.id}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h3>{stage.label}</h3>
-              <p>{stage.detail}</p>
-              <ul>{stage.concepts.map((concept) => <li key={concept}>{concept}</li>)}</ul>
-            </li>
-          ))}
-        </ol>
-        <div className="atlas-flow-note"><strong>Control flows down</strong><span>Intent → authority → execution contract → bounded action</span><strong>Evidence flows up</strong><span>Observation → proof → decision → outcome → improvement</span></div>
+        <ValueStream />
       </AtlasSection>
 
       <AtlasSection

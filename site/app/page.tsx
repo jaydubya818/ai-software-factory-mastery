@@ -3,6 +3,7 @@ import { chapters, chaptersForPart, getChapter } from "../lib/content";
 import { guideParts } from "../lib/guide";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
+import { ValueStream } from "./components/ValueStream";
 
 const definitions = [
   ["Capability supply", "Agent Factory", "Creates, versions, evaluates, publishes, and governs reusable agents, skills, tools, model profiles, and configurations.", 10],
@@ -21,7 +22,7 @@ export default function Home() {
         <section className="hero guide-home-hero">
           <div className="hero-status"><span>A book, read front to back</span><i>{numbered.length} chapters</i><i>Six parts</i><i>Appendices and labs</i></div>
           <div className="eyebrow">The AI Software Factory Guide</div>
-          <h1>Design, build, prove, operate, and improve the <em>whole</em> factory.</h1>
+          <h1>Design, build, prove, operate, and improve the <em>software factory</em>.</h1>
           <div className="hero-bottom">
             <p className="hero-copy">How to design, build, prove, operate, and improve an engineering system in which humans define intent and accept risk while bounded agents plan, implement, validate, and recover — and independent evidence decides what advances.</p>
             <div className="hero-actions">
@@ -31,9 +32,16 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="factory-line" aria-label="The factory in one line">
-          <span className="section-kicker">The factory in one line</span>
-          <p>Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</p>
+        <section className="home-value-stream" aria-labelledby="value-stream-title">
+          <header>
+            <div>
+              <span className="section-kicker">End-to-end value stream</span>
+              <h2 id="value-stream-title">From governed intent to confirmed outcome</h2>
+              <p className="factory-one-line" aria-label="The factory in one line">Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</p>
+            </div>
+            <p>The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority. Each phase opens the chapter that builds it.</p>
+          </header>
+          <ValueStream />
         </section>
 
         <section className="definition-band" aria-label="Three definitions">
