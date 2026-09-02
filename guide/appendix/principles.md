@@ -161,6 +161,10 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **Tests answer deterministic questions; evals cover probabilistic behavior.** They are additive, not alternatives. → [22. Testing strategy for agentic change](../04-prove/22-testing-strategy-for-agentic-change.md)
 
+**Producer ≠ verifier.** The configuration under test never owns, tunes, or sees the instrument that scores it, and production outcome is the final grader that re-anchors every proxy. → [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md)
+
+**A mature factory never returns just "done".** It returns what changed → why → by whom or what → using which context, tools, and models → what was verified → what evidence supports acceptance. → [28. Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md)
+
 ## Authority, risk, and human attention
 
 **Scale trust, not human review.** Human review cannot grow linearly with generated code; risk-tiered autonomy is the alternative. → [7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md)
@@ -201,6 +205,8 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **Security can't be an approval meeting at the end; it's part of the execution contract.** Workload identity, least privilege, isolation, short-lived credentials, and egress control ship with every run. → [26. Security](../04-prove/26-security.md)
 
+**An agent can be intelligent without being trusted; the sandbox defines what intelligence is allowed to affect.** The isolation model is a written table of default-deny policy dimensions, and competence never widens it. → [14. Development environments, sandboxes, and compute](../03-build/14-development-environments-sandboxes-and-compute.md)
+
 ## Learning
 
 **Learning can be autonomous. Promotion should be governed.** Discovery may propose freely; promotion passes baseline comparison, regression evaluation, policy checks, and controlled rollout. → [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md)
@@ -212,6 +218,10 @@ The principles are grouped by the concern they protect. Several appear in more t
 **You can't operate a learning system safely if you can't reconstruct which version learned what.** Explicit versions everywhere; never silent mutation. → [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md)
 
 **A production failure should make the platform harder to fail the same way twice.** Every meaningful failure becomes a regression scenario, a stronger evaluator, or a tighter policy. → [29. Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md)
+
+**Execute → Observe → Evaluate → Learn → Propose → Verify → Promote, never Execute → rewrite production.** A candidate improvement earns nothing until regression, shadow, A/B, and canary make it a controlled one. → [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md)
+
+**Never jump straight to training.** Climb the adaptation ladder (rules → retrieval → prompt → skill → routing → fine-tuning → preference optimisation) one rung at a time, with evidence that the rung below was not enough. → [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md)
 
 ## Delivery and scale
 
@@ -250,6 +260,10 @@ The principles are grouped by the concern they protect. Several appear in more t
 **Forward deployment accelerates the path to self-service, not replaces it.** The same integration solved three times is a missing platform capability. → [31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 
 **Build where you need durable leverage; adopt where abstraction preserves optionality.** Own the control plane and the differentiating intelligence; adopt commodity infrastructure. → [31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
+
+**Adopt commodity execution mechanics; build the differentiated control plane and Builder Experience.** Score what you adopt on licensing, community health, operational burden, exit cost, and vendor independence, and keep the platform boundary movable. → [31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
+
+**Merge authority and release authority are distinct grants.** Different approvers, different hooks, controlled rollout between them; a merged pull request is not a deployment decision. → [11. Control plane, orchestrator, and execution plane](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
 
 **The bottleneck will keep moving; design the factory to see where it moves next.** Cost, context, supply-chain capacity, and trust break first at scale. → [31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 
@@ -306,5 +320,70 @@ The principles are grouped by the concern they protect. Several appear in more t
 **Independent validation.** The actor that produced a material change cannot be the sole authority that certifies it. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
 
 **One authoritative lifecycle.** Mission, Plan, WorkOrder, Task, Attempt, evidence, pull request, acceptance, merge, deployment, and production verification stay separate; no lower state silently completes its parent. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
+
+## The forty concepts to have cold
+
+The principles above are sentences. Underneath them are forty concepts a reader should be able to define, place in the mental model of [Chapter 2](../01-understand/02-the-factory-in-one-view.md) (Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption, optimised for trusted throughput), and point at the chapter that owns. Each line is the concept, one sentence, and the chapter.
+
+**Intent**
+
+1. **Builder Intent** — The outcome, constraints, acceptance criteria, and risk a builder needs, captured before any agent reasons and amplified by everything after. → [6](../02-design/06-intent-and-specification-engineering.md)
+
+**Harness**
+
+2. **Agent Harness** — The execution boundary around the model that decides which model runs, what context it sees, which tools it may call, what persists, and when it stops. → [13](../03-build/13-coding-harnesses-and-agent-protocols.md)
+3. **Agent Runtime** — The execution platform that hosts harnesses: worker fleet, sandboxes, scheduling, leases, durable state, and recovery. → [11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
+4. **Control Plane** — The durable authority layer owning intent, policy, state, approvals, and evidence rules; it decides, and never performs, the work. → [11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
+5. **Durable Execution** — Tasks, Attempts, leases, checkpoints, idempotency, and reconciliation that let work outlive any process, conversation, or crash. → [12](../03-build/12-durable-execution.md)
+
+**Capability**
+
+6. **Skills** — Versioned, evaluated, reusable methods for a class of task; a capability contract, not a prompt. → [10](../03-build/10-the-agent-factory.md)
+7. **Tools** — Narrow, schema-validated primitives through which a model acts, authorised outside the model. → [15](../03-build/15-agent-architecture.md)
+8. **MCP** — The interoperability protocol for exposing tools and context to agents; standardises connectivity, never governance. → [15](../03-build/15-agent-architecture.md)
+9. **Capability Registry** — The authoritative record of identity, version, provenance, evaluation, and lifecycle for every reusable capability. → [10](../03-build/10-the-agent-factory.md)
+10. **Enterprise Context** — Relevant, authoritative, fresh, permission-aware, attributable knowledge the run is grounded in. → [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+11. **RAG / Retrieval** — Selecting the minimum relevant context per step; a permissions, provenance, and evaluation problem before it is a search problem. → [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+12. **Hierarchical Context** — Organisation → product or domain → repository → change, the specific layer overriding the general, every layer versioned. → [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+13. **Repository Intelligence** — Indexed symbols, dependencies, ownership, boundaries, build and test systems, and history, kept current per commit. → [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+14. **Repository Profiles** — One shared platform, many per-repository profiles of conventions, risk, admitted workflows, and learned lessons. → [20](../03-build/20-autonomous-engineering-workflows.md)
+15. **Deterministic Automation** — Static analysis, tests, rules engines, and preprocessing for what software can decide reliably; inference is spent only where reasoning creates value. → [18](../03-build/18-agent-and-loop-engineering.md)
+
+**Model**
+
+16. **Model Abstraction** — The model as a replaceable capability behind a governed gateway; a vendor name is never the architecture. → [17](../03-build/17-models-routing-and-capability-selection.md)
+17. **Model Routing** — Choosing the cheapest capability that reliably meets a task's quality, security, latency, and risk requirements, which may be no model at all. → [17](../03-build/17-models-routing-and-capability-selection.md)
+18. **Model Specialisation** — Code-specialised, reasoning, frontier, lower-cost, and hosted models matched to task classes rather than one model for everything. → [17](../03-build/17-models-routing-and-capability-selection.md)
+19. **Workload Taxonomy** — The classification of tasks by complexity, risk, latency, and security needs that routing policy is written against. → [17](../03-build/17-models-routing-and-capability-selection.md)
+20. **Tokenomics** — Spend as users × sessions × turns × requests × tokens × price, managed as an architecture discipline. → [8](../02-design/08-economics-metrics-and-human-attention.md)
+21. **Cost per Accepted Outcome** — The economic measure that replaces cost per token; a cheaper model that needs rework is the expensive one. → [8](../02-design/08-economics-metrics-and-human-attention.md)
+
+**Trust**
+
+22. **Secure Sandboxing** — Contained execution for untrusted generated actions, with the isolation model written as policy dimensions. → [14](../03-build/14-development-environments-sandboxes-and-compute.md)
+23. **Isolation** — Layered boundaries (worktree, process, filesystem, network, credentials, budgets, lease) none of which proves the others. → [14](../03-build/14-development-environments-sandboxes-and-compute.md)
+24. **Scoped Credentials** — Short-lived, minimum, per-run secrets minted at provisioning and revoked at teardown; never a publication credential inside the sandbox. → [26](../04-prove/26-security.md)
+25. **Governance** — The operating rules for what may run, who may approve, and what evidence is required, enforced by the control plane. → [7](../02-design/07-governance-policy-and-risk-proportional-approval.md)
+26. **Policy** — Governance as code, layered organisation → product → repository, evaluated at named hooks with recorded decisions. → [7](../02-design/07-governance-policy-and-risk-proportional-approval.md)
+27. **Human Authority / HITL** — People retain decisions whose consequences require judgment or authority, involved by risk rather than by habit. → [4](../02-design/04-the-human-agent-operating-model.md)
+28. **Evaluation / Evals** — Measuring a configuration across a population: offline, online, and regression; global and repository-specific; graders calibrated, producer ≠ verifier. → [23](../04-prove/23-evaluation-engineering.md)
+29. **Independent Verification** — A separate verifier, identity, and environment prove each candidate against frozen criteria; the producer never certifies its own work. → [21](../04-prove/21-quality-and-evidence-architecture.md)
+30. **Observability** — Correlated traces, metrics, and logs that describe behaviour from intent to outcome without becoming authority. → [28](../05-operate/28-observability-telemetry-and-forensics.md)
+31. **Tracing** — The execution trajectory and routing trace of one run, captured completely enough to replay, diff, and attribute drift. → [28](../05-operate/28-observability-telemetry-and-forensics.md)
+32. **Evidence / Provenance** — Receipts bound to an exact subject digest, verifier, method, and time, with the lineage that says where every input came from. → [24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md)
+
+**Learning**
+
+33. **Feedback Loops** — Explicit and implicit signals joined to records and outcomes, sorted by a failure taxonomy, and fed back as candidates. → [33](../06-improve/33-governed-learning-and-compounding-engineering.md)
+34. **System-Level Learning** — Improvement aimed at the factory's own prompts, skills, routes, tools, tests, and policies, not at one conversation. → [33](../06-improve/33-governed-learning-and-compounding-engineering.md)
+35. **Governed Promotion** — A candidate becomes the default only after baseline comparison, regression gates, shadow, canary, and a human decision, with rollback retained. → [33](../06-improve/33-governed-learning-and-compounding-engineering.md)
+36. **Fine-Tuning** — Updating weights (or adapters) for stable, well-specified behaviour, reached only after the lower rungs of the adaptation ladder are exhausted. → [33](../06-improve/33-governed-learning-and-compounding-engineering.md)
+37. **RLHF** — Preference optimisation from human preference data through a reward model; consumes the factory's acceptance and correction signals, so those must be trustworthy first. → [33](../06-improve/33-governed-learning-and-compounding-engineering.md)
+
+**Adoption and transformation**
+
+38. **Build vs Adopt** — Adopt commodity execution mechanics behind standard contracts; build the differentiated control plane and Builder Experience. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
+39. **Forward-Deployed Engineering** — Embed → Observe → Co-build → Productise → Contribute → Reuse → Scale; the measure is how quickly teams stop needing it. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
+40. **Migration and Adoption** — A gravity well rather than a mandate: gateway, then evaluation, then observability, then governed tools, then runtime, one proven corridor at a time. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 
 For the terms these principles rely on, see the [glossary](./glossary.md).

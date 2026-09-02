@@ -4,7 +4,7 @@ part: design
 chapter: 6
 summary: How business intent becomes a governed, versioned, testable specification before any agent is given implementation authority — the five things to extract from intent, the Plan as an executable contract, the task graph, approval semantics — from the Business Understanding layer through Mission, Plan, and WorkOrder to the prototype-as-spec workflow.
 absorbs: [04-domain-model/03-specification-engineering-executable-requirements-and-plan-assurance.md]
-infographics: [intent-to-plan, spec-contract, task-graph, prototype-to-pr]
+infographics: [intent-to-plan, builder-journey, spec-contract, task-graph, prototype-to-pr]
 ---
 
 # 6. Intent and specification engineering
@@ -68,6 +68,33 @@ flowchart LR
     Review -->|revision required| Plan
     Review -->|exception required| Human["Human decision owner"]
 ```
+
+### The builder experience
+
+The Intent layer has a customer, and the customer is not the platform team. It is the **builder**: the person, or the agent acting for a person, who arrives with an outcome they must accomplish and leaves with governed work in flight. Everything the factory does to make that arrival and departure easy is the **Builder Experience (BX)**, and it deserves the same design attention as the records underneath it, because a factory nobody can enter is a factory nobody uses.
+
+Design it **customer-backward**. Start from what the builder must accomplish, in the builder's own terms, and work backward into the platform capability that accomplishes it. The opposite habit, starting from the harness, the model gateway, or the skill registry and asking builders to learn them, produces a platform that is complete and unused. The test is blunt: *the builder should never need to understand the model, the harness, the skill, or the MCP implementation.* Those are the factory's concerns. The builder's concerns are the five extractions below, the risk they carry, and the decisions they will be asked to make.
+
+Because builders differ, the factory names **builder personas** and designs for each. A developer arrives with repository scope and tests and wants the shortest path to an evidence-bearing pull request. A product manager arrives with an outcome statement and needs the factory to supply repository boundaries, deployment risk, and testing expectations without asking. A quality engineer arrives with acceptance scenarios that are already half a specification. A designer arrives with a prototype. Another agent arrives through an API with a structured request and no authority of its own. [Stage 1](../stages/01-builder-intent.md) tabulates what each brings and lacks; the point here is that a persona is a design input, not a marketing label, and that every persona converges on the same Mission, Plan, and WorkOrder records.
+
+The **builder journey** is the path a persona travels from first contact to routine use: discovery, first intent, first accepted outcome, first trusted production change, repeat use, and, for the builders who stay, **end-to-end ownership** of a workflow they now run through the factory rather than around it. Each stage of the journey has a measurable exit (time to first successful workflow, time to first accepted PR, repeat-use rate) and a characteristic way of failing (the governed path was slower than pasting a prompt into a chat window). Think of a new hire's first month: the organisation that plans the first day, the first commit, and the first on-call shift keeps people; the one that hands over a laptop and a wiki does not.
+
+<!-- infographic: builder-journey -->
+> **Infographic — The builder journey.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    P["Builder persona<br/>developer · PM · QE · designer · agent"] --> D["Discover the paved road"]
+    D --> I["First intent<br/>five extractions"]
+    I --> A["First accepted outcome"]
+    A --> T["First trusted production change"]
+    T --> R["Repeat use"]
+    R --> O["End-to-end ownership<br/>of a workflow"]
+    O -.->|"feeds"| W["Workforce transformation"]
+    X["Model · harness · skill · MCP"] -. "never exposed to the builder" .-> I
+```
+
+The journey is also where **adoption** becomes **workforce transformation**. Adoption is a count of builders using the factory. Transformation is a change in what engineering work is: developers who spend their week reviewing plans, weighing decisions, and approving consequential changes while agents implement and validate, and product, quality, and design roles that can express intent directly rather than through a ticket to a developer. A factory that is adopted without transforming the work has automated the old job; a factory designed customer-backward changes the job, which is the outcome the economics in [Chapter 8](./08-economics-metrics-and-human-attention.md) actually measure.
 
 ### Five things to extract from intent
 
@@ -287,6 +314,12 @@ A minimal specification package for a small feature includes: stable IDs; UI, AP
 
 **Decomposition that maximises agents.** Every node in the task graph is an agent; coordination cost, tokens, and shared-state conflicts rise while quality does not. Use the graph to pick the cheapest reliable capability per node, including scripts and humans.
 
+**Platform-forward design.** The entry point asks the builder to choose a model, name a harness, pick skills, or configure an MCP server before stating an outcome. Detect it in onboarding drop-off and in support questions about infrastructure rather than about work. Fix it customer-backward: the builder states the outcome, constraints, context, criteria, and risk; the factory resolves everything else.
+
+**One persona, five doors.** The surface was designed for developers and every other builder is handed a developer's form. Detect it as non-developer intent arriving with empty scope and risk fields. Fix it with persona-specific surfaces that converge on one record set.
+
+**Adoption without transformation.** Builder counts rise while the work itself is unchanged: agents type what developers used to type and developers still do everything else. Detect it in the human-outcomes metrics of Chapter 8. Fix it by measuring the builder journey through to end-to-end ownership, not just first use.
+
 ## In Mission Control
 
 Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl/tree/a49064875d0711253d74029e3066cc74c7c1c2a5) against the `main` evidence boundary [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e27564deb1c03c167e61b5ee094567c2ba7b1) (2026-08-11).
@@ -313,6 +346,8 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 - Planning converts ambiguous human intent into an executable contract. The Plan is a versioned artifact with objective, criteria, tasks, dependencies, affected systems, context, capabilities, risk, verification strategy, and human checkpoints; the planner is replaceable, the Plan is governed.
 - Approval binds one exact Plan revision to one exact Mission Spec and Constitution, never mutates, and authorises release of WorkOrders rather than dispatching execution. Intelligence recommends; authority is granted separately.
 - Decompose into a task graph whose nodes carry objective, inputs, outputs, dependencies, context, capabilities, risk, verification, retry and timeout semantics; two agents on one repository is a distributed-systems problem; decomposition exposes work so the cheapest reliable capability can take each piece.
+- The Intent layer has a customer: the builder. Design the Builder Experience customer-backward, from what the builder must accomplish into platform capability. The builder never needs to understand the model, harness, skill, or MCP implementation.
+- Name builder personas, design a builder journey with measurable exits from first intent to end-to-end ownership, and measure adoption as workforce transformation, not as a count of users.
 
 ## Go deeper
 
@@ -323,4 +358,4 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 - [Glossary](../appendix/glossary.md).
 - External canon: NASA Systems Engineering Handbook, Appendix C and Product Realization; NASA SWE-055 Requirements Validation; NIST SSDF 1.1.
 - Mission Control sources at the pinned commits: `convex/missions.ts`, `convex/schema.ts`, `apps/mission-control-ui/src/eos/views/MissionPlanWorkspace.tsx`, `docs/software-factory/domain-contracts.md`, `docs/plans/2026-08-11-feat-continuous-quality-proof-plan.md`.
-- Source notes: "The 12-layer production AI agent stack" (Business Understanding layer); Jay West, "Key terms and definitions" capability taxonomy (Intent & Planning); Jay West, "AI Software Factory mission" (Intent layer and Planning layer); Jay West, factory architecture notes (five extractions from intent, the checkout-performance ambiguity example, plan contract and questions, task-graph fields, planner versus Plan, approval semantics); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter of HumanLayer on the prototype-to-sliced-PR workflow).
+- Source notes: "The 12-layer production AI agent stack" (Business Understanding layer); Jay West, "Key terms and definitions" capability taxonomy (Intent & Planning); Jay West, "AI Software Factory mission" (Intent layer and Planning layer); Jay West, factory architecture notes (five extractions from intent, the checkout-performance ambiguity example, plan contract and questions, task-graph fields, planner versus Plan, approval semantics, the builder layer: Builder Experience, personas, customer-backward design, the builder journey, workforce transformation); HumanLayer × BAML livestream, "Software factory design patterns" (Dexter of HumanLayer on the prototype-to-sliced-PR workflow).

@@ -218,6 +218,37 @@ The second half is education, and it is automated. A **session-analysis dashboar
 
 Each flag attaches to a term in the cost equation, states what it cost, and says what to change. That is what makes it education rather than surveillance: it reports on sessions and patterns, never on a person's productivity, which keeps it on the right side of the caution earlier in this chapter. The same organisation's roadmap moves the dashboard from batch detection to real-time guidance in the session itself; [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) says what that means for the learning loop.
 
+### Tokenomics: three costs, and the measure that unites them
+
+The playbook above uses several cost words, and they are not interchangeable. Getting them straight is what lets a team argue about spend without talking past each other.
+
+**Inference cost** is what the model bill measures: tokens consumed multiplied by price, the last two terms of the cost equation. **Token efficiency** is how much accepted work each token buys, and it improves when the middle terms of the equation shrink: fewer wasted turns, fewer redundant requests, less re-sent context. **Context efficiency** is the narrower question of how much of what the model was shown actually influenced the outcome; a context package that is half tool schemas nobody called has a context efficiency of half, and every re-billed turn pays for the idle half again. The hierarchical context of [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) is the structural answer to it.
+
+Above those sit three ways of pricing what the factory produces, and they form a ladder from the least useful to the one that matters.
+
+| Measure | What it divides by | What it hides | Who it serves |
+|---|---|---|---|
+| **Cost per token** | Tokens | Everything: retries, rework, review, whether anything was accepted | Vendor comparison only |
+| **Cost per task** | Tasks attempted | Whether the task succeeded, how many attempts it took, what the human did afterwards | Capacity planning |
+| **Cost per accepted outcome** | Outcomes accepted and verified, all-in | Nothing that matters; it includes model, tools, CI, human review, rework, and recovery | The factory |
+
+*Don't optimise cost per token; optimise cost per accepted outcome.* Cost per token falls when you downgrade the model; cost per task falls when you stop retrying; only cost per accepted outcome falls when the factory gets better, because it is the one denominator that a failed run cannot inflate. It is the same quantity the cost-per-validated-change diagram above computes, named from the routing side.
+
+The trade-off the measure governs is three-cornered: **cost, latency, and quality**. A stronger model raises quality and cost and often latency; deterministic preprocessing lowers cost and latency at fixed quality for the part of the work it can settle; a cheaper model lowers cost and may lower quality below the floor and then raise cost again through retries. The routing question in [Chapter 17](../03-build/17-models-routing-and-capability-selection.md) is this triangle stated as a policy: the cheapest capability that reliably meets the quality, latency, security, and risk requirements. **Budget-aware escalation** is the same triangle applied at run time: step up to a costlier capability only when the cheaper one has failed the floor and the budget for this workload class allows it, and stop, with a human, when it does not.
+
+That leaves the number the whole chapter has been circling. A factory's output is not tokens, not pull requests, and not tasks attempted. It is **trusted throughput**: accepted, verified outcomes per unit of time and per unit of cost. Read it as two ratios on one dashboard, outcomes per week and outcomes per unit of attributed spend, both counting only work that passed independent verification and stayed accepted through its observation window. Trusted throughput is the factory's throughput measure for the same reason a manufacturing line counts units that passed inspection: a line that ships more and returns more has not sped up. It is what **ROI** is computed against, since a return is only real for outcomes that were trusted enough to deploy; it is what a cheaper model has to move to earn its place; and it is what the human-attention material that follows protects, because attention spent on rework or on findings nobody needed is attention that did not produce a trusted outcome.
+
+```mermaid
+flowchart LR
+    Tok["Tokens consumed"] --> CpT["Cost per token"]
+    Tasks["Tasks attempted"] --> CpTask["Cost per task"]
+    Acc["Accepted, verified outcomes"] --> CpAO["Cost per accepted outcome"]
+    Acc --> TT["Trusted throughput<br/>accepted, verified outcomes<br/>per unit time and cost"]
+    CpAO --> TT
+    TT --> ROI["ROI"]
+    Fail["Failed, reworked, or reverted runs"] -. "inflate the first two, never the third" .-> Tasks
+```
+
 ### What breaks first at scale
 
 Once the factory works for a few teams, the bottleneck moves, and it moves predictably. Four things break first. **Cost**: experimentation outpaces attribution, so spend rises before anyone can say which workflow, team, or model caused it. **Context**: huge repositories, many knowledge sources, permission boundaries, and stale documentation overwhelm retrieval, and grounded answers on obsolete facts are still wrong. **Supply-chain capacity**: pull requests, CI runs, security scans, artifact storage, and review demand grow faster than any of those systems were sized for, and the delivery pipeline becomes the queue. **Trust**: one visible autonomous mistake undoes months of adoption. None of these is a generation problem, which is why a factory optimised for generation speed hits them hardest. The bottleneck will keep moving; design the factory so that you can see where it moves next, which is what the four metric families and the stage-level lead-time breakdown are for.
@@ -360,6 +391,9 @@ An agent workflow is **inside evaluated coverage** when its material inputs, sta
 | Unit price optimised, waste untouched | Contract renegotiated or models downgraded while turns, requests, and tokens per session keep climbing | Decompose spend with the cost equation; eliminate zero-value tokens in the middle terms before touching price per token |
 | Per-tool budgets | Separate caps for each tool or harness; engineers game the split or stall on one while another sits idle | One shared spend tier across a person's interactive harnesses; separate tiers only for managed agents |
 | Caps that stop work | A hard spending cap halts a session mid-task; the governed path becomes the one that shuts off | Live cost counter, nudges at 50/80/100 percent, easy manager approval for a tier upgrade; caps only on Attempts, never on people |
+| Throughput counted before verification | PRs opened or tasks completed reported as output; reverts and rework arrive later and are never subtracted | Report trusted throughput: accepted, verified outcomes per unit time and cost, counted after the observation window |
+| Cost per task mistaken for cost per outcome | Spend per attempt falls while attempts per accepted outcome rise | Divide by accepted, verified outcomes only; a failed attempt inflates cost per task and never lowers cost per accepted outcome |
+| Context paid for and unused | Large packages re-billed every turn while only a fraction influenced the result | Measure context efficiency; retrieve the minimum relevant context from the change upward |
 
 ## In Mission Control
 
@@ -392,12 +426,14 @@ The honest product statement: the immutable lineage and metric surfaces exist no
 - Four metric families, builder, trust, economics, platform, read together and segmented; generation volume is activity, trusted outcomes are the product.
 - At scale, cost, context, supply-chain capacity, and trust break first. The bottleneck keeps moving; build the factory to see where it goes next.
 - Signal aggregation is attention economics: deduplicate, correlate, rank, contextualise, explain, and surface the smallest set that can change the decision. Maximum decision quality per unit of human attention, not maximum signal volume.
+- Three costs, one ladder: cost per token hides everything, cost per task hides success, cost per accepted outcome hides nothing. Inference cost, token efficiency, and context efficiency are the levers; cost, latency, and quality are the triangle; budget-aware escalation is the triangle applied at run time.
+- The factory's throughput measure is trusted throughput: accepted, verified outcomes per unit of time and cost. ROI is computed against it, models earn their place by moving it, and nothing counts toward it until it has passed verification and stayed accepted.
 
 ## Go deeper
 
 - [Chapter 3 — First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md) for autonomy levels and quality as the acceleration engine; [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md); [Chapter 7 — Governance](../02-design/07-governance-policy-and-risk-proportional-approval.md) for decision packets and risk bands
 - [Chapter 17 — Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for the marginal-cost model decision; [Chapter 18 — Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md) for orchestrator, worker, and validator roles; [Chapter 23 — Evaluation engineering](../04-prove/23-evaluation-engineering.md) for evaluated coverage; [Chapter 28 — Observability](../05-operate/28-observability-telemetry-and-forensics.md); [Chapter 33 — Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md); [Chapter 35 — Mastering the factory](../06-improve/35-mastering-the-factory.md) for the five audiences
-- Sources: Jay West, *AI Software Factory Mission* (Success Metrics; The Proof You Need to Produce; North Star); *AI Software Factory Study Guide* (ch. 10, Success Metrics and the executive framing); IndyDevDan, *Engineering Time, Focus and Attention* (the agentic operating level); Luke (Goose / Factory), *Multi-agent systems and the bottleneck of human attention*; Jay's platform notes on adoption metrics ("Factory in one line"); Jay West, factory architecture notes (token economics levers, budgets and stopping conditions, four metric families, what breaks first at scale, signal aggregation)
+- Sources: Jay West, *AI Software Factory Mission* (Success Metrics; The Proof You Need to Produce; North Star); *AI Software Factory Study Guide* (ch. 10, Success Metrics and the executive framing); IndyDevDan, *Engineering Time, Focus and Attention* (the agentic operating level); Luke (Goose / Factory), *Multi-agent systems and the bottleneck of human attention*; Jay's platform notes on adoption metrics ("Factory in one line"); Jay West, factory architecture notes (token economics levers, budgets and stopping conditions, four metric families, what breaks first at scale, signal aggregation, the cost-per-token / cost-per-task / cost-per-accepted-outcome ladder, token and context efficiency, and trusted throughput as the factory's throughput measure)
 - Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the six-term cost equation, spend tiers and nudges in place of caps, the session-analysis anti-patterns, and the published usage and unit-cost figures quoted above; *Six layers of a working agentic system* (public post, 2026) for cost dashboards a CFO can read as part of the runtime and operations layer
 - Mission Control code at `af414acf`: `convex/schema.ts`, `convex/eos/projections.ts`, `convex/analytics.ts`, `convex/workflowMetrics.ts`, `convex/costEvents.ts`; `docs/product/software-factory-capability-maturity.md`; `docs/testing/evidence/production-factory-pilot-v3/README.md`; [Appendix C capability and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`
 - Background: *Team Topologies*; *The DevOps Handbook*; the Toyota Production System

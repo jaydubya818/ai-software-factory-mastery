@@ -4,7 +4,7 @@ part: improve
 chapter: 32
 summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
 absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
-infographics: [review-at-scale, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
+infographics: [review-at-scale, review-pipeline, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
 ---
 
 # 32. Production feedback, automated review, and the agentic merge queue
@@ -423,6 +423,34 @@ One repository with one reviewer agent is a demo. A large organisation has hundr
 
 Read together, the ten form a pipeline: *profile* the repository once, *index* it continuously, *classify* each change, pick the *tier*, assemble *hierarchical context*, dispatch the *specialised reviewers* under a *budget*, emit *structured findings*, and *evaluate* the whole thing per class against *layered policy*. The order matters because each step narrows the next one's work; the cost of review then scales with the risk of the change, not with the size of the estate.
 
+Laid out end to end, with the human and the outcome included, the pipeline has twelve steps, and the last two are what make it a factory rather than a linter.
+
+<!-- infographic: review-pipeline -->
+> **Infographic — The twelve-step review pipeline.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    PR["1. PR"] --> PF["2. Profile<br/>repository profile"]
+    PF --> AN["3. Analyze<br/>diff, changed symbols,<br/>dependency impact"]
+    AN --> CL["4. Classify<br/>kind, surface, risk tier"]
+    CL --> RC["5. Retrieve context<br/>hierarchical, review history"]
+    RC --> RT["6. Route<br/>reviewers and budget by tier"]
+    RT --> SR["7. Specialised reviewers"]
+    SR --> AG["8. Aggregate<br/>dedupe, suppress, threshold"]
+    AG --> VF["9. Verify<br/>independent check of findings"]
+    VF --> HU["10. Human<br/>by tier; baseline"]
+    HU --> OC["11. Outcome<br/>merged, reverted, incident"]
+    OC --> LN["12. Learn<br/>repository memory"]
+    LN -.-> PF
+    LN -.-> AG
+```
+
+Steps 8 and 10 carry vocabulary the ten mechanisms did not need on their own. Aggregation is three operations in a fixed order. **Finding deduplication** collapses findings that name the same defect from different reviewers, different rules, or different lines of the same hunk into one record with all of its evidence attached, keyed on affected code and category rather than on wording. **Noise suppression** then removes findings the repository has already ruled on: categories the profile marks as not applicable, patterns a maintainer has dismissed with a reason before, findings whose severity falls below the tier's request-changes threshold. Finally a **confidence threshold** decides what happens to what remains by the reviewer's calibrated confidence: above the threshold, publish; in a band below it, route to a person as a question rather than a finding; below the band, drop and count. The threshold is set per repository class from measured precision, and the dropped findings are retained so that a later incident on those lines can show the threshold was wrong.
+
+Step 10 needs a **human-review baseline**: the measured precision, recall, and time-to-review of human-only review on the same class of change, taken before the reviewer was introduced and refreshed periodically. Without it, "the reviewer finds 40 percent of defects" has no meaning, because nobody knows what the humans it is meant to assist were finding. The baseline is what a reviewer is promoted against from advisory to gate mode, and what its autonomy is demoted against when precision falls.
+
+Steps 11 and 12 close the loop. An **accepted finding** is one a human acted on and whose action survived to merge; it is the positive label the reviewer's precision is computed from, and it is joined to the outcome (did the change ship clean, or come back as an incident) before it is trusted. Those labels, the dismissals with their reasons, the overrides, and the incidents accumulate into **repository memory**: the per-repository, versioned record of what the reviewer has been right and wrong about here, which findings this codebase's maintainers accept, and which patterns have escaped before. **Review history**, the raw sequence of past reviews, comments, and their resolutions, is the source that memory is distilled from, and it is also retrieved as context in step 5 so that a reviewer can say "this pattern was rejected in PR 4127 for this reason" rather than discovering the argument again. Memory feeds the profile (step 2) and the suppression and threshold rules (step 8), which is why the dotted arrows return there and not to the reviewer's prompt. Learning changes the pipeline's configuration through the promotion gate of [Chapter 33](./33-governed-learning-and-compounding-engineering.md), never the reviewer's instructions in place.
+
 What makes the design governable rather than merely scalable is that every step leaves a record the control plane can act on: the profile is a readiness gate, the classification is an input to the risk tier, the findings are evidence in the decision packet, and the per-class evaluation is what earns a reviewer more autonomy or demotes it. The reviewer never decides its own tier, never widens its own budget, and never grades its own findings.
 
 ### Mergeability and the agentic merge queue
@@ -625,6 +653,10 @@ Merge-maintenance policy checklist:
 | Missing verdict treated as pass | Reviewer timeout or error lets a PR through | Fail closed in gate mode; a non-verdict is a failure |
 | Unresolved finding vanishes on re-review | Earlier blocking finding absent after a new push, never addressed | Carry unresolved findings forward across reviews |
 | Risk routing and file invariants fused into one score | Low-risk PRs blocked on style; risky PRs pass on clean lint | Separate change-risk policy (needs a human?) from change-verify invariants (are the files right?) |
+| Reviewer measured against nothing | "Finds 40 percent of defects" with no human-review baseline for the same change class | Measure human-only precision, recall, and time-to-review first; promote and demote against it |
+| Threshold set by feel | Confidence threshold chosen once, never compared with outcomes; dropped findings discarded | Set per repository class from measured precision; retain dropped findings and check them against later incidents |
+| Memory in the prompt | Repository lessons appended to the reviewer's instructions in place; nobody can say which version learned what | Keep repository memory as a versioned record that feeds the profile and suppression rules through the promotion gate |
+| Duplicates counted as findings | The same defect reported three times inflates finding counts and reviewer precision | Deduplicate on affected code and category before aggregation; one record, all evidence |
 
 ## In Mission Control
 
@@ -658,6 +690,7 @@ precision, human attention, merge latency, and change-failure outcomes.
 ## Retain this
 
 - Review at scale is ten mechanisms in order: repository profiling, incremental indexing, change classification, risk-tiered depth, hierarchical context, specialised reviewers, per-class evaluation, budget-aware escalation, structured findings with evidence, and layered policy. Cost then scales with the risk of the change, not the size of the estate.
+- End to end the pipeline is twelve steps: PR → Profile → Analyze → Classify → Retrieve context → Route → Specialised reviewers → Aggregate → Verify → Human → Outcome → Learn. Aggregation is deduplication, then noise suppression, then a confidence threshold set from measured precision. A reviewer is promoted and demoted against a human-review baseline; accepted findings joined to outcomes become repository memory, distilled from review history and fed back to the profile and suppression rules through the promotion gate.
 - Feedback is untrusted evidence about an observation. It becomes more
   authoritative only through explicit promotion, and every earlier record is
   kept.
@@ -717,7 +750,13 @@ precision, human attention, merge latency, and change-failure outcomes.
   prototype-to-sliced-PR workflow; "The 12-layer production AI agent stack"
   coverage audit, sections 8 and 9; Jay West, factory architecture notes, on
   signal aggregation, risk-tiered review, reviewer feedback as a learning
-  signal, and review findings that teach.
+  signal, review findings that teach, the twelve-step review pipeline,
+  finding deduplication and noise suppression, confidence thresholds, the
+  human-review baseline, and repository memory.
+- [Chapter 16 — Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+  for changed-symbol retrieval and repository profiles as review context;
+  [Chapter 28 — Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md)
+  for the structured-evidence fields every finding carries.
 - Tessl documentation (docs.tessl.io), 2026: advisory and gate modes for
   agentic code review, consequence-times-likelihood severity, the
   request-changes threshold, stateful re-review, head re-verification before

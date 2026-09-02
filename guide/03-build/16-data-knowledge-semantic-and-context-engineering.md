@@ -4,7 +4,7 @@ part: build
 chapter: 16
 summary: Four disciplines stand between a raw source and a model's context window — data understanding decides whether data is usable, knowledge engineering prepares a governed corpus, semantic engineering makes terms mean one thing, and context engineering selects the smallest sufficient subset for this attempt.
 absorbs: [06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md, 06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md]
-infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer, context-graph]
+infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer, context-graph, context-hierarchy]
 ---
 
 # 16. Data, knowledge, semantic, and context engineering
@@ -164,6 +164,37 @@ The comparison that organisation published is the whole argument in one pair of 
 
 A context graph is the knowledge graph of the retrieval section, built at organisational scope, and it is governed by the same rules. Its nodes need the semantic layer's canonical identifiers, or "service" in the incident system and "service" in the deployment system become two nodes for one thing. Its edges need lineage, so an answer can say which system asserted the relationship and when. Its freshness needs an SLO per source, because a graph that still shows last quarter's ownership grounds the agent on the wrong world. And its queries run under least privilege: the graph is a retrieval source like any other, filtered per node by requester, tenant, and purpose before anything reaches the model. The **trusted context** layer of the six-layer view in [chapter 15](./15-agent-architecture.md), systems of record, a read-only data layer, schema and semantic catalog, scoped knowledge, lineage and freshness, retrieved just in time under least privilege, is the same thing said as an architecture. The line that goes with it is worth keeping verbatim: *trusted context is 80 percent of the agent's success; skip it and the agent hallucinates.* The remaining 20 percent is everything else in this book.
 
+### Hierarchical context: organisation, product, repository, change
+
+The context graph answers *where things are*. A second structure answers *which of them apply to this change*, and it is a hierarchy with four levels. **Hierarchical context** arranges everything an agent might be shown by the scope at which it is true:
+
+| Level | Scope | What lives there | Owner | Examples |
+|---|---|---|---|---|
+| Organisation | **Global context** | **Engineering standards**: security policy, data classification, licensing rules, the Project Constitution, house coding standards | Platform and security | "Nothing classified RESTRICTED leaves the region"; "every public endpoint has a contract test" |
+| Product / domain | **Product-domain context** | **Product-level guidance**: the domain model, service boundaries, shared contracts, the product's architecture decisions, its incident history | Product architecture | "Billing and entitlements never share a database"; the semantic contract for this domain |
+| Repository | **Local context** | **Repository-specific guidance**: instruction files, build and test topology, ownership, local conventions, the repository profile of [Chapter 20](./20-autonomous-engineering-workflows.md) | Repository owners | "Generated files under `gen/` are never edited by hand"; "run `make verify` before proposing" |
+| Change | The change itself | What this diff touches and what touches it | The Attempt | Changed symbols, their dependencies, prior review comments on this area |
+
+The bottom level is the one most retrieval systems skip, and it is where the biggest savings are. Three retrieval moves make it precise. **Changed-symbol retrieval** starts from the functions, types, and modules the diff actually modifies, resolved through the code index rather than guessed from file paths, and pulls their definitions and immediate usages. **Dependency context** goes one hop out: the callers, callees, contracts, and schemas the changed symbols depend on or are depended on by, so the agent can see what it might break without reading the repository. **Historical review patterns** add what reviewers have said about this area before: the comment that appears on every PR touching this module, the incident that started here, the finding that was dismissed last time and why. Together they give a reviewer or implementer the part of the repository that is relevant to *this* change, at a fraction of the tokens a whole-repository dump would cost, and with far less for the model to be distracted by.
+
+<!-- infographic: context-hierarchy -->
+> **Infographic — The four-level context hierarchy.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    Org["Organisation: engineering standards<br/>global context"] --> Prod["Product / domain: product-level guidance<br/>product-domain context"]
+    Prod --> Repo["Repository: repository-specific guidance<br/>local context"]
+    Repo --> Chg["Change: changed symbols · dependency context · historical review patterns"]
+    Chg --> Pkg["Context package for this Attempt<br/>minimum relevant context"]
+    Org -. "always applies, cannot be compressed away" .-> Pkg
+    Prod -. "applies when the scope is inside the domain" .-> Pkg
+    Repo -. "applies to this checkout" .-> Pkg
+```
+
+The hierarchy fixes two rules the compiler needs. Precedence runs downward: a repository convention cannot override an organisation standard, and a change cannot override either, so the compiler allocates global material first and never compresses it below its governing clauses. Selection runs upward: retrieval begins at the change and climbs only as far as the change requires. A one-line fix inside one module needs its changed symbols, their dependencies, the repository's build command, and the global standards; it does not need the product's architecture decision record. *Retrieve the minimum relevant context; never stuff one window.* The same rule from the reference-librarian analogy applies here with a sharper edge: the librarian is not being frugal with books, they are keeping the reader from drowning in the ones that do not answer the question.
+
+The hierarchy is also what lets one platform serve very different repositories. The organisation and product levels are shared and change rarely; the repository level is where each codebase's profile, learning, and local skills live; the change level is computed fresh every time. [Chapter 20](./20-autonomous-engineering-workflows.md) treats the repository level as repository intelligence; this chapter's job is to make sure each level is a governed source with its own owner, freshness, and permissions, retrieved through the same pipeline as everything else.
+
 ### Context engineering: compile for the decision, not the corpus
 
 The context compiler starts from task requirements, policy, risk, actor, repository scope, model limits, and a token budget, then selects, deduplicates, orders, compresses, and attributes material according to explicit rules. The controls it needs are authority tiers separating approved contracts from reference material; recency and lifecycle filters; permission-aware retrieval before ranking; diversity controls that stop ten near-identical chunks from crowding out a governing counterexample; contradiction detection and source comparison; token allocation by context class; compaction that retains decisions and unresolved issues; cache keys bound to source and policy versions; and "why retrieved" metadata for inspection and evaluation.
@@ -281,6 +312,9 @@ Centralizing knowledge simplifies governance and discovery but can create a stal
 | Missing authoritative data | Data-quality gate | Explicit blocked state, never a confident default | Owner supplies data; gate passes |
 | Silent alias mapping | Semantic evaluation | Term stays ambiguous; escalate | Contract updated and versioned |
 | Obsolete document ranks first | Authority tier and lifecycle filter | Excluded before compilation | Retrieval evaluation case added |
+| Whole-window stuffing | Context size flat regardless of change size; token cost per accepted outcome high | Retrieve from the change upward: changed symbols, dependency context, review history, then only the levels the scope requires | Context evals show packages are minimal and sufficient |
+| Local convention overrides a global standard | Precedence check in compilation | Global material allocated first and never compressed below governing clauses | Standard present in the package; evaluation case added |
+| Change level missing | Agent reads whole files to find what the diff touches | Changed-symbol retrieval and dependency context from the code index | Retrieval trace shows symbol-level candidates |
 
 Two rows deserve a second look because they are the ones that pass every ranking metric. "Obsolete document ranks first" is the grounded-but-stale failure: the citations are real and the answer is wrong. "Permission mismatch" is the relevant-but-unauthorized failure: the answer is right and the builder was never allowed to have it. Neither shows up in Recall@k. Both show up in production.
 
@@ -306,11 +340,12 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Retrieved text is an Attempt input, not authority; it cannot change intent, policy, tool grants, or acceptance criteria.
 - Evaluate each layer separately with its own measures (Recall@k, MRR, NDCG, groundedness among them); end-to-end success is necessary but not diagnostic.
 - Revocation needs forward and reverse lineage or it is only an announcement.
+- Context is hierarchical: Organisation (engineering standards, global) → Product/Domain (product-level guidance) → Repository (repository-specific guidance, local) → Change (changed symbols, dependency context, historical review patterns). Precedence runs down, selection runs up. Retrieve the minimum relevant context; never stuff one window.
 
 ## Go deeper
 
 - Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the compiler and the five trust categories; [19. The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [26. Security](../04-prove/26-security.md) for poisoning and injection; [28. Observability](../05-operate/28-observability-telemetry-and-forensics.md) for lineage; [5. Authoritative records](../02-design/05-authoritative-records.md) for the systems of record this pipeline must not shadow.
 - Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://doi.org/10.6028/NIST.AI.100-1); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
-- Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline and the five properties of enterprise context).
+- Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline, the five properties of enterprise context, the four-level context hierarchy, changed-symbol retrieval, dependency context, and historical review patterns).
 - Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the context graph, its published scale, and the grounded-versus-ungrounded comparison; *Six layers of a working agentic system* (public post, 2026) for the trusted-context layer and the "80 percent of the agent's success" line.
 - [Glossary](../appendix/glossary.md).

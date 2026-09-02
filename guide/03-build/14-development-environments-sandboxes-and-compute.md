@@ -4,7 +4,7 @@ part: build
 chapter: 14
 summary: How to give every Attempt a reproducible place to work, contain what it can do there, decide where that place runs, and make sure it cannot publish its own result.
 absorbs: [05-runtime-architecture/04-sandboxed-execution-isolation-and-publication.md, 05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md]
-infographics: [environment-vs-compute, pets-vs-cattle, prototype-to-production, sandbox-isolation-and-publication]
+infographics: [environment-vs-compute, pets-vs-cattle, prototype-to-production, isolation-model, sandbox-isolation-and-publication]
 ---
 
 # 14. Development environments, sandboxes, and compute
@@ -192,6 +192,34 @@ Whatever you choose, no single sandbox property proves the others. Use several i
 
 The sandbox is a resource, not an authority record. A local process, container, VM, or remote environment is attached to one Attempt. The control plane still owns policy, claim, lifecycle, evidence, acceptance, and publication. The sandbox may execute the frozen manifest and report facts; it may not change scope, validate itself, merge, deploy, or retain credentials after termination.
 
+### The isolation model
+
+The list above is a set of mechanisms. What a security reviewer wants to see is the **isolation model**: the written statement of what a run is allowed to affect, expressed as policy dimensions rather than as a product name. A **secure sandbox** (a **remote-agent sandbox** when the box lives on a fleet rather than a workstation) is the enforcement of that model for one Attempt, and **isolated execution** is the resulting property: the run can reach exactly what the model says and nothing else. The model starts from a **threat model**, which for autonomous execution is short and unforgiving. The code the agent generates may be wrong or hostile; the content it reads may carry instructions; the packages it installs may be compromised; and the agent itself, however capable, has no standing to be trusted. *An agent can be intelligent without being trusted; the sandbox defines what intelligence is allowed to affect.*
+
+Every dimension of the model has the same shape: a default of deny, an explicit grant recorded in the Execution Manifest, and an enforcement point outside the model. The **execution boundary** is the sum of those grants. The table is the reference.
+
+<!-- infographic: isolation-model -->
+> **Infographic — The isolation model: policy dimensions of one Attempt.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+
+| Dimension | What the grant says | Enforced by | What it prevents |
+|---|---|---|---|
+| **Identity and authorization** | Which workload identity the run acts as, and which actions that identity may take | Per-run workload identity minted at provisioning; server-side authorization on every call | An action attributable to nobody, or to a person's ambient login |
+| **Scoped and minimum credentials** | The shortest-lived, narrowest secrets the task needs, and no publication credential | Credential minting at environment creation, revocation at teardown, secret brokering rather than injection | A compromised run reaching the repository write identity or a production key |
+| **Network policy** | Which private services and which public hosts the run may reach, in both directions | Egress allowlist, private connectivity into the dev cloud, no public ingress | Exfiltration; unapproved downloads; a preview port becoming a public door |
+| **Filesystem policy** | Which paths are readable, which are writable, and where the worktree ends | Path allowlist, unprivileged user, Attempt-specific worktree | Edits outside the frozen scope; reads of another tenant's checkout |
+| **Tool permissions** | Which tools and MCP servers the run may invoke, with which arguments and side-effect classes | Tool gateway and policy engine outside the model ([Chapter 15](./15-agent-architecture.md)) | A model turning a read tool into a write tool, or reaching a tool it was never granted |
+| **Time limits** | Wall-clock and per-step deadlines | Lease, heartbeat, and monotonic deadline in the harness | A hung or looping run consuming the fleet indefinitely |
+| **Token and compute budgets** | Maximum tokens, cost, CPU, memory, and concurrency for the Attempt | Budget controller; admission reserves before dispatch | Runaway spend; one run starving the pool |
+| **Frozen scope** | The exact repository revision, paths, criteria, and manifest the run was authorized for | Manifest digest on the Attempt; post-run changed-file comparison | Scope widening mid-run; "while I was in there" changes |
+| **Kill switch** | Who may stop the run, at which level (Attempt, provider, tenant, global), and what stopping guarantees | Cancellation with reserved capacity; teardown by exact provider ID | A run that cannot be stopped, or a stop that leaves resources behind |
+| **Replay protection** | That a command, event, or credential cannot be replayed to produce a second effect | Idempotency keys, nonces, expiry on every control-to-execution message ([Chapter 12](./12-durable-execution.md)) | Duplicate publication; a captured token reused after the run ended |
+| **Auditability and evidence** | What the run must record, at what fidelity, and how it is protected | Hash-chained receipts, signed result bundles, content-addressed artifacts | A run whose story cannot be reconstructed, or whose evidence it forged itself |
+| **Compliance and security policy** | The residency, classification, retention, and organization-wide rules the run inherits | Policy-as-code layers ([Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md)) evaluated at admission | A run that is technically contained and legally out of bounds |
+
+Two consequences follow from writing the model down. First, it is testable: each row implies a negative test (the run tried to reach the host, write the path, call the tool, exceed the budget, replay the token, and was refused), and those tests are the promotion evidence for a sandbox arrangement. Second, it is comparable across providers: a managed sandbox, a container on your own cluster, and a remote VM in a BYOC account are all rated against the same twelve rows, which is how you avoid choosing isolation by brochure.
+
+The picture to hold is a bank vault with a visiting auditor. The auditor may be brilliant, and the bank still hands over one key, for one room, for one afternoon, with a guard at the door and a camera on the desk. Nothing about the auditor's competence changes the arrangement, because the arrangement was never about competence.
+
 ### Execution identity is not publication identity
 
 This is the boundary that carries the most weight. The agent runtime should not hold GitHub write or deployment credentials. After validation, a trusted outer control-plane component mints the shortest-lived, repository-scoped credential required to push and open one pull request. Human merge remains a separate decision. Giving the sandbox publication credentials simplifies the architecture and destroys separation of duties; the outer publication step is more work and keeps untrusted code away from the durable repository write identity.
@@ -318,6 +346,10 @@ Before a compute or environment arrangement is trusted for production Attempts, 
 
 **Vendor kernel surprises.** A build fails in the provider's sandbox because its lightweight kernel lacks a syscall. Detect by running the qualification suite on the provider before admission. Mitigate by owning the environment layer or choosing a BYOC provider that runs real VMs in your account.
 
+**Isolation by brochure.** The sandbox is "secure" because the provider says so, and nobody can state which of the twelve policy dimensions it enforces or how. Detect by asking for the negative test per row; if there is no test that a forbidden host, path, tool, budget, or replayed token was refused, the model is a claim. Fix by writing the isolation model down and rating every provider against the same rows.
+
+**Trust earned by competence.** A run is given broader access because the model is strong and its previous runs went well. Detect by grants that vary with model tier or track record rather than with task risk. Fix by holding the arrangement constant: intelligence never changes what the sandbox allows; only the WorkOrder's risk class and policy do.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control defines Sandbox Profiles, provider identity, image and toolchain digests, resource ceilings, network and secret boundaries, qualification evidence, local and remote backends, worker capability attestations, leases, budgets, cancellation, teardown, and compatibility checks. The architecture keeps sandbox capability separate from execution authority. That much is implemented as contract.
@@ -342,6 +374,7 @@ Future: compile repository manifests and environment contracts into attested, po
 - Treat autonomous execution like running untrusted code. Autonomy should come with narrower execution boundaries, not broader ambient access.
 - Prototypes sit on production rails from the first minute; productionizing raises the evidence bar rather than rebuilding. A fifteen-minute prototype that takes two weeks to reconstruct has only moved the bottleneck.
 - Multi-tenancy is enforced on four boundaries: identity per run, data authorization before the model, resource quotas and queue fairness, and scoped memory. Common platform, differentiated product behavior.
+- The isolation model is a written table of policy dimensions (identity and authorization, scoped credentials, network, filesystem, tool permissions, time, token and compute budgets, frozen scope, kill switch, replay protection, auditability, compliance), each default-deny, granted in the manifest, enforced outside the model, and proven by a negative test. An agent can be intelligent without being trusted; the sandbox defines what intelligence is allowed to affect.
 
 ## Go deeper
 
@@ -351,7 +384,8 @@ Future: compile repository manifests and environment contracts into attested, po
 - [Chapter 26. Security](../04-prove/26-security.md) — identity, secrets, threats, and supply chain in depth.
 - [Chapter 28. Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md) — the operator view of provisioning, cost, and orphans.
 - [Chapter 31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) — providers and the enterprise checklist.
-- [Glossary](../appendix/glossary.md) — development environment contract, sandbox profile, golden image, warm pool, orphan, publication boundary.
+- [Chapter 7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) and [Chapter 15. Agent architecture](./15-agent-architecture.md) — the policy layers and tool gateway that enforce the isolation model's rows from outside the model.
+- [Glossary](../appendix/glossary.md) — development environment contract, sandbox profile, isolation model, golden image, warm pool, orphan, publication boundary.
 - Mission Control sources at `9d5f8e3`: [Factory Attempt worker](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryAttemptWorker.ts), [Git worktree runtime](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryGitRuntime.ts), [Path-scope enforcement](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/factoryPathScope.ts), [GitHub App runtime](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/apps/orchestration-server/src/githubAppRuntime.ts), [Factory Attempt lease](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/factory/attempts.ts), [Todo 024](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/024-ready-p1-real-codex-github-pr-golden-path.md), [PR #61](https://github.com/jaydubya818/MissionControl/pull/61); [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`. Local uncommitted documents studied 2026-08-11: `docs/architecture/remote-sandbox-execution.md` (SHA-256 `ba4891ac…36f7c`), `docs/security/remote-sandbox-threat-model.md` (SHA-256 `9facf5d5…70c8c`), `docs/validation/2026-08-10-remote-sandbox-provider-proof.md` (SHA-256 `6ab6a560…50053`).
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — MacBook pool, trusted versus untrusted execution, the dev-environment layer, cloudtop, pets versus cattle, BYOC, identity in the environment; IndyDevDan, "Where should your software factory run" — agent sandboxes for isolation, scale, and autonomy, best-of-N, provisioned keys, in-box and out-of-box orchestrators; Dru Knox (Tessl) — the credentials incident and GitHub Actions limits for long-running agents; Jay West, factory architecture notes — execution environments as first-class, prototype-to-production continuity, multi-tenancy.
+- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — MacBook pool, trusted versus untrusted execution, the dev-environment layer, cloudtop, pets versus cattle, BYOC, identity in the environment; IndyDevDan, "Where should your software factory run" — agent sandboxes for isolation, scale, and autonomy, best-of-N, provisioned keys, in-box and out-of-box orchestrators; Dru Knox (Tessl) — the credentials incident and GitHub Actions limits for long-running agents; Jay West, factory architecture notes — execution environments as first-class, prototype-to-production continuity, multi-tenancy, the isolation model and its policy dimensions.
 - Primary references: [Devfile schema 2.3.0](https://devfile.io/docs/2.3.0/devfile-schema), accessed 2026-08-30; [Google Site Reliability Engineering books](https://sre.google/books/), accessed 2026-08-30.

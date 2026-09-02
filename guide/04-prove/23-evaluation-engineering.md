@@ -27,6 +27,22 @@ The two words get used interchangeably and they should not be. **Verification** 
 
 The clinical analogy is the cleanest. A lab test on one patient is verification: this sample, this assay, this result. A clinical trial is evaluation: does this treatment work across a representative population, compared with the current standard, with enough participants to be confident, and with its side effects measured? Nobody would approve a drug on one patient's bloodwork, and nobody should promote an agent configuration on one good run.
 
+One rule is shared by both disciplines and is worth stating before any mechanism, because every mechanism in this chapter exists to honor it: **producer ≠ verifier**. The configuration that produced a candidate is never the only thing that grades it, whether the grading is verification of one artifact or evaluation of a population. [Chapter 21](./21-quality-and-evidence-architecture.md) makes the case for the single-candidate form; here it means that the evaluation harness, the graders, and the dataset are owned and versioned independently of the configuration under test, and that a candidate does not get to choose, tune, or see the instrument that scores it.
+
+### Three kinds of evaluation, two scopes
+
+Before the records, the vocabulary of *when* and *where*. Evaluation happens in three modes, and a program needs all three because each one is blind to what the others see.
+
+**Offline evaluation** runs a candidate against a frozen dataset in a controlled environment, before anything real is exposed to it. It is reproducible, cheap to repeat, and can only test what someone thought to put in the dataset. **Online evaluation** measures the candidate on live work: sampled production outputs, real builders, real repositories, real consequences. It is representative and irreversible, and it needs guardrails because a bad output has already happened by the time it is measured. **Regression evaluation** is the narrowest and the most frequent: a fixed set of cases the current configuration is known to pass, run on every change, whose only question is whether something that used to work has stopped working. Regression sets grow from escaped failures and never shrink without a decision; they are the memory of everything the factory has already gotten wrong. The three evaluation windows later in this chapter are these three modes placed on a timeline.
+
+Scope is the second axis. A **global eval** measures behavior the whole factory must exhibit regardless of where it runs: no unauthorized writes, no secret exposure, correct escalation, budget discipline, honest completion reports. A **repository-specific eval** measures behavior that only makes sense inside one codebase: its conventions, its build and test commands, its architectural boundaries, the defects that have escaped from it before. The distinction matters because the two scopes have different owners and different failure signatures. A global eval that regresses is a platform incident; a repository-specific eval that regresses is a finding for that repository's profile ([Chapter 20](../03-build/20-autonomous-engineering-workflows.md)). A factory that keeps only global evals will pass everywhere and be wrong in the one repository that matters; a factory that keeps only repository-specific evals cannot tell whether a platform change broke everyone at once.
+
+| | Global | Repository-specific |
+| --- | --- | --- |
+| Offline | Safety, policy, and capability suites on the shared golden set | The repository's golden cases: its conventions, hot paths, prior escapes |
+| Online | Fleet-wide unauthorized-action rate, escalation correctness, cost per accepted outcome | Builder acceptance and correction rate for this repository's changes |
+| Regression | Every escaped platform failure, run on every factory change | Every escaped defect from this repository, run on every PR ([Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md)) |
+
 ### The subject is the whole configuration
 
 The first mistake in evaluation is to think the subject is a model. It is not. The evaluation subject is a versioned combination:
@@ -120,7 +136,7 @@ flowchart TB
 
 A **deterministic grader** applies a fixed rule with a fixed answer: does it compile, do the tests pass, does the output match the schema, did the agent stay inside the allowed paths and budget, did it exceed its permissions, did the security scanner find anything, is the artifact the one claimed, do the state invariants hold. Deterministic graders define clear claims and should own every hard gate.
 
-A **model grader** — commonly **LLM-as-judge** — uses a model to make a bounded judgment where deterministic methods cannot reach: is the plan complete, is the explanation adequate, does the change match the intent. Model graders scale, and they share failure modes with the systems they evaluate. A grader produced by the same configuration as the candidate is not automatically independent, for exactly the reason Chapter 21 gave: shared assumptions produce shared errors.
+A **model grader** — commonly **LLM-as-judge**, or **LLM-as-a-judge** in the research literature — uses a model to make a bounded judgment where deterministic methods cannot reach: is the plan complete, is the explanation adequate, does the change match the intent. Model graders scale, and they share failure modes with the systems they evaluate. A grader produced by the same configuration as the candidate is not automatically independent, for exactly the reason Chapter 21 gave: shared assumptions produce shared errors.
 
 A **human grader** handles meaning, risk, unresolved disagreement, and — most importantly — the calibration of the other two. Human rubrics need examples, anchors, reviewer training, blind assignment, and a process for disagreement.
 
@@ -157,6 +173,24 @@ One run is an anecdote. Where stochasticity matters — and for agents it almost
 Set a **regression threshold** — the amount by which a candidate may fall below the baseline on a measure before it is rejected — and a **quality floor** — an absolute minimum below which a candidate is rejected regardless of the baseline. Both are declared before the run. Then protect the **hard gates**: no aggregate improvement compensates for an unauthorized action, a critical security failure, evidence fabrication, data loss, or another noncompensable condition.
 
 **Statistical confidence and uncertainty** are the difference between a number and a finding. Report the sample size, the success distribution, a confidence interval or another uncertainty statement, severity, retry rate, latency, cost, and human intervention. Prefer **paired comparisons**, in which baseline and candidate run against the same task versions under comparable conditions; they reveal differences far more efficiently than comparing unrelated aggregates. Segment before aggregating — by workflow, repository class, risk, capability graph, and environment — because the most dangerous aggregate is the one that hides the slice where consequence is highest.
+
+### Trajectory, outcome, and the final grader
+
+The measures above split along a line that deserves its own name. **Outcome evaluation** asks whether the result was right: did the artifact satisfy the criteria, did the tests pass, was the change accepted. **Trajectory evaluation** asks whether the path was acceptable: did the run stay inside its authority, use the tools it was granted, spend within budget, escalate when it should have, and report its own uncertainty rather than hide it. The two are independent in both directions. A correct artifact reached by an unauthorized tool call is a trajectory failure that outcome evaluation cannot see; an impeccable trajectory that ends in a wrong answer is an outcome failure that trajectory evaluation cannot see. Hard gates live mostly on the trajectory side, because a trajectory violation is a control failure regardless of how the artifact turned out; quality thresholds live mostly on the outcome side. Report them separately, and never let a good outcome average away a bad path.
+
+Outcome measures themselves come in an order of increasing honesty, and the order is the point. Each step down the list is harder to collect and harder to fool.
+
+| Measure | What it says | What it cannot say |
+| --- | --- | --- |
+| **Task success** | The candidate satisfied the eval task's criteria as graded | Whether the criteria matched what the builder wanted |
+| **Builder acceptance** | The person who asked for the change accepted it without rework | Whether they accepted under deadline, or missed a defect |
+| **Actionable-comment acceptance** | For review agents: the fraction of findings a human acted on rather than dismissed | Whether the finding was correct, only that it was worth attention |
+| **False-positive rate** | How often the system flagged, blocked, or "fixed" something that was fine | How much real signal it missed (that is the false-negative rate, and both are needed) |
+| **Human correction** | How much a person changed the output before it shipped, measured by size and kind of edit | Why: a reformat and a rewrite are the same number unless edit type is recorded |
+| **Escaped defects** | Defects that passed every gate and were found in production | Anything until production has run long enough to find them |
+| **Production outcome** | What the change did for the customer and the service once live | Nothing: this is the final grader |
+
+*Production outcome is the final grader.* Every measure above it is a proxy chosen because production is slow to speak and expensive to consult. A configuration can score well on task success and builder acceptance and still be a net loss, because the defects it introduces escape quietly and the corrections it forces are absorbed by reviewers who never file them. That is why the loop from production back into the regression set, described under "Who evaluates the evaluator", is not an optional refinement: it is how the proxies are periodically re-anchored to the only measure that cannot be gamed. When two proxies disagree, ask which one production has recently confirmed. When a proxy and production disagree, production wins and the proxy is recalibrated, not the other way round.
 
 ### Capturing runs so failures can be reproduced
 
@@ -346,6 +380,14 @@ The predeclared experiment plan:
 
 **Telemetry mistaken for evaluation.** The dashboard shows tokens, latency, and tool calls, and the team reads it as quality. Detect it by asking which finding a given metric supports. Fix by binding evaluation findings to lineage rather than reading trends as verdicts.
 
+**Outcome without trajectory.** A candidate is promoted on task success while its runs reached for tools it was never granted or blew through budgets to get there. Detect it by checking whether trajectory findings are reported at all, and separately from outcome scores. Fix by grading path and result independently and putting authority violations on the hard-gate side.
+
+**Proxy never re-anchored.** Builder acceptance and task success stay high for a year while escaped defects climb, because nobody joined production outcomes back to the configuration that produced them. Detect it by asking when a proxy measure was last compared with production for the same slice. Fix by treating production outcome as the final grader and recalibrating proxies against it on a schedule.
+
+**Global only, or local only.** The factory keeps one shared eval set and is wrong in the repository that matters, or keeps only per-repository sets and cannot tell a platform regression from a local one. Detect it by asking which evals fail when a platform change lands and which fail when one repository's convention changes. Fix by running both scopes and giving each an owner.
+
+**Candidate chooses its judge.** The team tuning a configuration also edits the grader prompt, the dataset, or the thresholds mid-experiment. Detect it by shared ownership or unversioned graders. Fix by keeping producer and verifier separate: the instrument is versioned and owned independently of the thing it measures.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control has context evaluations, deterministic learning signals, dataset and experiment records, baseline/candidate comparison, independent Verification Subjects and Plans, verifier Attempts, criterion-linked evidence, exact-currentness checks, and Quality Gate Decisions. Run events, traces, artifacts, model/token/cost fields, and inspector views provide the raw material for trajectory analysis.
@@ -370,11 +412,14 @@ The intended direction is for Mission Control to compile versioned Eval Tasks an
 - Drift comes from the model, the knowledge source, the tool contract, the skill, and the environment. Continuous evaluation is only useful if you can attribute what changed.
 - Evaluate in three windows — offline in CI, inline on the deployed agent, operationally over time. Trust is continuously measured, never certified once.
 - Evaluate a skill by its delta: scenarios from real work, run without and with the skill, judged on multiple binary criteria, reported as baseline / with-skill / delta, kept as a regression corpus. A skill with no delta is context cost with no return.
+- Producer ≠ verifier: the configuration under test never owns, tunes, or sees the instrument that scores it.
+- Three modes, two scopes: offline (frozen, reproducible, blind to the unanticipated), online (live, representative, irreversible), regression (fixed, on every change, the memory of past failures); global evals for what every run must do, repository-specific evals for what only this codebase requires.
+- Grade the trajectory and the outcome separately; authority violations are hard gates whatever the artifact looked like. Outcome proxies run task success → builder acceptance → actionable-comment acceptance → false-positive rate → human correction → escaped defects, and production outcome is the final grader that re-anchors them all.
 
 ## Go deeper
 
 - Before this: [21. Quality and evidence architecture](./21-quality-and-evidence-architecture.md), [22. Testing strategy for agentic change](./22-testing-strategy-for-agentic-change.md). After this: [24. Quality contracts, proof packages, and certificates](./24-quality-contracts-proof-packages-and-certificates.md); [25. CI/CD, progressive delivery, and production verification](./25-cicd-progressive-delivery-and-production-verification.md) for canaries and rollback in delivery.
 - What evaluation feeds: [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) (regression control, capability optimization, promotion governance). What it evaluates: [17. Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md), [18. Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md), [19. The 12-layer production AI agent stack](../03-build/19-the-12-layer-production-ai-agent-stack.md). Where traces come from: [28. Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md).
 - Terms: [Glossary](../appendix/glossary.md).
-- Sources: Jay West, *The 12-layer production AI agent stack* (Evaluation Engineering and Harness Engineering layers; the evaluation-operations term list); HumanLayer × BAML livestream, *Software factory design patterns* (Dexter on building evals for automated issue triage from past issues, pushing repros on every PR, per-version accuracy, force-reclassifying by lines of code); Tessl documentation (docs.tessl.io), 2026 (scenario generation with feasibility checks, with-and-without skill evals judged on binary criteria, the baseline / with-skill / delta report, and the skill optimizer loop).
+- Sources: Jay West, *The 12-layer production AI agent stack* (Evaluation Engineering and Harness Engineering layers; the evaluation-operations term list); Jay West, factory architecture notes (offline, online, and regression evaluation; global versus repository-specific evals; trajectory versus outcome evaluation; the outcome-measure ladder ending in production outcome; producer ≠ verifier); HumanLayer × BAML livestream, *Software factory design patterns* (Dexter on building evals for automated issue triage from past issues, pushing repros on every PR, per-version accuracy, force-reclassifying by lines of code); Tessl documentation (docs.tessl.io), 2026 (scenario generation with feasibility checks, with-and-without skill evals judged on binary criteria, the baseline / with-skill / delta report, and the skill optimizer loop).
 - External: [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents); [SWE-bench paper](https://arxiv.org/abs/2310.06770) and [repository](https://github.com/SWE-bench/SWE-bench); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [NIST AI Resource Center](https://airc.nist.gov/); [OpenAI Agents SDK tracing](https://openai.github.io/openai-agents-python/tracing/). All accessed 2026-08-30.

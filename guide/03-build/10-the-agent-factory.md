@@ -117,6 +117,45 @@ Six words get used interchangeably and mean different things. The distinction is
 
 *The model thinks. The tool acts. The skill packages reusable behavior. The harness controls execution.* And the factory decides what any of them is permitted to do.
 
+### Where behavior belongs: rules, knowledge, and disposition
+
+Before authoring anything, decide where a behavior should live, because the Agent Factory offers three places to put it and they are not interchangeable. The governing rule is that *repository- or domain-specific behavior does not belong inside the model*. A model that has been taught one team's conventions is a model that cannot be swapped, cannot be shared with the next team, and cannot be told the convention changed last week. The three-way rule that follows:
+
+| Kind of behavior | Where it lives | Why |
+|---|---|---|
+| Known rules ("never force-push", "every endpoint has a contract test", "this path needs a security reviewer") | **Deterministic systems**: linters, policy engines, rules engines, pre-tool-call hooks, tests | A rule the organization can state is a rule software can check; spending inference on it adds cost and variance and removes proof |
+| Dynamic knowledge (this repository's architecture, last quarter's incidents, the current API, the reviewer's recent comments) | **Retrieval and skills**: context packages, the retrieval pipeline of [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md), versioned skills | It changes faster than any training cycle and must carry provenance and permissions |
+| Stable behavior (house style of explanation, a consistently preferred refactoring shape, tone and structure of findings that have not changed in a year) | **Fine-tuning** or preference optimization, last and rarely | Only behavior that is stable, measured, and general enough to survive the next model change earns a place in weights |
+
+*Deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning for stable behavior.* Read from the top down: reach for the model's weights only when the first two rows have been tried and the behavior has been shown stable enough to freeze ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) covers when training is warranted at all). The maturity lifecycle later in this chapter is the same rule applied over time: behavior migrates *down* the table toward determinism as it stabilizes, never up toward the model.
+
+One consequence is that a great deal of work should never reach a model at all. **Deterministic preprocessing** runs before any agent is invoked: static analysis, linting, type checking, security scanning, the existing test suite, policy checks, a rules engine over the change, change classification, and dependency analysis. Their outputs are facts with zero variance, and they do two jobs: they settle what software can settle, and they shape what remains into a smaller, better-classified task for whichever capability handles the residue. The router in [Chapter 17](./17-models-routing-and-capability-selection.md) formalizes the sequence as an escalation ladder from deterministic automation through cheap, specialized, and frontier models; the Agent Factory's part is to package the deterministic steps as first-class capabilities with the same envelope, versioning, and certification as any skill, so that "run the linter first" is a resolved, recorded dependency rather than a habit.
+
+### Capability matching, adapters, and extensibility
+
+Three mechanisms connect a task to the capabilities in the registry, and each is a contract of its own.
+
+**Capability matching** is the step that turns a task's requirements into a set of eligible capabilities. A WorkOrder step declares what it needs: task class, risk tier, repository and data classification, required tool effects, model capability level, and the evidence it must produce. The registry answers with the capabilities whose declared purpose, eligibility, trust level, and certification scope cover those requirements; the resolver then locks exact versions. Matching is recorded with the reason each capability was chosen and each near-miss rejected, so that an operator can later answer why the migration skill ran and the refactoring skill did not. Matching never widens authority: a capability that matches is eligible, and the WorkOrder's policy decision still governs whether it may act.
+
+**Tool extensibility** is how the set of things an agent can do grows without touching the agent. A new tool is a new contract registered behind the gateway, usually as an MCP server with executable schemas and side-effect declarations, certified for a bounded scope, and made discoverable to the agents whose scope it fits. The Agent Definition does not change, the harness does not change, and no prompt is edited to mention the tool by name. Extension happens at the registry and the gateway, which is the only arrangement in which adding a tool is a governed release rather than a surprise, and removing one is a revocation rather than a search.
+
+**Model adapters** are the third mechanism, and they answer a question that grows louder as the factory serves more models: how much should be standardized, and how much tuned per model? The rule is *standardize the core contract; optimize adapters at the edge.* The core contract is one: one Agent Definition format, one skill package format, one tool invocation contract, one calling convention for messages, tools, structured output, and cancellation. Every workflow, skill, and evaluator is written against it. Then, at the edge where the contract meets a specific model or harness, an **optimized adapter** absorbs the differences that matter for quality: the instruction phrasing one model follows better, the tool-schema fidelity another needs coaxing on, structured-output repair for a profile that returns loose JSON, the `CLAUDE.md` versus `AGENTS.md` instruction-file split, prompt-cache placement, and reasoning-effort defaults. Adapters are versioned, evaluated, and owned like any capability, and they are measured by one question: does the same skill on this model, through this adapter, meet the workload quality floor? If a behavior can only be achieved by editing the skill for one model, the adapter is missing; if an adapter has grown its own instructions and tools, the contract has leaked to the edge.
+
+```mermaid
+flowchart LR
+    WO["WorkOrder step requirements"] --> Match["Capability matching<br/>eligibility · trust · certification scope"]
+    Reg["Capability registry"] --> Match
+    Match --> Lock["Resolution lock"]
+    Lock --> Core["Core contract<br/>agent definition · skill format · tool contract · calling convention"]
+    Core --> A1["Optimized adapter: model A"]
+    Core --> A2["Optimized adapter: model B"]
+    Core --> A3["Optimized adapter: harness C"]
+    New["New MCP server"] -->|"register + certify"| Reg
+    New -. "no change to agent, harness, or prompt" .-> Core
+```
+
+Three skill families deserve names because they recur in every factory and are governed slightly differently. **Code-review skills** package one class of review judgment (a security pattern, a migration safety check, an API-compatibility rule) scoped to a glob of files, with a rubric, examples, and evaluation cases; the **specialized reviewers** of [Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) are compositions of them, and the verifiers of [Chapter 13](./13-coding-harnesses-and-agent-protocols.md) are their smallest form. **Policy skills** encode an organizational rule as a checkable procedure with the hard limit enforced by a hook rather than by prose, so the skill explains and the hook refuses. And the wider class of **reusable artifacts** is everything the factory can hand from one team to another with a version and an owner: skills, agent definitions, context packages, evaluators, workflow recipes, adapters, and the deterministic preprocessing steps above. The contribution model later in this chapter is about who authors each; the point here is that all of them share the envelope, which is what lets a review skill written for one product be matched, resolved, and certified for another.
+
 ### The Agent Factory's generic architecture
 
 Strip away product names and every Agent Factory has the same shape. Authors produce agent definitions, skills, and tools. Those are bound to model configurations, evaluated against suites and checked against policy, assigned explicit versions, published to a capability registry that supports discovery and deprecation, and consumed by a runtime that resolves exact versions before it executes. Feedback from the runtime flows back to the authors.
@@ -517,6 +556,14 @@ Two practical corollaries. First, teams with existing agents should be pulled in
 
 **Install from anywhere.** An engineer installs a public skill from an unknown source because it looked useful, and it carries instructions the agent follows. Detect it in the install audit and the inventory's third-party classification. Fix with an install policy: source allowlist, severity threshold, minimum release age ([Chapter 26](../04-prove/26-security.md)).
 
+**Behavior trained into the model.** A team's conventions are fine-tuned into a model, and the model can no longer be swapped, shared, or told the convention changed. Detect it when a rule change requires a training run. Fix with the three-way rule: deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning only for stable behavior.
+
+**Extension by prompt.** A new tool is added by editing the agent's instructions to mention it, so the tool has no contract, no certification, and no revocation handle. Detect it by listing the tools an agent uses that the registry does not know. Fix by registering the tool behind the gateway and letting matching expose it.
+
+**The adapter that became the agent.** Model-specific tweaks accumulate instructions and tools of their own until the "adapter" is a second agent definition nobody versions. Detect it by diffing adapter content against the core contract. Fix by standardizing the core and confining adapters to phrasing, schema fidelity, output repair, and defaults.
+
+**Inference spent on the deterministic.** Linting, type errors, and policy violations are discovered by the model rather than by the tools that already exist for them. Detect it in model findings that a static check would have produced. Fix with deterministic preprocessing packaged as certified capabilities that run before any agent.
+
 ## In Mission Control
 
 At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control contains versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, canaries, policy gates, promotion and demotion concepts, model-route lifecycle, and Factory Version bindings that freeze many material bindings in Factory Versions and Execution Manifests. Those are real components of an Agent Factory: **implemented**.
@@ -547,6 +594,9 @@ The intended direction is a registry that continuously calculates certification 
 - A skill with typed input and output schemas is a launchable function, which is how packaged reasoning becomes automation.
 - Inventory what is installed across the organization, classify first-party and third-party, and treat duplicates and drift as findings.
 - A 0–100 quality score with a threshold in CI is an entry gate to evaluation, never a substitute for it.
+- Repository- or domain-specific behavior does not belong inside the model. Deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning for stable behavior; and deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs before any agent.
+- Capability matching turns a step's requirements into eligible, recorded capabilities without widening authority; tool extensibility happens at the registry and gateway, never in the prompt; standardize the core contract and optimize model adapters at the edge.
+- Code-review skills, policy skills, and the wider class of reusable artifacts share one envelope, which is what lets a capability built for one product be matched and certified for another.
 
 ## Go deeper
 
@@ -566,6 +616,6 @@ The intended direction is a registry that continuously calculates certification 
 - David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, Pi, and Hermes.
 - Tessl documentation (docs.tessl.io), 2026: skill packages, manifests and workspaces, registry install and update mechanics, typed skill schemas, the organization inventory, and reviewer plugins with score thresholds. The Agent Skills specification (agentskills.io) defines the skill folder format.
 - Jay West, "Key terms and definitions" capability taxonomy: Agent Definitions, Skills Framework, and Agent Harness tool terms.
-- Jay West, factory architecture notes: the Agent Definition contract, the agent/skill/tool/model/harness/factory distinction, the skill maturity lifecycle, versioning, and the contribution model.
+- Jay West, factory architecture notes: the Agent Definition contract, the agent/skill/tool/model/harness/factory distinction, the skill maturity lifecycle, versioning, the contribution model, the three-way rule for where behavior belongs, deterministic preprocessing, capability matching, tool extensibility, and model adapters at the edge.
 - [Chapter 31. Enterprise adoption and the infrastructure landscape](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) for the gravity-well adoption path and forward-deployed engineering.
 - [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf/); [SLSA specification](https://slsa.dev/spec/); [OCI Image Format](https://github.com/opencontainers/image-spec); [NIST AI Risk Management Framework resources](https://airc.nist.gov/).

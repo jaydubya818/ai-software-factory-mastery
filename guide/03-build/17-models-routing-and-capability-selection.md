@@ -4,7 +4,7 @@ part: build
 chapter: 17
 summary: Models are interchangeable execution resources; a factory routes each step to the cheapest qualified model profile by capability, quality, latency, cost, context, data policy, availability, and history, records why, and promotes new routes only through canaries and human approval.
 absorbs: [06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md]
-infographics: [model-router, model-profile-lifecycle]
+infographics: [model-router, model-profile-lifecycle, escalation-ladder]
 ---
 
 # 17. Models: routing, profiles, and capability selection
@@ -46,6 +46,22 @@ Two components make the separation real. **Provider adapters** translate one cal
 Routing should start transparent and rule-based: a human can read the policy and predict the route. It becomes adaptive only as production evidence accumulates, and only for lanes where the evidence is dense enough to trust. Models are not perfectly interchangeable; prompting, tool behavior, reasoning style, and failure modes all differ. So a switch is a re-evaluation and tuning exercise, never an architectural rewrite. If a switch requires a rewrite, the abstraction was never there. And if a switch requires no evaluation, the independence is unproven.
 
 > *Without evaluation, model independence is architecture theater.*
+
+### Specialisation, eligibility, and fallback
+
+Model independence does not mean every model is the same. It means the differences are recorded where the router can read them. **Model specialisation** is the first difference: models are built and priced for different jobs, and a factory should expect to hold several kinds at once.
+
+| Kind | What it is for | Where it usually routes |
+|---|---|---|
+| **Code-specialised** | Editing, completion, refactoring, and test writing with strong tool fidelity | EXECUTE, test generation, mechanical refactors |
+| **Reasoning** | Long-horizon planning, ambiguous specifications, root-cause analysis | PLAN, incident diagnosis, high-risk review |
+| **Frontier** | The strongest general capability available, at the highest price and often the highest latency | Novel or high-risk work pinned to the top tier |
+| **Lower-cost** | Classification, extraction, summarisation, subagent tasks with well-defined inputs | Subagent default, triage, routine review passes |
+| **Hosted** versus self-hosted | Provider-served models against models run inside the factory's own boundary | LOCAL lane for sensitive data; hosted for the rest |
+
+The **model capability registry** is where those differences live, and the table above is its index. Every profile in it carries the evidence-backed fields listed earlier and three more that the router applies before anything else. **Model eligibility** is the set of task classes, data classifications, tenants, regions, and risk tiers a profile is approved for; it is a policy fact, not a capability score, and a profile that is ineligible for a step does not exist for that step. **Fallback models** are the ordered list of eligible profiles the route may fall to when the first choice is unavailable, rate-limited, or over budget, each pre-qualified for the same lane so that a fallback never relaxes capability or policy. And a **model adapter** is the per-provider translation that lets one profile be called through the factory's single calling convention; [Chapter 10](./10-the-agent-factory.md) sets the rule for it (standardise the core contract, optimise adapters at the edge), and the registry records which adapter version each profile was evaluated through, because the same model through two adapters is two configurations.
+
+> *The model is a replaceable capability, not the architecture.*
 
 ### A model profile is the unit of selection
 
@@ -131,6 +147,60 @@ flowchart TD
 The diagram has one branch the ten criteria do not mention. One valid routing outcome is *no LLM at all*. If a deterministic service, a lint rule, a codemod, or a mature skill produces the outcome reliably, the router should send the step there, at zero model cost and with a deterministic result. A factory that reaches for a model by reflex is spending money to add variance.
 
 > *The best model for some tasks is no model at all.*
+
+### The routing dimensions and the workload taxonomy
+
+The ordered criteria above are one way to read the router. Another is by the dimension each rule is *aware of*, which is the vocabulary a routing policy is written in. Eight dimensions cover a factory's policies, and a policy that names which of them it uses is one a human can audit.
+
+| Routing dimension | The question it asks | What it reads |
+|---|---|---|
+| **Capability-aware** | Can this profile do what the step needs? | Registry: tool use, structured output, context, reasoning depth |
+| **Complexity-aware** | How hard is this instance of the task? | Workload class, change size, dependency impact, novelty, prior failures |
+| **Risk-aware** | What happens if the answer is wrong? | Risk tier from the WorkOrder and repository profile |
+| **Cost-aware** | What does an accepted outcome cost on this route? | Cost per accepted outcome, budget remaining |
+| **Quality-aware** | Does this route meet the floor for this workload? | Workload-specific evaluation results |
+| **Latency-aware** | Does it fit the step's time budget? | Measured time to first token and throughput at real prompt sizes |
+| **Security-aware** | May this content go to this provider, region, and retention policy? | Data classification, tenant, residency, provider terms |
+| **Fallback** | What happens when the chosen route is unavailable? | Ordered fallback models, all pre-qualified for the lane |
+
+Complexity-aware routing depends on knowing what kind of work a step is, and that is the job of the **workload taxonomy**: a classification of every task the factory runs into workload classes, each with a default lane, a quality floor, an eligible model tier range, and a typical budget. A first taxonomy is short: classify, extract, summarise, retrieve-and-answer, generate code, refactor mechanically, write tests, review for one finding class, plan, diagnose an incident. The taxonomy is what turns "route by task type" from a slogan into a lookup, and it is where **budget-aware escalation** is defined: for each class, the point at which a cheaper route's failure justifies spending on the next tier, and the point at which no further spend is justified and the step escalates to a human instead.
+
+Three mechanisms prove a route before it carries production work, and all three produce records. **Shadow mode** runs a candidate profile on the same inputs as the active route without its output being used, so that the two can be compared on real work at no risk. **Canary evaluation** gives the candidate a bounded share of live steps in one lane, with a frozen baseline, a minimum sample, and a stop condition, and promotes it only on stable quality, no policy escapes, and human approval. The **routing policy** is the versioned document those decisions change: lane pools, floors, fallback chains, budgets, canary rules, and the kill switch, with a diff between versions that an operator can read.
+
+And every route taken leaves a **routing trace**: the routing decision record (inputs, candidates, rejection reasons, selected profile, source, policy version) joined to what happened next (usage, latency, fallback events, validation result, acceptance). A routing decision alone says what the router chose; a routing trace says whether it was right, and it is the raw material of every promotion decision above and of the cost attribution in [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md). The question the whole apparatus exists to answer, for every step, is one sentence:
+
+> *What is the cheapest capability that reliably satisfies this task's quality, security, latency, and risk requirements? It need not be an LLM.*
+
+### Deterministic automation and the escalation ladder
+
+The last clause of that question deserves its own section, because the reflex it corrects is the most expensive habit a factory can have: sending everything to the frontier model. Most of what a software change needs to know about itself can be determined by software that already exists and never hallucinates. **Deterministic automation** is the practice of running that software first, and **deterministic preprocessing** is the specific step of running it before any model is consulted, so that the model, if one is needed at all, receives facts rather than raw material.
+
+The preprocessing set is familiar because every mature engineering organisation already runs it in CI; the factory moves it to the front of the agent's path and treats its output as classified input. Static analysis and linting find the defects that have names. Type checking settles what the compiler can settle. Security scanning flags known patterns and vulnerable dependencies. The existing test suite reports what already breaks. Policy checks and a **rules engine** apply the organisation's stated rules, from "no secrets in source" to "this path requires a security reviewer", as decisions rather than opinions. **Change classification** labels the change by kind, size, and touched boundaries. **Dependency analysis** computes the impact set from the changed symbols. The result is a task that is smaller, better labelled, and often already answered.
+
+*Don't spend inference on what software can determine reliably.*
+
+What remains climbs an **escalation ladder**, and the ladder runs in one direction: cheapest reliable capability first, frontier last, with a recorded reason for every step up.
+
+<!-- infographic: escalation-ladder -->
+> **Infographic — The escalation ladder.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    In["Task"] --> D["Deterministic automation<br/>static analysis · lint · types · security scan · tests · policy · rules engine · classification · dependency analysis"]
+    D -->|"determined"| Done["Result with zero variance"]
+    D -->|"residue: needs judgment"| C["Cheap model<br/>classify · extract · summarise · routine passes"]
+    C -->|"meets the workload floor"| Done
+    C -->|"below floor, or class requires more"| S["Specialised model<br/>code-specialised · reasoning · domain reviewer"]
+    S -->|"meets the floor"| Done
+    S -->|"novel · high risk · still failing"| F["Frontier model"]
+    F -->|"meets the floor"| Done
+    F -->|"budget exhausted or still failing"| H["Human decision"]
+    B["Budget-aware escalation per workload class"] -. "sets each step-up threshold" .-> C & S & F
+```
+
+Read the ladder as *Deterministic → cheap model → specialised model → frontier model*, not *everything → frontier*. Each rung has a condition for stepping up, set per workload class by the taxonomy, and a budget beyond which the step up is refused and the work goes to a person. The ladder is also why deterministic capabilities belong in the Agent Factory's registry with the same envelope as skills ([Chapter 10](./10-the-agent-factory.md)): a linter with a version, an owner, and a certification scope is a rung the router can resolve to; a linter someone remembers to run is not.
+
+The cost consequence is large and easy to state. On the ladder, frontier inference is spent on the fraction of work that needs it; off the ladder, it is spent on all of it, and the variance comes free. A code-review pipeline that runs static analysis, classification, and dependency impact first, then a cheap pass for routine findings, then a specialised reviewer only on the risky subset, will typically send a small minority of its pull requests to a frontier model and produce fewer false findings on the rest, because most of what the frontier model would have "found" was already a fact.
 
 ### Token economics is an architecture problem
 
@@ -233,6 +303,11 @@ Weigh the routing styles with open eyes. Static routing is predictable but ages 
 | Gains measured while the model moved | Routing, defaults, and vendor changes land together and the improvement cannot be attributed | Hold the model constant when measuring your own optimisations |
 | Subagents on the primary model | Well-defined subtasks run on frontier reasoning by default | Set a cheaper subagent default in routing policy with an explicit override |
 | Dynamic routing before evidence | A learned router selects on sparse or biased data | Benchmark, model-agnostic harness, and per-agent scoring first; dynamic routing after |
+| Everything to frontier | Frontier share of steps near 100 percent; findings the linter already reported | Deterministic preprocessing first; climb the escalation ladder with a recorded reason per step |
+| Workload unclassified | Routing rules keyed on agent name or lane only; complexity invisible | A workload taxonomy with class, floor, tier range, budget, and escalation thresholds |
+| Route without a trace | Decisions exist, outcomes are elsewhere; promotion argued from anecdote | Join every routing decision to usage, fallback events, validation, and acceptance as a routing trace |
+| Fallback list unqualified | The fallback model was never evaluated for the lane it falls into | Pre-qualify every fallback profile for the same lane and eligibility as the primary |
+| Specialisation ignored | A reasoning model runs mechanical edits; a code model plans an incident response | Registry records specialisation; workload classes map to kinds |
 
 ## In Mission Control
 
@@ -257,11 +332,15 @@ The pure resolver filters deprecated, unavailable, rate-limited, unapproved, inc
 - For every managed agent: benchmark from its real work, run it on a harness that serves any model, score cost per completed task with quality and reliability, move to the Pareto-optimal point, and keep moving. The same model in two harnesses can differ severalfold in price; benchmark the configuration, not the model.
 - Hold the model constant to measure your own gains. Default model selection is routing policy, and the subagent default is the biggest lever. Dynamic routing is roadmap until the benchmark and harness exist.
 - Switching models costs humans intuition; respect user workflow profiles and test prompt portability before changing interactive routes.
+- The model is a replaceable capability, not the architecture. Hold several specialisations (code-specialised, reasoning, frontier, lower-cost, hosted and self-hosted) in a model capability registry that records eligibility, pre-qualified fallback models, and the adapter each profile was evaluated through.
+- Routing policy is written in eight dimensions: capability-, complexity-, risk-, cost-, quality-, latency-, security-aware, and fallback. A workload taxonomy gives each task class its lane, floor, tier range, and budget-aware escalation thresholds; shadow mode and canary evaluation prove a route; routing traces join every decision to its outcome.
+- The routing question is: what is the cheapest capability that reliably satisfies this task's quality, security, latency, and risk requirements? It need not be an LLM.
+- Don't spend inference on what software can determine reliably. Deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs first; the residue climbs Deterministic → cheap model → specialised model → frontier model, never everything → frontier.
 
 ## Go deeper
 
 - Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the model literacy table and the execution manifest; [18. Agent and loop engineering](./18-agent-and-loop-engineering.md) for sub-agents on different models; [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [33. Governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md) for promotion gates; [29. Resilience](../05-operate/29-resilience-incidents-and-the-control-tower.md) for provider failover.
 - Mission Control at `b31e275`: [routing resolver](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/modelRouting.ts), [routing policies](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/modelRoutingPolicies.ts), [routing decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/modelRoutingDecisions.ts), [context evaluations](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/evals.ts), [operating standard](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/software-factory/MODEL_ROUTING_OPERATIONS.md).
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (routing by task, sub-agents by model, the hidden cost of switching models); Jay West, "Factory in one line" notes (models as interchangeable execution resources; the ten router criteria); Jay West, factory architecture notes (capability versus identity, the capability registry, ordered routing, the no-model outcome, token economics and budgets); the 12-layer production AI agent stack (Model Engineering: task-specific profiles, configuration lifecycle, structured-output reliability, model-switching ergonomics); the AI Software Factory study guide, chapter 6 (model routing).
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (routing by task, sub-agents by model, the hidden cost of switching models); Jay West, "Factory in one line" notes (models as interchangeable execution resources; the ten router criteria); Jay West, factory architecture notes (capability versus identity, the capability registry, ordered routing, the no-model outcome, token economics and budgets, model specialisation and eligibility, fallback models, the eight routing dimensions, the workload taxonomy, shadow mode and canary evaluation, routing traces, deterministic preprocessing, and the escalation ladder); the 12-layer production AI agent stack (Model Engineering: task-specific profiles, configuration lifecycle, structured-output reliability, model-switching ergonomics); the AI Software Factory study guide, chapter 6 (model routing).
 - Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four-step benchmark-driven selection method, the code-review agent example and its Pareto plot, the subagent default model, and dynamic routing as roadmap; *Six layers of a working agentic system* (public post, 2026) for the rule that a model swap is one configuration change because no vendor is hardcoded.
 - [Glossary](../appendix/glossary.md).

@@ -4,7 +4,7 @@ part: operate
 chapter: 28
 summary: How to see what the factory is doing without mistaking what it observed for what it decided — a correlation spine from intent to outcome, shared trace and span semantics for agent runtimes, four kinds of health, cost attribution that rolls up without double counting, and forensic bundles that survive an incident.
 absorbs: [05-runtime-architecture/05-factory-observability-and-agent-runtime-telemetry.md, factory-platform-engineering/06-observability-semantics-cost-and-forensics.md]
-infographics: [telemetry-model, execution-lineage, cost-attribution]
+infographics: [telemetry-model, execution-lineage, completion-record, cost-attribution]
 ---
 
 # 28. Observability, telemetry, and forensics
@@ -93,6 +93,40 @@ flowchart TD
     EV --> DS
     TL -.->|"never directly"| DS
 ```
+
+### The completion record
+
+The four record kinds describe what the factory keeps. The **completion record** describes what a run hands back, and the rule for it is short: *a mature factory never returns just "done"*. A bare success status is the least informative thing an Attempt can say, because it collapses every question an operator, reviewer, or auditor will later ask into one bit. What the run returns instead is a chain of answers, in a fixed order, each one drawn from the records above rather than from the model's own account of itself.
+
+<!-- infographic: completion-record -->
+> **Infographic — The completion record: never just "done".** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    C1["What changed<br/>artifact digests, files, diff"] --> C2["Why<br/>intent, criteria, Plan revision"]
+    C2 --> C3["By whom or what<br/>Agent Definition version,<br/>workload identity, human actors"]
+    C3 --> C4["Using which context, tools, models<br/>context provenance, tool receipts,<br/>routing trace"]
+    C4 --> C5["What was verified<br/>checks run, by which verifier,<br/>against which criteria"]
+    C5 --> C6["What evidence supports acceptance<br/>receipts, subject digests,<br/>freshness, unresolved findings"]
+```
+
+Each link has a source of truth. *What changed* comes from artifact digests and the changed-file comparison against the frozen scope, never from the model's summary of its own diff. *Why* is the Plan revision and the acceptance criteria the Task was bound to. *By whom or what* is the Agent Definition version and the workload identity, plus every human who approved, corrected, or overrode along the way. *Using which context, tools, and models* is the context package with its provenance, the tool receipts, and the **routing trace**: the record of which model route was selected for each call, why (the policy, the capability match, the budget), which fallbacks were considered, and which one actually ran, so that a quality or cost question can be traced to a routing decision rather than to "the model" ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)). *What was verified* names the checks, the verifier identity, and the criteria each check addressed. *What evidence supports acceptance* is the set of receipts bound to the exact subject digest, their freshness, and, as important as any of it, what remains unverified or unresolved.
+
+Underneath the chain sits the **execution trajectory**: the ordered sequence of decisions, tool calls, state transitions, retries, and escalations the run took to get from manifest to result. The completion record summarises; the trajectory is what the summary is accountable to, and it is what trajectory evaluation in [Chapter 23](../04-prove/23-evaluation-engineering.md) grades. A record whose chain cannot be walked back into the trajectory is a narrative, not a record.
+
+Findings inside the record are structured, not prose. Whether they come from a verifier, a review agent, a scanner, or an incident, **structured evidence** carries the same fields, so that the next consumer (a human, an aggregator, a learning pipeline) can count, deduplicate, rank, and act on them:
+
+| Field | What it holds | Why it is required |
+| --- | --- | --- |
+| **Severity** | Consequence × likelihood, on the shared scale | So findings can be ordered and thresholds applied without rereading them |
+| **Confidence** | The producer's calibrated estimate that the finding is real | So low-confidence findings can be routed to a person rather than blocking or being dropped |
+| **Affected code** | Repository, path, symbol, and line range, bound to the subject digest | So the finding survives a rebase and can be deduplicated against its neighbours |
+| **Recommended action** | What would resolve it, and whether an agent may apply it | So the fix-review loop and the human know what is being asked |
+| Evidence and producer | The test, trace, rule, or incident behind it; the producer's identity and version | So the finding can be independently checked and its producer's precision measured |
+
+The last field is where **incident ownership** enters. When a finding is promoted to an incident, or when a production outcome is traced back to a run, the record names an owner: a person, not a queue, with the completion record and the forensic bundle in hand. Ownership is part of the record because an incident without an owner is telemetry, and the control tower of [Chapter 29](./29-resilience-incidents-and-the-control-tower.md) routes on owners, not on alerts.
+
+The picture is a surgeon's operative note. Nobody accepts "operation went fine". The note says what was done, why, by whom, with which instruments and under which anaesthetic, what was checked before closing, and what the follow-up depends on, and it is written from the chart, not from memory.
 
 ### What to instrument on each plane
 
@@ -239,6 +273,14 @@ A bundle is immutable, access-controlled, redacted by policy, and bound to a cas
 
 **Missing forensic data.** An incident arrives and the bundle has holes. Preserve the remaining sources, record the gap, fix the instrumentation, and repeat the exercise.
 
+**"Done" as the record.** The Attempt returns a status and a model-written summary, and the reviewer has to reconstruct what changed and what was checked from the diff. Detect by asking, for a recent run, which of the six links (changed, why, by whom, with what, verified how, evidenced by what) can be answered from records rather than from the transcript. Fix by making the completion record a contract the harness must fill from digests, receipts, and the routing trace.
+
+**Findings as prose.** Review and verifier output arrives as paragraphs, so nothing can be deduplicated, ranked, or measured for precision. Detect by trying to count last week's findings by severity. Fix with the structured-evidence fields: severity, confidence, affected code, recommended action, evidence, and producer.
+
+**Incident with no owner.** A production outcome is traced to a run and lands in a channel rather than with a person. Detect by incidents whose owner field is a team name or empty. Fix by naming an owner at promotion time and routing on owners.
+
+**Routing invisible.** Quality drops on a task class and nobody can say which model actually served it, because fallbacks are not recorded. Detect by asking for the routing trace of one expensive or failed run. Fix by recording selected route, reason, candidates considered, and fallback taken on every model call.
+
 **Convention drift.** An OpenTelemetry attribute changes meaning and dashboards silently break. Pin versions, test exporters, keep the adapter.
 
 ## In Mission Control
@@ -260,6 +302,8 @@ Not yet implemented or demonstrated: an end-to-end OpenTelemetry architecture wi
 - Default posture is metadata-first and content-off; capture full runs deliberately, for replay and comparison, under classification and retention rules. Never sample away domain, audit, evidence, or error records.
 - Cost rolls up from model call to Attempt to WorkOrder to accepted outcome once, with a recorded allocation rule; the practitioner views are usage over time and cost by model, sliceable by workflow. Attribute by team, workflow, model, and outcome, and report cost per trusted outcome, not cost per token; the cheapest model is not the cheapest system once rework is counted.
 - A forensic bundle freezes manifests, identities, decisions, events, traces, lineage, receipts, artifacts, proofs, human decisions, cost, controls, and known gaps, immutably and under access control.
+- A mature factory never returns just "done". The completion record answers, from records rather than from the model: what changed → why → by whom or what → using which context, tools, and models (including the routing trace) → what was verified → what evidence supports acceptance, and it is accountable to the execution trajectory beneath it.
+- Findings are structured evidence with severity, confidence, affected code, recommended action, evidence, and producer; an incident is not an incident until it has a named owner.
 
 ## Go deeper
 
@@ -272,4 +316,5 @@ Not yet implemented or demonstrated: an end-to-end OpenTelemetry architecture wi
 - [Chapter 29, Resilience, incidents, and the control tower](./29-resilience-incidents-and-the-control-tower.md) for what the control tower does with these signals.
 - Primary references: OpenTelemetry Semantic Conventions (version 1.43.0 at time of study; CI/CD conventions release-candidate) and the OpenTelemetry Generative AI attribute registry (accessed 2026-08-30); W3C Trace Context; Google SRE guidance on monitoring and canaries.
 - Mission Control product sources studied: `convex/factory/attempts.ts`, `convex/schema.ts`, `apps/mission-control-ui/src/MonitoringDashboard.tsx`, `apps/mission-control-ui/src/eos/views/ExecutionInspectorView.tsx`, `packages/model-router/src/types.ts`.
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on token-usage and cost-by-model dashboards and the control plane's need for session traces and budgeting; "The 12-layer production AI agent stack" notes, Harness Engineering layer and trace-replay vocabulary; Jay West, factory architecture notes, on execution lineage, the observability-versus-evaluation boundary, drift attribution, and token economics.
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on token-usage and cost-by-model dashboards and the control plane's need for session traces and budgeting; "The 12-layer production AI agent stack" notes, Harness Engineering layer and trace-replay vocabulary; Jay West, factory architecture notes, on execution lineage, the observability-versus-evaluation boundary, drift attribution, token economics, the completion record ("never just done"), routing traces, structured evidence fields, and incident ownership.
+- [Chapter 17, Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for the routing decisions the routing trace records; [Chapter 32, Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) for structured findings as they are aggregated at review.

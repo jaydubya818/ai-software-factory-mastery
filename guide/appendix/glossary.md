@@ -230,6 +230,43 @@ adopt and hardest to exit.
 harness on its own fleet under its own operations, or the organization runs the
 harness on its own workers with its own identity and network boundaries.
 
+**Commodity layer** — The band of the stack that many organizations need in
+the same shape and that the market or open-source community is converging on:
+agent-loop mechanics, sandbox provisioning, workflow engines, tracing
+transport, vector stores, model APIs, CI runners. The default is to adopt it
+behind a standard contract; owning it buys nothing a competitor cannot buy.
+
+**Differentiated layer** — The band of the stack only this organization can
+decide and that compounds when done well: the control plane's authority and
+evidence model, policy layers, repository profiles and enterprise context,
+evaluation sets from real work, learning signals, and the Builder Experience.
+The default is to build it and treat its contracts as the product.
+
+**Platform boundary** — The set of contracts at which an organization's own
+components meet adopted ones. It is a strategic choice and it moves as
+capabilities become commodity; standard contracts and conformance suites are
+what keep it movable.
+
+**Conformance suite** — The behavioural tests a replacement harness, sandbox
+provider, model gateway, or other adopted component must pass to be admitted
+behind a standard contract. Swappability is proven by conformance, never by a
+matching product name.
+
+**Exit cost** — The real price of leaving an adopted component, measured by
+attempting the export before signing: records in a documented schema, evidence
+readable without the vendor, a replaceable harness, an API rather than only a
+UI. High exit cost is adopted with the exit rehearsed, not ignored.
+
+**Vendor independence** — The property that the organization's architecture
+survives a vendor's disappearance, acquisition, or repricing. It is what
+standard contracts, conformance, and rehearsed exits exist to protect.
+
+**Community health** — For an open-source foundation, the observable signals
+that the project will exist when the plan ends: maintainer count and
+diversity, release cadence, issue response time, and governance model. For a
+commercial foundation, the analogous signals are runway, roadmap transparency,
+and customer base.
+
 **Agent Runtime** — The execution substrate that starts, observes, controls,
 and terminates agent sessions or Attempts using an exact harness, environment,
 identity, and model route. Runtime capability does not establish business
@@ -557,6 +594,53 @@ generation, verification, diagnosis, repair or replanning, changed-hypothesis
 retry, convergence, budgets, stop conditions, fallback, and escalation. An
 iteration cap is containment, not a substitute for progress detection.
 
+**Agent contract** — The stable interface a harness exposes to the control
+plane regardless of which vendor loop runs inside it: manifest in, ordered
+events and completion report out, with cancellation, budgets, and lifecycle
+hooks. The organization owns the contract and adopts the loop mechanics
+behind it.
+
+**Workload taxonomy** — The classification of tasks by complexity, risk,
+latency, security sensitivity, and required capability that routing policy is
+written against. A task class, not a prompt, is the unit routing decides on.
+
+**Routing trace** — The per-call record of which model route was selected,
+why (policy, capability match, budget), which candidates and fallbacks were
+considered, and which one actually ran. It lets a quality or cost question be
+traced to a routing decision rather than to "the model."
+
+**Canary evaluation** — Exposing a bounded cohort of real work to a candidate
+model route, skill, or configuration with a risk stop and rollback ready, and
+measuring outcomes before widening. It is the last rung of the promotion
+ladder, not a substitute for the offline rungs.
+
+**Shadow mode** — Running a candidate route, policy, or reviewer on live
+inputs while computing but not enforcing its decisions, so that disagreement
+with the incumbent can be measured. See shadow testing (candidates) and shadow
+governance (policy decisions); a shadow mode nobody reads is a delay.
+
+**Deterministic preprocessing** — Static analysis, linting, type checking,
+security scanning, tests, policy checks, change classification, and
+dependency analysis run before any model is invoked, so that inference is
+spent only on what software cannot decide reliably. The sequence is
+deterministic → cheap model → specialised model → frontier model.
+
+**Repository profile** — The versioned readiness record for one repository:
+languages, build and test systems, ownership, conventions, architectural
+boundaries, hot paths, defect history, risk classification, admitted
+workflows, and learned lessons. One shared platform, many profiles; not one
+universal agent and not one model per repository.
+
+**Changed-symbol retrieval** — Retrieving context by the functions, types, and
+modules a change actually touches, plus their dependents, rather than by
+similarity to the diff text. It is how review and implementation context
+stays minimal and relevant across a large codebase.
+
+**Model adapter** — A small set of additional weights trained on top of a
+frozen base model so that a tuned behaviour can be attached, versioned, and
+detached without retraining, and so the base model stays replaceable
+underneath it. Standardise the core contract; optimise adapters at the edge.
+
 ## Governed delivery records
 
 **Company** — The top-level organizational and accountability boundary.
@@ -798,6 +882,27 @@ radius, paths touched, novelty) rather than the code. It is the risk-tier
 assignment made runnable, and it is kept separate from the file invariants a
 verifier checks.
 
+**Policy hook** — A named point in the lifecycle (before dispatch, before a
+side-effecting tool call, before publication, merge, release, promotion, and
+on resume) where the orchestrator stops, hands state and proposed effect to
+the policy engine, and proceeds only with a recorded allow, deny, or
+condition. A hook that does not persist its decision and policy version is
+decorative.
+
+**Merge authority** — The grant to move a reviewed candidate into the trunk,
+held by the repository's owners and exercised by a human on a decision packet.
+It is distinct from release authority; a merge is not a deployment decision.
+
+**Release authority** — The grant to expose a merged change to users, held by
+whoever owns the service's availability and risk, often a different person and
+policy from merge authority, and exercised through controlled rollout over a
+bounded blast radius.
+
+**Regression gate** — The evidence a promotion hook demands: the candidate,
+compared with the current baseline on the frozen evaluation set, may not fall
+below declared thresholds on any protected measure, and no aggregate
+improvement excuses a failed hard gate.
+
 ## Quality and assurance concepts
 
 **Quality Contract** — A versioned, machine-readable specification of the
@@ -889,9 +994,40 @@ baseline's before anything ships. Also called shadow evaluation.
 evaluates defined assertions and emits criterion-level findings. A grader's
 output is itself subject to calibration, provenance, and independence concerns.
 
-**LLM-as-judge** — A model-based grader used for bounded qualities that are
-difficult to express deterministically. It must be calibrated for bias,
-disagreement, presentation sensitivity, and correlated failure.
+**LLM-as-judge** (also **LLM-as-a-judge**) — A model-based grader used for
+bounded qualities that are difficult to express deterministically. It must be
+calibrated against human-labelled references for bias, disagreement,
+presentation sensitivity, and correlated failure, and it never owns a hard
+gate.
+
+**Outcome evaluation** — Grading whether the result was right: criteria met,
+tests passed, change accepted. Independent of trajectory evaluation (whether
+the path was acceptable); a good outcome must never average away a bad path.
+
+**Escaped defect** — A defect that passed every gate and was found in
+production. The most valuable evaluation content a factory owns: each one
+becomes a permanent regression case, and the escaped-defect rate is what
+re-anchors every proxy measure.
+
+**Builder acceptance** — The person who asked for a change accepted it
+without rework. A stronger outcome proxy than task success and a weaker one
+than escaped defects, because acceptance can happen under deadline or miss a
+defect.
+
+**Actionable-comment acceptance** — For review agents, the fraction of
+findings a human acted on rather than dismissed. It measures whether findings
+were worth attention, not whether they were correct; joined to outcomes it
+becomes the reviewer's precision.
+
+**Human-review baseline** — The measured precision, recall, and
+time-to-review of human-only review for a class of change, taken before an
+automated reviewer is introduced and refreshed periodically. A reviewer is
+promoted from advisory to gate mode, and demoted, against it.
+
+**Production outcome (final grader)** — What a change did for the customer
+and the service once live. Every other measure is a proxy chosen because
+production is slow to speak; when a proxy and production disagree, production
+wins and the proxy is recalibrated.
 
 **Trace replay** — Read-only inspection or re-emission of retained run events
 for diagnosis and testing. It does not recreate external effects or prove the
@@ -1479,6 +1615,39 @@ Cache reads are cheap and cache writes carry a premium, so the right TTL
 depends on the typical idle gap between turns: longer for interactive sessions
 with pauses, shorter for short-lived subagents.
 
+**Isolation model** — The written statement of what one Attempt is allowed to
+affect, as policy dimensions: identity and authorization, scoped credentials,
+network policy, filesystem policy, tool permissions, time limits, token and
+compute budgets, frozen scope, kill switch, replay protection, auditability,
+and compliance. Each dimension is default-deny, granted in the manifest,
+enforced outside the model, and proven by a negative test. An agent can be
+intelligent without being trusted; the sandbox defines what intelligence is
+allowed to affect.
+
+**Replay protection** — Idempotency keys, nonces, and expiry on every
+control-to-execution command, event, and credential so that a captured or
+duplicated message cannot produce a second effect after the run ended.
+
+**Completion record** — What a run hands back instead of "done": what changed
+→ why → by whom or what → using which context, tools, and models (including
+the routing trace) → what was verified → what evidence supports acceptance,
+each link drawn from records rather than from the model's account of itself,
+and accountable to the execution trajectory beneath it.
+
+**Execution trajectory** — The ordered sequence of decisions, tool calls,
+state transitions, retries, and escalations one run took from manifest to
+result. The completion record summarises it; trajectory evaluation grades it.
+
+**Structured evidence** — The fixed fields every finding carries whatever
+produced it: severity (consequence × likelihood), calibrated confidence,
+affected code bound to the subject digest, recommended action, the evidence
+behind it, and the producer's identity and version. Findings as prose cannot
+be counted, deduplicated, or measured.
+
+**Incident ownership** — A named person, not a queue, attached to an incident
+at promotion time, with the completion record and forensic bundle in hand.
+The control tower routes on owners; an incident without one is telemetry.
+
 ## Platform experience and agentic security
 
 **Developer portal** — A user-facing projection of catalog, workflow,
@@ -1790,6 +1959,96 @@ the factory is subject to the same policy, verification, and acceptance
 controls as the work the factory performs. A learning subsystem is not exempt
 from the governance it informs.
 
+**Explicit feedback** — What a person deliberately says about an output: a
+review comment, a rated response with a reason, a typed correction, a finding
+marked wrong. Precise, rare, and biased toward the vocal.
+
+**Implicit feedback** — What a person does with an output, recorded without
+being asked: the finding acted on or scrolled past, the suggestion merged
+unchanged or rewritten, the change that shipped clean or returned as an
+incident. Abundant, noisy, representative, and evidence only once joined to
+the record it concerns and the outcome that followed.
+
+**Builder behaviour signals** — The implicit signals that carry most of the
+information: comment acceptance, reviewer override, dismissed finding, and
+later incident. A dismissed finding followed by an incident on the same lines
+is strong evidence the dismissal was the error.
+
+**Failure taxonomy** — A versioned classification of the ways the factory gets
+things wrong, by cause rather than symptom (wrong context retrieved, right
+context ignored, tool misuse, specification gap, unsafe action blocked or
+not blocked, evaluator miss, routing mismatch, budget exhaustion,
+human-process failure). It turns individual signals into clusters with
+counts, trends, and owners.
+
+**Candidate improvement** — The output of Propose in the learning loop: a
+versioned proposal with hypothesis, evidence, scope, and rollback that has
+earned nothing yet.
+
+**Controlled improvement** — A candidate that has passed Verify (regression,
+shadow evaluation, A/B, canary rollout, in that order) under a predeclared
+experiment and been promoted by a person with authority proportional to its
+blast radius.
+
+**Recursive system improvement** — The seven-step loop (Execute → Observe →
+Evaluate → Learn → Propose → Verify → Promote) run against the factory's own
+components with the same records and gates as customer software. Never
+Execute → automatically rewrite production.
+
+**Adaptation ladder** — The ordered set of ways to change agent behaviour, by
+how much of the system each touches and how reversible it is: Rules →
+Retrieval/Context → Prompt → Skill → Routing → Fine-tuning → Preference
+optimisation and training. Climb one rung at a time with evidence that the
+rung below was insufficient; never jump straight to training.
+
+**Fine-tuning** — Updating a model's weights, or an adapter on top of a frozen
+base, on a governed dataset so that a stable, well-specified behaviour no
+longer has to be re-taught in every context window. Domain-level tuning (a
+stable vocabulary or convention) is the most defensible use; behavioural
+adaptation (how the model plans, asks, and reports) is harder to specify and
+evaluate. A tuned model is an artifact with its own benchmark, certification,
+and rollback.
+
+**Preference optimisation** — Training a model from human preference data
+(pairs of outputs with a judgment about which is better) rather than from
+examples of correct output, either directly or through a reward model. The
+top rung of the adaptation ladder and the least attributable.
+
+**RLHF** — Reinforcement learning from human feedback: the best-known family
+of preference-optimisation methods, in which a reward model trained on human
+preference data guides updates to the policy model's weights. It consumes
+exactly the acceptance, edit, override, and dismissal signals the factory
+collects, which is why those signals must be trustworthy and attributed
+first.
+
+**Reward model** — A model trained to predict human preference judgments,
+used to score outputs during preference optimisation. It is a grader with
+every grader's failure modes, including reward hacking, and is evaluated as
+one.
+
+**Repository memory** — The per-repository, versioned record of what an
+automated reviewer has been right and wrong about here, which findings this
+codebase's maintainers accept, and which patterns have escaped before,
+distilled from review history and fed back to the repository profile and
+suppression rules through the promotion gate, never appended to a prompt in
+place.
+
+**Finding deduplication** — Collapsing findings that name the same defect
+from different reviewers, rules, or lines of the same hunk into one record
+with all evidence attached, keyed on affected code and category rather than
+wording. It precedes noise suppression and thresholding.
+
+**Noise suppression** — Removing findings a repository has already ruled on:
+categories the profile marks inapplicable, patterns dismissed with a reason
+before, findings below the tier's request-changes threshold. Suppressed
+findings are retained and counted, not deleted.
+
+**Confidence threshold** — The calibrated-confidence level, set per repository
+class from measured precision, above which a finding is published, in a band
+below which it is routed to a person as a question, and below which it is
+dropped and counted. Dropped findings are kept so a later incident can show
+the threshold was wrong.
+
 ## Architecture, governance, and operations concepts
 
 **Factory System Record** — The governed accountability and classification
@@ -1872,6 +2131,40 @@ discarded once the answer is recorded.
 architecture, built to prove the path is passable rather than to deliver a
 feature. Also called a technical spike.
 
+**Adoption wedge** — The one workflow, in one team, valuable enough to fund an
+embedding and repeatable enough that its artifacts transfer; usually the
+governed issue-to-PR corridor. Each product organization's first wedge is
+chosen with its design partners, not assigned.
+
+**Co-building** — Building an integration with a product team rather than for
+it or advising it from outside, so that the team can do the next one alone
+and the platform learns what its abstraction was missing.
+
+**Builder enablement** — The deliverable of an embedding: the product team's
+ability to extend and maintain what was co-built after the embedded engineer
+leaves. A working integration only the engineer understands is a failure.
+
+**Embedded engineering** — A platform engineer placed inside a product team
+for a bounded period, working from that team's backlog on that team's
+repositories. The first step of the forward-deployed loop: Embed → Observe →
+Co-build → Productise → Contribute → Reuse → Scale.
+
+**Migration tooling** — The productised form of the most common co-build:
+scripts and adapters that move a team's existing agent, prompts, or
+evaluation cases onto the platform's contracts in the gravity-well order, so
+that the fourth team's migration is a command, not an engagement.
+
+**Local factory** — A product organization's own factory (harness wrappers,
+review agent, evaluation sets) built because it knows its domain and cannot
+wait. The shared platform learns from it, productises what generalises,
+contributes it back, and leaves what is local; it neither suppresses nor
+absorbs it.
+
+**Reusable artifact** — A skill, tool, Agent Definition, repository profile
+template, migration script, or document that a bespoke solution becomes when
+it is productised: versioned in the Agent Factory with an owner and an
+evaluation, rather than a branch in one team's repository.
+
 ## Outcome measures
 
 **Token economics (tokenomics)** — The discipline of controlling model
@@ -1889,6 +2182,12 @@ optimization lives; the last is chosen by routing workloads to models.
 **Cost per outcome** — Spend divided by accepted, validated outcomes (a merged
 change, a resolved incident, a completed review), the only cost figure a
 factory optimizes for. Cost per token and token volume are diagnostic inputs.
+
+**Trusted throughput** — Accepted, verified outcomes per unit of time and
+cost: the factory's throughput measure, and the quantity the six architectural
+areas and their surrounding adoption concern are optimised for. Raw output
+that raises volume while lowering the accepted, verified share lowers trusted
+throughput.
 
 **Pareto-optimal model selection** — Choosing, for each managed agent, the
 model configuration that no other configuration beats on both cost per

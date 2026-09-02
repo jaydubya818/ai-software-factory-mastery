@@ -46,6 +46,8 @@ The factory's first persona is the developer, because developers arrive with the
 
 Every door opens onto the same room. Whatever the surface, CLI, SDK, IDE, web UI, API, or agent-to-agent call, the result is the same set of durable concepts: an identity, an intent, and the risk and criteria that make that intent governable. *Multiple experiences should converge on one execution contract.* The factory is opinionated about that contract and flexible about the interface. This is the same principle that lets a bank accept a deposit at a branch, an ATM, or a phone app and record all three as the identical ledger entry; the teller and the app differ, the entry does not.
 
+Taken together, those doors and the surfaces behind them are the **Builder Experience (BX)**: designed customer-backward, from what each **builder persona** must accomplish into the platform capability that accomplishes it, and measured as a **builder journey** from first intent to repeat use and end-to-end ownership of a workflow. The builder never needs to understand which model, harness, skill, or MCP server did the work; [Chapter 6](../02-design/06-intent-and-specification-engineering.md) develops the builder layer in full.
+
 For the non-developer builders, the factory compensates for what they lack rather than rejecting them for it. It clarifies intent, generates candidate acceptance criteria, surfaces the risk the builder could not see, applies the repository and architecture context automatically, and enforces the guardrails without asking the builder to know them. That is the **paved road**: the path where the safe way is also the fast way. *The safest paved road also needs to be the fastest paved road*, because if the governed entry takes longer than pasting a prompt into a chat window, builders will paste the prompt.
 
 ### Five things to extract
@@ -220,6 +222,7 @@ Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl
 - Six deterministic checks gate the freeze: requirements identifiable, outcomes measurable, no contradictions, no unresolved clarifications, scope explicit, acceptance testable.
 - Builders are developers, product managers, quality engineers, designers, and agents; every surface converges on one execution contract, and *the safest paved road also needs to be the fastest paved road.*
 - Risk is computed from scope and policy. Humans may raise it. Confidence never lowers it.
+- The Builder Experience is designed customer-backward from what the builder must accomplish; the builder never needs to know the model, harness, skill, or MCP implementation.
 
 ## Go deeper
 
@@ -227,4 +230,4 @@ Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl
 - [Chapter 6, Intent and specification engineering](../02-design/06-intent-and-specification-engineering.md) for the full specification discipline, non-functional requirements, and the prototype-as-spec pattern; [Chapter 5, Authoritative records](../02-design/05-authoritative-records.md) for the Mission record and its place in the hierarchy; [Chapter 4, The human–agent operating model](../02-design/04-the-human-agent-operating-model.md) for the builder personas and decision points; [Chapter 7, Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) for how risk set here drives review depth later.
 - [Chapter 27, The factory as a platform](../05-operate/27-the-factory-as-a-platform.md) and [Chapter 31, Enterprise adoption](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) for the paved road, builder surfaces, and prototype-to-production continuity.
 - [Glossary](../appendix/glossary.md): Builder Intent, Mission, Mission Spec, Project Constitution, Acceptance Criteria, Risk Classification.
-- Sources: Jay West, factory architecture notes (builder intent, the five things to extract, the checkout example, builders beyond developers, the Constitution and immutable Mission Spec); Jay West, Mission Control walkthrough (Mission, Mission Spec, spec-quality checks).
+- Sources: Jay West, factory architecture notes (builder intent, the five things to extract, the checkout example, builders beyond developers, the Builder Experience and builder journey, the Constitution and immutable Mission Spec); Jay West, Mission Control walkthrough (Mission, Mission Spec, spec-quality checks).

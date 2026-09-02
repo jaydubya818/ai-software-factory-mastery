@@ -4,7 +4,7 @@ part: improve
 chapter: 33
 summary: How the factory turns failures, corrections, and successful strategies into evaluated, human-promoted improvements to its own prompts, skills, tools, tests, and policies — learning autonomously without authorizing itself.
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [learning-loop, signal-diagnosis, recursive-loop, correction-to-skill, promotion-gate, autonomy-by-action-class]
+infographics: [learning-loop, signal-diagnosis, recursive-loop, seven-step-loop, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder]
 ---
 
 # 33. Governed learning and compounding engineering
@@ -198,6 +198,51 @@ step that turns a complaint into engineering data.
 The table is a starting hypothesis in each row, not a verdict, which is why
 the causal-diagnosis step below tests it before anything is proposed.
 
+### Implicit and explicit feedback
+
+Signals arrive in two registers, and a learning system that listens to only
+one of them hears a distorted version of the factory. **Explicit feedback**
+is what a person deliberately says about an output: a review comment, a
+thumbs-down with a reason, a correction typed into a form, a builder marking
+a finding wrong. It is precise, rare, and biased toward the vocal. **Implicit
+feedback** is what a person does, recorded without being asked: the finding
+they acted on and the one they scrolled past, the suggestion they merged
+unchanged and the one they rewrote, the change that shipped clean and the one
+that came back as an incident three weeks later. It is abundant, noisy, and
+far more representative, because it comes from everyone rather than from the
+people who bother to comment.
+
+The implicit register is where **builder behavior signals** live, and four
+of them carry most of the information:
+
+| Behavior signal | What it says | What it does not say |
+| --- | --- | --- |
+| **Comment acceptance** | The builder acted on a finding (fixed, replied, resolved with a change) | That the finding was correct; only that it was worth attention |
+| **Reviewer override** | A human reversed an automated decision: unblocked a blocked change, or blocked a passed one | Which side was right, until the outcome is known |
+| **Dismissed finding** | A finding closed with no change and no reply | Whether it was wrong, irrelevant here, or right but ignored under deadline |
+| **Later incident** | A change that passed every gate caused a production defect or rollback | Which component let it through, until diagnosis attributes it |
+
+Each one becomes useful only once it is joined to the record it concerns
+(the finding, the reviewer, the change, the configuration that produced it)
+and then to the outcome that followed. A dismissed finding followed by a
+later incident on the same lines is a strong signal that the finding was
+right and the dismissal was the error; a dismissed finding with no incident
+in the observation window is a weak signal that the finding was noise. The
+join is what turns behavior into evidence, and the join needs the lineage of
+[Chapter 28](../05-operate/28-observability-telemetry-and-forensics.md).
+
+Once signals are attributed, they are sorted into a **failure taxonomy**: a
+versioned classification of the ways the factory gets things wrong, by cause
+rather than by symptom. Wrong context retrieved; right context ignored; tool
+misuse; specification gap; unsafe action attempted and blocked; unsafe action
+attempted and not blocked; evaluator miss; routing mismatch; budget
+exhaustion; human-process failure. The taxonomy is what lets a thousand
+individual signals become a dozen clusters with counts, trends, and owners,
+and it is the input the source-diagnosis table above is applied to. A
+taxonomy that is not versioned drifts into a folder of ad-hoc labels; a
+taxonomy that is not shared across teams hides the pattern that recurs in
+all of them.
+
 ### Discovery versus promotion: the recursive loop
 
 The learning loop above can be drawn with one more distinction made explicit,
@@ -237,6 +282,53 @@ recommendations (a better skill, route, prompt, verifier, workflow, or policy);
 and an accepted recommendation returns to the factory through a new Mission
 and a governed Plan, the same door every other change uses. The line that
 summarises both drawings: *autonomous discovery, not autonomous authority.*
+
+### The seven-step loop, and the step it must never skip
+
+Stripped to its verbs, the loop the whole chapter describes is seven steps
+long, and the shape to keep is the one it is *not*: it is never Execute →
+automatically rewrite production.
+
+<!-- infographic: seven-step-loop -->
+> **Infographic — Execute → Observe → Evaluate → Learn → Propose → Verify → Promote.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    EX["Execute"] --> OB["Observe<br/>explicit + implicit signals"]
+    OB --> EV["Evaluate<br/>attribute, classify by taxonomy"]
+    EV --> LE["Learn<br/>cluster, diagnose cause"]
+    LE --> PR["Propose<br/>candidate improvement"]
+    PR --> VE["Verify<br/>baseline, regression, shadow, A/B, canary"]
+    VE --> PM["Promote<br/>human decision, new version, rollback ready"]
+    PM --> EX
+    EX -. "never" .-> RW["Rewrite production directly"]
+```
+
+Two words in the loop name the difference between a good idea and a change
+the factory may run on. A **candidate improvement** is the output of Propose:
+a versioned proposal with a hypothesis, evidence, scope, and rollback, which
+has earned nothing yet. A **controlled improvement** is a candidate that has
+passed Verify under the experiment discipline of
+[Chapter 23](../04-prove/23-evaluation-engineering.md) and been promoted by a
+person with the authority the change's blast radius requires. The whole
+loop, run against the factory's own components, is **recursive system
+improvement**: the same machinery that improves customer software improves
+the machinery, with the same records and the same gates.
+
+Verify is the step with the most instruments, and they are ordered by how
+much reality they expose the candidate to. **Regression testing** against
+the frozen baseline comes first and costs nothing real. **Shadow evaluation**
+runs the candidate beside the incumbent on live inputs with no authority to
+affect anything; disagreements are recorded and reviewed. **A/B testing**
+splits real work between incumbent and candidate under a predeclared
+hypothesis, sample size, and stop rule, so that the comparison is a
+measurement rather than an impression. **Canary rollout** gives the candidate
+a bounded share of real authority with a risk stop and an observation window,
+and is the last vote before the candidate becomes the default. No instrument
+substitutes for the one before it: a canary without a regression run exposes
+users to a candidate nobody checked offline, and a regression run without a
+canary promotes a candidate production has never seen.
 
 ### Compounding engineering: harvesting corrections
 
@@ -587,6 +679,76 @@ factory whose edit-size signal is polluted by reformatting, or whose acceptance
 signal is polluted by deadline approvals, should fix the signal before it
 fine-tunes anything on it.
 
+### The adaptation ladder
+
+The narrowest-durable-mechanism table above chose a remedy per problem. Seen
+from the other side, the remedies form a ladder, ordered by how much of the
+system each one changes, how reversible it is, how much evidence it needs,
+and how hard it is to attribute a later failure to it. The **adaptation
+ladder** runs Rules → Retrieval/Context → Prompt → Skill → Routing →
+Fine-tuning → Preference optimization and training, and the rule for
+climbing it is the whole point: *never jump straight to training*.
+
+<!-- infographic: adaptation-ladder -->
+> **Infographic — The adaptation ladder.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Rung | What changes | Reversibility | Evidence needed to climb past it |
+| --- | --- | --- | --- |
+| 1. Rules | Deterministic code, linters, schemas, policy; a decision is removed from the model | Instant | The behavior cannot be expressed as a rule |
+| 2. Retrieval / context | What the model is shown: sources, ranking, freshness, the context policy | Instant | The right context was present and the behavior still failed |
+| 3. Prompt | Instructions in the Agent Definition | Instant, by version | The instruction is followed in evaluation and still fails in the slice |
+| 4. Skill | A versioned reusable method for a task class | By version | The behavior recurs across tasks and cannot be taught per prompt |
+| 5. Routing | Which model, or which deterministic path, serves the task class | By configuration | No eligible route reaches the quality floor at acceptable cost |
+| 6. Fine-tuning | The model's weights, for a stable, well-specified behavior | By model version; expensive to re-evaluate | Stable behavior, a governed dataset, and a benchmark that shows rungs 1–5 exhausted |
+| 7. Preference optimization / training | The model's preferences from human preference data, via a reward model | Slowest and least attributable | Trustworthy, attributed preference signals at scale, and a reason the behavior cannot live in rungs 1–6 |
+
+The bottom of the ladder holds the mechanisms that do not touch the model at
+all, and most recurring problems are solved there. Rung 1 makes a decision
+deterministic; rung 2 changes what the model sees; rung 3 changes what it is
+told; rung 4 packages a method it can be handed; rung 5 changes which model
+answers. Each of these is a configuration or artifact change, promotable and
+reversible on the fast or medium release clock, and each failure they cause
+can be attributed by diffing two runs' lineage.
+
+The top two rungs change the model itself, and they are where the vocabulary
+of machine learning enters the factory. **Fine-tuning** updates a model's
+**weights** on a governed dataset so that a stable behavior no longer has to
+be re-taught in every context window; **adapters** are the cheaper form, a
+small set of additional weights trained on top of a frozen base so that the
+tuned behavior can be attached, versioned, and detached without retraining the
+whole model, which is also what makes the base model replaceable underneath
+it ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)).
+**Domain-level tuning** applies this to a body of knowledge or convention that
+is stable across a product line, a code style or a domain vocabulary, and is
+the most defensible use, because the thing being learned changes slowly.
+**Behavioral adaptation** applies it to how the model acts (how it plans,
+when it asks, how it reports uncertainty) and is harder to specify, harder to
+evaluate, and easier to get subtly wrong. **Preference optimization** goes one
+step further: rather than examples of correct output, it learns from **human
+preference data** (pairs of outputs with a judgment about which is better),
+either directly or through a **reward model** trained to predict that
+judgment; **RLHF**, reinforcement learning from human feedback, is the
+best-known family of such methods. The factory's acceptance, edit, override,
+and dismissal signals are exactly the raw material these methods consume,
+which is why the previous section insisted that the signals be trustworthy
+first.
+
+Three things follow. First, the ladder is climbed one rung at a time, with the
+evidence in the last column: a problem that reaches rung 6 should carry a
+record of why rungs 1 through 5 were tried and were not enough, because a
+behavior that could have been a rule and became a fine-tune is now
+unattributable, slow to reverse, and bound to one model version. Second, the
+upper rungs change the release clock: a tuned model or an adapter is an
+artifact with its own evaluation benchmark, certification, and rollback, and a
+preference-optimized model is a training run whose inputs (the dataset version,
+the reward model version, the experiment manifest) are governed records the
+learning system hands to specialists, never raw traces
+([Chapter 2](../01-understand/02-the-factory-in-one-view.md)). Third, the
+ladder is a diagnosis tool in reverse: when a team proposes training, ask
+which rung the problem actually lives on. Most of the time the answer is
+lower, cheaper, and reversible by lunchtime.
+
 ### What not to build first
 
 The loop described here is the last thing a factory should build, not the
@@ -689,6 +851,11 @@ threshold.
 | One autonomy level for the whole system | Routing tweaks queue behind permission changes, or permission changes ride a tuning fast-path | Define autonomy per action class by reversibility and blast radius |
 | Optimizing against noisy signals | Fine-tuning or reward modeling on unattributed acceptance and edit data; behaviour drifts confidently | Fix attribution and signal quality upstream; learn the wrong thing slower, not faster |
 | Autonomous learning before a baseline | Improvements are anecdotal; no golden set; regressions undetectable | Build the golden evaluation set and lineage first; propose to humans before automating anything |
+| Listening only to explicit feedback | Signals come from a handful of vocal reviewers; quiet dismissals and later incidents are never joined to the findings they concern | Capture implicit behavior signals (comment acceptance, override, dismissal, later incident) and join them to records and outcomes |
+| Unversioned failure taxonomy | Clusters are labeled ad hoc per team; the same cause has five names and no trend | Version the taxonomy, classify by cause, share it across teams |
+| Candidate treated as controlled | A proposal is promoted on its own evidence without regression, shadow, A/B, or canary | Every candidate passes Verify in order; no instrument substitutes for the one before it |
+| Jumping straight to training | A behavior that could have been a rule or a retrieval fix is fine-tuned; the failure is now unattributable and bound to one model version | Climb the adaptation ladder one rung at a time and record why each lower rung was insufficient |
+| Preference data without provenance | RLHF or a reward model trained on acceptance signals polluted by deadlines and reformatting | Hand specialists governed dataset versions and experiment manifests, never raw traces; fix signal quality first |
 
 ## In Mission Control
 
@@ -780,6 +947,20 @@ a self-operating learning factory.
   anything is proposed.
 - Autonomy is earned from validated outcomes and lost automatically on critical
   failure. The recursive object changes; accountability does not.
+- Feedback has two registers: explicit (what people say) and implicit (what
+  they do). Builder behavior signals (comment acceptance, reviewer override,
+  dismissed finding, later incident) become evidence only when joined to the
+  record they concern and the outcome that followed, then sorted into a
+  versioned failure taxonomy by cause.
+- The loop is Execute → Observe → Evaluate → Learn → Propose → Verify →
+  Promote, never Execute → rewrite production. A candidate improvement earns
+  nothing until Verify (regression, shadow evaluation, A/B, canary rollout, in
+  that order) makes it a controlled improvement; run against the factory
+  itself, that is recursive system improvement.
+- The adaptation ladder runs Rules → Retrieval/Context → Prompt → Skill →
+  Routing → Fine-tuning → Preference optimization and training. Climb one rung
+  at a time with the evidence that the rung below was insufficient. Never jump
+  straight to training.
 
 ## Go deeper
 
@@ -813,7 +994,15 @@ a self-operating learning factory.
   production AI agent stack" (Continual Learning definition); Jay West, factory
   architecture notes and Mission Control walkthrough, on the feedback signal
   list and source diagnosis, discovery versus promotion, asymmetric autonomy by
-  action class, the reward-modeling boundary, and what not to build first.
+  action class, the reward-modeling boundary, what not to build first,
+  implicit versus explicit feedback and builder behavior signals, the failure
+  taxonomy, the seven-step loop with candidate versus controlled improvement,
+  and the adaptation ladder.
+- [Chapter 17 — Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md)
+  for the routing rung and for adapters as the edge where a replaceable model
+  is tuned.
+- [Chapter 25 — CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md)
+  for canary mechanics and rollback.
 - Public source: Uber Engineering, *Running a Software Factory Efficiently at
   Uber Scale* (2026), for continuous skill improvement from execution traces
   and the move from batch anti-pattern detection to real-time guidance.

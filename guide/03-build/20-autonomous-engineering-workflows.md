@@ -4,7 +4,7 @@ part: build
 chapter: 20
 summary: How to admit a repository the factory is allowed to change, define the first workflow (governed issue-to-pull-request delivery) and the eight workflow products that follow it, and give each workflow its own trigger, proof shape, authority, and autonomy.
 absorbs: [autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md, autonomous-workflows/02-autonomous-engineering-workflow-catalog.md, autonomous-workflows/03-change-workflows-features-defects-tests-and-modernization.md, autonomous-workflows/04-operational-workflows-security-incidents-production-and-knowledge.md]
-infographics: [repository-onboarding, issue-to-pr-wedge, workflow-catalog]
+infographics: [repository-onboarding, repository-profile, issue-to-pr-wedge, workflow-catalog]
 ---
 
 # 20. Autonomous engineering workflows
@@ -58,6 +58,50 @@ flowchart LR
 The **codebase intelligence pipeline** builds the indexes an agent needs at planning time: lexical and symbol search, dependency and ownership graphs, build targets, test-to-code mapping, API and schema inventories, historical change hotspots, incidents, architecture decisions, and documentation, all with source and commit lineage preserved. Uncertainty reduces scope rather than blocking everything: missing owners, nonreproducible builds, unknown deployment paths, unclassified data, or absent tests block high-risk autonomous change, while the repository may still be eligible for read-only analysis or documentation proposals. Readiness is granular by workflow and risk class, and it expires. Before each WorkOrder, preflight verifies that the required readiness evidence is still fresh for the affected scope.
 
 There are trade-offs. Deep onboarding costs time and goes stale; incremental discovery tied to changed areas is cheaper but must not skip global controls. Human-authored architecture is more intentional; generated maps are more current; keep both and surface conflicts. Embedding every repository can improve semantic search and create privacy, cost, and freshness problems, so use hybrid retrieval only where evaluations show it improves the target tasks (Chapter 16).
+
+### Repository intelligence at estate scale
+
+Onboarding one repository is an assurance case. Onboarding an estate of a hundred thousand repositories is a different problem, and the two wrong answers to it are both tempting. The first is one universal agent that treats every repository the same, which works on the well-behaved majority and fails silently on the polyglot monorepo, the twenty-year-old service with no tests, and the repository whose build only works on one engineer's machine. The second is a bespoke agent, or worse a fine-tuned model, per repository, which cannot be built, evaluated, or maintained at that count. The answer between them is *one shared platform, many repository-specific profiles*: the same agents, harness, router, and evaluation machinery everywhere, configured for each codebase by a record the platform reads before it acts.
+
+That record is the **repository profile**. It is the machine-readable core of the readiness record above, the part that preflight, the context compiler, the router, and the reviewers consult on every WorkOrder rather than the part a human reads once at admission. Its fields:
+
+| Field | What it holds | Who consumes it |
+|---|---|---|
+| Languages | Primary and secondary languages with versions, and the toolchain each requires | Environment selection, capability matching |
+| Polyglot handling | For **polyglot repositories**: which directories belong to which language and build, and how cross-language contracts (generated clients, schemas, FFI) are kept in step | Change classification, dependency analysis |
+| Build and test systems | Authoritative build and test commands per target, expected durations, fixtures, known flaky suites | Verification planning, budgets |
+| Ownership metadata | Code owners by path, accountable owner, escalation contacts, review requirements | Routing of human decisions, reviewer assignment |
+| Architectural boundaries | Components, allowed dependency directions, public contracts, and the paths that are generated, vendored, or frozen | Impact analysis, scope enforcement |
+| Local standards | Repository-specific guidance: instruction-file precedence, conventions, prohibited patterns, and the local skills that encode them | Context compilation, policy skills |
+| Risk tier | The default risk classification for changes in this repository, and the paths that raise it | Review depth, autonomy ceiling |
+| Admitted workflows | Which workflow classes may run here, at which autonomy level, with which evidence, and when that admission expires | Preflight, work selection |
+
+A profile is versioned, owned, and mostly derived: languages, build topology, boundaries, and ownership are generated from the repository and its surrounding systems, then confirmed by an owner, while risk tier and admitted workflows are authoritative declarations. It expires like the rest of the readiness record, and drift detection refreshes it when the repository changes.
+
+<!-- infographic: repository-profile -->
+> **Infographic — One platform, many profiles.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Platform["One shared platform"]
+        Agents["Agents and skills"]
+        Harness["Harness and router"]
+        Eval["Evaluation and evidence"]
+        Idx["Incremental code indexing"]
+    end
+    Platform --> P1["Profile: payments-api<br/>Go · high risk · L2 autonomy"]
+    Platform --> P2["Profile: web-monorepo<br/>TS + Python · polyglot · L3 for tests"]
+    Platform --> P3["Profile: legacy-billing<br/>Java · no repro build · read-only"]
+    P1 --> W1["WorkOrders on payments-api"]
+    P2 --> W2["WorkOrders on web-monorepo"]
+    P3 --> W3["Analysis only"]
+    W1 & W2 -->|"outcomes, corrections"| L["Repository-specific learning"]
+    L -->|"local skills · policy · context · evals"| P1 & P2
+```
+
+Around the profile sit four mechanisms that keep repository intelligence current and useful at scale. **Incremental code indexing** re-indexes only what a commit changed, keyed by commit lineage, so that a hundred thousand repositories can stay fresh without a hundred thousand full rebuilds a day; a full rebuild is the exception, triggered by a toolchain or indexer version change. **Changed symbols** are computed per pull request from that index: the functions, types, and modules a diff touches, which is the seed for the change-level context of [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) and the input to everything below. **Dependency analysis and dependency impact** follow the changed symbols outward through the dependency graph to the callers, contracts, schemas, and other repositories that could be affected, and the size and sensitivity of that set is the strongest single input to change classification and risk tier. And **repository-specific learning** closes the loop: corrections, review comments, dismissed findings, and incidents from this repository become this repository's local skills, policy exceptions, context sources, and evaluation cases, promoted through the same governed path as anything else ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)) but scoped to the profile. Repository-specific policy, skills, context, and evaluation are therefore four fields the profile *points to*, not four things it contains, and each is versioned on its own.
+
+The division is exact. Shared and platform-owned: the agents, the harness, the router, the evaluation framework, the indexer, the profile schema. Repository-specific and profile-owned: which languages, which commands, which owners, which boundaries, which standards, which risk tier, which workflows, and what this repository has taught the factory so far. The analogy is a hospital: one set of clinical protocols and one pharmacy, and a chart at the foot of every bed. Nobody writes a new protocol per patient, and nobody treats a patient without reading the chart.
 
 ### The first workflow: governed issue-to-pull-request delivery
 
@@ -271,6 +315,10 @@ Repeatability is what makes measurement possible: you cannot compare run 400 to 
 | Building everything first | Months in, no workflow runs end to end; ten demos, no production evidence | Build the eight-item minimum behind protected seams; prove one complete path |
 | Generalizing before the abstraction is earned | Swarms, learned routing, universal memory, or hundreds of skills built on no production data | Treat them as hypotheses; build each only when a proven workflow shows the need |
 | Parallel delivery universe | Generated changes bypass the organization's SCM, CI, and deployment systems | Route every change through the existing supply chain; make it agent-aware rather than replacing it |
+| One universal agent | The same configuration runs on every repository; it fails silently on the polyglot monorepo and the untested legacy service | A repository profile per codebase read on every WorkOrder; admitted workflows and risk tier set per profile |
+| An agent or model per repository | Bespoke agents or fine-tuned models multiply with the estate and cannot be evaluated or maintained | One shared platform; repository-specific learning lives in local skills, policy, context, and evals the profile points to |
+| Full re-index on every commit | Index freshness lags by days across a large estate, or indexing cost dominates | Incremental code indexing keyed by commit lineage; full rebuilds only on indexer or toolchain change |
+| Risk classified by file count | A one-line change to a shared contract is treated as small | Dependency impact from changed symbols drives change classification and risk tier |
 
 ## In Mission Control
 
@@ -282,6 +330,7 @@ Repository registration, configuration, workspace manifests, multi-repository co
 
 - A workflow is the unit at which a factory is operated, measured, and trusted: a specific trigger to a specific accepted outcome with its own evidence, human decisions, and earned autonomy.
 - Registration is not readiness. Onboarding produces an expiring readiness record; derived indexes carry commit, method, confidence, and expiry; uncertainty narrows authority rather than blocking analysis.
+- At estate scale: one shared platform, many repository-specific profiles, not one universal agent and not a hundred thousand individually trained models. The profile holds languages, polyglot handling, build and test systems, ownership, architectural boundaries, local standards, risk tier, and admitted workflows; incremental indexing, changed symbols, and dependency impact keep it useful; repository-specific learning, policy, skills, context, and evals hang off it.
 - The first workflow is governed issue-to-pull-request delivery, because it is understandable, measurable, universal, demonstrable, expandable, and suited to progressive autonomy. Do not claim it builds any feature in any repository.
 - Expand in order: feature delivery, defect remediation, test generation and maintenance, dependency and security remediation, incident triage and RCA, production validation, technical-debt reduction, documentation and knowledge maintenance.
 - Each workflow has a proof shape. Reproduction precedes repair; tests need fault sensitivity, not line count; refactors need a named measure; migrations need invariants and restore evidence.
@@ -303,5 +352,5 @@ Repository registration, configuration, workspace manifests, multi-repository co
 - [25. CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md) for production validation; [29. Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md) for the incident framework.
 - [32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) and [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for the meta loop.
 - Appendix: [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) and [implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), assessed at `d902fae`; [Glossary](../appendix/glossary.md).
-- Sources: Jay West, "AI Software Factory Mission" (the wedge, the eight workflows, the lifecycle), the AI Software Factory study guide, chapter 9 (the thirteen-step version and "what not to claim"), and the factory architecture notes (what to build first, what not to build first, the CI/CD analogy); Dru Knox (Tessl), AI Engineer SF conversation and talk on getting to a software factory, harness engineering, and why the backlog disappears; IndyDevDan, "Software factories give leverage on your prompt" (AI developer workflows, agents propose and code disposes).
+- Sources: Jay West, "AI Software Factory Mission" (the wedge, the eight workflows, the lifecycle), the AI Software Factory study guide, chapter 9 (the thirteen-step version and "what not to claim"), and the factory architecture notes (what to build first, what not to build first, the CI/CD analogy, repository intelligence at estate scale: the repository profile, incremental indexing, changed symbols, dependency impact, and repository-specific learning); Dru Knox (Tessl), AI Engineer SF conversation and talk on getting to a software factory, harness engineering, and why the backlog disappears; IndyDevDan, "Software factories give leverage on your prompt" (AI developer workflows, agents propose and code disposes).
 - Primary references: Backstage Software Catalog; Development Containers specification; DORA capability catalog and user-centric focus; NIST Cybersecurity Framework (all accessed 2026-08-30).
