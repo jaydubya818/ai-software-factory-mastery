@@ -57,7 +57,7 @@ Requiring reproduction can delay urgent containment. Separate containment from p
 
 The existing golden path supports a bounded feature, independent validation, evidence mapping, failure correction, and human merge. Quality contracts, feedback reproduction, multi-repository coordination, and release records supply reusable foundations.
 
-The curriculum does not yet demonstrate accepted runs for the other change workflows or complete deployment and outcome closure for the feature path. This chapter provides the contracts that future labs and implementations must prove.
+The guide does not yet demonstrate accepted runs for the other change workflows or complete deployment and outcome closure for the feature path. This chapter provides the contracts that future labs and implementations must prove.
 
 ## 6. Future Vision
 

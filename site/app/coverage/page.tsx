@@ -51,7 +51,7 @@ export default function CoveragePage() {
     ["Labs", documents.filter((document) => document.hasLab).length, "/topics?section=Labs"],
     ["Whiteboards", documents.filter((document) => document.hasWhiteboardExercise).length, "/topics?q=whiteboard"],
     ["Evidence references", documents.filter((document) => document.hasImplementationEvidence).length, "/topics?q=evidence"],
-    ["Failure scenarios", documents.filter((document) => /failure|incident|recovery/i.test(document.text)).length, "/topics?q=failure"],
+    ["Failure scenarios", documents.filter((document) => /failure|incident|recovery/i.test(document.content)).length, "/topics?q=failure"],
   ] as const;
 
   return (

@@ -9,12 +9,12 @@ last_verified: 2026-08-30
 
 Use this map when you have a topic in mind but do not know where it belongs in
 the guide. “Start here” gives the shortest useful orientation. “Deep
-dive” supplies the production architecture. “Practice” points to a lab or
+dive” supplies the production architecture. “Apply” points to a lab or
 exercise where one exists.
 
 ## Factory and operating model
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | AI Software Factory | [Factory overview](./01-ai-software-factory-and-mission-control.md) | [Vision](../01-vision/01-what-is-an-ai-software-factory.md) | Chapter whiteboard |
 | Agent Factory | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Factory configuration](../04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md) | Capability-map lab |
@@ -30,7 +30,7 @@ exercise where one exists.
 
 ## Agent Factory and capability supply chain
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | Capability lifecycle and registries | [Capability supply chain](../agent-factory/01-capability-supply-chain-and-registries.md) | [Certification and retirement](../agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md) | [Certification lab](../10-labs/03-capability-certification-and-revocation-lab.md) |
 | Agent, skill, tool, and prompt versioning | [Packaging and versioning](../agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md) | [Execution manifests](../04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md) | Dependency-lock exercise |
@@ -40,7 +40,7 @@ exercise where one exists.
 
 ## Agents, harnesses, and interoperability
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | AI coding agents | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Agent architecture](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md) | Agent-composition exercise |
 | Inner and outer harnesses | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Harnesses and adapters](../05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md) | Two-adapter comparison |
@@ -54,7 +54,7 @@ exercise where one exists.
 
 ## Data, context, evaluation, and quality
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | Data Understanding | [Glossary](./02-canonical-glossary.md) | [Data and knowledge engineering](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | Source-quality lab |
 | Knowledge Engineering and RAG | [Agent context](../06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md) | [Retrieval lifecycle](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | Hybrid-retrieval lab |
@@ -69,7 +69,7 @@ exercise where one exists.
 
 ## Repository onboarding and autonomous workflows
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | Repository onboarding and readiness | [Repository onboarding](../autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md) | [Data and context](../06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md) | [Onboarding lab](../10-labs/04-repository-onboarding-and-readiness-lab.md) |
 | Codebase indexing and intelligence | [Repository onboarding](../autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md) | [Multi-repository delivery](../04-domain-model/04-multi-repository-development-and-coordinated-delivery.md) | Drift and refresh exercise |
@@ -79,7 +79,7 @@ exercise where one exists.
 
 ## Runtime, infrastructure, and delivery
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | Control plane | [Quick Read](../05-runtime-architecture/01-control-plane-and-execution-plane.md#quick-read) | [Runtime state machines](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md) | Authority-boundary whiteboard |
 | Development environments | [Stack boundaries](./05-software-factory-stack-boundaries.md) | [Environment and compute](../05-runtime-architecture/07-development-environments-compute-and-composable-infrastructure.md) | Clean-environment lab |
@@ -98,7 +98,7 @@ exercise where one exists.
 
 ## Platform, operator experience, and security
 
-| Topic | Start here | Deep dive | Practice |
+| Topic | Start here | Deep dive | Apply |
 | --- | --- | --- | --- |
 | Developer portal, service catalog, and golden paths | [Platform product](../factory-platform-engineering/01-developer-portal-catalog-and-golden-paths.md) | [Enterprise adoption](../03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md) | Golden-path usability exercise |
 | Scheduling, quotas, capacity, fairness, and cost | [Scheduling and cost](../factory-platform-engineering/02-scheduling-capacity-cost-and-fairness.md) | [Runtime orchestration](../05-runtime-architecture/02-runtime-orchestration-and-state-machines.md) | Queue simulation |

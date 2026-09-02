@@ -73,7 +73,7 @@ grouped.
 - Reworked topic discovery around section, persona, lifecycle, maturity, and
   risk filters.
 - Made document maturity visible in discovery views.
-- Clarified that review-ready curriculum does not imply an operationally proven
+- Clarified that review-ready guide does not imply an operationally proven
   implementation.
 
 ### Known evidence boundaries

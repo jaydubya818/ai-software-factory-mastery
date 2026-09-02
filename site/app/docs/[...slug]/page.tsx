@@ -48,7 +48,7 @@ export default async function DocumentPage({ params }: PageProps) {
         <article className="document-article">
           <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href="/guide">Guide</Link><span>/</span><Link href={`/topics?section=${encodeURIComponent(document.section)}`}>{document.section}</Link></nav>
           <header className="document-header">
-            <div className="document-labels"><span>{document.section}</span><span>{document.contentType === "interview" ? "reference" : document.contentType}</span>{document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}</div>
+            <div className="document-labels"><span>{document.section}</span><span>{document.contentType}</span>{document.labType && <span>{document.labType.replaceAll("-", " ")} lab</span>}</div>
             <h1>{document.title}</h1>
             <p>{document.description}</p>
             <div className="document-status"><StatusBadge status={document.status} prefix /><span>Risk: {document.risk.replaceAll("-", " ")}</span>{document.lastVerified && <span>Reviewed {document.lastVerified}</span>}<Link href="/coverage#maturity-title">How to interpret evidence →</Link></div>

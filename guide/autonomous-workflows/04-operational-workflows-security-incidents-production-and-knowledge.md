@@ -53,7 +53,7 @@ Fast automated containment can reduce impact and worsen an incorrect diagnosis. 
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum includes release records, production feedback, reproduction, alerts, evidence, corrective WorkOrders, review, governance, and continual learning. These are reusable primitives for operational workflows.
+The current guide includes release records, production feedback, reproduction, alerts, evidence, corrective WorkOrders, review, governance, and continual learning. These are reusable primitives for operational workflows.
 
 It does not yet demonstrate complete incident, security, production-validation, or knowledge-maintenance workflows with accepted evidence and recovery drills. Current claims should remain architectural until those paths are exercised.
 

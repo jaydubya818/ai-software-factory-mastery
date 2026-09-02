@@ -55,7 +55,7 @@ Large datasets increase coverage and maintenance. Small curated sets are explain
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum covers representative cohorts, baselines and candidates, trace replay, criterion-level receipts, canaries, model routing, evaluation datasets, and promotion. It does not yet specify contamination controls, grader calibration, agreement, repeated-trial analysis, statistical decision rules, shadow experiments, or a full adversarial-evaluation program.
+The current guide covers representative cohorts, baselines and candidates, trace replay, criterion-level receipts, canaries, model routing, evaluation datasets, and promotion. It does not yet specify contamination controls, grader calibration, agreement, repeated-trial analysis, statistical decision rules, shadow experiments, or a full adversarial-evaluation program.
 
 ## 6. Future Vision
 

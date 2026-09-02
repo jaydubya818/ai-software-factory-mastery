@@ -66,7 +66,7 @@ One database simplifies transactions and may become a scaling and retention bott
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum defines workflows, state machines, events, retries, idempotency, reconciliation, artifacts, evidence, context packages, and provider integration. It does not yet present one canonical event envelope, workflow migration protocol, compensation model, schema registry, or storage responsibility map spanning the complete factory.
+The current guide defines workflows, state machines, events, retries, idempotency, reconciliation, artifacts, evidence, context packages, and provider integration. It does not yet present one canonical event envelope, workflow migration protocol, compensation model, schema registry, or storage responsibility map spanning the complete factory.
 
 ## 6. Future Vision
 

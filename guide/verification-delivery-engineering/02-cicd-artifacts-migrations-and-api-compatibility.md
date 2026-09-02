@@ -67,7 +67,7 @@ Hermetic builds improve reproducibility and may be expensive for legacy stacks. 
 
 The current guide distinguishes execution, validation, publication, merge, deployment, and acceptance; it also covers provenance, attestations, SBOMs, exact commits, and release gates. Deployment execution may be delegated while governance remains in the factory.
 
-The curriculum does not yet teach artifact-registry operation, build-once promotion, database migration phases, consumer compatibility, pipeline-change protection, or complete deployment-provider reconciliation in sufficient depth. The present golden path stops before these claims are proven.
+The guide does not yet teach artifact-registry operation, build-once promotion, database migration phases, consumer compatibility, pipeline-change protection, or complete deployment-provider reconciliation in sufficient depth. The present golden path stops before these claims are proven.
 
 ## 6. Future Vision
 

@@ -65,7 +65,7 @@ Small canaries contain harm but may not represent rare workloads. Long observati
 
 The current architecture defines release records, gates, approvals, deployment linkage, production feedback, alerts, observation windows, rollback concepts, and validated customer value. The release chapter explicitly states that the complete mission-to-production path remains partial.
 
-This chapter closes the curriculum model while preserving that evidence boundary. Operational proof requires live provider reconciliation, progressive rollout, rollback exercise, and customer-outcome confirmation at an exact version.
+This chapter closes the guide model while preserving that evidence boundary. Operational proof requires live provider reconciliation, progressive rollout, rollback exercise, and customer-outcome confirmation at an exact version.
 
 ## 6. Future Vision
 

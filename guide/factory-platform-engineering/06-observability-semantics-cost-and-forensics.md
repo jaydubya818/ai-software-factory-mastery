@@ -100,7 +100,7 @@ Full-fidelity tracing improves reconstruction and increases cost and sensitive-d
 
 ## 5. Current Mission Control Implementation
 
-The existing observability chapter covers correlation, events, metrics, logs, token usage, cost, runtime health, and evidence boundaries. The curriculum does not yet define a complete semantic schema, cardinality and sampling policy, lifecycle-wide trace linkage, cached and reasoning token attribution, or forensic-bundle contract.
+The existing observability chapter covers correlation, events, metrics, logs, token usage, cost, runtime health, and evidence boundaries. The guide does not yet define a complete semantic schema, cardinality and sampling policy, lifecycle-wide trace linkage, cached and reasoning token attribution, or forensic-bundle contract.
 
 ## 6. Future Vision
 

@@ -61,7 +61,7 @@ Strong standardization improves reliability and can constrain legitimate domain 
 
 ## 5. Current Mission Control Implementation
 
-The current site and case-study implementation provide operator surfaces for intent, plans, workflows, evidence, approvals, runtime state, and review. The curriculum defines a capability map and authorized action parity.
+The current site and case-study implementation provide operator surfaces for intent, plans, workflows, evidence, approvals, runtime state, and review. The guide defines a capability map and authorized action parity.
 
 It does not yet teach or demonstrate a complete internal developer portal, service catalog, self-service repository onboarding, golden-path ownership model, extension marketplace, or adoption analytics. These are product responsibilities around the architecture, not optional polish.
 

@@ -69,7 +69,7 @@ Frequent recertification improves freshness and consumes evaluation capacity. Us
 
 The current material defines evaluations, canaries, policy gates, promotion and demotion concepts, model-route lifecycle, evidence, and Factory Versions. It does not yet demonstrate a uniform certification object or end-to-end revocation propagation for every capability type.
 
-The curriculum therefore supports the decision model but cannot claim a complete capability certification service. Reviewers should expect implementation evidence for lifecycle APIs, evaluation lineage, active-use inventory, and revocation drills before treating the capability as operationally proven.
+The guide therefore supports the decision model but cannot claim a complete capability certification service. Reviewers should expect implementation evidence for lifecycle APIs, evaluation lineage, active-use inventory, and revocation drills before treating the capability as operationally proven.
 
 ## 6. Future Vision
 

@@ -72,7 +72,7 @@ Automated intake increases responsiveness and can flood the system with low-valu
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum deeply specifies the governed issue-to-pull-request path and provides domain, orchestration, evidence, release, feedback, and learning primitives that other workflows can reuse.
+The current guide deeply specifies the governed issue-to-pull-request path and provides domain, orchestration, evidence, release, feedback, and learning primitives that other workflows can reuse.
 
 It does not yet publish full contracts, labs, maturity evidence, and operating metrics for the eight workflow classes above. The current golden path should therefore be described as the first workflow product, not proof of the entire portfolio.
 

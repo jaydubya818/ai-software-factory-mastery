@@ -65,7 +65,7 @@ More detail increases transparency and cognitive load. Use progressive disclosur
 
 The current material specifies operator screens for Missions, plans, attempts, evidence, approval, review, release, health, and learning. It also distinguishes human workflow preferences from authority.
 
-The curriculum does not yet provide one complete interaction model covering plan preview, live progress, pause/resume, intervention, notification, review inbox, accessibility, and user-research measures. Current pages should be evaluated against this system rather than treated as sufficient because they expose records.
+The guide does not yet provide one complete interaction model covering plan preview, live progress, pause/resume, intervention, notification, review inbox, accessibility, and user-research measures. Current pages should be evaluated against this system rather than treated as sufficient because they expose records.
 
 ## 6. Future Vision
 

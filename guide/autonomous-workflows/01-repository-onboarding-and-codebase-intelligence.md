@@ -77,7 +77,7 @@ Embedding every repository can improve semantic search and create privacy, cost,
 
 The current domain includes repository registration, configuration, workspace manifests, multi-repository coordination, environments, preflight, policy, and context packages. These establish important authority and runtime boundaries.
 
-The published curriculum does not yet demonstrate a complete repository onboarding pipeline, readiness record, codebase indexing lifecycle, owner attestation, drift detection, or workflow-specific admission based on discovered capabilities. This chapter defines that missing front door.
+The published guide does not yet demonstrate a complete repository onboarding pipeline, readiness record, codebase indexing lifecycle, owner attestation, drift detection, or workflow-specific admission based on discovered capabilities. This chapter defines that missing front door.
 
 ## 6. Future Vision
 

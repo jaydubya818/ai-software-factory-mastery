@@ -59,7 +59,7 @@ Fine-grained credentials reduce blast radius and increase integration cost. Shar
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum covers authentication, authorization, service identity, tenant boundaries, secret handling, audit, evidence retention, supply-chain provenance, policy, and approvals.
+The current guide covers authentication, authorization, service identity, tenant boundaries, secret handling, audit, evidence retention, supply-chain provenance, policy, and approvals.
 
 It does not yet provide a complete workload-identity federation design, just-in-time credential flow, delegated authorization chain, data inventory, deletion workflow, residency policy, intellectual-property and license controls, or formal compliance mapping. Those controls require organizational and platform implementation beyond chapter-level architecture.
 

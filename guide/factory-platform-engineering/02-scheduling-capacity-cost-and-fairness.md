@@ -101,7 +101,7 @@ Sophisticated schedulers improve utilization and are hard to explain. Begin with
 
 The current architecture includes queues, leases, worker capabilities, budgets, model routing, provider rate limits, concurrency, and health metrics. These support bounded execution.
 
-The curriculum does not yet specify a complete admission and scheduling policy, fairness model, preemption protocol, capacity forecast, reviewer-capacity constraint, or end-to-end cost attribution. Existing economic metrics require this operational layer to become actionable.
+The guide does not yet specify a complete admission and scheduling policy, fairness model, preemption protocol, capacity forecast, reviewer-capacity constraint, or end-to-end cost attribution. Existing economic metrics require this operational layer to become actionable.
 
 ## 6. Future Vision
 

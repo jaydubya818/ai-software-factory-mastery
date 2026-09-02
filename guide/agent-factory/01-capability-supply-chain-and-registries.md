@@ -82,7 +82,7 @@ One universal schema simplifies tooling but can flatten meaningful differences b
 
 ## 5. Current Mission Control Implementation
 
-The current curriculum and studied implementation contain versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, and Factory Version bindings. These are important components of an Agent Factory.
+The current guide and studied implementation contain versioned agent records, skill discovery and linting, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, and Factory Version bindings. These are important components of an Agent Factory.
 
 The current material does not yet demonstrate one canonical registry boundary with unified publication, dependency resolution, compatibility qualification, deprecation, quarantine, and revocation across every capability type. Exact skill-version binding and a complete capability promotion path remain incomplete. This chapter defines the missing operating contract; it does not claim the full registry exists in production.
 
