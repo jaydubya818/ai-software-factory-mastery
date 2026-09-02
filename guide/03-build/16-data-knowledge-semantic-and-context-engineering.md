@@ -4,7 +4,7 @@ part: build
 chapter: 16
 summary: Four disciplines stand between a raw source and a model's context window — data understanding decides whether data is usable, knowledge engineering prepares a governed corpus, semantic engineering makes terms mean one thing, and context engineering selects the smallest sufficient subset for this attempt.
 absorbs: [06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md, 06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md]
-infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer]
+infographics: [knowledge-pipeline, retrieval-evaluation, semantic-layer, context-graph]
 ---
 
 # 16. Data, knowledge, semantic, and context engineering
@@ -66,7 +66,7 @@ The **source registry** is the list of approved sources with owner, authority cl
 
 Retrieval combines several methods, and none is universally best. **BM25** and other **lexical search** find exact names, identifiers, and uncommon tokens; **embeddings** turn content into vectors and **vector search** finds conceptual similarity; **metadata filtering** applies scope and authority; **hybrid retrieval** fuses lexical and vector candidate sets, for example with reciprocal rank fusion; **graph traversal** follows explicit relationships and lineage, which is what a **knowledge graph** and **GraphRAG** add; **query rewriting** expands or reformulates the question before any of that; and **reranking** reorders candidates for the actual task. Code symbols and policy identifiers reward lexical search, natural-language concepts reward embeddings, and blast-radius questions reward graphs. Hybrid retrieval is justified by measured improvement, not by default complexity.
 
-Two properties are not optional. **Permission-aware retrieval** filters by requester, tenant, purpose, lifecycle, and freshness before content reaches ranking or generation, so that an unauthorized document can never be "very relevant." **Citation and source attribution** tie every excerpt to its artifact, source version, and permission; a citation without source identity, version, and permission is decoration.
+Two properties are not optional. **Permission-aware retrieval** filters by requester, tenant, purpose, lifecycle, and freshness before content reaches ranking or generation, so that an unauthorized document can never be "very relevant." The unit of that filter is the individual artifact, carrying its own ACL reference from enrichment onward (**per-document access control**); a permission decided at the level of a whole source or index is too coarse to be trusted, because one wiki space holds both the public runbook and the incident post-mortem. **Citation and source attribution** tie every excerpt to its artifact, source version, and permission; a citation without source identity, version, and permission is decoration.
 
 ### The enterprise retrieval pipeline, end to end
 
@@ -126,6 +126,43 @@ A **controlled vocabulary** defines preferred terms, aliases, and deprecated ter
 This is not the cryptographic canonicalization that the evidence chapters use to hash records. That makes bytes identical; this makes meanings identical.
 
 A **Semantic Contract** defines canonical concepts, identifiers, allowed relationships, disambiguation rules, source mappings, owner, version, and compatibility policy. Keep the layer as small as possible and as explicit as necessary. An ontology earns its cost when several sources repeatedly disagree about meaning; it is premature when a small controlled vocabulary and stable identifiers solve the actual problem. Semantic engineering removes measured ambiguity; it does not build a speculative enterprise model of everything.
+
+### Ground first: the context graph
+
+Everything above is about whether the agent's context is *right*. There is an economic argument for grounding that is just as strong, and it is easy to miss because the failure it describes does not look like a failure. *An ungrounded agent fails slowly rather than cheaply.* Given a question it cannot answer from what it has been handed, an agent does not stop; it searches one more place, re-sending its whole expanding context on every turn, spawns a helper, hits an error, and reasons its way to a confident wrong conclusion. Every one of those turns is billed. Richer information up front is the single most powerful lever on the "requests per turn" term of the cost equation in [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md), and grounding is therefore a cost control as much as a quality control.
+
+The pattern that one large engineering organisation built for this is a **context graph**: a single graph, integrating the organisation's internal systems, whose nodes are the entities an engineer reasons about (services, teams, incidents, pull requests, design documents, deployments, datasets, historical table usage) and whose edges are the relationships between them (owns, depends on, deployed, caused, queried), which any agent can query in natural language before it starts work. Its published scale gives a sense of what "single graph" means in practice: about 24 million nodes and 80 million edges, 86 node types and 117 edge types, drawn from more than thirty internal systems. Those are one organisation's numbers; the shape transfers at any size.
+
+<!-- infographic: context-graph -->
+> **Infographic — The context graph.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph Systems["30+ source systems"]
+        Svc["Services"]
+        Team["Teams"]
+        Inc["Incidents"]
+        PR["Pull requests"]
+        Doc["Design docs"]
+        Dep["Deployments"]
+        DS["Datasets"]
+        Use["Table usage history"]
+    end
+    Svc -->|"owned by"| Team
+    Inc -->|"affected"| Svc
+    PR -->|"changed"| Svc
+    Doc -->|"describes"| Svc
+    Dep -->|"released"| PR
+    DS -->|"produced by"| Svc
+    Use -->|"who queries"| DS
+    Systems --> Graph["Context graph: typed nodes and edges, lineage, freshness, ACLs"]
+    Graph -->|"natural-language query, least privilege"| Agent["Any agent, before it starts"]
+    Sem["Semantic contract: canonical identifiers"] --> Graph
+```
+
+The comparison that organisation published is the whole argument in one pair of runs. Same prompt, same model, asked whether a dataset was queryable. The grounded agent queried the graph's historical usage, found the table that more than fifty analysts already use, and answered in 38 seconds. The ungrounded agent spent 20 minutes reading service code, spawned two subagents, hit three errors, and concluded, wrongly, that the dataset could not be queried. The second run was not only slower and more expensive; it was confidently incorrect, which is the most expensive kind of wrong because a human then has to discover it.
+
+A context graph is the knowledge graph of the retrieval section, built at organisational scope, and it is governed by the same rules. Its nodes need the semantic layer's canonical identifiers, or "service" in the incident system and "service" in the deployment system become two nodes for one thing. Its edges need lineage, so an answer can say which system asserted the relationship and when. Its freshness needs an SLO per source, because a graph that still shows last quarter's ownership grounds the agent on the wrong world. And its queries run under least privilege: the graph is a retrieval source like any other, filtered per node by requester, tenant, and purpose before anything reaches the model. The **trusted context** layer of the six-layer view in [chapter 15](./15-agent-architecture.md), systems of record, a read-only data layer, schema and semantic catalog, scoped knowledge, lineage and freshness, retrieved just in time under least privilege, is the same thing said as an architecture. The line that goes with it is worth keeping verbatim: *trusted context is 80 percent of the agent's success; skip it and the agent hallucinates.* The remaining 20 percent is everything else in this book.
 
 ### Context engineering: compile for the decision, not the corpus
 
@@ -265,6 +302,7 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Enterprise context is relevant + authoritative + fresh + permission-aware + attributable. A grounded answer on obsolete documents is still wrong; a relevant answer on unauthorized information is worse. Retrieval is a permissions, provenance, freshness, and evaluation problem as much as a search problem.
 - The operating pipeline is sources → ingest → normalize and chunk → index and embed → hybrid retrieval → rerank → permission filter → grounded context → citations and provenance → agent, with ingestion orchestration and retrieval tracing as part of the platform.
 - The semantic layer is as small as possible and as explicit as necessary; unresolved terms stay ambiguous.
+- Ground first. An ungrounded agent fails slowly rather than cheaply: it searches one more place, re-bills its context every turn, and ends confidently wrong. A context graph (services, teams, incidents, PRs, design docs, deployments, datasets, usage) that any agent can query in natural language is a cost control and a quality control at once, and it is governed like any other source: canonical identifiers, lineage, freshness SLOs, per-node least privilege. Trusted context is 80 percent of the agent's success.
 - Retrieved text is an Attempt input, not authority; it cannot change intent, policy, tool grants, or acceptance criteria.
 - Evaluate each layer separately with its own measures (Recall@k, MRR, NDCG, groundedness among them); end-to-end success is necessary but not diagnostic.
 - Revocation needs forward and reverse lineage or it is only an announcement.
@@ -274,4 +312,5 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the compiler and the five trust categories; [19. The 12-layer stack](./19-the-12-layer-production-ai-agent-stack.md); [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [26. Security](../04-prove/26-security.md) for poisoning and injection; [28. Observability](../05-operate/28-observability-telemetry-and-forensics.md) for lineage; [5. Authoritative records](../02-design/05-authoritative-records.md) for the systems of record this pipeline must not shadow.
 - Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
 - Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline and the five properties of enterprise context).
+- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the context graph, its published scale, and the grounded-versus-ungrounded comparison; *Six layers of a working agentic system* (public post, 2026) for the trusted-context layer and the "80 percent of the agent's success" line.
 - [Glossary](../appendix/glossary.md).

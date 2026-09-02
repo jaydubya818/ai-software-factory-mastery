@@ -4,7 +4,7 @@ part: design
 chapter: 8
 summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder.
 absorbs: [03-operating-model/02-factory-economics-and-operating-metrics.md, 03-operating-model/07-engineering-attention-altitude-and-control.md, 03-operating-model/05-compounding-engineering-and-human-attention.md]
-infographics: [five-metric-dimensions, cost-per-validated-change, budget-feedback-loop, attention-altitude]
+infographics: [five-metric-dimensions, cost-per-validated-change, cost-equation, budget-feedback-loop, attention-altitude]
 ---
 
 # 8. Economics, metrics, and human attention
@@ -133,6 +133,37 @@ The structural levers are the ones to reach for before renegotiating a contract:
 
 One lever is easy to forget because it does not look like a model decision: for some tasks *the best model is no model at all*. A deterministic service or a mature skill that performs a known transformation costs almost nothing per run, never hallucinates, and needs no evaluation of its trajectory. Routing to it is an economic and a quality decision at once ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)).
 
+### The cost equation
+
+The levers above are easier to prioritise once the bill is written as a product rather than a total. One large engineering organisation that runs agents across thousands of engineers published the decomposition it manages against, and it transfers to any factory:
+
+*Total spend = users × sessions per user × turns per session × requests per turn × tokens per request × price per token.*
+
+The six terms fall into three groups, and each group wants a different response. The first two, users and sessions per user, are **adoption**: they measure how much of the organisation's work is flowing through the factory, and the correct response to their growth is to welcome it. The middle three, turns, requests, and tokens, are *the work the agent does on its own behalf, on top of what the engineer actually asked for*: the extra turn spent recovering from an error, the request that searches one more place, the tokens that re-send a tool schema nobody used. This is where almost all optimisation effort belongs: plan faster, cut unwanted turns and errors, cut input tokens. The last term, price per token, is set by the vendor. You do not negotiate it turn by turn; you choose which model runs which workload, which is the routing decision of [Chapter 17](../03-build/17-models-routing-and-capability-selection.md). Measure each term weekly or monthly and forecast it, so that a rising bill can be read as "more adoption" or "more waste" and never as a single undifferentiated number.
+
+<!-- infographic: cost-equation -->
+> **Infographic — The cost equation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph Adopt["Adoption: grow these"]
+        U["Users"] --> S["Sessions per user"]
+    end
+    subgraph Work["Work the agent does on its own behalf: optimise these"]
+        T["Turns per session"] --> R["Requests per turn"] --> K["Tokens per request"]
+    end
+    subgraph Price["Vendor price: choose the workload-to-model mapping"]
+        P["Price per token"]
+    end
+    S --> T
+    K --> P
+    P --> Total["Total spend"]
+```
+
+The runtime defaults that move the middle terms (compaction threshold, reasoning effort, the subagent model default, prompt-cache lifetimes) are the loop defaults of [Chapter 18](../03-build/18-agent-and-loop-engineering.md); the schema and tool-access techniques that shrink tokens per request are in [Chapter 15](../03-build/15-agent-architecture.md). The point of the equation here is the accounting discipline: every lever in this chapter attaches to one term, and a lever that attaches to none is a slogan.
+
+The same organisation's public figures are the clearest available evidence that the middle terms are where the money is. Between February and August 2026 its weekly active users grew about 7× and weekly agentic requests about 9.4×, while total AI spend stayed roughly flat from April; with the model held constant from February to July, cost per thousand model requests fell about 34 percent from its peak and cost per session fell 52 percent from its June peak. Those are one organisation's published measurements, not universal constants, but the shape is the argument: usage multiplied, unit cost fell across every metric, and quality held, without a unit-price cut and without downgrading tools. The conclusion the team drew is the one this chapter has been building toward. *Cost is a tractable engineering problem: eliminate zero-value token consumption rather than rely on unit-price cuts or tool downgrades. Cost per outcome, never cost per token.*
+
 ### Budgets and stopping conditions are execution controls
 
 Budgets are not accounting after the fact; they are controls the harness enforces while a run is in progress. Each Attempt carries limits on tokens, model spend, tool calls, execution time, retries, and compute, and an objective stopping condition so that an agent which is stuck stops rather than reasoning indefinitely in circles. A budget that is only reported is a bill; a budget that is enforced is a safety boundary, and it is also what makes a failed run cheap enough to be a normal event rather than an incident.
@@ -152,6 +183,23 @@ flowchart LR
     C --> R["Routing and improvement decisions"]
     R -.->|"cheaper reliable capability"| B
 ```
+
+### Visibility instead of caps
+
+Attempt budgets bound a *run*. The spend of a *person* or a *team* is a different object, and the instinct to bound it the same way, with a hard cap that stops work when it is reached, is usually wrong. A cap turns the first two terms of the cost equation, the adoption terms, into the thing being suppressed, and it teaches engineers that the governed path is the one that shuts off mid-task. The organisation whose figures appear above chose the opposite design, and it is the pattern to copy: make cost visible everywhere, and steer with nudges.
+
+The visibility starts in the harness. A **live cost counter** sits in the status line of whichever interactive harness the engineer is using, per harness and across all harnesses for that user, so cost is seen while it is being incurred rather than discovered on an invoice (the unified wrapper that hosts it is in [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md)). Above the counter sit **spend tiers** rather than hard caps: one shared tier across all of a person's interactive harnesses, and separate tiers for each managed agent, because a code-review agent and a human's terminal session should never draw on the same pool. The harness nudges in chat at 50, 80, and 100 percent of the expected spend for the tier, and a tier upgrade is one easy manager approval, not a procurement cycle. A cost-check skill or dashboard lets anyone ask "what am I spending, on what?" at any moment.
+
+The second half is education, and it is automated. A **session-analysis dashboard** built into the runtime, with no opt-in, reads every session trace across local and cloud sandboxes and every harness, and flags sixteen anti-patterns, each with its financial impact and a targeted remediation. Four of the named ones show the range:
+
+| Anti-pattern | What it looks like | Remediation |
+| --- | --- | --- |
+| Suboptimal model routing | Simple multi-turn sessions running on the frontier model when a mid-tier model would do | Route by task; change the default for that session class |
+| Context-window bloat | A 40KB tool payload persisting in context and re-billed every turn | Summarise or drop tool results; move the tool behind the shell ([Chapter 15](../03-build/15-agent-architecture.md)) |
+| Cache-expiration inefficiency | Resuming after a long break forces a full-price prefix rebuild | Match the cache lifetime to how people actually pause ([Chapter 18](../03-build/18-agent-and-loop-engineering.md)) |
+| Prompt-initialisation overhead | 100K tokens of instructions and tool definitions before any user input | Load tools on demand; trim standing instructions |
+
+Each flag attaches to a term in the cost equation, states what it cost, and says what to change. That is what makes it education rather than surveillance: it reports on sessions and patterns, never on a person's productivity, which keeps it on the right side of the caution earlier in this chapter. The same organisation's roadmap moves the dashboard from batch detection to real-time guidance in the session itself; [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) says what that means for the learning loop.
 
 ### What breaks first at scale
 
@@ -292,6 +340,9 @@ An agent workflow is **inside evaluated coverage** when its material inputs, sta
 | Budget as a bill | Cost known only from the monthly invoice; no run ever stopped | Enforce token, spend, tool-call, time, retry, and compute budgets in the harness; attribute by team, workflow, model, outcome |
 | Reasoning where automation would do | Strong models on deterministic transformations | Route to scripts and mature skills; the best model for some tasks is none |
 | Bottleneck unobserved | Cost, context, CI capacity, or trust degrades before anyone measures it | Four metric families, stage-level lead time, attribution before scale |
+| Unit price optimised, waste untouched | Contract renegotiated or models downgraded while turns, requests, and tokens per session keep climbing | Decompose spend with the cost equation; eliminate zero-value tokens in the middle terms before touching price per token |
+| Per-tool budgets | Separate caps for each tool or harness; engineers game the split or stall on one while another sits idle | One shared spend tier across a person's interactive harnesses; separate tiers only for managed agents |
+| Caps that stop work | A hard spending cap halts a session mid-task; the governed path becomes the one that shuts off | Live cost counter, nudges at 50/80/100 percent, easy manager approval for a tier upgrade; caps only on Attempts, never on people |
 
 ## In Mission Control
 
@@ -318,6 +369,8 @@ The honest product statement: the immutable lineage and metric surfaces exist no
 - Say "plan-to-validated-PR time down 60 percent with change failure rate held," never "50 percent more code."
 - Token economics is an architecture problem: the cheapest model is not the cheapest system once retries and senior rework are counted. Optimise cost per trusted outcome, not cost per token; sometimes the best model is no model.
 - Budgets (tokens, spend, tool calls, time, retries, compute) and objective stopping conditions are execution controls the harness enforces, and budget data feeds routing and improvement so economics shapes architecture continuously rather than arriving on the monthly bill.
+- Total spend = users × sessions per user × turns per session × requests per turn × tokens per request × price per token. Grow the first two, optimise the middle three (the work the agent does on its own behalf), and choose the workload-to-model mapping for the last. Cost per outcome, never cost per token.
+- Bound Attempts with budgets; steer people with visibility: a live cost counter, spend tiers instead of caps, nudges at 50/80/100 percent, easy tier upgrades, and a session-analysis dashboard that names each anti-pattern with its cost and its fix.
 - Four metric families, builder, trust, economics, platform, read together and segmented; generation volume is activity, trusted outcomes are the product.
 - At scale, cost, context, supply-chain capacity, and trust break first. The bottleneck keeps moving; build the factory to see where it goes next.
 - Signal aggregation is attention economics: deduplicate, correlate, rank, contextualise, explain, and surface the smallest set that can change the decision. Maximum decision quality per unit of human attention, not maximum signal volume.
@@ -327,6 +380,7 @@ The honest product statement: the immutable lineage and metric surfaces exist no
 - [Chapter 3 — First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md) for autonomy levels and quality as the acceleration engine; [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md); [Chapter 7 — Governance](../02-design/07-governance-policy-and-risk-proportional-approval.md) for decision packets and risk bands
 - [Chapter 17 — Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for the marginal-cost model decision; [Chapter 18 — Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md) for orchestrator, worker, and validator roles; [Chapter 23 — Evaluation engineering](../04-prove/23-evaluation-engineering.md) for evaluated coverage; [Chapter 28 — Observability](../05-operate/28-observability-telemetry-and-forensics.md); [Chapter 33 — Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md); [Chapter 35 — Mastering the factory](../06-improve/35-mastering-the-factory.md) for the five audiences
 - Sources: Jay West, *AI Software Factory Mission* (Success Metrics; The Proof You Need to Produce; North Star); *AI Software Factory Study Guide* (ch. 10, Success Metrics and the executive framing); IndyDevDan, *Engineering Time, Focus and Attention* (the agentic operating level); Luke (Goose / Factory), *Multi-agent systems and the bottleneck of human attention*; Jay's platform notes on adoption metrics ("Factory in one line"); Jay West, factory architecture notes (token economics levers, budgets and stopping conditions, four metric families, what breaks first at scale, signal aggregation)
+- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the six-term cost equation, spend tiers and nudges in place of caps, the session-analysis anti-patterns, and the published usage and unit-cost figures quoted above; *Six layers of a working agentic system* (public post, 2026) for cost dashboards a CFO can read as part of the runtime and operations layer
 - Mission Control code at `af414acf`: `convex/schema.ts`, `convex/eos/projections.ts`, `convex/analytics.ts`, `convex/workflowMetrics.ts`, `convex/costEvents.ts`; `docs/product/software-factory-capability-maturity.md`; `docs/testing/evidence/production-factory-pilot-v3/README.md`; [Appendix C capability and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`
 - Background: *Team Topologies*; *The DevOps Handbook*; the Toyota Production System
 - [Glossary](../appendix/glossary.md)

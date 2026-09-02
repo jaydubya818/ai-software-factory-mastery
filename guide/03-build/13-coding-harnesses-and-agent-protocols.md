@@ -4,7 +4,7 @@ part: build
 chapter: 13
 summary: How to wrap an interactive coding agent so it can be leased, observed, cancelled, resumed, and substituted inside a factory, and which protocol belongs at which boundary.
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, execution-loop, harness-adapter-contract, protocol-boundaries]
+infographics: [inner-outer-harness, execution-loop, meta-harness, harness-adapter-contract, protocol-boundaries]
 ---
 
 # 13. Coding harnesses and agent protocols
@@ -116,6 +116,34 @@ Two properties of the loop carry the whole design. The model proposes the next a
 ### A harness is not a software factory
 
 It is tempting to look at the loop above, note that it already has budgets and policy checks and checkpoints, and conclude that the harness is the factory. It is not. A harness executes an agent; a software factory governs the work. The harness knows about one run: its task, its state, its tools, its budget. The factory knows about intent, plans, WorkOrders, acceptance criteria, independent verification, evidence, review, delivery, and what to learn afterwards, none of which a run can see or decide. The harness's structured completion is the factory's input, not its conclusion. That is why the harness does not own approval, verification, merge, or release, and why the control plane in [Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md) sits above it rather than inside it.
+
+### The meta-harness: one governance layer across many harnesses
+
+Nobody runs one harness. A working team has Claude Code on some desks, Codex on others, an internal agent for the company's own systems, and a few specialized domain agents, each with its own tools, sessions, policies, permission model, and execution environment. Wrap each one with a thin adapter and you have five operable harnesses and five silos: five places policy is configured, five session formats nobody else can resume, five sandboxes with five isolation stories. The layer that closes that gap is the **meta-harness**, the governance layer *across* harnesses, and it is the outermost of the four nested layers that [Chapter 15](./15-agent-architecture.md) describes (meta-harness, then harness, then graph, then loop, then the model).
+
+A meta-harness supplies four things. **Composition**: a manifest declares which agents exist and who may delegate to whom, so the delegation graph is written down rather than discovered in a transcript. **Policy**: token caps, file rules, and permission defaults are enforced once and applied to every harness, instead of re-implemented in each product's settings hierarchy. **Collaboration**: sessions are shared and resumable across people, devices, and agents, so a run started in one harness by one engineer can be picked up elsewhere. **Sandbox**: isolation is pluggable, so the provider can be swapped while the policy stays constant. Omnigent is one open-source implementation of this layer; the vocabulary is the useful part, whichever implementation you choose or build.
+
+The practical form of a meta-harness inside a large engineering organization is a **unified wrapper**. Uber's engineering team, which runs every interactive coding harness its engineers use through one such wrapper, describes it as owning installation, configuration, authentication, and cost visibility across all of them, and as the place where the standard defaults live: compaction at a fixed token threshold, a medium reasoning effort, a cheaper default model for subagents, prompt-cache lifetimes matched to how people actually pause, and a live cost counter in the status line of whichever harness is running. Because every session passes through it, the wrapper can also collect every trace into one session-analysis dashboard, flag anti-patterns with their cost, and route all MCP traffic through one gateway. None of that changes what any single harness does; it changes what all of them share.
+
+<!-- infographic: meta-harness -->
+> **Infographic — The meta-harness across harnesses.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Meta["Meta-harness: composition manifest, policy once, shared sessions, pluggable sandbox"]
+        Wrapper["Unified wrapper: install, config, auth, defaults, cost visibility"]
+        Wrapper --> H1["Claude Code adapter"]
+        Wrapper --> H2["Codex adapter"]
+        Wrapper --> H3["Internal agent"]
+        Wrapper --> H4["Domain agent"]
+    end
+    H1 & H2 & H3 & H4 --> GW["One MCP and tool gateway"]
+    H1 & H2 & H3 & H4 --> Traces["One trace store and session analysis"]
+    Meta --> CP["Control plane: identity, authority, evidence"]
+```
+
+In this guide's terms the meta-harness is the control plane's harness-facing half ([Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md)) together with the Agent Factory's governance across agent definitions ([Chapter 10](./10-the-agent-factory.md)). The composition manifest is the agent registry and its delegation rules; policy-once is the policy engine the outer harness already routes through; shared resumable sessions are the durable Attempt record with native session identity attached; the pluggable sandbox is the environment layer of [Chapter 14](./14-development-environments-sandboxes-and-compute.md). The adapter contract and conformance suite later in this chapter are how a harness earns a seat inside the meta-harness. What the meta-harness adds to a single outer harness is that the rules are written once and the evidence lands in one place, which is the only arrangement in which a second harness is cheap to add and a first one is cheap to leave.
 
 ### Where the seam sits: thin or thick
 
@@ -328,6 +356,7 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - The model reasons; the harness controls. The harness owns model invocation, lifecycle, context assembly, state, tool discovery and execution, permissions, the loop, budget, timeouts, checkpoints, recovery, observability, evaluation hooks, and human intervention.
 - The loop is the heartbeat: load state, assemble context, route, reason, propose, policy-check, execute, observe, update state outside the model, evaluate, then continue, retry, checkpoint, escalate, pause, or stop. The model proposes; the runtime permits.
 - The harness turns probabilistic intelligence into bounded execution. A harness executes an agent; a software factory governs the work.
+- Several harnesses without a common layer are several silos. The meta-harness governs across them: a composition manifest, policy enforced once, shared resumable sessions, and a pluggable sandbox. Its practical form is a unified wrapper that owns install, configuration, authentication, standard defaults, and cost visibility for every harness; in this guide it is the control plane's harness-facing half.
 
 ## Go deeper
 
@@ -341,4 +370,5 @@ Future: one canonical harness contract with explicit optional capabilities and n
 - [Glossary](../appendix/glossary.md) — inner harness, outer harness, adapter, capability manifest, ACP, AG-UI, A2A, MCP.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
 - Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory.
+- Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) — the meta-harness layer (composition, policy, collaboration, sandbox) and Omnigent as one implementation; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) — the unified wrapper across interactive harnesses, its standard defaults, cost visibility, and the single MCP gateway.
 - Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.

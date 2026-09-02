@@ -315,6 +315,31 @@ scoped and reviewable.
 changes an external system. A tool supplies capability; policy and credentials
 determine whether a particular call is authorized.
 
+**Tool gateway** — A single entry point through which every tool and MCP
+server, internal or third-party, is reached, so that authentication, policy,
+tenant scoping, logging, and cost attribution are enforced once. Exposing tools
+through a gateway is also what makes CLI tool resolution and code-mode possible.
+
+**CLI tool resolution** — Reaching tools by executing a shell command that
+resolves and invokes the tool against the gateway at call time, instead of
+loading every tool's schema into the model's context. It removes tool-schema
+overhead from every turn; it does not change what the tool is authorized to do.
+
+**Tool search** — Letting the model search a tool catalog and load only the
+definitions it needs for the task at hand, so a library of thousands of tools
+does not consume context or degrade selection accuracy.
+
+**Code-mode** — Running a chatty sequence of tool actions (submit, poll,
+fetch) as one script in a subprocess, returning only the summary to the
+model's context. It removes polling turns and intermediate payloads from the
+loop; the actions themselves remain subject to the same authorization.
+
+**Context graph** — A queryable graph of an organization's engineering
+entities and their relationships (services, teams, incidents, pull requests,
+design documents, deployments, datasets, table usage) that any agent can
+consult in natural language before acting. Grounding through it is the main
+lever on requests per turn; it is knowledge, not authority.
+
 **Model Context Protocol (MCP)** — An interoperability protocol for exposing
 tools, resources, prompts, and negotiated extensions between hosts and servers.
 MCP standardizes communication and discovery; it does not by itself establish
@@ -1243,6 +1268,38 @@ supply-chain analysis but does not prove that the artifact is secure.
 **Trace context** — Correlation metadata propagated across service and
 asynchronous boundaries. It connects observations but does not confer authority.
 
+**Loop** — The smallest unit of agency: observe what the environment returned,
+act with one tool call, verify with an external signal, and repeat until a goal
+condition is met. Completion is decided by evidence, never by the model's own
+judgment or a step count.
+
+**Graph** — The workflow layer above the loop: nodes do one unit of work
+against typed shared state, conditional edges read that state and name the
+next node, and checkpoints after each node allow pause, replay, and human
+review. A loop decides whether execution continues; a graph decides where it
+goes.
+
+**Harness** — The runtime wrapped around a model that determines what its
+reasoning can actually do: the callable tool set, permissions and approval
+gates, the context it is shown, the execution environment, and the immutable
+trace of every turn. Model capability and agent capability differ exactly by
+what the harness exposes.
+
+**Meta-harness** — A governance layer across several harnesses (hosted coding
+agents, internal agents, domain agents) that supplies composition (which agents
+exist and who may delegate to whom), policy enforced once, shared resumable
+sessions, and pluggable isolation. In this guide its responsibilities belong to
+the control plane and Agent Factory governance.
+
+**Compaction threshold** — The context size at which a harness summarizes
+conversation history rather than re-sending it; a deliberate default that
+trades recall against repeated input cost and cache bursts.
+
+**Prompt-cache TTL** — How long a provider keeps a cached prompt prefix.
+Cache reads are cheap and cache writes carry a premium, so the right TTL
+depends on the typical idle gap between turns: longer for interactive sessions
+with pauses, shorter for short-lived subagents.
+
 ## Platform experience and agentic security
 
 **Developer portal** — A user-facing projection of catalog, workflow,
@@ -1551,6 +1608,31 @@ architecture, built to prove the path is passable rather than to deliver a
 feature. Also called a technical spike.
 
 ## Outcome measures
+
+**Cost equation** — Total agent spend decomposed into multiplying terms:
+users × sessions per user × turns per session × requests per turn × tokens per
+request × price per token. The first two are adoption and should grow; the
+middle three are work the agent does on its own behalf and are where
+optimization lives; the last is chosen by routing workloads to models.
+
+**Cost per outcome** — Spend divided by accepted, validated outcomes (a merged
+change, a resolved incident, a completed review), the only cost figure a
+factory optimizes for. Cost per token and token volume are diagnostic inputs.
+
+**Pareto-optimal model selection** — Choosing, for each managed agent, the
+model configuration that no other configuration beats on both cost per
+completed task and quality, using a benchmark built from that agent's own real
+work, and re-running the choice as the model frontier moves.
+
+**Managed agent** — An agent the platform runs on a person's behalf for a
+defined SDLC workload (code review, CI self-healing, on-call triage,
+maintenance) with its own benchmark, model route, harness, and budget, and a
+human review or escalation path. The most controllable layer of agent usage.
+
+**Session analysis** — Automatic inspection of session traces across every
+harness a person uses, classifying waste into named anti-patterns, each with a
+financial impact and a remediation, and feeding the result back as guidance
+rather than a cap.
 
 **Lead Time to Validated Customer Value** — Time from governed Mission creation
 until the change is deployed, independently verified in production or an

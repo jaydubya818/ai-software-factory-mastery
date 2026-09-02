@@ -366,6 +366,36 @@ low cost, low review effort, and safe recovery. Do not copy private data,
 incidental repository text, or one-off reasoning into standing instructions; a
 strategy that worked once because of an accident of context is not a pattern.
 
+### Skills that improve from their own traces
+
+Skill improvement has a natural automation, and at least one large engineering
+organisation running thousands of skills has published it as its next step.
+Every skill execution leaves a trace, and the trace records the **papercuts**:
+the retry that was needed, the argument the skill got wrong, the tool result it
+had to re-fetch, the step a human corrected afterwards. Record those papercuts
+per skill, cluster them across executions, and auto-generate a proposed skill
+update from the traces, so the skill's own history writes its next revision.
+The same organisation's session analytics is moving in parallel from batch
+detection of anti-patterns (the dashboard of
+[Chapter 8](../02-design/08-economics-metrics-and-human-attention.md)) to
+continuous trace monitoring that guides the engineer in real time, inside the
+session, before the expensive turn happens rather than in a report afterwards.
+
+Both are discovery, in this chapter's terms, and both belong in the meta loop.
+What they are not, in this guide's model, is promotion. An auto-generated skill
+update is a versioned improvement candidate like any other: it carries its
+trace evidence and its recurrence count, it is evaluated against the current
+skill as baseline on a development set and an untouched holdout, it must clear
+the quality floor, and it goes live only through the
+[promotion gate](#baseline-candidate-and-the-promotion-gate), as a bounded
+tuning or a capability change depending on what it touches. A skill that
+rewrites itself from its own traces without beating a baseline is the
+self-authorised mutation of the first failure-mode row, wearing a more
+sophisticated pipeline. Real-time guidance is safer, because it advises a
+person rather than changing a capability, but the advice is still derived
+from the anti-pattern catalog, and that catalog is versioned and evaluated
+like any other evaluator. *Traces may propose; the gate promotes.*
+
 ### Scope: personal fit versus organizational truth
 
 Corrections occur at different scopes. "Use this tone in my draft" is a
@@ -653,6 +683,12 @@ a self-operating learning factory.
   experiment, measure, promote or reject or roll back). Autonomous discovery,
   not autonomous authority.
 - Diagnose before optimizing; the prompt is the last suspect, not the first.
+- Skills can improve from their own traces: record papercuts per execution,
+  cluster them, and auto-generate the next revision; session analytics can move
+  from batch anti-pattern reports to real-time guidance. Both are discovery.
+  An auto-generated skill update is a governed candidate that must beat the
+  current skill as baseline at the promotion gate. Traces may propose; the gate
+  promotes.
 - Autonomy is set per action class by reversibility and blast radius, never by
   model confidence: bounded tuning may auto-promote; capability changes need a
   human; authority changes never self-promote.
@@ -701,5 +737,8 @@ a self-operating learning factory.
   architecture notes and Mission Control walkthrough, on the feedback signal
   list and source diagnosis, discovery versus promotion, asymmetric autonomy by
   action class, the reward-modeling boundary, and what not to build first.
+- Public source: Uber Engineering, *Running a Software Factory Efficiently at
+  Uber Scale* (2026), for continuous skill improvement from execution traces
+  and the move from batch anti-pattern detection to real-time guidance.
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
   referenced in the research canon.

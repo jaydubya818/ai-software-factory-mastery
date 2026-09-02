@@ -4,7 +4,7 @@ part: operate
 chapter: 31
 summary: How an organization measures factory maturity by evidence rather than enthusiasm, advances one corridor at a time, chooses what to buy, build, and host, and satisfies the enterprise controls that decide whether a factory can run at all.
 absorbs: [03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md]
-infographics: [maturity-model, adoption-path, build-vs-buy, gravity-well, contribution-model, release-clocks, deployment-topologies]
+infographics: [maturity-model, adoption-path, build-vs-buy, gravity-well, contribution-model, release-clocks, deployment-topologies, usage-layers]
 ---
 
 # 31. Enterprise adoption and the infrastructure landscape
@@ -308,6 +308,32 @@ Large platform organizations that have run agentic delivery across many product 
 
 The sentence that holds the five together: *do not just scale agents; scale the system that makes their work trustworthy.*
 
+### From interactive sessions to managed agents
+
+The five lessons describe what an organisation learns. One large engineering organisation has published where that learning leads once agents are in every engineer's hands, and it is the clearest public statement of the strategic shift this chapter's maturity model implies. Its framing organises agent usage into four layers, from the most general to the most specialised. At the bottom is the interactive developer session: an engineer at a terminal, steering a coding harness turn by turn, with the harness's defaults and the engineer's habits deciding what each task costs. At the top is the **managed agent**: a specialised, headless agent with one job, its own benchmark, its own model, and its own spend tier, started by the platform or by an event rather than by a person. The intermediate layers are the progressively more constrained forms in between, such as reusable skills invoked inside sessions and sessions that agents start on an engineer's behalf. The rule that orders them: *the higher the layer, the more control the organisation has over cost, quality, and model selection.*
+
+<!-- infographic: usage-layers -->
+> **Infographic — Four layers of agent usage.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart BT
+  L1["Interactive developer sessions<br/>most general; engineer steers; defaults decide cost"]
+  L2["Intermediate layers<br/>reusable skills inside sessions; agent-started sessions"]
+  L3["Managed agents<br/>most specialised; one job, own benchmark, own model, own spend tier"]
+  L1 --> L2 --> L3
+  Ctl["More control over cost, quality, and model selection"] -.-> L3
+  Adopt["More adoption and engagement"] -.-> L1
+```
+
+The strategic claim that follows is the one to retain. A managed environment gives complete control over model routing, the execution harness, and spend, and *optimising a fleet of specialised managed agents, each with its own benchmark and Pareto-efficient model, is more cost-effective and more scalable than optimising individual terminal sessions across thousands of engineers.* Interactive sessions are where adoption happens and where the cost equation's first two terms grow ([chapter 8](../02-design/08-economics-metrics-and-human-attention.md)); managed agents are where the middle terms can be engineered down, because one team owns the whole configuration. The interactive layer is not abandoned; its defaults are set centrally through the unified wrapper of chapter [13](../03-build/13-coding-harnesses-and-agent-protocols.md), and the session-analysis dashboard educates engineers about what their sessions cost. But the organisation's optimisation effort concentrates where control is.
+
+Each managed agent gets its own roadmap, and the roadmap has the same three steps every time: define the **target outcome metrics** for the agent's job; build the **evaluation benchmark** from the agent's real work; select the **Pareto-optimal model** on that benchmark, and re-select as the frontier moves (the method is in chapter [17](../03-build/17-models-routing-and-capability-selection.md)). Doing this for one agent per SDLC stage is how each stage moves up the maturity model above: an agent with a benchmark and retained outcome evidence is a corridor with proof, and a corridor with proof can be promoted.
+
+The published examples of managed agents map onto the stages a factory already knows: code review on every pull request; self-healing of CI failures; end-to-end pull requests with visual validation of the result; on-call alert triage; bug debugging; and code maintenance. Every one of them carries human review or escalation, which is the on-the-loop control mode of chapter [8](../02-design/08-economics-metrics-and-human-attention.md), and the agentic merge queue of chapter [32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) is where several of them meet.
+
+The scale that organisation reports is worth quoting, with the caveat that it is one organisation's published measurement and not a target for anyone else: more than 70 percent of its pull requests attributed to local or cloud agents; more than 3,600 agent skills built by engineers across the SDLC; more than 30,000 skill executions a day; and a growing share of sessions started by managed agents rather than by people. Read against the maturity model, that is an organisation operating many Level 3 corridors at once, with the managed-agent fleet as the mechanism by which each corridor earned its evidence.
+
 ### The first year and the next five
 
 The mission plan behind this guide lays out a twelve-month path that follows the corridor logic above, in six phases.
@@ -442,6 +468,7 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - Tenancy has four layers (identity, data, resources, memory); authorize before context reaches the model. Three release clocks (models and routing; skills and definitions; runtime and contracts), all explicitly versioned.
 - What breaks first at scale: cost, then context, then supply-chain capacity, then trust. The bottleneck keeps moving; build the factory to see where it moves next.
 - Five lessons: the platform owns the workflow; the paved road must beat the workaround; trust becomes the bottleneck; context and tools get complicated fast; agent platforms become infrastructure early. Scale the system that makes agents' work trustworthy, not just the agents.
+- Agent usage runs in layers from the most general (interactive sessions) to the most specialised (managed agents); the higher the layer, the more control over cost, quality, and model selection. Optimising a fleet of specialised managed agents, each with its own benchmark and Pareto-efficient model, beats optimising thousands of terminal sessions. Each managed agent's roadmap: target outcome metrics, evaluation benchmark, Pareto-optimal model, and up the maturity model one SDLC stage at a time, with human review or escalation retained.
 - The first ninety days: understand, then align on a few durable contracts and prove one workflow, then harden toward self-service. No imported architecture, no migration mandate, no self-improvement before a baseline.
 - Choose topology (managed, BYOC, VPC, self-hosted, on-premises) from residency, networking, and key custody. Fill the enterprise control checklist before it is sent to you, and write vendor-exit criteria before signing.
 - The credible executive message is "we expand proven corridors."
@@ -452,4 +479,5 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - Glossary: [maturity level, corridor, shadow governance, BYOC, vendor-exit criteria](../appendix/glossary.md)
 - Case studies: [Mission Control implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) · [Capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) · [Coverage and maturity](../appendix/coverage-and-maturity.md)
 - Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on composition over inheritance, outposts, and why there is no open-source control plane; Jay West, "The 12-layer production AI agent stack" coverage audit, section 13 (enterprise and open-source infrastructure); Jay West, agent platform and runtime technology glossary; Jay West, AI Software Factory mission (twelve-month plan, five-year roadmap, adoption metrics); Jay West, audience-framing notes (the eight audiences); Jay West, factory architecture notes, on build versus buy, the contribution model, existing agents, forward-deployed engineering, multi-tenancy, release clocks, scale bottlenecks, the five lessons, and the first ninety days
+- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four layers of agent usage, the shift from interactive sessions to managed agents, the per-agent roadmap, the managed-agent examples, and the published scale figures; *The 4 Layers of an Agent System Explained* (public post, 2026) for the meta-harness as the governance layer across many harnesses, which is what makes a managed-agent fleet operable
 - External canon: [DORA delivery metrics](https://dora.dev/) · [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf) · Team Topologies (Skelton and Pais) · Google SRE

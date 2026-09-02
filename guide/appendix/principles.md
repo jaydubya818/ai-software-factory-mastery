@@ -55,6 +55,12 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **The harness turns probabilistic intelligence into bounded execution.** It is an execution boundary, not a loop around an LLM. → [13. Coding harnesses and agent protocols](../03-build/13-coding-harnesses-and-agent-protocols.md)
 
+**The model is just weights. The harness is the agent.** Model capability and agent capability differ exactly by what the harness exposes; a better prompt cannot compensate for a missing capability. → [15. Agent architecture](../03-build/15-agent-architecture.md)
+
+**Loop makes the work verifiable. Graph makes the workflow structured. Harness makes the model operational. Meta-harness makes many agent environments governable.** Diagnose a failure at its layer before touching the prompt or the model. → [15. Agent architecture](../03-build/15-agent-architecture.md)
+
+**The loop stops when evidence says stop.** A goal condition such as "tests pass", never a step count and never the model's own belief that the work looks right. → [18. Agent and loop engineering](../03-build/18-agent-and-loop-engineering.md)
+
 **The control plane manages the work. Workers execute the work.** Separate the intelligence doing the reasoning from the orchestration controlling the workflow. → [11. Control plane, orchestrator, and execution plane](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
 
 **Use the lightest orchestration model that satisfies the workflow.** Orchestration earns its complexity only once work involves repositories, services, dependencies, and parallel branches. → [11. Control plane, orchestrator, and execution plane](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
@@ -206,6 +212,12 @@ The principles are grouped by the concern they protect. Several appear in more t
 **A production failure should make the platform harder to fail the same way twice.** Every meaningful failure becomes a regression scenario, a stronger evaluator, or a tighter policy. → [29. Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md)
 
 ## Delivery and scale
+
+**Cost per outcome, never cost per token.** Spend is users × sessions × turns × requests × tokens × price; grow the first two, shrink the middle three, choose the last. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+
+**An ungrounded agent fails slowly rather than cheaply.** Richer context up front is the strongest lever on turns and requests; ground first, then reason. → [16. Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+
+**Benchmark the agent's own work, then move to the Pareto-optimal model and keep moving.** The frontier shifts every few weeks; hold the model constant to measure your own gains. → [17. Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md)
 
 **The prototype shouldn't need to be rewritten to become trustworthy.** Productionizing raises the evidence and operational bar; it does not rebuild. → [25. CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md)
 

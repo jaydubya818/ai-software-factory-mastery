@@ -4,7 +4,7 @@ part: build
 chapter: 15
 summary: An engineering agent is a governed runtime composition around a fallible model — an execution loop, a protocol boundary for capabilities, behavioral tool contracts, a context compiler, and a memory lifecycle — with authority held by the runtime, never by the model.
 absorbs: [06-ai-engineering/00-ai-systems-foundations-for-software-factory-architects.md, 06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md]
-infographics: [agent-loop, mcp-topology, context-assembly, memory-admission]
+infographics: [agent-loop, agent-layers, mcp-topology, context-assembly, memory-admission]
 ---
 
 # 15. Agent architecture: loop, MCP, tools, context, and memory
@@ -92,6 +92,58 @@ flowchart LR
 ```
 
 The taxonomy names what surrounds the loop. **Context management** supplies the right code, documents, history, state, and information at the right time; **context window management** decides what fits. **Control mechanisms** are the guardrails: permissions, approvals, policies, budgets, and human-in-the-loop checkpoints. A **guardrail** is any control that limits or redirects agent behavior; a **policy engine** evaluates rules and decides whether an action may proceed, needs approval, or must be blocked. The **execution environment** is the sandbox, container, or workspace where the agent runs commands and changes code; **sandboxing** isolates it so a mistake cannot reach what it should not. **State management** tracks progress across the loop, **error recovery** retries, repairs, or replans after failure, and **observability** traces decisions, actions, latency, failures, and cost.
+
+### Four layers: loop, graph, harness, meta-harness
+
+An agent that burns tokens, declares the task complete, and then fails the tests is usually an architecture problem, not a prompting problem. The reflex is to rewrite the prompt or reach for a stronger model. Most of the time the failure came from the system around the model, and different failures have to be fixed at different layers. A public four-layer model, drawn as nested boxes, is the clearest way to see which layer is which; the outer layers each contain the inner ones, so the nesting reads meta-harness, then harness, then graph, then loop, then the model itself.
+
+The **loop** is the smallest unit of agency. It observes what the environment actually returned rather than what the model expected, acts with one tool call and one real-world side effect per turn, and verifies against an external signal only: tests, a build exit code, a grader, CI. The part that matters is how completion is decided. Completion is a goal condition such as "the tests pass," never a step count and never the model's belief that the work looks right. Without an external verification signal an agent will confidently declare success on an incomplete task. *The model never grades its own work.* This is the execution loop above with its evaluate step made strict.
+
+The **graph** is the workflow. Where a loop decides *whether* execution continues, a graph decides *where* it goes next. Nodes do the work: read shared state, do one thing, write the result back. Conditional edges read the state and return the name of the next node. Shared state is a typed record every node reads and writes, and it is the binding contract between them. Checkpoints snapshot the state after each node, which is what makes pause, replay, and human review possible. Branches, retries, specialist hand-offs, and fallbacks all live here. Use a graph when the path is uncertain, because it makes the route explicit, inspectable, and controllable. In this guide the graph is the task graph the orchestrator schedules ([chapter 18](./18-agent-and-loop-engineering.md)) on top of the durable workflow engine ([chapter 12](./12-durable-execution.md)).
+
+The **harness** is the environment the model touches the world through. *The model is just weights. The harness is the agent.* Four things belong to it: the tools (the callable set, every action the model is allowed to attempt), the permissions (gates on tool calls, which actions need human approval first), the context (instruction files, loaded files, injected knowledge: what the model sees), and the traces (an immutable per-turn log of every call, input, and output). The consequence everyone underestimates is that **model capability is not agent capability**. A model may know exactly how to solve a task; if the tool, the data source, or the permission is not exposed through the harness, the agent still cannot do it. *A better prompt cannot compensate for a missing capability.* Fix capability in the harness, never in the prompt. [Chapter 13](./13-coding-harnesses-and-agent-protocols.md) and [Stage 4](../stages/04-execute-through-harness.md) cover the harness in full.
+
+The **meta-harness** is the governance layer across harnesses. A real team runs Claude Code, Codex, an internal agent, and a few specialized domain agents side by side, and each arrives with its own tools, sessions, policies, permissions, and execution environment. Without a common layer, five harnesses are five silos. The meta-harness supplies four things: composition (a manifest that declares which agents exist and who may delegate to whom), policy (token caps and file rules enforced once and applied everywhere), collaboration (shared, resumable sessions across people, devices, and agents), and a pluggable sandbox (swap the isolation provider; the policy stays constant). Omnigent is one open-source implementation of this layer. In this guide it is the control plane and the Agent Factory's governance across harnesses ([chapter 10](./10-the-agent-factory.md), [chapter 11](./11-control-plane-orchestrator-and-execution-plane.md)).
+
+<!-- infographic: agent-layers -->
+> **Infographic — Four layers around the model.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Meta["Meta-harness: composition, policy, shared sessions, pluggable sandbox"]
+        subgraph Harness["Harness: tools, permissions, context, traces"]
+            subgraph Graph["Graph: nodes, conditional edges, typed shared state, checkpoints"]
+                subgraph Loop["Loop: observe, act, verify against external evidence"]
+                    LLM["LLM: weights only"]
+                end
+            end
+        end
+    end
+```
+
+| Layer | What it owns | What it makes possible | The guide's term for it |
+|---|---|---|---|
+| Loop | Observe, act, verify; the completion rule | Verifiable work | The execution loop (this chapter); the attempt loop (chapter 18) |
+| Graph | Nodes, conditional edges, typed shared state, checkpoints | A structured, inspectable workflow | The task graph and the workflow engine (chapters 12 and 18) |
+| Harness | Tools, permissions, context, traces | An operational model | The inner and outer harness (chapter 13, Stage 4) |
+| Meta-harness | Composition manifest, policy once, shared sessions, pluggable sandbox | Governable multiple agent environments | The control plane and Agent Factory governance (chapters 10 and 11) |
+
+The diagnostic rule that follows is the one to keep. When an agent fails, ask *which layer is the failure at?* A task declared complete with red tests is a loop failure: the completion rule accepted the model's opinion. Work that took the wrong route, or retried the wrong thing, is a graph failure. A task the model understood but could not perform is a harness failure: a capability was missing. Two teams' agents that cannot share a session, or a policy that is enforced in one harness and absent in another, is a meta-harness failure. A stronger model improves reasoning; a reliable agent depends just as much on the architecture around it, and the incident question in [chapter 29](../05-operate/29-resilience-incidents-and-the-control-tower.md) is this rule applied after the fact.
+
+### Six layers of a working agentic system
+
+A second public model cuts the same system by production question rather than by nesting. Its premise is that the model sits inside a larger operating system, that each layer answers a different question, and that not every workflow needs every feature on day one. The table keeps the six rows and maps each to the chapter of this guide that owns it.
+
+| # | Layer | Typical components | The question it answers | Where this guide covers it |
+|---|---|---|---|---|
+| 1 | Experience and trigger | Chat or application UI, inbox, schedule, event, API, file arrival, user identity | What starts the work, for whom, and where is the result delivered? | [Chapter 4](../02-design/04-the-human-agent-operating-model.md), [chapter 6](../02-design/06-intent-and-specification-engineering.md), [chapter 30](../05-operate/30-control-surfaces-event-contracts-and-storage.md) |
+| 2 | Orchestration and state | Planner, workflow graph, tool routing, memory and state, loop limits, retries, fallbacks; bounded steps, approved methods, escalation paths, definition of done | What happens next, what is remembered, and how does execution stay bounded? | [Chapter 11](./11-control-plane-orchestrator-and-execution-plane.md), [chapter 12](./12-durable-execution.md), [chapter 18](./18-agent-and-loop-engineering.md) |
+| 3 | Tools and deterministic logic | APIs, query services, code capabilities, rules, calculators, document generation, writeback | What can the system do, and which steps must stay deterministic? | This chapter's tool registry; [chapter 18](./18-agent-and-loop-engineering.md) on agents proposing and code disposing |
+| 4 | Trusted context | Systems of record, read-only data layer, schema and semantic catalog, scoped knowledge, lineage and freshness, retrieved just in time under least privilege | Where does truth live, what does it mean, and what is the agent allowed to see? | This chapter's context compiler; [chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) |
+| 5 | Trust and control | Golden sets, deterministic checks, model-based review, guardrails, approvals, human escalation, audit; the agent withholds an answer when confidence drops | How do we know the result is acceptable, and what happens when it is not? | [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md), [chapter 21](../04-prove/21-quality-and-evidence-architecture.md), [chapter 23](../04-prove/23-evaluation-engineering.md), [chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) |
+| 6 | Runtime and operations | Hosting, identity, network, secrets, CI/CD, observability, cost controls, runbooks and lifecycle; private model instances per tenant; end-to-end traces; cost dashboards a finance leader can read; a model swap is one configuration change because no vendor is hardcoded | Can this run reliably outside a laptop and be owned as a business service? | [Chapter 14](./14-development-environments-sandboxes-and-compute.md), [chapter 17](./17-models-routing-and-capability-selection.md), [chapter 27](../05-operate/27-the-factory-as-a-platform.md), [chapter 28](../05-operate/28-observability-telemetry-and-forensics.md), [chapter 29](../05-operate/29-resilience-incidents-and-the-control-tower.md) |
+
+Three lines from the source are worth carrying as they stand. On layer three: anything with a known right answer stays deterministic; the model reasons and explains, code does the math. On layer four: trusted context is most of an agent's success, and skipping it is how an agent ends up hallucinating. On layer five: correctness needs a number before anything ships. And the closing line is the reason this chapter treats the composition rather than the model as the thing you version: **the durable asset is the harness** (workflow knowledge, tools, context, evaluation, and controls); **models and platform services can change.**
 
 ### Reasoning is separated from authority
 
@@ -398,6 +450,26 @@ Before shipping, weigh the choices that shape the composition.
 | Long-term memory | Continuity and compounding knowledge | Staleness, leakage, poisoning, hidden coupling | Write admission and correction lifecycle are governed |
 | Knowledge graph | Relationship traversal and lineage | Ingestion and consistency complexity | Queries need graph structure and provenance |
 
+### Tool access without context bloat
+
+The registry and gateway above decide *whether* a call is allowed. A separate build decision is *how much of the tool catalog the model has to carry in its head to make the call at all*, and it dominates cost once the catalog is large. Standard MCP loads every tool schema into every session. Uber's engineering team, which routes more than a thousand internal and SaaS MCP servers through one gateway for central authentication and policy, published the numbers: a session with a hundred or more tools carries roughly 50–70K tokens of schema in its first prompt, re-sent on every turn. SaaS vendors make it worse by exposing everything: one workspace suite alone was 49 tools and about 22K tokens of schema, a messaging server 34 tools, a project tracker 46. Two or three vendor servers put more schema in the window than the file being edited, before the user has typed anything. These are one organization's measurements, but the mechanism is universal.
+
+Two fixes remove the schema from the context rather than trimming it. The first is **CLI tool resolution**: the model runs a shell command; a command-line tool resolves and invokes the MCP tool against the gateway at call time. Every server is projected as a CLI command, and the schema in context drops to near zero because the model needs to know only the command, not the full contract. The second is **tool search**: the model searches the catalog and loads only the tools it needs for the task, which scales to thousands of tools without the selection-accuracy decay that a huge always-loaded catalog produces. Both keep the gateway exactly where it was: identity, allowlist, egress, and receipts still sit on the single path every call takes.
+
+Once tools are callable from the shell, a third pattern becomes available. **Code-mode** lets the model batch many actions into one script. Chatty protocols, such as submit a query, poll its status two to five times, then fetch the result, run inside a subprocess, and only the summary returns to the context. Uber measured five identical SQL queries in one session, tool-calling versus code-mode:
+
+| Query | Tool-calling tokens | Code-mode tokens | Saved |
+|---|---|---|---|
+| `SELECT 1` (1 row) | 903 | 402 | 55% |
+| `COUNT(*)` | 954 | 403 | 58% |
+| `GROUP BY`, 20 rows | 1,600 | 457 | 71% |
+| `SHOW COLUMNS`, 175 rows | 2,200 | 900 | 59% |
+| `SELECT *`, wide table, 50 rows | 1,431,594 | 900 | ~100% |
+
+The savings come from removing the schema initialization, the multi-turn polling, and the step-by-step reasoning between calls, not from shrinking the payload; the last row is a wide result that never entered the context at all. For bulk workflows N model turns collapse into one script and more than 90% of the tokens disappear. The team ships pre-built code-mode skills for its most-used servers so that the cheap path is the default path, and routes SaaS MCPs through the same gateway, exposed as CLIs, with a code-mode skill per server for the common workflows.
+
+The factory rule that falls out: the gateway governs every call; the catalog is resolved at call time, not preloaded; and anything that polls, pages, or loops runs in code and returns a summary. A tool the model cannot see costs nothing until it is needed, and a tool the model can see costs tokens on every turn whether it is used or not.
+
 Finally, secure the data path. Model inputs and outputs carry source code, credentials, personal or regulated data, and proprietary context, so define allowed providers, regions, retention, training and data-use terms, redaction, encryption, and logging. Embeddings and caches inherit the sensitivity of their sources, and bias and safety evaluation must match the real users, languages, repositories, and decisions affected.
 
 ## Failure modes
@@ -419,6 +491,9 @@ The recurring anti-patterns are granting every discovered MCP tool, treating too
 | Tool grant wider than the task | Registry audit; call to a resource outside WorkOrder scope | Scope grants per WorkOrder; deny at the gateway; review the agent definition |
 | Silent memory promotion | Prior outputs retrieved as fact with no promotion record | Require an explicit promotion decision with provenance; quarantine the unpromoted entries |
 | MCP adopted where a direct call was cheaper | Latency and hop cost dominate a stable internal service | Re-decide on reuse, interoperability, governance, latency, and cost; keep the gateway either way |
+| Prompting a capability gap | Prompt rewrites and model upgrades on a task the model describes correctly but cannot perform; no tool, data source, or permission for it in the manifest | Diagnose by layer; add the capability to the harness and the registry; a better prompt cannot compensate for a missing capability |
+| Tool-schema bloat | Tens of thousands of schema tokens in the first prompt, re-billed every turn; vendor MCP servers exposing dozens of tools each | Resolve tools at call time through a CLI or tool search behind the gateway; load only what the task needs |
+| Polling loop in context | Submit, poll, poll, fetch cycles each consuming a model turn; wide query results landing in the window | Run chatty protocols in code-mode inside a subprocess; return only the summary |
 
 Catch these before production by evaluating complete configurations (model, prompt, tools, context, harness, environment, policy, evaluator) with representative cases, deterministic checks, calibrated graders, repeated trials, confidence intervals, adversarial cases, and outcome slices. A high average can hide a catastrophic failure in a critical slice; no single score establishes truth, so retain disagreements, uncertainty, and counterevidence, and promote only on predefined improvement and non-regression criteria. When something does go wrong, the incident framework in [chapter 29](../05-operate/29-resilience-incidents-and-the-control-tower.md) asks which layer failed: intent, context, model, tool, state, policy, or evaluation. The separation of components in this chapter is what makes that question answerable.
 
@@ -436,6 +511,10 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 
 - An agent is a versioned composition of identity, objective, instructions, model profile, tools, context, memory view, policy, budgets, state, and evaluation profile, not a model with a long prompt.
 - The loop is understand → plan → act → observe → evaluate → adjust; the loop chooses the next action, the workflow owns progress and authority.
+- Four nested layers: loop (verifiable work; completion is a goal condition, and the model never grades its own work), graph (where execution goes next: nodes, conditional edges, typed shared state, checkpoints), harness (tools, permissions, context, traces: the model is weights, the harness is the agent), meta-harness (composition, policy once, shared sessions, pluggable sandbox across harnesses). When an agent fails, ask which layer the failure is at.
+- Model capability is not agent capability. A better prompt cannot compensate for a missing capability; fix capability in the harness.
+- Six production layers (experience and trigger, orchestration and state, tools and deterministic logic, trusted context, trust and control, runtime and operations) each answer a different question. The durable asset is the harness; models and platform services can change.
+- Govern every call at the gateway, but resolve the catalog at call time: CLI tool resolution and tool search keep schema out of the window, and code-mode runs polling and bulk work in a subprocess that returns a summary.
 - The model proposes; only the runtime authorizes. Tool results return as untrusted observations, and both approvals and denials are recorded.
 - Freeze an execution manifest before the first model call; every event and piece of evidence points back to it.
 - MCP standardizes host, client, server, session, transport, and six primitives. Capability negotiation proves compatibility, never trust, safety, or authorization. Govern the connection: identity, audience-bound tokens, scopes, allowlist, egress, receipts, revocation.
@@ -453,4 +532,5 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - MCP `2025-11-25` baseline: [specification](https://modelcontextprotocol.io/specification/2025-11-25), [architecture](https://modelcontextprotocol.io/specification/2025-11-25/architecture), [lifecycle and capability negotiation](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports), [authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), [tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools), [resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), [prompts](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts), [sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling), [elicitation](https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation), [tasks (experimental)](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks), [changelog](https://modelcontextprotocol.io/specification/2025-11-25/changelog).
 - Mission Control at `b31e275`: [agent identities](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentIdentities.ts), [agent versions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentVersions.ts), [context manifests](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/manifests.ts), [context activation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/activation.ts), [context router](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/context-router/src/router.ts), [memory lifecycle](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/memoryLifecycle.ts), [graph-assisted memory proposal](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/plans/memory-graphrag-architecture.md), [plugin and MCP guidance](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/CREATING_PLUGINS.md).
 - Sources: Jay West, "Key terms and definitions" capability taxonomy (execution loop, agent definitions, harness terms); Jay West, factory architecture notes (the four context types, the governed tool registry, MCP versus direct calls); the AI Software Factory study guide, chapter 6 terminology; the agent platform technology glossary (MCP, FastMCP, durable context patterns); the "Factory in one line" notes on harness ownership and the incident layer list.
+- Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) for the loop, graph, harness, and meta-harness nesting, the completion rule, and "model capability is not agent capability"; *Six layers of a working agentic system* (public post, 2026) for the six-layer table and "the durable asset is the harness"; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the MCP gateway, CLI tool resolution, tool search, code-mode measurements, and SaaS MCP schema sizes.
 - [Glossary](../appendix/glossary.md).
