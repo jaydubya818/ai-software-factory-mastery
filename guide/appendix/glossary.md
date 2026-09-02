@@ -1609,6 +1609,12 @@ feature. Also called a technical spike.
 
 ## Outcome measures
 
+**Token economics (tokenomics)** — The discipline of controlling model
+inference spend without reducing validated output: choosing which model runs
+which work, what the model is shown, how many turns a loop takes, what is
+cached, what is automated away, and what is stopped. Organized by the cost
+equation and judged by cost per validated outcome.
+
 **Cost equation** — Total agent spend decomposed into multiplying terms:
 users × sessions per user × turns per session × requests per turn × tokens per
 request × price per token. The first two are adoption and should grow; the

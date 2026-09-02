@@ -4,6 +4,7 @@ import { guideParts } from "../lib/guide";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { Pipeline } from "./components/Pipeline";
+import { Thesis } from "./components/Thesis";
 
 const definitions = [
   ["Capability supply", "Agent Factory", "Creates, versions, evaluates, publishes, and governs reusable agents, skills, tools, model profiles, and configurations.", 10],
@@ -78,10 +79,7 @@ export default function Home() {
           </ol>
         </section>
 
-        <section className="principles-section">
-          <div className="principle-statement"><span className="section-kicker">The durable thesis</span><blockquote>Reliable autonomy comes from a trustworthy system around fallible agents.</blockquote></div>
-          <div className="principle-list"><div><strong>Humans</strong><span>Own intent, judgment, policy, and material risk</span></div><div><strong>Agents</strong><span>Reason and execute inside bounded authority</span></div><div><strong>Software</strong><span>Owns durable state, policy, recovery, and control</span></div><div><strong>Evidence</strong><span>Proves whether exact work is ready to progress</span></div></div>
-        </section>
+        <Thesis />
 
       </main>
       <SiteFooter />

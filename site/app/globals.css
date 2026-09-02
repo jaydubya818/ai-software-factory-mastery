@@ -1587,3 +1587,38 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .atlas-index-track { grid-column: 1 / -1; height: 3px; margin: 0 -14px; background: var(--line); border-radius: 0 0 12px 12px; overflow: hidden; }
 .atlas-index-track span { display: block; height: 100%; background: var(--green); transition: width 240ms ease; }
 @media (max-width: 720px) { .atlas-index { grid-template-columns: 1fr; top: 57px; } .atlas-index-head { border-right: 0; padding-right: 0; padding-bottom: 6px; } }
+
+/* Home: interactive thesis */
+.thesis { width: min(1180px, calc(100% - 40px)); margin: 0 auto 110px; padding: 64px 70px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; background: var(--green-dark); color: #fff; border-radius: 22px; }
+.thesis .section-kicker { color: #a8cbb9; }
+.thesis-statement blockquote { margin: 22px 0 0; font-family: Georgia, serif; font-weight: 500; font-size: clamp(34px, 4.2vw, 54px); line-height: 1.08; letter-spacing: -.04em; }
+.thesis-hint { margin: 18px 0 22px; color: #c3d4cb; font-size: 14.5px; line-height: 1.55; max-width: 460px; }
+.thesis-actors { display: grid; gap: 6px; }
+.thesis-actors button { display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: baseline; width: 100%; padding: 13px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 10px; background: transparent; color: #fff; text-align: left; font: inherit; cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.thesis-actors button:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.3); }
+.thesis-actors button.is-active { background: var(--paper); color: var(--ink); border-color: var(--paper); transform: translateX(6px); }
+.thesis-actors button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.thesis-actors strong { font-size: 14px; }
+.thesis-actors span { color: #c3d4cb; font-size: 13px; line-height: 1.45; }
+.thesis-actors button.is-active span { color: var(--muted); }
+.thesis-panel { display: grid; gap: 22px; align-content: start; padding: 28px; border: 1px solid rgba(255,255,255,.14); border-radius: 16px; background: rgba(255,255,255,.04); animation: thesis-in 260ms ease; }
+@keyframes thesis-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.thesis-panel-head { display: grid; gap: 4px; }
+.thesis-index { color: var(--amber); font-family: var(--font-geist-mono), monospace; font-size: 11px; letter-spacing: .1em; }
+.thesis-panel-head h3 { margin: 6px 0 0; font-family: Georgia, serif; font-weight: 500; font-size: 30px; letter-spacing: -.03em; }
+.thesis-panel-head p { margin: 0; color: #c3d4cb; font-size: 15px; }
+.thesis-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.thesis-panel small { display: block; margin-bottom: 8px; color: #a8cbb9; font-family: var(--font-geist-mono), monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; }
+.thesis-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.thesis-panel li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.5; color: #eef3ef; }
+.thesis-panel li::before { content: ""; position: absolute; left: 0; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: #7fb59a; }
+.thesis-never li::before { background: transparent; border: 1.5px solid #e0a35a; width: 6px; height: 6px; top: 8px; }
+.thesis-never li { color: #f3e6d2; }
+.thesis-records div { display: flex; flex-wrap: wrap; gap: 6px; }
+.thesis-records span { padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.1); font-family: var(--font-geist-mono), monospace; font-size: 11.5px; color: #eef3ef; }
+.thesis-without { padding: 14px 16px; border-left: 2px solid var(--amber); background: rgba(0,0,0,.18); border-radius: 0 10px 10px 0; }
+.thesis-without p { margin: 0; font-family: Georgia, serif; font-size: 16px; line-height: 1.45; color: #fff; }
+.thesis-link { justify-self: start; color: #f0c98a; font-weight: 600; font-size: 13.5px; text-decoration: none; }
+.thesis-link:hover { text-decoration: underline; }
+@media (max-width: 960px) { .thesis { grid-template-columns: 1fr; padding: 40px 28px; gap: 32px; } .thesis-actors button { grid-template-columns: 1fr; gap: 2px; } .thesis-actors button.is-active { transform: none; } }
+@media (max-width: 640px) { .thesis { width: min(100% - 28px, 1180px); padding: 30px 20px; } .thesis-columns { grid-template-columns: 1fr; } }

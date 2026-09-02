@@ -213,7 +213,7 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 ## Delivery and scale
 
-**Cost per outcome, never cost per token.** Spend is users × sessions × turns × requests × tokens × price; grow the first two, shrink the middle three, choose the last. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+**Cost per outcome, never cost per token.** Tokenomics is an architecture discipline: spend is users × sessions × turns × requests × tokens × price; grow the first two, shrink the middle three, choose the last. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
 
 **An ungrounded agent fails slowly rather than cheaply.** Richer context up front is the strongest lever on turns and requests; ground first, then reason. → [16. Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
 

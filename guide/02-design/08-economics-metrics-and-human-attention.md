@@ -2,7 +2,7 @@
 title: Economics, metrics, and human attention
 part: design
 chapter: 8
-summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder.
+summary: How to measure whether the factory creates validated customer value rather than activity, how to attribute its full cost and treat token economics as architecture, how budgets act as execution controls, what breaks first at scale, and how to treat qualified human attention as the scarcest resource it consumes — from signal aggregation to where an engineer should focus and when to move up or down the altitude ladder. Includes the tokenomics playbook: the cost equation, the lever for every term, budgets as execution controls, and visibility instead of caps.
 absorbs: [03-operating-model/02-factory-economics-and-operating-metrics.md, 03-operating-model/07-engineering-attention-altitude-and-control.md, 03-operating-model/05-compounding-engineering-and-human-attention.md]
 infographics: [five-metric-dimensions, cost-per-validated-change, cost-equation, budget-feedback-loop, attention-altitude]
 ---
@@ -116,7 +116,9 @@ flowchart LR
 
 Three cautions. Comprehensive measurement can become surveillance: measure workflows and systems, not individuals, and never use lines of code, commits, hours online, or prompt volume as performance targets. Business outcomes take weeks to observe while teams need fast feedback: use leading indicators, label them as proxies, and never quietly substitute "PR merged" for customer value. Cost attribution will be imperfect: a transparent range beats a precise but incomplete number, and the measurement system itself has a cost that should stay proportional to the decisions it supports.
 
-### Token economics is an architecture problem
+### Tokenomics: token economics is an architecture problem
+
+**Token economics** — **tokenomics**, in the shorthand most teams use — is the discipline of controlling what a factory spends on model inference without shrinking what it delivers. It sits in this chapter rather than in a finance appendix because every lever that moves the bill is a design decision: which model runs which work, what the model is shown, how many turns a loop takes, what is cached, what is automated away, and what is stopped. The next five subsections are the tokenomics playbook: the levers, the equation that names them, the controls that enforce them, the visibility that keeps them honest, and the playbook that puts them in one table.
 
 Model spend is usually handed to finance as a bill to be negotiated. It is better treated as an architecture problem, because nearly every lever that moves it is a design decision, and because the cheapest model is not the cheapest system. A cheaper model that takes three attempts and then costs a senior engineer thirty to forty-five minutes of rework has cost more than one successful run on a stronger model, and the difference never appears on the model invoice. *Optimise cost per trusted outcome, not cost per token.*
 
@@ -133,7 +135,7 @@ The structural levers are the ones to reach for before renegotiating a contract:
 
 One lever is easy to forget because it does not look like a model decision: for some tasks *the best model is no model at all*. A deterministic service or a mature skill that performs a known transformation costs almost nothing per run, never hallucinates, and needs no evaluation of its trajectory. Routing to it is an economic and a quality decision at once ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)).
 
-### The cost equation
+### Tokenomics: the cost equation
 
 The levers above are easier to prioritise once the bill is written as a product rather than a total. One large engineering organisation that runs agents across thousands of engineers published the decomposition it manages against, and it transfers to any factory:
 
@@ -164,7 +166,22 @@ The runtime defaults that move the middle terms (compaction threshold, reasoning
 
 The same organisation's public figures are the clearest available evidence that the middle terms are where the money is. Between February and August 2026 its weekly active users grew about 7× and weekly agentic requests about 9.4×, while total AI spend stayed roughly flat from April; with the model held constant from February to July, cost per thousand model requests fell about 34 percent from its peak and cost per session fell 52 percent from its June peak. Those are one organisation's published measurements, not universal constants, but the shape is the argument: usage multiplied, unit cost fell across every metric, and quality held, without a unit-price cut and without downgrading tools. The conclusion the team drew is the one this chapter has been building toward. *Cost is a tractable engineering problem: eliminate zero-value token consumption rather than rely on unit-price cuts or tool downgrades. Cost per outcome, never cost per token.*
 
-### Budgets and stopping conditions are execution controls
+### Tokenomics: the control playbook
+
+Every lever in this chapter and its neighbours acts on one term of the cost equation. Read the table top to bottom when spend is rising and you need to know which knob to turn first; the terms are ordered from the one you want to grow to the one you least control.
+
+| Term | Direction | What moves it | Where |
+|---|---|---|---|
+| Users | Grow | Paved road that beats the workaround; onboarding; managed agents that work on people's behalf | [Chapter 27](../05-operate/27-the-factory-as-a-platform.md), [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) |
+| Sessions per user | Grow | Workflows worth starting; triggers that start work without a person | [Chapter 20](../03-build/20-autonomous-engineering-workflows.md) |
+| Turns per session | Shrink | Ground first (context graph, semantic layer); a goal-condition stop rule; bounded loops; retry budgets; deterministic skills instead of reasoning | [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md), [Chapter 18](../03-build/18-agent-and-loop-engineering.md), [Chapter 10](../03-build/10-the-agent-factory.md) |
+| Requests per turn | Shrink | Code-mode batching; subagents only where they buy measured quality; no polling loops inside the model's context | [Chapter 15](../03-build/15-agent-architecture.md) |
+| Tokens per request | Shrink | Tool gateway with CLI resolution and tool search instead of loaded schemas; compaction threshold; reasoning-effort default; prompt-cache TTL matched to idle gaps; narrow retrieval | [Chapter 15](../03-build/15-agent-architecture.md), [Chapter 18](../03-build/18-agent-and-loop-engineering.md) |
+| Price per token | Choose | Benchmark-driven, Pareto-optimal model per workload; cheaper default model for subagents; "no model at all" for known transformations | [Chapter 17](../03-build/17-models-routing-and-capability-selection.md) |
+
+Two rules keep the playbook honest. First, the only number you optimise for is **cost per validated outcome**; a change that lowers cost per token and raises human rework has made the factory more expensive. Second, every lever is measured with the model held constant, because a model upgrade moves every term at once and will be mistaken for your own improvement.
+
+### Tokenomics: budgets and stopping conditions are execution controls
 
 Budgets are not accounting after the fact; they are controls the harness enforces while a run is in progress. Each Attempt carries limits on tokens, model spend, tool calls, execution time, retries, and compute, and an objective stopping condition so that an agent which is stuck stops rather than reasoning indefinitely in circles. A budget that is only reported is a bill; a budget that is enforced is a safety boundary, and it is also what makes a failed run cheap enough to be a normal event rather than an incident.
 
@@ -184,7 +201,7 @@ flowchart LR
     R -.->|"cheaper reliable capability"| B
 ```
 
-### Visibility instead of caps
+### Tokenomics: visibility instead of caps
 
 Attempt budgets bound a *run*. The spend of a *person* or a *team* is a different object, and the instinct to bound it the same way, with a hard cap that stops work when it is reached, is usually wrong. A cap turns the first two terms of the cost equation, the adoption terms, into the thing being suppressed, and it teaches engineers that the governed path is the one that shuts off mid-task. The organisation whose figures appear above chose the opposite design, and it is the pattern to copy: make cost visible everywhere, and steer with nudges.
 
@@ -358,6 +375,7 @@ The honest product statement: the immutable lineage and metric surfaces exist no
 
 ## Retain this
 
+- Tokenomics is an architecture discipline: spend = users × sessions × turns × requests × tokens × price; grow the first two, shrink the middle three, choose the last, and judge every lever by cost per validated outcome with the model held constant.
 - The clock starts at governed intent and stops at confirmed customer value. Merge is a waypoint.
 - Three executive measures — lead time to validated value, change failure rate over a seven-day window, engineering leverage — form a constraint system; report them together.
 - Five dimensions (speed, quality, economics, human outcomes, factory intelligence) and four tiers (business, delivery, factory, diagnostic). Diagnostics explain; they are not outcomes.
