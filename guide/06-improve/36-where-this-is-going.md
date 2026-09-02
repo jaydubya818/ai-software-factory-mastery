@@ -390,7 +390,7 @@ At [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c06
 and `b3dfcee`, Mission Control has already made the composable choices this
 chapter recommends: a provider-neutral Generic Harness Contract with exact
 capability manifests and a swappable adapter registry (`codex/v1` admitted,
-DeepSeek experimental, Loom future); a `SandboxProvider` abstraction with
+DeepSeek experimental, a pluggable engine adapter); a `SandboxProvider` abstraction with
 local and remote backends; six versioned YAML workflows and a recipe catalog
 that resolve to canonical workflows rather than a second engine; a skills
 registry with `SKILL.md` parsing and linting; and a control plane that treats
