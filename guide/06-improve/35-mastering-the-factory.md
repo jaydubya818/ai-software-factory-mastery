@@ -872,44 +872,20 @@ governable.
 - Five audiences: board (leverage with controlled risk), CEO (strategy to
   value, faster), CFO (output per dollar, less rework), CTO (governed
   platform), developer (less repetition, same control).
-- Thirty seconds, two minutes, ten minutes; the eight-move structure; the
-  five-layer whiteboard with humans at intent, plan, code, release, and
-  exception.
 - Every objection has an architectural answer. Adversarial questions are where
   mastery shows: hard gates fail closed, scope is authority, roadmaps are not
   present-tense claims.
-- Replace vague claims with bounded ones; use the transitions; never use a
-  term you cannot unpack.
 - Twelve months: Define, Build the core, Establish validation, Pilot, Harden,
   Commercialize. Thirty days to first proof. A weekly rhythm of strategy,
   customer, architecture, quality, business, reflection.
 - Position the product as the control plane for AI Software Factories, and
   adopt through progressive proof from one repository and one workflow.
-- Three axes — strategy, architecture, organization — and the leader owns
-  the coherence of the system, not every line.
 - Inside an organization: understand (30), align and prove one path (60),
   harden and open to contribution (90); no prebuilt architecture, no
   migration mandate, no adaptive routing or self-improvement before a
   baseline. Centralize undifferentiated complexity; federate differentiated
   expertise. Three release clocks, not one train. Trusted outcomes, not
   generation volume.
-- The platform principles to have cold:
-  1. The model is a component. The factory is the system.
-  2. The model doesn't own the workflow. The platform does.
-  3. Planning converts ambiguous human intent into an executable contract.
-  4. An enterprise agent needs a contract, not just a prompt.
-  5. The model reasons. The harness controls.
-  6. Model context is not durable workflow state.
-  7. Agent count is an architectural cost, not a feature.
-  8. Models are capabilities, not architecture.
-  9. MCP standardizes connectivity. It doesn't outsource governance.
-  10. Reason where reasoning creates value. Automate where behavior becomes
-      deterministic.
-  11. Generation is cheap. Evidence is what creates trust.
-  12. Scale trust, not human review.
-  13. Autonomy should scale with reversibility, not confidence.
-  14. Learning can be autonomous. Promotion should be governed.
-  15. The prototype shouldn't need to be rewritten to become trustworthy.
 
 ## Go deeper
 

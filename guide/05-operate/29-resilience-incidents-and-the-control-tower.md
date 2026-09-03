@@ -374,16 +374,10 @@ Not implemented or proven: complete disaster recovery, regional failover, backup
 ## Retain this
 
 - The factory has authority over other systems, so its reliability is a safety control. When it cannot prove current authority, configuration, or evidence, availability yields to containment.
-- Classify every capability's degraded mode in advance; set RTO and RPO per capability, with zero loss for intent, policy, grants, and decisions.
-- Failover never creates two authorities, resets budgets, reuses permits, revives revoked capabilities, or duplicates publication. Fencing, generations, leases, idempotency, reconciliation, and an explicit recovery mode make that true.
-- Retry, replay, resume, reconciliation, failover, and restore each have a different safety precondition. Unknown is a first-class reconciliation state.
-- Recovery is unproven until exercised. Autonomy promotion needs recent recovery evidence.
-- SLOs cover the factory's promises: admission, dispatch, durability, enforcement, verification, accepted outcomes, recovery, and cost. Error-budget burn restricts change and autonomy; safety and security incidents never draw on the budget.
-- The control tower is a projection, not a source of truth. Its loop is Observe → Evaluate → Detect → Triage → Respond → Verify → Improve, and it never silently rewrites prompts, policies, models, evaluators, or capabilities.
 - Agent platforms become infrastructure earlier than expected. A poor answer is a model failure; the platform must still be deterministic about what happened, what authority existed, what state changed, and how to recover. Probabilistic intelligence does not justify probabilistic infrastructure.
+- The control tower is a projection, not a source of truth. Its loop is Observe → Evaluate → Detect → Triage → Respond → Verify → Improve, and it never silently rewrites prompts, policies, models, evaluators, or capabilities.
 - Mid-workflow recovery reads persisted state, never the model's memory: what completed, what side effects occurred, last safe checkpoint, what can resume. If resumption is unsafe, block truthfully and preserve evidence. The platform should know.
-- The incident procedure reduces blast radius without destroying evidence: pause the smallest unit (capability, definition, route, class); preserve state, traces, tool history, artifacts, policy decisions; name an owner; classify (model, context, tool execution, orchestration, idempotency, permissions, policy, evaluation, infrastructure); recover from the last safe state; make it permanent.
-- A truthful blocked state is better than a false success. A production failure should make the platform harder to fail the same way twice.
+- The incident procedure reduces blast radius without destroying evidence: pause the smallest unit (capability, definition, route, class); preserve state, traces, tool history, artifacts, policy decisions; name an owner; classify; recover from the last safe state; make it permanent. A truthful blocked state is better than a false success, and a production failure should make the platform harder to fail the same way twice.
 - Incidents run Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure, and *Isolate* means naming which layer failed: intent, context, model, tool, state, policy, or evaluation. Closure requires independent verification, full reconciliation, a sealed bundle, and a change-controlled improvement.
 
 ## Go deeper

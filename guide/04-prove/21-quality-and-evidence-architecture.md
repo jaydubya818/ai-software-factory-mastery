@@ -367,22 +367,13 @@ Existing project documentation reports focused tests and local lifecycle evidenc
 
 ## Retain this
 
-- Confidence is not evidence. A completion report, however articulate, is a claim. Generation is cheap; evidence is what creates trust.
-- Correctness has three levels — execution (does it work?), outcome (did it accomplish the intent?), policy (was it authorized?) — and they are checked independently.
-- Evidence comes from the system performing the check, not the system being checked. The producing agent is never the only entity evaluating its own output.
-- More signals are not better decisions. Deduplicate, correlate, rank, and surface the smallest set that could change the decision; learn from what reviewers do with it.
-- Completion is a fact about execution; acceptance is a judgment about outcome. The producer's "done" is never sufficient for acceptance.
-- Keep five records apart: criterion (the claim), artifact (the thing), receipt (the observation), gate (the policy evaluation), and acceptance decision (the accountable judgment).
-- A receipt is trustworthy when it names the exact artifact, the method, the verifier, the environment, and the validity window — and is never rewritten.
-- Pass, fail, unknown, stale, waived, and not applicable are six different things. Unknown never becomes pass; waived never becomes passed.
-- Evidence goes stale when any assumption changes, not just when time passes. Invalidate selectively; when unsure, invalidate conservatively.
-- Independence comes from separate execution paths and identities, not from a second model or a different job title.
-- Validators are not voters. Conflict is evidence, and it raises governance.
-- Validate continuously from intent to production. Lead time stops at validated customer value, not at merge.
-- A verification contract pairs every claim with the evidence that settles it and the mechanism that produces it. The more completely an outcome can be specified and independently verified, the more safely its execution can be delegated.
-- Verification completeness → trust → permissible autonomy → automation. When agents cannot be trusted to merge, ask which claims have no verifier, and build it.
-- Validate the validator. A bad verifier produces false failures against good work and false successes against bad work; measure both and let policy weight each verdict by the record.
-- The verifier gets goal, artifact, and contract — never the producer's reasoning. Orchestrator decomposes, worker executes, validator checks; verify at every milestone, not only at the end.
+- Confidence is not evidence: completion is a fact about execution, acceptance is a judgment about outcome, and a producer's "done" is never sufficient — evidence must come from the system performing the check, not the system being checked.
+- Correctness has three independent levels: execution (does it work?), outcome (did it accomplish the intent?), policy (was it authorized?). Passing one says nothing about the others.
+- Keep five records apart: criterion, artifact, receipt, gate, and acceptance decision. Collapsing any two into one is where most quality failures start.
+- Pass, fail, unknown, stale, waived, and not applicable are six distinct states that never substitute for each other. Evidence goes stale the moment any assumption behind it changes, not just with time, so invalidate selectively and, when unsure, conservatively.
+- Independence comes from separate execution paths and identities, not a second model or a different job title. Validators are not voters — a conflict between valid receipts is evidence that raises governance, not something to average away.
+- A verification contract pairs every claim with the evidence that settles it. The more completely an outcome can be specified and independently verified, the more safely it can be delegated; verification completeness sets the ceiling on autonomy, not the model.
+- Validate the validator. A bad verifier produces false failures against good work and false successes against bad work, and both must be measured before policy trusts its verdict.
 
 ## Go deeper
 

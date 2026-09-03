@@ -232,10 +232,8 @@ The intended direction is **future**: compile versioned Eval Tasks and fixtures 
 - Evals are additive to tests: tests answer deterministic questions, evals cover probabilistic behavior, and they run in three windows: offline, inline, operational. Trust is continuously measured, not certified once.
 - Validate the evaluator before relying on it: known positives and negatives, human-labeled calibration, agreement and false-positive and false-negative rates by task class, segmentation, and production failures as permanent regression scenarios. Never optimize against a judge you haven't validated.
 - Build the golden evaluation set first; without a stable baseline, improvement is anecdotal.
-- The verification chain: Candidate → Verification Subject → frozen Verification Plan → separate verifier Attempt → Evidence and Receipt → Quality Gate. Verification belongs to the artifact, not to the agent's confidence.
-- "Tests passed" is a claim; the checking system's recorded result bound to the exact digest is evidence. Verification on commit A does not authorize merge of commit B.
+- The verification chain: Candidate → Verification Subject → frozen Verification Plan → separate verifier Attempt → Evidence and Receipt → Quality Gate. "Tests passed" is a claim; the checking system's result bound to the exact digest is evidence, and verification on commit A never authorizes merge of commit B.
 - Surface the smallest set of signals that could change the decision; capture reviewer feedback on each. Maximum decision quality per unit of human attention.
-- Observability says what happened; evaluation says whether it was good enough; lineage connects them and makes drift attributable across model, knowledge, tool, skill, and environment.
 
 ## Go deeper
 

@@ -259,8 +259,6 @@ The intended direction, described in [Chapter 10](../03-build/10-the-agent-facto
 - MCP standardizes connectivity; it doesn't outsource governance. Every tool, on every transport, sits behind a governed registry and gateway, and the model proposes while the platform decides.
 - Reason where reasoning creates value; automate where behavior becomes deterministic. Skills mature from open-ended reasoning to captured method to conventional automation.
 - Improve once, benefit everyone: the Agent Factory's registries are what make one team's discovery every builder's capability.
-- Centralize undifferentiated complexity; federate differentiated expertise. The platform owns the contract and the paved road; product organizations own the domain content.
-- Version everything explicitly and run three release clocks: fast for models, prompts, and routing; medium for skills and Agent Definitions; slow for runtime and durable contracts.
 
 ## Go deeper
 

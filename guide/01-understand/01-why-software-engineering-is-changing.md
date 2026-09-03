@@ -246,15 +246,10 @@ Against the twelve threshold capabilities at `8014d5a`: versioned planning and i
 ## Retain this
 
 - The unit of production is validated customer value, not code; the lead-time clock starts at a governed Mission and stops at validated outcome, not at merge.
-- The scarce resource is accountable human judgment, not tokens or lines of code.
-- Governance is part of the execution architecture, not a compliance report added afterward.
 - Trust the governed operating system, not the probabilistic model; failures must be detectable, contained, recoverable, and attributable.
 - Humans own intent, risk acceptance, and irreversible decisions; agents own bounded execution; the shared layer is where the model is most credible.
-- The factory governs the deployment decision and lineage; it delegates the mechanics to existing delivery platforms.
 - Completion, validation, acceptance, merge, deployment, and production verification are different decisions and must stay different states.
-- Multi-agent orchestration is a capability, not a default shape; validation is independent only when execution, evidence, and acceptance authority are separated.
 - Lead time, change failure rate, and leverage must improve together; quality does not merely constrain autonomy, reliable validation is what lets autonomy safely increase.
-- Automatic observation is valuable; automatic self-modification of governed behavior is not acceptable.
 - Automation moves bottlenecks upstream to intent and downstream to verification: implementation, then review, then verification and context and intent and governance, then factory engineering. The people move with it, into contract design, governance, product-intent judgment, and review-gate supervision.
 
 ## Go deeper

@@ -1523,78 +1523,18 @@ only then extend proof into deployment and production outcome.
   evidence over assertions; durable state over conversation; policy before
   autonomy; independent validation; one authoritative lifecycle. The last one
   holds the rest together: no lower state silently completes its parent.
-- Two zoom levels of the same chain: the Builder loop a person experiences
-  and the governed delivery lifecycle the records enforce. Each arrow is a
-  gate, not an optimistic handoff.
-- Eight actors, each with a "cannot independently do" column — including the
-  human. Human approval is a server-enforced authority boundary, not a UI
-  state; passing execution and verification make a WorkOrder eligible, not
-  accepted.
-- Mission Control is a control plane, not a coding agent: React for operators,
-  Convex as the only source of truth and the only place transitions happen,
-  Hono for orchestration and provider boundaries, executors in worktrees or
-  sandboxes, GitHub behind a least-privilege App.
-- A Mission flows Constitution → Mission → immutable Spec → approved Plan →
-  Quality Contract → WorkOrder → Task → frozen manifest and Context Package →
-  leased Attempt → immutable Candidate → independent verification → Quality
-  Gate → permit → exact-current PR → human acceptance → merge → deployment →
-  activation → production verification → learning, and each step has negative
-  authority over the next.
-- The Planner is replaceable; the Plan is governed. Plan approval releases
-  WorkOrders; it does not dispatch. Quality isn't inferred after generation;
-  it's part of the execution contract.
-- "I'm done" is an event, not evidence. A Candidate is an output, not a
-  success declaration. Verification belongs to the artifact, not the agent's
-  confidence, and evidence comes from the system performing the check.
-- Candidate identity is the join key. A green result for the wrong SHA proves
-  nothing; verification on commit A doesn't authorize merge of commit B; a
-  moved head invalidates eligibility, not history.
 - Execution completed ≠ verification passed ≠ gate eligible ≠ WorkOrder
   accepted ≠ PR merged ≠ production verified. Correctness and authority are
   separate concerns, and currentness is a third.
-- A model can reason about authority; it should never grant itself authority.
-  Scope, budget, data classification, and capability are frozen into the
-  manifest and enforced outside the model.
-- Retry is a new Attempt; retry the intent, not the side effect. Missing
-  evidence is a negative state. Unavailable telemetry is `null`, not zero.
-- Admission is a chain of exact identities and digests; registration is not
-  qualification, promotion is execution-only eligibility.
-- The scarce resource isn't agents; it's human attention. The Command Center
-  is exception-first.
-- Advisory stays advisory: memory, evals, and learning explain and propose, and
-  never accept, publish, merge, or reconfigure. Learning can be autonomous;
-  promotion remains governed.
 - The system must always answer six questions from records: what was
   authorized, what ran, what changed, what proved it, is the evidence current,
   who may move it forward.
-- The evidence at `b3dfcee` is a bounded, human-governed production pilot:
-  15/15 accepted, 17 fail-closed drills, 3/3 live remote, `workOrders.accept`
-  by a human, no merge. It authorizes nothing beyond that.
+- The scarce resource isn't agents; it's human attention. The Command Center
+  is exception-first.
 - The honest claim at `af414acf`: a strong, human-governed production-pilot
-  architecture with a qualified delivery kernel — not yet a fleet-scale
-  autonomous factory or a certified Remote Sandbox platform. Architecture
-  docs define intent, plans describe proposals, evidence proves a revision;
-  the Capability Maturity Ledger is the canonical status and gets corrected
-  when they disagree.
-- Repository content, external text, memory, tool output, model output, and
-  worker results are untrusted data. Workflows are snapshotted onto runs;
-  the runtime contract changes only on incompatibility; the production
-  worker is off by default.
-- The most valuable habit in the repository is refusing to fabricate evidence
-  when prerequisites are absent.
-- A pluggable execution engine is trusted with how, never with whether: the
-  control plane dispatches under an executor snapshot, the engine plans and
-  implements, the factory worker verifies and publishes, a human accepts and
-  merges. Engine gates are evidence; engine done without a candidate SHA is
-  BLOCKED; the adapter holds none of the six prohibited authorities; its
-  lessons become telemetry, never receipts. At the review date the adapter is
-  experimental, flag-gated, and not admitted to remote sandbox.
-- Eleven surfaces, each with a refusal: Command Center, Factory Board, Work
-  Orders, Tasks board, Execution Run Inspector, Factory Overview, Factory
-  Health, Knowledge → Memory, Registry, harness engineering, Labs. The V1
-  constraint set (ASF-001 to ASF-008) bounds the pilot: GitHub only, one
-  production executor, human merge only, sandboxed RED work, tiered evidence
-  retention.
+  architecture with a qualified delivery kernel, evidenced at `b3dfcee` by
+  15/15 accepted workloads, 17 fail-closed drills, and 3/3 live remote — not
+  yet a fleet-scale autonomous factory or a certified Remote Sandbox platform.
 
 ## Go deeper
 

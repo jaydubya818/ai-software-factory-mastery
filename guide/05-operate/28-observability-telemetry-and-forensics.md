@@ -291,16 +291,10 @@ Not yet implemented or demonstrated: an end-to-end OpenTelemetry architecture wi
 
 ## Retain this
 
-- Every signal carries the correlation spine: Mission → Plan → WorkOrder → Task → Attempt → trace → span → artifact → PR → release, plus scope, manifest digest, SHA, identity, and time. Correlation never grants access.
-- Execution lineage runs builder → intent → Plan → Task → Agent Definition → model + config → context → tool calls → artifact → evaluation → review → deployment → outcome. Each run records model and configuration, retrieved context, tools called, state transitions, time, cost, tokens, retries, policies fired, and outcome.
 - Observability tells you what happened; evaluation tells you whether it was good enough. Without observability, evaluation is not debuggable; without evaluation, observability is just telemetry.
-- Drift has many sources (model, knowledge source, tool contract, skill, environment); lineage is what lets you attribute which one moved.
 - Four record kinds: domain state decides, audit says who, evidence proves, telemetry describes. Telemetry becomes evidence only through a validator with a method, policy, and subject digest.
-- Use links, not parent–child, for retries, CI, fan-out, pauses, and replays. Keep attempt number and idempotency key on everything.
-- Shared semantics (a stable envelope with provider fields namespaced) are what make runs, providers, and workflows comparable. Export via OpenTelemetry behind an adapter with pinned conventions.
 - Four kinds of health: outcome, control, runtime, AI economics and quality. Token volume is diagnostic, not productivity.
-- Default posture is metadata-first and content-off; capture full runs deliberately, for replay and comparison, under classification and retention rules. Never sample away domain, audit, evidence, or error records.
-- Cost rolls up from model call to Attempt to WorkOrder to accepted outcome once, with a recorded allocation rule; the practitioner views are usage over time and cost by model, sliceable by workflow. Attribute by team, workflow, model, and outcome, and report cost per trusted outcome, not cost per token; the cheapest model is not the cheapest system once rework is counted.
+- Cost rolls up from model call to Attempt to WorkOrder to accepted outcome once, with a recorded allocation rule; attribute by team, workflow, model, and outcome, and report cost per trusted outcome, not cost per token — the cheapest model is not the cheapest system once rework is counted.
 - A forensic bundle freezes manifests, identities, decisions, events, traces, lineage, receipts, artifacts, proofs, human decisions, cost, controls, and known gaps, immutably and under access control.
 - A mature factory never returns just "done". The completion record answers, from records rather than from the model: what changed → why → by whom or what → using which context, tools, and models (including the routing trace) → what was verified → what evidence supports acceptance, and it is accountable to the execution trajectory beneath it.
 - Findings are structured evidence with severity, confidence, affected code, recommended action, evidence, and producer; an incident is not an incident until it has a named owner.

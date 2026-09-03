@@ -376,27 +376,13 @@ The pure resolver filters deprecated, unavailable, rate-limited, unapproved, inc
 
 ## Retain this
 
-- Models are interchangeable execution resources; the harness, not the model, creates reliability.
-- The unit of selection is a model profile that pins provider, exact version, region, eligibility, prompt, sampling, limits, structured-output and tool settings, safety policy, fallback, budgets, evaluation suite, and retirement.
-- Catalog is fact, policy is rule, decision is record. Keep them separate and freeze the decision with the Attempt.
-- Route on task type, capability, quality, latency, cost, context window, security and data policy, availability, historical performance, and fallback behavior. Cost breaks ties only among eligible routes.
-- Fallback may relax cost or latency, never capability, risk approval, or policy. No eligible route is a blocked state, not a default.
-- Models are capabilities, not architecture. Workflows request capabilities; provider adapters and an evidence-backed capability registry supply identity. Without evaluation, model independence is architecture theater.
-- Apply the criteria in order: eligibility, capability, workload quality, context, tool support, latency, reliability, then cost. One valid outcome is no model at all.
-- Optimize cost per trusted outcome, not cost per token. Budgets and stopping conditions are execution controls, and budget data feeds routing and improvement.
-- Evaluate the whole configuration on representative cohorts; benchmarks are priors. Promote through shadow, canary, sample size, and human approval; keep the prior policy for rollback.
-- Validator independence is a routing decision: different provider, method, or deterministic check for REVIEW.
-- For every managed agent: benchmark from its real work, run it on a harness that serves any model, score cost per completed task with quality and reliability, move to the Pareto-optimal point, and keep moving. The same model in two harnesses can differ severalfold in price; benchmark the configuration, not the model.
-- Hold the model constant to measure your own gains. Default model selection is routing policy, and the subagent default is the biggest lever. Dynamic routing is roadmap until the benchmark and harness exist.
-- Switching models costs humans intuition; respect user workflow profiles and test prompt portability before changing interactive routes.
-- The model is a replaceable capability, not the architecture. Hold several specialisations (code-specialised, reasoning, frontier, lower-cost, hosted and self-hosted) in a model capability registry that records eligibility, pre-qualified fallback models, and the adapter each profile was evaluated through.
-- Routing policy is written in eight dimensions: capability-, complexity-, risk-, cost-, quality-, latency-, security-aware, and fallback. A workload taxonomy gives each task class its lane, floor, tier range, and budget-aware escalation thresholds; shadow mode and canary evaluation prove a route; routing traces join every decision to its outcome.
-- The routing question is: what is the cheapest capability that reliably satisfies this task's quality, security, latency, and risk requirements? It need not be an LLM.
-- Don't spend inference on what software can determine reliably. Deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs first; the residue climbs Deterministic → cheap model → specialised model → frontier model, never everything → frontier.
-- Measure agent effectiveness — accepted outcomes across the real workload distribution at acceptable quality, latency, and cost — not leaderboard rank. The distribution is the routing target, and the Pareto frontier is drawn per workload class.
+- Models are interchangeable execution resources, not architecture; the harness creates reliability. Workflows request capabilities, never a vendor name — provider adapters and an evidence-backed capability registry supply identity, and without evaluation that independence is architecture theater.
+- The unit of selection is a model profile that pins provider, exact version, region, eligibility, prompt, sampling, limits, structured-output and tool settings, safety policy, fallback, budgets, evaluation suite, and retirement. Catalog is fact, policy is rule, decision is record — freeze the decision with the Attempt.
+- Apply the routing criteria in order — eligibility, capability, workload quality, context, tool support, latency, reliability, then cost — and let cost break ties only among eligible routes. Fallback may relax cost or latency, never capability or policy; no eligible route is a blocked state, not a default; one valid outcome is no model at all.
+- Optimize cost per trusted outcome, not cost per token: benchmark model and harness together on the agent's own real work, score cost per completed task with quality and reliability, and move to the Pareto-optimal point as it shifts. Hold the model constant to measure your own gains.
+- Don't spend inference on what software can determine reliably. Deterministic preprocessing runs first; the residue climbs Deterministic → cheap model → specialised model → frontier model, never everything → frontier — and measure agent effectiveness against the real workload distribution, not leaderboard rank.
 - Route while the loop runs: escalate on evidence of failure, downgrade the mechanical remainder, and decide each switch cache-aware — price, switching cost, cache value, compaction cost, remaining work, success probability. The cheapest model is not cheapest if the switch destroys the context.
-- Set an intelligence budget by complexity, risk, and value: rename → cheap; feature → specialised; cross-system architecture → frontier; security-critical migration → frontier plus multiple validators. Run parallel candidates only where outcome value exceeds the multiplied cost, and never count them as independent verification.
-- Opinionated defaults, open contracts. Assume intelligence commoditises — differentiation lives in context, workflow, harness, verification, integration, data, policy, and learning — and design so that being wrong about it costs nothing.
+- Set an intelligence budget by complexity, risk, and value, and prefer opinionated defaults over open contracts: assume intelligence commoditises — differentiation lives in context, workflow, harness, verification, and data — and design so that being wrong about it costs nothing.
 
 ## Go deeper
 

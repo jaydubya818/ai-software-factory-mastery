@@ -312,15 +312,10 @@ What is not implemented, and what this chapter should therefore be read as desig
 
 - The factory is an internal product. The platform team owns ease of safe use; consuming teams own intent and domain risk. Adoption is evidence about product fit, and needing a specialist for routine use is a defect.
 - The portal is a view and the catalog is a map. Every write action goes through a governed API, and humans and agents resolve to the same records and permissions. A portal with its own authority is a shadow control plane.
-- A golden path is a supported product with a published contract and an explicit escape hatch: versioned extensions and expiring exceptions. Measure where people leave the path.
 - Admission decides whether work is eligible and budgeted; scheduling decides when and where. Neither silently changes risk, capability, region, or model profile.
-- Budgets are layered from Attempt to organisation, fallbacks cannot evade them, and incident and recovery capacity is always reserved.
-- Fair shares, aging, scoped concurrency, and backpressure that reaches the requester keep queues honest. Preempt only checkpointed work.
 - Cost belongs to accepted outcomes and preserves reserved, incurred, wasted, avoided, and unallocated amounts. Start with showback; move to chargeback only once the allocation rule is stable.
 - The Factory Board is guided entry: recipe → Mission draft (with a stop condition) → Plan compile, and nothing further. It never dispatches or accepts.
-- Factory Health watches human touches per agent task, shared component contributions, and workflow-versus-interactive token spend. The Engineering OS shell organises Strategy, Delivery, Operations, Intelligence, Knowledge, and Governance over the same APIs; Labs holds experiments in preview until the golden-path bar.
 - Aim at a controlled execution system (isolated environments, lifecycle hooks, durable checkpoints, independent verification, evidence correlation), not a dark factory. Progressive autonomy is the doctrine: human-led for intent and irreversible decisions, agent-orchestrated for decomposition and execution, auto-accept only for low-risk, policy-covered actions.
-- Judge factory infrastructure on five criteria: defined as code (a manifest plus definitions), lives in the cloud, API-first runtime, built-in evals and loops and benchmarks, multi-model and multi-agent. Factory as code buys a measurable baseline, version control, and agent-proposed diffs to the factory itself.
 - Opinionated defaults, open contracts: factory opinions make the paved road paved; portable contracts keep the opinion from becoming a dependency.
 
 ## Go deeper

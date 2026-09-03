@@ -260,7 +260,6 @@ The intended direction is a versioned repository graph, Plans that create a coor
 - Prefer a read-only discovery index plus on-demand qualified checkout over cloning everything or trusting the human to pick.
 - Adjacent checkouts plus a versioned manifest beat submodules, subtrees, and symlinks unless their versioning semantics solve a real product need. Submodules pin commits and make you commit twice.
 - A coordinated change is a dependency graph of pull requests; the Plan owns invariants, merge order, compatibility window, release sequence, and rollback.
-- Add before remove; keep the compatibility window open until migration is measured complete; make cleanup its own WorkOrder.
 - The integration candidate is a manifest of commits and artifacts with a digest that evidence binds to, and a change in one repository can stale evidence in another.
 
 ## Go deeper

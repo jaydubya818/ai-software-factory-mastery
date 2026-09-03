@@ -289,15 +289,11 @@ Assessed at `main` [`b31e275`](https://github.com/jaydubya818/MissionControl/tre
 
 - *The model reasons. The harness controls.* The harness owns model invocation, lifecycle, context assembly, state, tool discovery and execution, permissions, the loop, budget, timeouts, checkpoints, recovery, observability, evaluation hooks, and human intervention.
 - The loop: load task and state → assemble context → route → reason → action? → policy check → tool → observe → update state → evaluate progress → continue, retry, checkpoint, escalate, pause, stop, or complete. The model proposes; the runtime decides whether the action is permitted and whether the loop continues.
-- *Model context is not durable workflow state.* The Attempt is a durable state machine with bounded retries, idempotent transitions, replay-protected side effects, and first-class pause and cancel.
+- *Model context is not durable workflow state.* The Attempt is a durable state machine with bounded retries, idempotent transitions, replay-protected side effects, and first-class pause and cancel; recovery reads persisted state, because *the platform should know* and *a truthful blocked state is better than a false success.*
 - *Retry the intent. Don't blindly repeat the side effect.* Idempotency keys belong to the logical operation and are owned by the orchestrator. *Attempt identity may change. Logical-operation identity should not.*
 - Workers are admitted on identity, session, generation, capability, capacity, Factory Version, and backend, then hold a fenced lease; a stale worker cannot keep mutating.
 - *Context is a governed input, not everything we can fit into the window.* Four types; the Attempt gets a frozen, minimal, attributable Context Package; Factory Memory is advisory and *cannot rewrite the contract.*
 - *MCP standardizes connectivity. It doesn't outsource governance.* Identity, authorization, argument validation, resource scope, rate limits, timeouts, auditability, and approval are enforced at the tool boundary, outside the model. *Content cannot grant authority.*
-- Environments are bounded and reproducible; *autonomy should come with narrower execution boundaries, not broader ambient access.*
-- Budgets and objective stopping conditions are execution controls; budget data feeds routing and improvement.
-- Recovery reads persisted state; *the platform should know.* *A truthful blocked state is better than a false success.*
-- The stage ends with an immutable Candidate and a completion report. *"I'm done" is an event, not evidence.* *A Candidate is an output, not a success declaration.*
 
 ## Go deeper
 

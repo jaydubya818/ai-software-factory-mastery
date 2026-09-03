@@ -1332,54 +1332,6 @@ a self-operating learning factory.
 
 - Learning can be autonomous. Promotion is governed. The factory observes,
   clusters, and proposes on its own; a human promotes, on independent evidence.
-- Three loops: inner (the agent checks itself), outer (validate, review,
-  release, observe), meta (learn from what slipped through). The meta loop has
-  the most leverage and therefore the strictest gate.
-- A learning signal answers the mission's eight questions; the eighth — what
-  should change — is a proposal, never a change.
-- Compounding engineering harvests repeated corrections, with provenance and
-  scope, and promotes each to the narrowest durable mechanism. A test, schema,
-  or policy usually beats more prompt text.
-- Signals connect behaviour to outcomes: acceptance and rejection, edit size,
-  reviewer feedback, evaluation and tool failures, unnecessary tool calls,
-  expensive trajectories, defects and rollbacks, which context contributed,
-  builder feedback. Each is diagnosed to a source: Agent Definition, skill,
-  model route, prompt, retrieval, tool behaviour, or evaluation coverage.
-- Discovery may be autonomous (observe, identify, propose); promotion is
-  governed (baseline evaluation, security and policy check, controlled
-  experiment, measure, promote or reject or roll back). Autonomous discovery,
-  not autonomous authority.
-- Diagnose before optimizing; the prompt is the last suspect, not the first.
-- Skills can improve from their own traces: record papercuts per execution,
-  cluster them, and auto-generate the next revision; session analytics can move
-  from batch anti-pattern reports to real-time guidance. Both are discovery.
-  An auto-generated skill update is a governed candidate that must beat the
-  current skill as baseline at the promotion gate. Traces may propose; the gate
-  promotes.
-- Mine PR review history for corrections and sort each into Rule, Skill,
-  Verifier, or Refactor; prefer the deterministic end. File tickets with the
-  evidence PRs, prove with a with/without eval, scan weekly. Mine the same
-  history for chores and turn them into scheduled or triggered automations.
-  Every mined finding is a governed candidate through the promotion gate.
-- Autonomy is set per action class by reversibility and blast radius, never by
-  model confidence: bounded tuning may auto-promote; capability changes need a
-  human; authority changes never self-promote.
-- Trustworthy, attributed signals come before any reward modeling. Sophisticated
-  optimization against noisy feedback learns the wrong thing faster.
-- Build the golden evaluation set and lineage before any autonomous learning.
-  Without a stable baseline, improvement is anecdotal.
-- Every candidate is evaluated against a baseline, on a development set and an
-  untouched holdout, with a quality floor and full regression suites; promotion
-  creates a new immutable Factory Version; canaries carry a risk stop.
-- Personal fit is not organizational truth; scope is classified before
-  anything is proposed.
-- Autonomy is earned from validated outcomes and lost automatically on critical
-  failure. The recursive object changes; accountability does not.
-- Feedback has two registers: explicit (what people say) and implicit (what
-  they do). Builder behavior signals (comment acceptance, reviewer override,
-  dismissed finding, later incident) become evidence only when joined to the
-  record they concern and the outcome that followed, then sorted into a
-  versioned failure taxonomy by cause.
 - The loop is Execute → Observe → Evaluate → Learn → Propose → Verify →
   Promote, never Execute → rewrite production. A candidate improvement earns
   nothing until Verify (regression, shadow evaluation, A/B, canary rollout, in
@@ -1389,46 +1341,14 @@ a self-operating learning factory.
   Routing → Fine-tuning → Preference optimization and training. Climb one rung
   at a time with the evidence that the rung below was insufficient. Never jump
   straight to training.
-- The Factory Learning chain is persisted evidence → deterministic signal →
-  recurring cluster (a policy-set minimum occurrence count, three by default)
-  → Improvement Candidate → human review
-  (approve experiment, snooze, dismiss, reject) → experiment → Mission → Plan
-  → WorkOrder. Refresh makes zero model calls; a candidate has no authority
-  over live configuration or acceptance; an accepted `EVAL_SCENARIO` creates a
-  scenario with PR lineage.
-- Learning writeback reads an execution engine's lessons store read-only, by
-  default only after terminal success (a factory that also wants failed-run
-  lessons reads them in separately, labeled unverified), records additive
-  learning candidates on the Attempt and WorkOrder as idempotent
-  `learning.candidate.proposed` events, and treats them as telemetry: they
-  cannot accept or satisfy receipts. Missing store, no candidates.
-- Four loop layers: feedback (raw signals), verification (objective evidence
-  before trust), memory (retained failures and patterns), optimization (the
-  meta layer that changes the other three). Skip the memory layer and every
-  run rediscovers the last run's failure.
-- Six self-improvement levels: observe → diagnose → recommend → propose →
-  verify → promote. Aim for level 4, a pull request with evidence attached.
-  Level 6 is a policy per action class, never a default. Autonomous proposal
-  is not autonomous promotion.
-- The closed-loop factory: the factory defined as code (a manifest plus
-  agents, skills, MCPs, routing), scorers as budgeted graded functions over
-  runs, self-improvement agents proposing diffs that humans review as pull
-  requests, and benchmarks as configuration matrices over reference tasks
-  graded by the same scorers.
-- Eval-driven factory engineering: hypothesis → change → eval → compare →
-  promote or reject. Every change to the factory, including the ones the
-  factory proposes about itself, runs through it.
-- Meta-loops observe loops: failure analyzer, cost optimizer, context-drift
-  detector, skill optimizer, verifier-quality monitor, routing optimizer,
-  factory-health monitor. Maintenance loops keep software healthy on a
-  cadence; humans own domains, agents maintain dimensions. Automation
-  discovery turns repeated patterns into candidate skills and loops;
-  workflow discovery runs discover → evaluate → encode → reuse.
-- The flywheel: Intent → Definition of Correct → Context → Skill → Execution
-  → Evidence → Verifier → Evaluation → Outcome → Learning → better skills and
-  context. Higher quality earns higher autonomy, which produces more runs,
-  more evidence, better context, better skills, better verification, and
-  higher quality. The promotion gate is the brake.
+- Autonomy is set per action class by reversibility and blast radius, never by
+  model confidence: bounded tuning may auto-promote; capability changes need a
+  human; authority changes never self-promote.
+- Trustworthy, attributed signals come before any reward modeling. Sophisticated
+  optimization against noisy feedback learns the wrong thing faster.
+- Build the golden evaluation set and lineage before any autonomous learning.
+  Without a stable baseline, improvement is anecdotal.
+- Diagnose before optimizing; the prompt is the last suspect, not the first.
 
 ## Go deeper
 

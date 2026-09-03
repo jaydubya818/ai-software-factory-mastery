@@ -348,12 +348,8 @@ Future: a canonical event envelope, workflow migration protocol, compensation mo
 - Design around decision types and authoritative states, across seven surfaces: intent composer, plan preview, execution view, intervention, review inbox, evidence review, recovery view.
 - The home screen is an exception-first Command Center: blocked, failed verification, over budget, changed from the approved Plan, stale evidence, ready for acceptance, consequential decision needed. The scarce resource is not agents; it is human attention. Manage exceptions and authority, not activity.
 - Metrics can inform authority; they should not quietly become authority. A dashboard score never accepts a WorkOrder.
-- Many interfaces, one execution contract: CLI, IDE, UI, SDK, API, and agent-to-agent calls all produce the same identity, intent, Agent Definition, execution, tool authorization, evidence, evaluation, and trace.
-- "Thinking" is not a status. Progress events summarise decisions, discoveries, scope changes, evidence, budget, and the next transition; token streams are diagnostics.
 - Interrupt humans with a decision packet: decision, deadline, risk, recommendation, evidence with counterevidence, alternatives, links. A reviewer gets the Plan, diff, risk class, tests, evaluations, and policy decisions, not an approve button. A Slack ping carries the same packet. The human never compensates for missing automation.
-- Completion is not acceptance; the run explorer should show a run that finished and failed verification.
-- Triggers are intake, not authority; admission decides. Events carry a typed envelope; consumers deduplicate, tolerate defined ordering, and fail visibly on unknown versions. Delivery is not acceptance.
-- Running work binds to its approved workflow version; migration and compensation are new decisions with their own authority.
+- Triggers are intake, not authority; admission decides. Events carry a typed envelope, bind to an approved workflow version, and are deduplicated and failed visibly on unknown versions. Delivery is not acceptance.
 - Every store has a truth boundary. Authority lives in the transactional store; artifacts are referenced by digest; projections are rebuildable; similarity is not evidence.
 
 ## Go deeper

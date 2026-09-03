@@ -731,52 +731,13 @@ precision, human attention, merge latency, and change-failure outcomes.
 
 ## Retain this
 
-- Review at scale is ten mechanisms in order: repository profiling, incremental indexing, change classification, risk-tiered depth, hierarchical context, specialised reviewers, per-class evaluation, budget-aware escalation, structured findings with evidence, and layered policy. Cost then scales with the risk of the change, not the size of the estate.
-- End to end the pipeline is twelve steps: PR → Profile → Analyze → Classify → Retrieve context → Route → Specialised reviewers → Aggregate → Verify → Human → Outcome → Learn. Aggregation is deduplication, then noise suppression, then a confidence threshold set from measured precision. A reviewer is promoted and demoted against a human-review baseline; accepted findings joined to outcomes become repository memory, distilled from review history and fed back to the profile and suppression rules through the promotion gate.
-- Feedback is untrusted evidence about an observation. It becomes more
-  authoritative only through explicit promotion, and every earlier record is
-  kept.
-- Check the latest version first, deduplicate second, reproduce third. Issues
-  are created after reproduction, never from raw feedback.
-- A verified reproduction is one of the highest-leverage assets in an
-  autonomous maintenance loop; spend tokens generating several and verify on an
-  independent path. If none is clear, a human gets it.
-- Every subsystem has an accuracy number. Sixty percent useful is worth
-  shipping; measure by landed lines of code and reclassify.
-- Cheap regression cases run on every PR; expensive ones by risk; flaky ones are
-  quarantined with an owner.
-- Signal quality is a product problem: deduplicate, correlate, attach severity,
-  confidence, ownership, and risk; surface the smallest set that can change the
-  decision; explain findings well enough to teach. Maximum decision quality per
-  unit of human attention, not maximum signal volume.
-- Review depth is proportional to risk, not to the fact that AI generated the
-  change. Low risk goes to automated verification and possibly autonomous
-  promotion; medium to one reviewer with a summarized packet; high to senior
-  review with stronger controls. Reviewer feedback recalibrates the tiers.
-- Autonomy scales with reversibility, not confidence. Scale trust, not human
-  review.
-- The fix-review loop is a while loop with a maximum of three iterations, then
-  a human. Reviewer satisfaction is not acceptance, and a reviewer cannot
-  certify its own fix.
-- An agent may keep a human-approved candidate mergeable; it must not expand
-  scope or take the merge decision. A material diff invalidates approval.
-- A 20,000-line prototype is a specification, not a PR. Slice it through a
-  reviewed plan with migrations ordered first.
-- Roll a review agent out advisory first, then gate. Severity is consequence
-  times likelihood; a threshold decides what requests changes; unresolved
-  findings carry forward; one review per head, re-verified before publication;
-  no verdict means fail.
-- "Does this PR need a human?" and "are the files right?" are two checks:
-  change-risk policy and change-verify invariants.
-- The review bottleneck moves from writing to reviewing to defining correctness
-  and verification. Compress review through five stages — deterministic checks,
-  specialised verifiers, agent reviewers, risk classification, human judgment —
-  and measure the share of changes that reach the bottom.
-- Context-driven review beats generic review: diff plus repository profile,
-  architecture, standards, history, skills, and component rules, delivered
-  through specialised lenses (frontend, backend, auth, infra) activated by the
-  change. Shift the standard left to the producer so that review is defence in
-  depth; a lens whose finding rate never falls is a standard that never moved.
+- Feedback → issue → reproduction → fix → PR → review → merge are seven distinct records; each promotion requires stronger evidence, and every earlier record stays intact. Check the latest version first, deduplicate second, reproduce third — issues are created only from a verified reproduction, never raw feedback.
+- Review at scale is a governed pipeline, not one reviewer config: profile the repository, index continuously, classify each change, tier by risk, assemble hierarchical context, dispatch specialised reviewers under budget, aggregate and verify findings, and evaluate per repository class against layered policy, so cost scales with the risk of the change, not the size of the estate. Accepted findings joined to outcomes become versioned repository memory, fed back through the same promotion gate as any other learning.
+- Signal quality is a product problem: deduplicate, correlate, and surface only the smallest set that could change the decision. Review depth is proportional to risk, not to who or what produced the change, and autonomy scales with reversibility, not confidence — scale trust, not human review.
+- The fix-review loop is a bounded while loop (fix, push, re-review, cap at a few iterations, then escalate); satisfaction is not acceptance, and a reviewer can never certify its own suggested fix.
+- An agent may keep a human-approved candidate mergeable — rebase, retry, resolve proven mechanical conflicts — but it must never expand scope or exercise the human merge gate; a material diff after approval invalidates it.
+- A 20,000-line discovery prototype is a specification, not a pull request: treat it as the plan's input, slice it into independently reviewable PRs with migrations ordered first, and ship in the range of one to three thousand lines at a time.
+- Context-driven review (diff plus repository profile, standards, history, and skills) beats a generic opinion of the code; shifting the standard left to the producer is what makes a review lens's finding rate fall over time.
 
 ## Go deeper
 

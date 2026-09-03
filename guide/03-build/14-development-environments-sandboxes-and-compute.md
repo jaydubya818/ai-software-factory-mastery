@@ -363,18 +363,12 @@ Future: compile repository manifests and environment contracts into attested, po
 ## Retain this
 
 - Sandbox, environment, and compute answer three different questions: how execution is contained, whether the work can be done and evaluated, and where it runs. Design each on its own.
-- The environment is a pinned, attested dependency bound to the Attempt by the Execution Manifest. "Latest" is not reproducible.
-- Identity provisioning lives in the environment layer, scoped to the WorkOrder and short-lived.
-- Pets are fine to start; automate the bootstrap and prove a rebuild before you need one.
-- Startup stages and previews are product metrics and product surfaces, not plumbing.
-- Isolation is layered; no single boundary proves the others, and disposable is not the same as safe.
+- The execution environment is a frozen, first-class object binding exact revision, approved tools, scoped credentials, filesystem and network boundaries, dependencies, limits, timeouts, and auditing, for isolation, reproducibility, containment, and consistency with delivery. Autonomy should come with narrower execution boundaries, not broader ambient access.
+- The isolation model is a written table of policy dimensions (identity and authorization, scoped credentials, network, filesystem, tool permissions, time, token and compute budgets, frozen scope, kill switch, replay protection, auditability, compliance), each default-deny, granted in the manifest, enforced outside the model, and proven by a negative test. An agent can be intelligent without being trusted; the sandbox defines what intelligence is allowed to affect.
 - The sandbox never holds publication credentials. Validate in quarantine, then mint the shortest-lived token outside, then let a human merge.
-- Own the environment before you own the compute; evaluate each layer's build, buy, or BYOC on its own terms and keep the exit.
-- The execution environment is a first-class object binding exact revision, approved tools, scoped credentials, filesystem and network boundaries, dependencies, limits, timeouts, and auditing, for isolation, reproducibility, containment, and consistency with delivery.
-- Treat autonomous execution like running untrusted code. Autonomy should come with narrower execution boundaries, not broader ambient access.
 - Prototypes sit on production rails from the first minute; productionizing raises the evidence bar rather than rebuilding. A fifteen-minute prototype that takes two weeks to reconstruct has only moved the bottleneck.
 - Multi-tenancy is enforced on four boundaries: identity per run, data authorization before the model, resource quotas and queue fairness, and scoped memory. Common platform, differentiated product behavior.
-- The isolation model is a written table of policy dimensions (identity and authorization, scoped credentials, network, filesystem, tool permissions, time, token and compute budgets, frozen scope, kill switch, replay protection, auditability, compliance), each default-deny, granted in the manifest, enforced outside the model, and proven by a negative test. An agent can be intelligent without being trusted; the sandbox defines what intelligence is allowed to affect.
+- Pets are fine to start if you automate the bootstrap and prove a rebuild before you need one; startup stages and previews are product metrics and product surfaces, not plumbing.
 
 ## Go deeper
 

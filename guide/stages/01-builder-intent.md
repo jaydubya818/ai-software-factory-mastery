@@ -220,9 +220,6 @@ Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl
 - The Project Constitution exists before intelligence is applied; *important system rules should not depend on model memory.*
 - The Mission is the durable outcome; the Mission Spec is immutable, ID-bearing, and revised by creating a new revision, never by editing.
 - Six deterministic checks gate the freeze: requirements identifiable, outcomes measurable, no contradictions, no unresolved clarifications, scope explicit, acceptance testable.
-- Builders are developers, product managers, quality engineers, designers, and agents; every surface converges on one execution contract, and *the safest paved road also needs to be the fastest paved road.*
-- Risk is computed from scope and policy. Humans may raise it. Confidence never lowers it.
-- The Builder Experience is designed customer-backward from what the builder must accomplish; the builder never needs to know the model, harness, skill, or MCP implementation.
 
 ## Go deeper
 

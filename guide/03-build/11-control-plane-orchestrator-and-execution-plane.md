@@ -550,23 +550,13 @@ The repository glossary and lexicon reviewed on 2026-09-02 state the authority s
 
 ## Retain this
 
-- Authority and state ownership define the plane; deployment topology does not. The browser is a surface, never the policy boundary.
-- The control plane decides, the execution plane performs, and the orchestrator coordinates without manufacturing authority.
-- Commands request, events report, and state is derived under explicit rules by the single state owner.
-- Persist intent before crossing any unreliable boundary; expect at-least-once delivery and design for effectively-once effects.
-- An immutable execution manifest going out and an ordered, idempotent event contract coming back are what make executors replaceable.
-- Lifecycles are layered: an Attempt completing says nothing about Task review or WorkOrder acceptance. An execution-complete event is evidence, not acceptance.
-- Waiting states, stop conditions, and reconciliation are first-class parts of orchestration, and safety limits are not negotiable by a model.
-- External systems stay authoritative for their own facts; the factory owns the governance decision about them.
-- Orchestration answers five questions (parallel, wait, shared state, branch failure, human checkpoint) in records, not in a conversation. The control plane manages the work; workers execute the work. The model does not own the workflow; the platform does.
-- Run three release clocks: configuration moves fast and eval-gated, artifacts on a certification lifecycle, contracts under compatibility discipline.
-- Policy is enforced at named hooks (dispatch, side-effecting tool call, publication, merge, release, promotion, resume), and each hook records the policy version and the decision. Authority comes in grains: merge authority and release authority are distinct grants with distinct approvers, joined by controlled rollout. Governed promotion and regression gates apply the same hooks to the factory's own changes; traceability is the walk from any effect back through its hook to its intent.
-- With a pluggable execution engine: the control plane decides whether and what executes, the engine decides how, the control plane verifies, publishes through its own GitHub App, and accepts on a human decision, and a human merges. A completed engine run ≠ an accepted WorkOrder; engine gates are evidence; done without a candidate SHA is BLOCKED; cancellation wins until terminal success is durably reported.
-- The executor snapshot is copied onto the Attempt at dispatch and never re-resolved: editing the Factory Version changes the next dispatch, not this run; retry is a new Attempt with a new engine identity; backends are frozen as a pair; environment overrides win over committed repository policy, which is never mutated.
-- Admission is maturity plus five required external controls (canonical worker lease, sandbox policy, repository-scope reconciliation, independent verification, publication permit) minus six prohibited authorities (worker leases, verification subjects, verification plans, evidence authority, GitHub publication, acceptance). Adapter selection only, never an engine-specific worker path; experimental adapters are flag-gated and off by default; unattended engine modes are not admitted.
-- The factory control plane owns loop inventory, scheduling, triggers, permissions, identity, model configuration, context deployment, skill versions, policy, budgets, observability, logs, evals, verification, dashboards, and promotion. Don't build every runtime; own the control plane.
-- A universal meta-harness chooses the workflow for an outcome; outcome-driven execution says produce X subject to Y and prove A through F before completion. The control plane still freezes what, within which bounds, and what counts as proof.
-- Owning your factory means owning what correct means and controlling how work is produced and verified: own intent, standards, context, skills, policies, evals, and outcomes; adopt models, runtimes, sandboxes, infrastructure, and commodity tooling.
+- The plane is defined by who owns authority and state, not by where code runs or what the UI shows. External systems (GitHub, CI) stay authoritative for their own facts; the control plane owns only the governance decision about them.
+- Commands request, events report, and only the state owner derives state under explicit rules. Persist intent before crossing any unreliable boundary and expect at-least-once delivery — an immutable manifest going out and an idempotent event contract coming back are what make executors replaceable.
+- Lifecycles are layered: an Attempt completing says nothing about Task review or WorkOrder acceptance. Waiting, reconciliation, and hard stop conditions are first-class states, not edge cases, and safety limits are never negotiable by a model.
+- Orchestration answers five questions (parallel, wait, shared state, branch failure, human checkpoint) in durable records, never inside a model conversation: the control plane manages the work, workers execute it, and the platform owns the workflow.
+- Policy is enforced at named hooks, each recording its policy version and decision. Authority comes in grains — merge and release are distinct grants with distinct approvers — and traceability is the walk from any effect back through its hook to the intent it served.
+- With a pluggable execution engine, the control plane decides whether and what executes and the engine decides how: a completed run is not an accepted WorkOrder, engine gates are evidence rather than verification, and the executor snapshot frozen at dispatch means a live configuration edit never changes a running Attempt.
+- Own what defines correctness — intent, standards, context, skills, policies, evals, outcomes — and adopt everything else. Don't build every runtime; own the control plane.
 
 ## Go deeper
 

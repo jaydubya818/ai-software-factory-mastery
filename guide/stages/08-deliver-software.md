@@ -224,10 +224,6 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - Verification asks whether the artifact met the contract; acceptance asks whether we authorize progression. Correctness and authority are separate concerns.
 - The pull-request gate is exact-current: head, Candidate digest, evidence, and receipts name the same commit, or the gate closes.
 - Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified; then merge → deployment → activation → production verification. Code complete is not factory complete.
-- Don't build a parallel delivery universe; make existing CI/CD agent-aware and outcome-aware, and turn pipelines into continuous evidence.
-- Progressive delivery: qualify → limited release → inline evals → healthy? expand : rollback. Speed comes from observability and reversibility, not from removing controls.
-- Prototypes sit on production rails from the first minute; productionizing raises the bar rather than rebuilding.
-- The scarce resource is human attention: an exception-first Command Center, and time-boxed, auditable waivers whose recurrence is product data.
 
 ## Go deeper
 

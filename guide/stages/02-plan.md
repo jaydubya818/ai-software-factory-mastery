@@ -281,7 +281,6 @@ Assessed at local HEAD [`a490648`](https://github.com/jaydubya818/MissionControl
 - A human approves one exact revision. *Plan approval authorizes the release of governed WorkOrders. It does not dispatch execution.* *Intelligence can recommend. Authority is granted separately.*
 - The Quality Contract is derived from the approved Plan and freezes requirements, assertions, invariants, assurance expectations, evidence requirements, and approval policy before execution. *Quality isn't inferred after generation. It's part of the execution contract.*
 - Traceability runs spec requirement → Plan assertion → WorkOrder → acceptance criterion → verification check, and is checked in both directions.
-- The WorkOrder is the unit of governance; an agent run is not.
 - Decomposition exposes work for the cheapest reliable capability per piece; it does not maximize agents. Two agents on one repository is a coordination problem, not a reasoning problem.
 - Routing is eligibility first, then reliability, then cost. *The best model for some tasks is no model at all.*
 

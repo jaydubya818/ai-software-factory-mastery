@@ -530,26 +530,13 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 
 ## Retain this
 
-- Three definitions: the Agent Factory supplies reusable capabilities; the AI Software Factory turns governed intent into validated value using them; Mission Control is one control plane and a case study, not the definition.
-- The one-line factory is a value stream, not a call graph: skills are frozen before and applied during execution; improvement changes future versions only through governed promotion; delivery ends at observed outcome.
-- The system map has a downward path that delegates bounded capability and an upward path that reports observations; neither lets an executor mint authority or certify its own work.
-- Name each layer by what it owns and what it does not prove; a product boundary is a commercial choice, an authority boundary is a safety choice.
+- Three definitions: the Agent Factory supplies reusable capabilities; the AI Software Factory turns governed intent into validated value using them; Mission Control is one control plane and a case study, not the definition. The agent is not the factory; the factory is the system around the agent, and the model does not own the workflow — the platform does. Trust the system, not the model.
+- The one-line factory is a value stream, not a call graph: skills are frozen before and applied during execution, improvement changes future versions only through governed promotion, and delivery ends at observed outcome. Every stage has a contract, every transition has a record, and lower-level completion never accepts a higher-level outcome.
+- The system map has a downward path that delegates bounded capability and an upward path that reports observations; neither lets an executor mint authority or certify its own work. Name each layer by what it owns and what it does not prove; a product boundary is a commercial choice, an authority boundary is a safety choice.
 - The stack is compute, development environment, inner harness, outer harness, control plane; decide build, buy, or bring per layer, prefer composition over inheritance, and treat every interface as a versioned product proven by behavioral tests.
-- Mission Control's seven layers are intent, planning, execution, validation, governance, human decision, and learning; the whiteboard version is five bands with humans at five decision points.
-- Every stage has a contract, every transition has a record, and lower-level completion never accepts a higher-level outcome.
+- Six architectural areas (intent, harness, capability, model, trust, learning) and fourteen owned layers, run in order as Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption and transformation and optimised for trusted throughput; the platform centralises undifferentiated, risky capability and domain teams federate their workflows.
+- The factory is a governed system of reusable skills and continuously operated loops performing a meaningful portion of the lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory — a continuum (assistance → skills → automation → loops → connected loops → factory) that never has to reach everything. Its boundary is signal-to-outcome, not ticket-to-code, and the factory-native SDLC runs three loops at three speeds: inner for autonomy, outer for trust, meta for improvement.
 - The five commitments: builder intent is the interface; models are interchangeable; the harness makes reliability; agents do not certify their own work; learning is automated and promotion is governed.
-- Five systems, five verbs — plus the harness inside the runtime: the Agent Factory creates, the runtime executes, the harness controls, knowledge grounds, the Software Factory delivers, the control plane governs. Use the lightest orchestration that satisfies the workflow; choose language per subsystem.
-- The master whiteboard has four bands (understand and structure; intelligence and execution; trust and delivery; learn) and its controls are cross-cutting, never a final box.
-- The model is a component; the factory is the system. The model does not own the workflow; the platform does. Trust the system, not the model.
-- Six architectural areas (intent, harness, capability, model, trust, learning) and fourteen owned layers; the platform centralises undifferentiated, risky capability and domain teams federate their workflows.
-- Memory hooks: Intent → Plan → Route → Execute → Verify → Deliver → Learn; Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale.
-- The mental model in one breath: Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption and transformation, optimised for trusted throughput (accepted, verified outcomes per unit of time and cost).
-- The second definition: a governed system of reusable skills and continuously operated loops that performs a meaningful portion of the lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory. A skill is executable organisational knowledge; a loop is automation that watches itself.
-- Four modes (traditional, agent-assisted, agentic, factory) on one continuum: AI assistance → skills → automation → loops → connected loops → factory. The share done by loops rises; it never has to reach everything.
-- The lifecycle above the areas is SIGNAL → INTENT → FACTORY → OUTCOME → LEARNING, and around again; the factory's boundary is signal-to-outcome, not ticket-to-code, and the data model and control plane sit beneath every transition.
-- Three cross-cutting concerns: the control plane governs, the context plane knows, factory engineering builds and improves the loops.
-- The factory-native SDLC runs three loops at three speeds: inner for autonomy, outer for trust, meta for improvement.
-- The agent is not the factory; the factory is the system around the agent.
 
 ## Go deeper
 

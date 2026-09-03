@@ -161,7 +161,7 @@ Beside them: accepted-task success, rollback rate, false-positive review rate, p
 
 ### What not to build first
 
-Resist building sophisticated autonomous learning before a trustworthy baseline exists. The order that works: a golden evaluation set and cost baseline; lineage recorded on every run; the signals above collected and attributed; manual diagnosis and promotion for the first improvements; then automation of observation, clustering, and proposal; then auto-promotion for the narrowest, most reversible action classes with rollback proven. Highly dynamic multi-agent swarms, machine-learned routing, a universal memory layer, and hundreds of generic skills are hypotheses until production evidence exists. Recursive self-improvement before a trustworthy baseline is the fastest way to build a system that confidently learns the wrong thing.
+Resist building sophisticated autonomous learning before a trustworthy baseline exists — don't generalize before you've earned the abstraction. The order that works: a golden evaluation set and cost baseline; lineage recorded on every run; the signals above collected and attributed; manual diagnosis and promotion for the first improvements; then automation of observation, clustering, and proposal; then auto-promotion for the narrowest, most reversible action classes with rollback proven. Highly dynamic multi-agent swarms, machine-learned routing, a universal memory layer, and hundreds of generic skills are hypotheses until production evidence exists. Recursive self-improvement before a trustworthy baseline is the fastest way to build a system that confidently learns the wrong thing.
 
 ## How to build it
 
@@ -220,12 +220,8 @@ At [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c06
 - Separate learning from promotion: discovery, clustering, diagnosis, proposal, and experimentation can be autonomous; promotion is governed, and the previous version stays recoverable.
 - Collect outcome-linked signals, especially human edit size, unnecessary tool calls, and which context contributed; a thumbs-up is not a learning signal.
 - Diagnose the source before proposing: Agent Definition, skill, route, prompt, retrieval, tool, or evaluation coverage, using lineage diffs between cohorts.
-- The loop: observe → identify → propose → evaluate against baseline → security and policy check → controlled experiment → measure → promote, reject, or rollback.
 - Autonomy is set per action class by "what happens if this is wrong, and how easily can we reverse it?", never by model confidence; changes to authority, security boundaries, destructive operations, deployment, or gating evaluators always take the human path.
-- Improvements that need authority return as a new Mission through the same governed Plan as any other work: Research → Verify → Recommend → Approve → Implement → Validate → Measure → Iterate.
 - Compounding engineering: recurring corrections become skills; stable skills become automation.
-- Trustworthy, attributed learning signals come before any reward modeling; noisy feedback learns the wrong thing faster.
-- Drive the loop with cost per trusted outcome, human edit rate, defect escape, and retry rate, always segmented.
 - Build the baseline before the learner; don't generalize before you've earned the abstraction.
 
 ## Go deeper

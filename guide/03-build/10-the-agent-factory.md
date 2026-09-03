@@ -696,31 +696,9 @@ The intended direction is a registry that continuously calculates certification 
 - A registry is an authority surface, not a directory. If it cannot name the digest, the certification state, and the revoker, it is a catalog.
 - A capability is a versioned dependency graph, not a name. Version on material behavior; prompts and models are behavioral dependencies.
 - Resolve before execution into an immutable lock with reasons, and fail closed. "Latest" is not a binding.
-- Compatibility is relational and proven by conformance suites bound to digests, never by declaration.
-- Evaluation measures, certification grants bounded and expiring eligibility, promotion widens scope progressively with human authorization for material increases.
-- Deprecate with migration, quarantine on doubt, revoke to block resolution, retire without erasing history.
-- A tool schema describes shape; a complete contract adds authority, side effects, failure, cost, evidence, and lifecycle. Classify by highest-consequence effect; prefer atomic primitives with receipts.
-- Skills are written for agents, load only when relevant, ship their scripts, enforce hard limits with hooks, and are where the factory's learning is stored.
 - An enterprise agent needs a contract, not just a prompt: purpose, model requirements, instructions, skills, tools, context, eligibility, budgets, evaluation, observability, owner, version.
-- The model thinks, the tool acts, the skill packages reusable behavior, the harness controls execution, and the factory governs how they compose.
-- Reason where reasoning creates value; automate where behavior becomes deterministic. A mature skills framework removes unnecessary reasoning rather than maximizing it.
+- Certify skill → verifier pairs, not skills. Autonomy follows verification confidence: ask what can be independently verified well enough to automate.
 - Centralize undifferentiated complexity; federate differentiated expertise. Improve once, benefit everyone.
-- You cannot operate a learning system safely if you cannot reconstruct which version learned what.
-- Rules are eager push, skills are lazy push, and both are context as code: packaged with a manifest and lockfile, installed by exact version from a scoped registry, updated only within the compatible range, rolled back by reinstall.
-- A skill with typed input and output schemas is a launchable function, which is how packaged reasoning becomes automation.
-- Inventory what is installed across the organization, classify first-party and third-party, and treat duplicates and drift as findings.
-- A 0–100 quality score with a threshold in CI is an entry gate to evaluation, never a substitute for it.
-- Repository- or domain-specific behavior does not belong inside the model. Deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning for stable behavior; and deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs before any agent.
-- Capability matching turns a step's requirements into eligible, recorded capabilities without widening authority; tool extensibility happens at the registry and gateway, never in the prompt; standardize the core contract and optimize model adapters at the edge.
-- Code-review skills, policy skills, and the wider class of reusable artifacts share one envelope, which is what lets a capability built for one product be matched and certified for another.
-- A skill is an executable unit of organisational knowledge, not merely a prompt: workflow instructions, standards, policies, domain knowledge, review criteria, tools and MCP, hooks, expected outputs, and acceptance criteria.
-- The skill registry is what officially exists (a package manager for capabilities); the skill inventory is what is deployed and consumed (a software inventory). Skill drift runs version → deployment → usage → drift detection → upgrade → regression evaluation, and the regression step is not optional.
-- Skill-centric architecture: the skill is the reusable artifact and every loop is an execution mechanism around it; one skill is consumed from the coding agent, review, CI, the maintenance loop, the migration agent, and the IDE.
-- Certify skill → verifier pairs, not skills. The chain is Definition of Correct → Skill → Execution → Verifier → Evidence → Promotion or Rework, and autonomy follows verification confidence: ask what can be independently verified well enough to automate.
-- Factory opinions are evidence-backed, overridable defaults; canonical workflows are validated patterns for recurring classes, specialised by layer (canonical → organisation → product → repository → task), never by copy.
-- Twelve asset types (skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, context sources) each run owner → version → evaluate → deploy → observe → improve → deprecate. Evals are governed assets in an eval registry with owner, baseline, production correlation, last validated, and expiry.
-- Mine history for standards: history → extract standards → codify skill → generate eval → generate verifier, with the reviewer whose comments were mined as owner.
-- Agent Runtime Management keeps templates, versions, instances, and identities apart: an instance is never more than its version and its issued identity allow, and the Agent Fleet view reads from those bindings so revocation can find and stop what is running.
 
 ## Go deeper
 

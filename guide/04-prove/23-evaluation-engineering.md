@@ -465,27 +465,13 @@ The intended direction is for Mission Control to compile versioned Eval Tasks an
 
 ## Retain this
 
-- Verification proves one candidate against one criterion. Evaluation measures a configuration across a population. Do not confuse them, and do not promote on either alone.
+- Verification proves one candidate against one criterion; evaluation measures a configuration across a population. Producer ≠ verifier in both: the configuration under test never owns, tunes, or sees the instrument that scores it.
 - The evaluation subject is the whole configuration — agent definition, model route, prompt, tools, skills, context policy, harness, environment, workflow, verifier — with a digest stamped on every trial.
-- A dataset is a governed product: versioned, sliced, split into development / regression / certification / adversarial / holdout, deduplicated semantically, and tracked for contamination and drift.
-- Deterministic graders own hard gates; model graders make bounded judgments and must be calibrated and blinded; humans decide meaning and calibrate the others. Graders do not vote.
-- One run is an anecdote. Run repeated paired trials, report uncertainty, segment before aggregating, and let no aggregate erase a hard gate.
-- Inspection, recorded replay, mocked-tool replay, and execution replay are four different things. Execution replay is a new observation, and its divergences are data.
-- Promotion climbs a ladder — offline, holdout, adversarial, shadow, canary, controlled comparison — with the experiment plan declared before the first run.
-- Reproducible inputs improve comparison; they do not make model output deterministic.
-- Build the golden set first, from representative work collected with product teams, and include known failures, adversarial cases, and escaped defects. Without a stable baseline, improvement becomes anecdotal.
-- Validate the evaluator: known positives and negatives for deterministic checks, a human-labeled calibration set for model graders, agreement and false-positive/false-negative rates by segment. Never optimize against a judge you haven't validated.
-- Observability says what happened; evaluation says whether it was good enough. The lineage chain from builder to outcome is what connects them.
-- Drift comes from the model, the knowledge source, the tool contract, the skill, and the environment. Continuous evaluation is only useful if you can attribute what changed.
-- Evaluate in three windows — offline in CI, inline on the deployed agent, operationally over time. Trust is continuously measured, never certified once.
-- Evaluate a skill by its delta: scenarios from real work, run without and with the skill, judged on multiple binary criteria, reported as baseline / with-skill / delta, kept as a regression corpus. A skill with no delta is context cost with no return.
-- Producer ≠ verifier: the configuration under test never owns, tunes, or sees the instrument that scores it.
-- Three modes, two scopes: offline (frozen, reproducible, blind to the unanticipated), online (live, representative, irreversible), regression (fixed, on every change, the memory of past failures); global evals for what every run must do, repository-specific evals for what only this codebase requires.
-- Grade the trajectory and the outcome separately; authority violations are hard gates whatever the artifact looked like. Outcome proxies run task success → builder acceptance → actionable-comment acceptance → false-positive rate → human correction → escaped defects, and production outcome is the final grader that re-anchors them all.
-- The test–eval continuum runs unit → integration → behavioural → deterministic verifier → rubric eval → LLM judge → production outcome. Use the most deterministic mechanism available for the claim; a micro-eval of ten cases covers one probabilistic behaviour between test and eval.
-- Every capability gets a with/without evaluation and a marginal capability value: (Δ quality + Δ success + Δ human effort) / (Δ cost + Δ latency + Δ complexity). The factory simplicity principle follows — no agentic complexity unless evals show improvement — and the model × harness matrix says which term to blame.
-- Evals expire. A benchmark has a half-life; eval drift is monitored by comparing verdicts with production and refreshing or retiring; benchmark overfitting is cured by targeting production outcomes, not leaderboards. The eval registry — purpose, workload class, dataset, rubric, owner, baseline, score, compatibility, last validated, production correlation, expiry — is the asset-lifecycle record that makes retirement a decision.
-- Scorers are graded functions over real runs, sampled and scheduled because they cost money; benchmarks are configuration matrices over five to ten reference tasks graded by the same scorers.
+- A dataset is a governed product: versioned, sliced, split into development / regression / certification / adversarial / holdout, deduplicated semantically, and tracked for contamination and drift. Build the golden set first, from representative work collected with product teams, and include known failures and escaped defects — without a stable baseline, improvement becomes anecdotal.
+- Deterministic graders own hard gates; model graders make bounded judgments and must be calibrated and blinded; humans decide meaning and calibrate the others. Graders do not vote, and none of them counts until validated against known positives/negatives or a human-labeled set.
+- One run is an anecdote. Run repeated paired trials, report uncertainty, segment before aggregating, and let no aggregate erase a hard gate — grade trajectory and outcome separately, since production outcome is the final grader that re-anchors every proxy.
+- Promotion climbs a ladder — offline, holdout, adversarial, shadow, canary, controlled comparison — with the experiment plan declared before the first run, and continues across three windows (offline, inline, operational) because trust is continuously measured, never certified once.
+- Every capability gets a with/without evaluation and a marginal capability value: (Δ quality + Δ success + Δ human effort) / (Δ cost + Δ latency + Δ complexity). No agentic complexity without an eval that shows improvement — and evals themselves expire, so refresh or retire them against production correlation.
 
 ## Go deeper
 

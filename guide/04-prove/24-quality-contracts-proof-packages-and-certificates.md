@@ -647,15 +647,8 @@ The repository glossary and lexicon reviewed 2026-09-02 name the review-package 
 - A Candidate is an output, not a success declaration. It becomes a Verification Subject, is checked by a frozen Verification Plan in a separate Attempt, and cannot inherit old evidence once it changes.
 - Currentness binds candidate, subject, evidence, checks, and PR head. Verification on commit A does not authorize merge of commit B; verified once does not mean verified forever.
 - Verification asks whether the contract was satisfied; acceptance asks whether progression is authorized. Correctness and authority are separate concerns.
-- Four records: Contract (what must be true), Evidence Envelope (what was observed), Gate Decision (whether it suffices), Certificate (a signed, bounded, revocable projection).
 - Scores prioritize; hard gates protect. A 98/100 cannot override one critical finding, missing test, unknown migration result, or absent approval.
-- `UNKNOWN` and `STALE` are first-class states. Fail closed. Never coerce to pass.
-- A certificate means only: this exact subject satisfied this contract version with this evidence and these approvals at this time. Consumers check status at the decision boundary.
-- Verifiers submit evidence; policy decides; humans accept material risk. Nothing certifies its own work.
 - The doctrine in nine lines: no assertion without evidence; no evidence without provenance; no acceptance without independent validation; no autonomy without calibrated trust; no release without a satisfied contract; no score may override a hard gate; no certificate means more than its exact subject, policy, evidence, and time; no production contradiction may be hidden by an earlier pass; no learning proposal may promote itself.
-- The review package is evidence-first: frozen intent, criteria → checks, failures and retries, Decision Candidates, changed-file groups, then optional ADVISORY residual findings. Accepting a Decision Candidate never rewrites frozen intent; it opens a new Spec or Plan revision or an ADR.
-- A receipt packet proves a bounded runtime stayed in its envelope and is validated against the manifest before it becomes evidence. WAIVED is recorded, never rendered as PASS, and policy may still block. Residual AI is advisory only.
-- Show two counts: execution progress (Tasks done) and acceptance readiness (blocking criteria verified and current). Task count alone never accepts. The merge gate is a composite of CI, lenses, mutation, and policy on the exact head, and a human still merges.
 
 ## Go deeper
 

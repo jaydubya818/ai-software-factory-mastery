@@ -236,7 +236,6 @@ Data Understanding and Semantic Engineering are the thinnest layers in the studi
 - Twelve disciplines, each owning one decision: Business Understanding, Data Understanding, Knowledge Engineering, Model Engineering, Context Engineering, Semantic Engineering, Agent Engineering, Loop Engineering, Evaluation Engineering, Harness Engineering, Infrastructure Engineering, Continual Learning.
 - Every layer publishes six contracts: input, decision, output, evidence, failure, change.
 - The arrows between layers are contracts, not a waterfall. A correction returns to the discipline that owns the failed decision.
-- Knowledge Engineering prepares the corpus; Context Engineering selects from it; the harness executes; the workflow governs. Keep those four apart.
 - Every retry is a new immutable attempt that names what changed.
 - Diagnose by owner: for any symptom, find the discipline whose decision failed and ask its first question.
 - The stack is a responsibility model, not a product stack or an organization chart. More agents do not improve quality; retrieval does not prove truth; evaluation scores do not grant authority; observability records, it does not certify; and continual learning is not self-modification.

@@ -352,10 +352,8 @@ The target is for Mission Control to calculate effective autonomy at dispatch fr
 - Effective autonomy is the minimum of the Factory, Mission, WorkOrder, policy, and trust ceilings.
 - Promotion is a human decision on sustained, scoped evidence — initially 100 WorkOrders over 30 days at 99 percent independent validation with zero critical violations. Demotion may be automatic, and quarantine is immediate for authority, evidence, or containment breaches.
 - The Trust Score is numeric inside and banded outside; hard overrides beat weighted averages; failures decay over 90 days but never leave the record.
-- Validator disagreement increases governance. Results are evidence, not votes.
 - Humans approve evidence and risk through decision packets, not agent activity through logs.
 - Quality is the acceleration engine: reliable validation → trust → autonomy → speed.
-- Agents perform work; a named human remains accountable for the system, the policy, and the accepted outcome.
 
 ## Go deeper
 

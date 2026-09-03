@@ -430,7 +430,7 @@ Every write retains source, scope, time, confidence, sensitivity, owner, lifecyc
 
 ### Use multiple agents only for a measurable reason
 
-Add another agent when independent verification, parallelism, context isolation, or specialized expertise produces a measurable gain, never to imitate an organization chart. Every hand-off needs an explicit input contract, output schema, authority, budget, termination condition, and owner. Shared durable state belongs in the runtime, not in private message history. Independent validation needs a separate evidence path, different incentives or tools where appropriate, and protection against correlated failure; a different persona name is not independence. And evaluate the complete configuration and workflow, because a model benchmark cannot show whether context selection, tool policy, memory, recovery, or coordination works. [Chapter 18](./18-agent-and-loop-engineering.md) develops the patterns.
+Add another agent when independent verification, parallelism, context isolation, or specialized expertise produces a measurable gain, never to imitate an organization chart. Every hand-off needs an explicit input contract, output schema, authority, budget, termination condition, and owner. Shared durable state belongs in the runtime, not in private message history. Independent validation needs a separate evidence path, different incentives or tools where appropriate, and protection against correlated failure; a different persona name is not independence. And evaluate the complete configuration and workflow, because a model benchmark cannot show whether context selection, tool policy, memory, recovery, or coordination works. [Chapter 18](./18-agent-and-loop-engineering.md) develops the patterns. None of this diagnosis works without stable identifiers: every record — manifest, Attempt, artifact, policy decision — has to share them, or a reviewer cannot trace a failure back to its cause. That is also why a small governed agent stays easier to trust and improve than one whose tools, memory, and context keep expanding without bound; growth in composition is a cost to justify, not a default.
 
 ## How to build it
 
@@ -517,24 +517,13 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 
 ## Retain this
 
-- An agent is a versioned composition of identity, objective, instructions, model profile, tools, context, memory view, policy, budgets, state, and evaluation profile, not a model with a long prompt.
-- The loop is understand → plan → act → observe → evaluate → adjust; the loop chooses the next action, the workflow owns progress and authority.
-- Four nested layers: loop (verifiable work; completion is a goal condition, and the model never grades its own work), graph (where execution goes next: nodes, conditional edges, typed shared state, checkpoints), harness (tools, permissions, context, traces: the model is weights, the harness is the agent), meta-harness (composition, policy once, shared sessions, pluggable sandbox across harnesses). When an agent fails, ask which layer the failure is at.
-- Model capability is not agent capability. A better prompt cannot compensate for a missing capability; fix capability in the harness.
-- A universal meta-harness takes a goal, constraints, and a verification contract and chooses the decomposition, workers, skills, strategy, and verification itself: outcome-driven execution, "produce X subject to Y and prove A through F," with the route frozen into the manifest and authority untouched.
-- Tools seen from the agent's side are affordances: CLI or API over UI, structured queries over raw logs, environment manifests, structured errors. A recurring stop at the same step is a missing affordance, not a missing prompt.
-- Six production layers (experience and trigger, orchestration and state, tools and deterministic logic, trusted context, trust and control, runtime and operations) each answer a different question. The durable asset is the harness; models and platform services can change.
-- Govern every call at the gateway, but resolve the catalog at call time: CLI tool resolution and tool search keep schema out of the window, and code-mode runs polling and bulk work in a subprocess that returns a summary.
-- The model proposes; only the runtime authorizes. Tool results return as untrusted observations, and both approvals and denials are recorded.
-- Freeze an execution manifest before the first model call; every event and piece of evidence points back to it.
-- MCP standardizes host, client, server, session, transport, and six primitives. Capability negotiation proves compatibility, never trust, safety, or authorization. Govern the connection: identity, audience-bound tokens, scopes, allowlist, egress, receipts, revocation.
-- A tool contract covers schemas, identity, scope, side-effect class, idempotency, timeout, retry, rate limit, approval behavior, result envelope, receipt, and version. Protocol errors and execution errors stay distinct.
-- MCP solves the N×M interoperability problem and nothing else: it standardizes connectivity and does not outsource governance. Choosing MCP over a direct call is an interoperability decision, not a religion.
-- The moment a model gets a tool, intelligence becomes authority. Every capability sits behind a governed registry that answers what, who, on whose behalf, which resources, valid arguments, risk class, approval, and evidence; grants are scoped to the task; identity, authorization, validation, scope, rate limits, timeouts, audit, and approval are enforced outside the model.
-- Context is a governed input, not everything we can fit into the window. Keep task/run context, working state, enterprise retrieval, and durable memory distinct, and promote to durable memory deliberately.
-- Context is compiled in eight steps into five separate trust categories; memory is admitted through quarantine, evaluation, and approval, and corrected, expired, or revoked as first-class events.
-- Add agents only for a measurable gain, and evaluate the whole configuration, never the model alone.
-- Traceability works only when records share stable Attempt, manifest, artifact, and policy identifiers; a small governed agent is safer and easier to improve than one whose tools, memory, and context keep expanding.
+- An agent is a versioned composition of identity, objective, instructions, model profile, tools, context, memory view, policy, budgets, state, and evaluation profile, not a model with a long prompt; change any component and evidence from an earlier Attempt may no longer apply.
+- Diagnose a failure by layer: loop (completion is a goal condition, the model never grades its own work), graph (routing), harness (a missing capability, since a better prompt cannot compensate for it), meta-harness (cross-harness policy and sessions). Model capability is not agent capability.
+- The model proposes; only the runtime authorizes. Every call passes a gateway (identity, authorization, validation, scope, rate limits, approval) before it executes, and the execution manifest is frozen before the first model call so every event and piece of evidence points back to it.
+- MCP standardizes connectivity, not governance, and solves the N×M integration problem and nothing more. Choosing it over a direct call is an interoperability decision, not a religion.
+- Context is a governed input, not everything we can fit into the window: the minimum relevant, permission-aware, attributable set for one decision. Durable memory is promoted deliberately, never silently.
+- Add another agent only for a measurable gain in verification, parallelism, isolation, or expertise, and evaluate the whole configuration, never the model alone.
+- Traceability depends on every record sharing stable Attempt, manifest, artifact, and policy identifiers; a small governed agent stays easier to trust and improve than one whose tools, memory, and context keep expanding.
 
 ## Go deeper
 

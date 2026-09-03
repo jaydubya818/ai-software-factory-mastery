@@ -193,9 +193,7 @@ Mission Control does not yet provide a complete test taxonomy, an impact-analysi
 - Traditional tests validate deterministic behavior; evals validate probabilistic behavior. They are additive, and evaluation starts before promotion and continues after deployment.
 - Change-impact selection is defensible only when the map is data, the reasons for exclusion are recorded, and full runs happen on a schedule. The model proposes; the map constrains.
 - Agent-written tests must fail red first, assert observable outcomes, and be judged by a validator that did not write the code.
-- Test infrastructure is production infrastructure: versioned fixtures, isolated tenants, no secrets, defined cleanup, retained environment identity.
 - A flaky test in quarantine is visible debt with an owner and an expiry. A retried-to-green test is destroyed evidence.
-- A test receipt binds the run to commit, artifact, environment, command, selection, exclusions, retries, and verifier.
 - Test quantity is an activity metric. Fault sensitivity is the quality metric.
 
 ## Go deeper

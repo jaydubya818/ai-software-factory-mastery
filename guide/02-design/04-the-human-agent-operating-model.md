@@ -413,26 +413,13 @@ No fresh browser journey was performed. The operating model becomes proven only 
 
 ## Retain this
 
-- Humans own intent, judgment, material risk, and accountability; agents own bounded execution, iteration, validation, and evidence collection; the most valuable work is shared.
-- Human-led is not human-performed; agent-executed is not agent-authorized.
-- Five agent roles — Planner, Orchestrator, Worker, Validator, Recovery worker — are permission sets, and no role certifies its own work.
-- Twelve lifecycle states, each with entry, exit, owner, evidence, tools, approvals, and escalation; attempted, completed, validated, approved, merged, deployed, and verified are different states.
-- A handoff is a durable contract; unknown is a valid value, invented continuity is not.
-- Interrupt humans for judgment, with an attention item, never for routine activity with a transcript.
-- Approval authorizes; acceptance confirms. Disagreement never widens authority.
-- Review burden is a metric. If agents add review time, there is no leverage yet.
-- Autonomy changes how often a human decides, never who owns the outcome.
-- Three parties: agents propose and execute; deterministic systems validate and govern; humans retain decisions whose consequences require judgment or authority. Facts go to code, judgment to people, work to agents.
-- A builder is anyone who can express intent clearly enough to be translated into governed work; the factory compensates for what non-developers lack rather than excluding them.
-- The safest paved road must also be the fastest, and a prototype should become trustworthy by raising its evidence bar, not by being rewritten.
-- Tools should educate while they execute; the platform should increase engineering capability, not just coding throughput.
-- Trust is measured (repeat usage, accepted outcomes, reduced rework, self-service onboarding, time saved, use after support leaves) and protected with escape hatches: explained recommendations, visible policy decisions, feedback, recoverable errors.
-- The operator attention contract: interrupt only for judgment, authority, or credentials, and every packet states decision, why, risk, evidence, options, and what resumes after.
-- A human touch is any override, approval, or takeover during agent execution; human touches per agent task is the leverage measure. Overnight continuity means work survives model changes, context limits, restarts, handoffs, and the end of the chat session, under bounded retries and escalation, never silent looping; a Mission needs a stop condition before its Plan is compiled.
-- Humans move from writing implementation to shaping executable intent. Work shaping turns ambiguous demand into bounded, agent-legible work; product taste decides what should exist; both sit on the human judgment boundary, where attention is spent by design.
-- Two roles to name: the factory steward (intent, outcomes, opinions, exceptions, and factory improvement for one domain) and the software-factory process engineer (root-causes recurring failures into harness, context, verifier, and skill improvements).
-- Role fungibility lets people work across functional boundaries through governed agents; latent quality capacity is the backlog of quality work a factory can finally afford. Factories raise quality, not only velocity.
-- Human touchpoints per accepted outcome is the operating metric of the model; every subsection here lowers it or keeps the touchpoints that should remain.
+- Three parties: humans own intent, judgment, material risk, and accountability; agents propose and execute bounded work; deterministic systems validate and govern. Facts go to code, judgment to people, work to agents. Human-led is not human-performed; agent-executed is not agent-authorized, and autonomy changes how often a human decides, never who owns the outcome.
+- Five agent roles — Planner, Orchestrator, Worker, Validator, Recovery worker — are permission sets, and no role certifies its own work. Twelve lifecycle states each carry entry, exit, owner, evidence, tools, approvals, and escalation; attempted, completed, validated, approved, merged, deployed, and verified are different states.
+- A handoff is a durable contract, not a chat summary; unknown is a valid value, invented continuity is not. Interrupt humans only for judgment, authority, or credentials, with a decision packet, never for routine activity with a transcript — approval authorizes, acceptance confirms, and disagreement never widens authority.
+- A human touch is any override, approval, or takeover during agent execution; human touches — and human touchpoints per accepted outcome — are the leverage measures this whole model is built to lower without lowering quality. Review burden is itself a metric: if agents add review time, there is no leverage yet.
+- Overnight continuity means work survives model changes, context limits, restarts, handoffs, and the end of the chat session, under bounded retries and escalation, never silent looping; a Mission needs a stop condition before its Plan is compiled.
+- Humans move from writing implementation to shaping executable intent: work shaping turns ambiguous demand into bounded, agent-legible work, and product taste decides what should exist — both sit on the human judgment boundary, where attention is spent by design. Name the factory steward (intent, outcomes, exceptions, and improvement for one domain) and the process engineer (root-causes recurring failures into the harness).
+- A builder is anyone who can express intent clearly enough to be translated into governed work; the factory compensates for what non-developers lack rather than excluding them. The safest paved road must also be the fastest, trust is a measured product outcome protected with escape hatches, and tools should educate while they execute.
 
 ## Go deeper
 

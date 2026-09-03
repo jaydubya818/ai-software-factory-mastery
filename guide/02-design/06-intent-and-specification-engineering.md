@@ -342,22 +342,13 @@ Future direction: compile an approved Plan and the active Factory Configuration 
 
 ## Retain this
 
-- Business Understanding is the bottom layer of the stack: define the decision, constraints, ownership, and success criteria before anything else.
-- The first hallucination happens before code: the system invents what "done" means. The cure is a governed, versioned, testable specification before implementation authority.
-- Mission owns why; Plan owns how; WorkOrder owns a bounded, delegated part. Never let the "how" record rewrite the "why".
-- Requirement, acceptance criterion, validation assertion, evidence requirement: four constructs, four questions. Tests produce evidence; they are not the requirement.
-- NFRs need measure, condition, population, threshold, window. Invariants must never become false and live above the WorkOrder.
-- Specify failure and recovery first; run the nine-item ambiguity pass; keep provenance on every line; humans decide meaning and risk.
-- Plan review is independent and produces a coverage matrix, findings, and approved / revision required / exception required. Approval freezes a baseline; material change creates a revision and computes what it invalidates.
-- For large experimental work, a prototype can be the spec: mocks, overnight implement-and-review loop, slop PR as specification, sliced into 1–3k-line PRs with ordered migrations.
-- Separate intent understanding from planning. Extract five things first: objective, constraints, context, acceptance criteria, risk. Interrupt the builder only when ambiguity changes implementation or risk; an agent efficiently solving the wrong problem is the most expensive failure.
-- Planning converts ambiguous human intent into an executable contract. The Plan is a versioned artifact with objective, criteria, tasks, dependencies, affected systems, context, capabilities, risk, verification strategy, and human checkpoints; the planner is replaceable, the Plan is governed.
-- Approval binds one exact Plan revision to one exact Mission Spec and Constitution, never mutates, and authorises release of WorkOrders rather than dispatching execution. Intelligence recommends; authority is granted separately.
-- Decompose into a task graph whose nodes carry objective, inputs, outputs, dependencies, context, capabilities, risk, verification, retry and timeout semantics; two agents on one repository is a distributed-systems problem; decomposition exposes work so the cheapest reliable capability can take each piece.
-- The Intent layer has a customer: the builder. Design the Builder Experience customer-backward, from what the builder must accomplish into platform capability. The builder never needs to understand the model, harness, skill, or MCP implementation.
-- Name builder personas, design a builder journey with measurable exits from first intent to end-to-end ownership, and measure adoption as workforce transformation, not as a count of users.
-- Work shaping is the intent-layer discipline: humans move from writing implementation to shaping executable intent. The standing part of every shaped piece of work is the domain's Definition of Correct; you cannot reliably automate what you have not adequately defined.
-- A complete specification has two halves: what is wanted, and the verification contract that says, claim by claim, what will count as proof.
+- The first hallucination happens before code — the system invents what "done" means. Business Understanding (the decision, constraints, ownership, success criteria) is the bottom layer everything else is built on; a governed, versioned, testable specification is the fix.
+- Mission owns why, Plan owns how, WorkOrder owns a bounded, delegated part. Never let the "how" record rewrite the "why."
+- A specification has four distinct constructs — requirement, acceptance criterion, validation assertion, evidence requirement — and two halves: what is wanted, and the verification contract that says, claim by claim, what counts as proof. NFRs need a measure, condition, population, threshold, and window; invariants live above the WorkOrder and must never become false.
+- Separate intent understanding from planning: extract objective, constraints, context, acceptance criteria, and risk first, and interrupt the builder only when ambiguity changes implementation or risk. An agent efficiently solving the wrong problem is the most expensive failure a factory can produce.
+- The Plan is a versioned, independently reviewed contract, not chain-of-thought: the planner is replaceable, the Plan is governed, approval freezes one exact revision, and it authorises release of WorkOrders rather than dispatching execution. Decompose into a task graph whose nodes carry inputs, outputs, dependencies, risk, and verification, so the platform can pick the cheapest reliable capability for each piece.
+- For large experimental work, a prototype can be the spec: mocks, an overnight implement-and-review loop, the resulting "slop PR" treated as the specification and sliced into small, ordered, reviewable pull requests.
+- The Intent layer's customer is the builder. Design the Builder Experience customer-backward, so the builder never needs to understand the model, harness, skill, or MCP implementation, and measure adoption as workforce transformation, not a count of users.
 
 ## Go deeper
 

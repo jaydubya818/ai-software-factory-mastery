@@ -325,13 +325,8 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 
 - Build once, promote by digest. The subject gets more precise as it moves: source commit, build recipe, artifact digest, deployment, active configuration, observed outcome.
 - Database changes are distributed-systems changes: expand, migrate, validate, cut over, contract, and never contract without fresh compatibility evidence.
-- A syntactically compatible schema can be semantically incompatible. Test against real consumer versions.
 - CI execution is not delivery authority. The factory decides, delegates execution, and reconciles; no callback advances state without identity, digest, policy, and reconciliation.
 - Deployment is a state transition, not success. Merge, deployed, technically verified, and outcome confirmed have separate owners, evidence, and clocks.
-- Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified. After merge come deployment, activation, and production verification as distinct stages. Code complete is not factory complete.
-- Do not build a parallel delivery universe. Route generated change through the existing SCM, CI/CD, and artifact chain, and make that chain agent-aware and outcome-aware. The next generation of CI/CD is continuous evidence.
-- Progressive delivery is qualify, limited release, inline evals, healthy?, expand or roll back. Speed comes from making changes observable and reversible, not from eliminating controls.
-- Production validation is a workflow: deployment, telemetry analysis, synthetic validation, anomaly detection, rollback or escalation. Segment signals; aggregates hide harm.
 - Rollback is pre-engineered and drilled; when reversal is unsafe, contain and correct forward with human risk acceptance.
 - Production evidence can supersede a certificate. Preserve the original decision, append the fact, and open corrective work.
 - The factory is a production system with SLOs, error budgets, and an attention budget; reliability decides autonomy.

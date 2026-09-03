@@ -497,20 +497,11 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 ## Retain this
 
 - The hierarchy is a chain of claims, not a database diagram: `Company → Workspace → Repository → Factory Configuration → Mission → Plan → WorkOrder → Task → Attempt → Evidence → Pull Request → Release`.
-- "Done" is at least seven different decisions with different owners; the records exist so none of them can impersonate another.
-- The WorkOrder is the contract between human intent and agent execution; a Task is decomposition inside it.
-- Attempts are immutable because retries are new facts; Evidence is bound to a criterion, a verifier, and an exact artifact, and goes stale when the artifact changes.
-- Plan approval freezes a version and authorises WorkOrders; it does not dispatch, accept, merge, or deploy.
-- Factory Configuration answers "which operating rules apply here?"; the execution manifest answers "what exactly governed this try?"; neither replaces the WorkOrder's authority.
-- State transitions are owned by deterministic control-plane code with actor, expected version, reason, idempotency key, and policy decision; agents recommend, they never advance.
+- The WorkOrder is the contract between human intent and agent execution; a Task is decomposition inside it. Attempts are immutable because retries are new facts, and Evidence is bound to a criterion, a verifier, and an exact artifact — going stale the moment that artifact changes.
+- Plan approval freezes one version and authorises WorkOrders; it does not dispatch, accept, merge, or deploy. All state transitions are owned by deterministic control-plane code with actor, expected version, reason, idempotency key, and policy decision — agents recommend, they never advance.
 - The five invariants: upward traceability, exact versions per run, no silent parent completion, new version on material change, and downward traceability from every acceptance to fresh evidence.
 - The companion records each pin a fact the spine would otherwise carry loosely: Constitution (rules before intelligence), Mission Spec (immutable meaning, checked before planning), Quality Contract (success frozen before execution), Factory Version (what ran), execution manifest and Context Package (frozen inputs), Candidate (an output, not a success), Verification Subject (evidence belongs to the artifact, not the agent's confidence).
 - Execution completed ≠ verification passed ≠ acceptance ≠ merge ≠ production verified. Verification on commit A does not authorise merge of commit B.
-- The traceability chain, spec requirement → Plan assertion → WorkOrder blueprint → acceptance criterion → verification check, is built from stable identifiers so a revision can enumerate what it invalidates. The planner is replaceable; the Plan is governed.
-- A Goal above the Mission owns an outcome, never execution state. A host binding and a code scope say where and on what work may run, and dispatch is blocked until both exist. A Run is one agent turn beneath an Attempt. The Software Factory is a thin versioned configuration, not a second lifecycle.
-- Seven state machines (Mission, Plan, WorkOrder, Task, Attempt, Verification, Approval) and five rules: no state implies the next; Task Done ≠ WorkOrder accepted ≠ engine done ≠ Definition of Done; a failed Attempt does not make the Task terminal while recovery is active; none of UNKNOWN, MISSING, PENDING, FAILED, or STALE is success; approval is its own machine.
-- The canonical factory data model is Signal → Intent → Plan → Task → Attempt → Artifact → Evidence → Verification → Decision → Deployment → Outcome; it is this chapter's hierarchy with the scope records folded away and both ends extended. Agents and models change; the durable artifacts remain.
-- A Signal is a record, not an inbox: the factory's boundary is signal-to-outcome, and an Outcome should be comparable with the Signal that started it.
 
 ## Go deeper
 

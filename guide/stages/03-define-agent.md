@@ -267,7 +267,6 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - *Models are capabilities, not architecture.* Workflows request capability; adapters and a capability registry resolve it; switching is re-evaluation, not rewrite. *Without evaluation, model independence is architecture theater.*
 - Route eligibility first, then reliability, then cost. *Cost per trusted outcome, not cost per token.* *The best model for some tasks is no model at all.*
 - Freeze everything into an execution manifest under a Factory Version before admission. *Reproducibility requires freezing the execution environment, not saving the prompt.*
-- The Agent Factory creates and versions the capabilities; the control plane binds them. Explicit versions, never silent mutation.
 
 ## Go deeper
 

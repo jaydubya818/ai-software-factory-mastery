@@ -441,20 +441,13 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 
 ## Retain this
 
-- Seven security layers — identity, policy and access, runtime control plane, detection, response and containment, infrastructure foundation, visibility — crossed by five flows (identity, authorisation, data and access, telemetry, response). The layers prove who acted inside what policy; only independent verification proves the change is safe, and a trust score can demote but never promote.
-- Minimum context, tools, permissions, time, and budget for the task; evidence for every consequential action.
-- Authenticate the principal, authorize the action, attest the execution. Five principal types, none of them a shared "system" user.
-- Identity is not authority. Authority is a short-lived, attempt-scoped credential minted after policy, and the identity chain says who delegated it.
-- Content is not authority. Repository text, tool output, web pages, and memory are data; the deterministic control plane computes what is allowed. Prompt injection is an authority-confusion problem, and in a well-built factory a successful injection is a wasted run, not an incident.
-- Start with the threat model; place every control outside the model. Probabilistic reasoning should never imply probabilistic authorization. The model proposes; policy authorizes.
-- The execution environment is a frozen security boundary: revision, tools, credentials, filesystem, network, dependencies, limits, timeouts, auditing. Autonomy comes with narrower boundaries, not broader ambient access.
-- Data classification — PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED — is frozen into the execution contract and governs model eligibility, retrieval, storage, and egress.
-- Security can't be an approval meeting at the end; it's part of the execution contract.
-- The trust level of an input decides the isolation level of what runs on it: raw feedback is untrusted; a generated, vouched-for repro can be trusted.
-- Tools are privilege boundaries; memory can persist an attack beyond one run.
-- Secrets go to the process, never to the prompt, the log, or the evidence. Audit the secret's version, not its value. Audit denials.
-- Tags locate; digests identify. Provenance, attestation, signature, and transparency are different things, and none is a quality verdict.
-- Verify at the consumption boundary against an expected signer and lineage. The factory itself, including prompts, tools, and models, is part of the supply chain.
+- Minimum context, tools, permissions, time, and budget for the task; evidence for every consequential action — the security thesis in one line.
+- Identity is not authority. Authority is a short-lived, attempt-scoped credential minted after policy; content — repository text, tool output, web pages, memory — is data, never authority, and cannot grant permission or alter policy.
+- Every control that matters lives outside the model: probabilistic reasoning should never imply probabilistic authorization, and the model proposes while policy authorizes. Security can't be an approval meeting at the end; it's part of the execution contract.
+- The execution environment is a frozen security boundary — revision, tools, credentials, filesystem, network, dependencies, limits, timeouts, data classification — fixed before the worker starts. Autonomy means narrower boundaries, not broader ambient access.
+- The trust level of an input decides the isolation level of what runs on it. Tools are privilege boundaries, and memory can persist an attack beyond the run that introduced it.
+- Tags locate; digests identify. Provenance, attestation, signature, and transparency are different claims, and none is a quality verdict — verify at the consumption boundary against an expected signer and lineage.
+- Seven security layers — identity, policy and access, runtime control plane, detection, response and containment, infrastructure foundation, visibility — crossed by five flows prove who acted inside what policy. Only independent verification proves the change is safe; a trust score can demote but never promote.
 
 ## Go deeper
 

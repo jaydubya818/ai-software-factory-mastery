@@ -325,17 +325,11 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 ## Retain this
 
 - The Task is stable identity; Attempts are appended, immutable history. A retry is always Attempt N+1 with a recorded reason and a changed hypothesis.
-- A lease is temporary ownership with an owner, a fencing generation, an expiry, and a heartbeat. Expiry makes an Attempt suspect, not failed; reconciliation decides.
-- Every material completion write proves the current fence. A stale worker's event is kept for audit and refused as authority.
-- An idempotency key names a logical operation (`create-pr:{attemptId}:{headSha}`), never a moment in time, and it belongs at every side-effect boundary. A database key alone cannot deduplicate a provider call; reconcile with provider identity.
+- A lease is temporary ownership with an owner, a fencing generation, an expiry, and a heartbeat. Expiry makes an Attempt suspect, not failed, and reconciliation decides; every material completion write must prove the current fence, so a stale worker's event is kept for audit but refused as authority.
+- An idempotency key, minted by the orchestrator and tied to the logical operation, names that operation (`create-pr:{attemptId}:{headSha}`), never a moment in time, and belongs at every side-effect boundary. A database key alone cannot deduplicate a provider call; reconcile with provider identity. Retry the intent, not the side effect.
 - Classify the failure domain before responding. Authorization failures stop; transient failures back off with jitter; validation failures get a new Attempt; unknown results get reconciled; contradictory evidence gets quarantined.
 - After every attempt: verify, correct, retry, stop, or escalate. Budgets are multidimensional and not negotiable by a model.
-- Cancellation is a protocol ending in reconciliation, not a flag.
-- Timeouts, backoff, rate limits, circuit breakers, bulkheads, backpressure, load shedding, and dead-lettering each have a fixed place in the attempt lifecycle; queue age and spend per Attempt are the earliest warnings.
-- Model context is not durable workflow state, and it is not a transaction log. Workflow state lives in a persisted state machine with leases, bounded retries, idempotent transitions, replay-protected side effects, and first-class pause and cancel.
-- The orchestrator mints the idempotency key, tied to the logical operation, persisted before execution. Retry the intent; don't blindly repeat the side effect. Attempt identity may change; logical-operation identity should not.
-- Recovery never depends on what the model remembers. The platform should know, and a truthful blocked state is better than a false success.
-- A poor answer is a model failure; losing track of what happened is a platform failure. Probabilistic intelligence doesn't justify probabilistic infrastructure.
+- Model context is not durable workflow state and not a transaction log; recovery never depends on what the model remembers. A poor answer is a model failure, but losing track of what happened is a platform failure, and probabilistic intelligence doesn't justify probabilistic infrastructure.
 
 ## Go deeper
 
