@@ -4,7 +4,7 @@ part: build
 chapter: 10
 summary: How agents, skills, tools, prompts, model profiles, and evaluators become governed, versioned, resolvable, certified, and revocable capabilities that the Software Factory consumes but never authors on the fly.
 absorbs: [agent-factory/01-capability-supply-chain-and-registries.md, agent-factory/02-capability-packaging-versioning-and-dependency-resolution.md, agent-factory/03-capability-evaluation-certification-promotion-and-retirement.md, agent-factory/04-tool-skill-and-integration-contract-reference.md]
-infographics: [capability-supply-chain, agent-factory-architecture, capability-lifecycle, agent-runtime-management, skill-anatomy, skill-maturity-lifecycle]
+infographics: [capability-supply-chain, agent-factory-architecture, capability-lifecycle, agent-runtime-management, skill-anatomy, skill-maturity-lifecycle, skill-verifier-chain, workflow-specialisation, factory-asset-lifecycle]
 ---
 
 # 10. The Agent Factory: reusable capabilities
@@ -17,7 +17,7 @@ Most organizations manage agent capabilities as loose prompt files, copied scrip
 
 Two failure classes follow. Teams duplicate behavior and learn the same lesson repeatedly. And a convenient capability quietly becomes production infrastructure without any of the controls applied to code, packages, identities, or deployment artifacts.
 
-Dru Knox of Tessl describes the ladder most teams climb: individual engineers collect skills; then someone starts doing **harness engineering**, building the loops that automate and improve agent work; then the team realizes that everyone has become an internal tool builder and the thing they are building is a software factory. At every rung the same question appears: where do the skills live, who owns them, which version is running, and how do we know they still work? His answer, and this chapter's, is that a skills registry with publication controls, security and quality review, and versioning is part of the control plane, not an afterthought. David Andre's open-sourced skills repository, used across Codex, Claude Code, and two smaller open-source harnesses, shows the same pressure from the individual side: forty-two skills is already a supply chain, and without discipline it degrades into forty-two ways to be surprised.
+One developer-tooling founder, in a public practitioner talk, describes the ladder most teams climb: individual engineers collect skills; then someone starts doing **harness engineering**, building the loops that automate and improve agent work; then the team realizes that everyone has become an internal tool builder and the thing they are building is a software factory. At every rung the same question appears: where do the skills live, who owns them, which version is running, and how do we know they still work? His answer, and this chapter's, is that a skills registry with publication controls, security and quality review, and versioning is part of the control plane, not an afterthought. David Andre's open-sourced skills repository, used across Codex, Claude Code, and two smaller open-source harnesses, shows the same pressure from the individual side: forty-two skills is already a supply chain, and without discipline it degrades into forty-two ways to be surprised.
 
 ## How it works
 
@@ -187,7 +187,7 @@ A searchable list is a **catalog**. It is optimized for people and agents to fin
 
 In practice the registry is several type-specific registries behind one publication contract. The **Skill Registry** holds reusable, evaluated task methods with their versions, dependencies, required tools, compatibility, ownership, and lifecycle; publication there does not grant permission to use a skill for a particular WorkOrder. The **Prompt Registry** holds parameterized prompt and instruction artifacts, including source, immutable versions, variables, expected outputs, dependencies, evaluation, and promotion status, so that runtime composition remains attributable to exact versions. The **Evaluator Registry** holds deterministic checks, human rubrics, model graders, datasets, calibration evidence, eligible claims, and lifecycle, with one standing rule: a registered evaluator cannot certify its own reliability.
 
-A central registry improves consistency and revocation and can become a bottleneck. Federated authoring with centrally enforced publication contracts usually preserves team autonomy while keeping common controls; the contribution model under "How to build it" says which side of the line each responsibility falls on. Small organizations can begin with signed manifests in source control, provided runtime resolution and lifecycle state remain authoritative; a shared Git repository of skills, which is where both Dru Knox and David Andre started, is a fine catalog and becomes a registry only when it gains those properties.
+A central registry improves consistency and revocation and can become a bottleneck. Federated authoring with centrally enforced publication contracts usually preserves team autonomy while keeping common controls; the contribution model under "How to build it" says which side of the line each responsibility falls on. Small organizations can begin with signed manifests in source control, provided runtime resolution and lifecycle state remain authoritative; a shared Git repository of skills, which is where that founder's team and David Andre both started, is a fine catalog and becomes a registry only when it gains those properties.
 
 ### Packaging and the manifest
 
@@ -337,6 +337,8 @@ Put more plainly, a skill is a versioned reusable capability, not a prompt file.
 
 *A skill is a versioned capability, not just a prompt.*
 
+Said at the level of the organisation rather than the package, a skill is *an executable unit of organisational knowledge, not merely a prompt*: a reusable, versioned definition of how work is performed or of what good looks like. Nine things get encoded in one, and a skill missing several of them is a note, not a skill: the workflow instructions (the steps, in order, with what to do when a step fails); the standards the output must meet; the policies it must not violate; the domain knowledge the agent would otherwise have to rediscover; the review criteria a reviewer will apply; the tools and MCP servers it may use; the hooks that enforce its hard limits; the expected outputs and their format; and the acceptance criteria that say when the work is done. Read against the skill anatomy above, the nine are what the boxes contain. Read against [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md), the standards, policies, review criteria, and acceptance criteria together are the skill's slice of the Definition of Correct, which is why a skill and its verifier can be built from the same source.
+
 ### The maturity lifecycle: reason, package, automate
 
 Skills are also where reasoning gets progressively retired. When a team first meets a problem, the right tool is open-ended reasoning: nobody yet knows the pattern, so a strong model explores. As the pattern stabilizes, it gets captured as a reusable skill, so the next agent does not rediscover it. And once parts of the behavior become deterministic, those parts move out of the model entirely into conventional automation: a script, a service, a check. The skill shrinks to the residue that still needs judgment.
@@ -358,7 +360,66 @@ This is the opposite of what most teams expect from an AI platform. A mature ski
 
 David Andre's lessons from running one skill set across four harnesses are concrete. Skills are written for agents, not for humans; they should be human-readable, but the agent is the primary user, and a strong model can review a skill for whether it is written well for agents. A skill loads only when the task is relevant, which is the point: it keeps the main system prompt small and the context window clean. Length is not quality; two of his most-used skills are the shortest in the repository, one being a single paragraph that asks the agent to list only the decisions it is unsure about, because reviewing decisions scales where reviewing thousands of lines does not. Ship scripts with the skill so the agent runs a tested script instead of regenerating it every time, which saves tokens and makes behavior predictable; his anti-sleep skill is a shell script plus instructions on how to verify it is running. When the skill guides a multi-step process, have it restate the remaining steps on every turn so a question about step three does not lose steps four through nine. And the lesson that matters most for governance: guardrails belong in a pre-tool-call hook that blocks dangerous patterns programmatically, with explicit lists of what must be blocked and what must be allowed, because putting them in the prompt and hoping is not strong enough.
 
-Dru Knox adds the organizational side. A skill should codify a workflow, so that any repeated task (the weekly flaky-test hunt, the playbook for adding a command to the CLI) can be turned into a skill, published to the registry, and launched as an automated workflow in a sandbox with the right permissions. The registry scans each published workflow for security and quality and measures how much it actually improves agent output. The meta loop then feeds mistakes back into skills: the agent made this error, update the playbook so it does not happen again. Skills are where the factory's learning is stored, which is why they need the lifecycle above (see [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)).
+The same practitioner talk adds the organizational side. A skill should codify a workflow, so that any repeated task (the weekly flaky-test hunt, the playbook for adding a command to the CLI) can be turned into a skill, published to the registry, and launched as an automated workflow in a sandbox with the right permissions. The registry scans each published workflow for security and quality and measures how much it actually improves agent output. The meta loop then feeds mistakes back into skills: the agent made this error, update the playbook so it does not happen again. Skills are where the factory's learning is stored, which is why they need the lifecycle above (see [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)).
+
+### Skill-centric architecture and the skill → verifier pair
+
+The maturity lifecycle says what happens to a skill over time. A second question is how many places consume it, and the answer decides whether the factory has skills or silos. In a **skill-centric architecture** the skill is the reusable artifact and every loop is an execution mechanism around it. The same security-review skill is loaded by the developer's coding agent while it writes, by the code-review agent at the pull request, by the CI job that gates the merge, by the nightly maintenance loop that sweeps existing code, by the migration agent that rewrites a module, and by the engineer's IDE assistant. One package, one version, one owner, six consumers. The alternative, which most organisations reach by accident, is six separately written descriptions of the same standard, each drifting on its own schedule, each right about something the others are wrong about. Consuming one skill from every point in the lifecycle is also what makes context shift-left ([Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md)) cheap: the standard reaches the producer for free because the producer loads the same skill the reviewer does.
+
+A skill says "here is what to do." It does not prove that it was done, and a factory that trusts a skill's own report of its success has a self-grading agent. So every skill that matters is paired with a **verifier**: a focused mechanism that independently determines whether an execution or its output satisfies a correctness criterion. Verifiers come in several kinds, and the kind is chosen by the claim: deterministic (a script that checks a property), rule-based, test-based, static-analysis, policy-based, model-as-judge, or hybrid. They inspect actions, logs, artifacts, code, tests, and output; they do not inspect the producer's reasoning, which is the context firewall of [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md). The smallest verifiers are the one-invariant lint rules of [Chapter 20](./20-autonomous-engineering-workflows.md); the largest are the independent validation of [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md). The **skill → verifier pair** is the unit of trust: the skill says what to do, the verifier says prove you did it, and the chain that connects them runs from definition to decision.
+
+<!-- infographic: skill-verifier-chain -->
+> **Infographic — From Definition of Correct to promotion.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    DoC["Definition of Correct"] --> Skill["Skill: here is what to do"]
+    Skill --> Exec["Execution"]
+    Exec --> Ver["Verifier: prove you did it"]
+    DoC -->|"verification rules"| Ver
+    Ver --> Ev["Evidence"]
+    Ev --> Dec{"Promotion or rework"}
+    Dec -->|"pass"| Prom["Promote: merge, deploy, accept"]
+    Dec -->|"fail"| Re["Rework"] --> Exec
+    Exec -. "reasoning never crosses" .-> Ver
+```
+
+The pair also settles how much autonomy a skill may earn. **Verification-driven autonomy** turns the usual question around: instead of asking how capable the agent is, ask *what can we independently verify well enough to safely automate?* A strong verifier permits high autonomy for the skill it verifies; a weak or absent verifier means the skill's output goes to a human, however good the skill is. That is the mechanism behind the risk-proportional levels of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md), and it is why the Agent Factory certifies pairs rather than skills. A skill certified without its verifier has been certified to produce, not to be trusted.
+
+### Factory opinions, canonical workflows, and workflow specialisation
+
+Between a rigid workflow that cannot handle a variant and a blank agent that reinvents the procedure every run sits the thing that makes a factory feel opinionated. **Factory opinions** are reusable, evidence-backed default workflows and choices, encoded so that they apply unless overridden: how a review is done here, how a security review differs from it, how a migration is staged, how an incident is investigated. Each opinion is a capability in the registry with the envelope above, and each is overridable at a declared scope with a recorded reason, which is what separates an opinion from a rule. The workflow recipes listed among the capability types earlier are opinions in package form.
+
+The opinions that recur across every organisation become **canonical workflows**: reusable, empirically validated patterns for a recurring class of work, such as code review, incident investigation, dependency upgrade, migration, or feature delivery. They are validated on reference tasks, not adopted because they read well ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) covers discovering them from traces). A canonical workflow is then specialised by layer rather than by copy: canonical → organisation → product → repository → task. The organisation layer adds its policies and standards; the product layer adds its architecture and domain rules; the repository layer adds its profile, commands, and local skills; the task layer adds this WorkOrder's acceptance criteria. The result is shared patterns with layered specialisation instead of a hundred thousand unrelated workflows, and it is the same four-level hierarchy [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) uses for context, applied to procedure. A fix to the canonical layer reaches every specialisation on the next resolution, which is the compounding the contribution model promises.
+
+<!-- infographic: workflow-specialisation -->
+> **Infographic — Workflow specialisation by layer.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    Can["Canonical workflow: code review<br/>validated on reference tasks"] --> Org["Organisation: policies, standards, review depth by risk"]
+    Org --> Prod["Product: architecture rules, domain lenses"]
+    Prod --> Repo["Repository: profile, commands, local skills, owners"]
+    Repo --> Task["Task: this WorkOrder's acceptance criteria"]
+    Fix["Fix to the canonical layer"] -.->|"next resolution"| Org
+    Op["Factory opinion: overridable at a declared scope, reason recorded"] -.- Org
+```
+
+### The factory asset lifecycle
+
+The capability lifecycle earlier in this chapter is drawn for the registry's state machine. Stated as verbs it applies to every asset the factory runs on, and the list is longer than most teams' registry admits. Twelve asset types: skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, and context sources. Each one has an owner, is versioned, is evaluated, is deployed, is observed, is improved, and is deprecated: owner → version → evaluate → deploy → observe → improve → deprecate. An asset that is missing any of the seven is running on the factory without being governed by it, and the ones most often missing are the last five in the list. Repository profiles are edited in place; harness profiles live in a config file; verifiers are copied between repositories; evals are written once and never retired; models are swapped without a deprecation notice; context sources are added and never measured.
+
+<!-- infographic: factory-asset-lifecycle -->
+> **Infographic — The factory asset lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    A["Asset: skill · prompt · policy · tool · MCP server · repo profile · harness profile · workflow · verifier · eval · model · context source"]
+    A --> O["owner"] --> V["version"] --> E["evaluate"] --> D["deploy"] --> Ob["observe"] --> I["improve"] --> Dp["deprecate"]
+    I -->|"new version"| V
+```
+
+Evals are the asset that most needs this treatment, because an eval that nobody owns silently becomes the definition of success. An **eval registry** holds each evaluation as a governed asset with these fields: name, purpose, workload class, dataset, rubric, owner, baseline, current score, model and harness compatibility, last validated, production correlation, and expiry or review date. The last three are the ones a spreadsheet of evals never has. Production correlation says whether passing this eval still predicts an accepted outcome; last validated says when anyone checked; expiry says when it must be re-examined or retired, because evals drift from what the organisation means by success and saturate as they are optimised against. The Evaluator Registry named under "Catalog versus registry" is where these records live; the mechanics of building, running, and validating the evals themselves are in [Chapter 23](../04-prove/23-evaluation-engineering.md).
 
 ### Tools, integrations, and the complete contract
 
@@ -492,6 +553,10 @@ An organization that has been using agents for a year has skills in places nobod
 
 The inventory is the active-use inventory from "Stand up the registry," taken from the consuming side rather than the registry's records, and the two should agree. Where they disagree, a skill is running that the registry never certified, or a certified skill has been forked in place. Both are findings, not curiosities.
 
+The distinction between the two is worth stating as a pair, because teams that build one assume they have the other. The **skill registry** is what officially exists: each skill's versions, ownership, provenance, security assessment, compatibility, quality score, usage, dependencies, recommended versions, deprecation status, and distribution. It is a package manager for capabilities. The **skill inventory** is what is actually deployed and consumed: which repositories and agents have which version installed, whether the copy matches the published hash, and whether it is loaded at all. It is the software inventory. A package repository tells you which versions of a library were published; only a scan of the fleet tells you which version is running in production, and the same is true of skills.
+
+The gap between them has a name and a chain. **Skill drift** is a deployed skill becoming stale relative to its source, its dependencies, the policies it encodes, or the environment it runs in, and it accumulates through a predictable sequence: skill version → deployment → usage → drift detection → upgrade → regression evaluation. A version is published; it is installed somewhere; it is used; the source moves on, or a tool it depends on changes its contract, or a policy it encodes is revised; detection notices the installed version is behind or its assumptions no longer hold; an upgrade is proposed; and the upgrade is regression-evaluated against the skill's eval suite before it is installed, because a newer version is not automatically a better one for this repository. The regression step is where most organisations skip, and it is what separates an upgrade from a surprise. Copy drift (the same file diverging across repositories) is one cause; the inventory catches it. Source drift (the world moving away from a correctly installed skill) is the other, and it is the context drift of [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) seen from the skill's side.
+
 ### Skill quality as a scored gate
 
 The guide argued above against a single quality score for eligibility, because eligibility is multidimensional and risk-specific. That argument stands. A narrower use of a score is defensible: a quality gate on the authoring side, applied before a skill enters evaluation, that asks whether the skill is well written for an agent at all. David Andre's advice to have a strong model review the skill "as an agent would read it" is this check done by hand; the tooling version is a **reviewer plugin**.
@@ -499,6 +564,10 @@ The guide argued above against a single quality score for eligibility, because e
 A reviewer plugin is a configuration of weighted **judges**, each with a **rubric** file, the weights summing to one. A default rubric splits into two families. Description judges score specificity, completeness, trigger quality (does the description cause the skill to load when it should and not otherwise), and distinctiveness from neighboring skills. Content judges score conciseness, actionability, workflow clarity, and progressive disclosure (is the essential guidance up front, with detail available but not forced into context). Fork a public reviewer and tune the weights rather than writing rubrics from nothing. The result is a **skill quality score** from 0 to 100, and a **threshold** turns it into a gate: below the threshold, the review command exits non-zero, and in CI that fails the build. A fix command iterates on the skill against the same rubric until it clears the bar, which is the reviewer loop from [Chapter 23](../04-prove/23-evaluation-engineering.md) turned inward on the skill itself. Set the threshold explicitly and pass it consistently; a gate that defaults differently in CI and on a laptop is not a gate.
 
 Mapped to this chapter's lifecycle, the quality score is an entry condition for the candidate state: a skill that reads badly for agents is not worth evaluating for behavior. Certification still requires the with-and-without evaluation in [Chapter 23](../04-prove/23-evaluation-engineering.md), and the security scan in [Chapter 26](../04-prove/26-security.md), which no rubric replaces.
+
+### Mine history for skills, evals, and verifiers
+
+The hardest part of writing a skill is knowing what the organisation's standards actually are, because most of them were never written down; they were said in review comments. **Historical behaviour mining** extracts implicit standards from where they already live: pull-request history, review comments, tickets, incidents, production failures, accepted fixes, recorded decisions, and architecture reviews. A comment that appears on every third pull request touching the payments module ("never call the ledger from a request handler") is a standard, and it has been enforced by one reviewer's attention for two years. The pipeline runs history → extract standards → codify skill → generate eval → generate verifier. The extracted standard becomes a clause in the Definition of Correct; the skill tells the producing agent about it; the eval contains the historical cases where it was violated and the accepted fixes as expected outputs; and the verifier checks new changes for the same violation. Each of the four outputs enters the lifecycle above as a draft, with an owner, and nothing is promoted because it was mined; the reviewer whose comments were mined is the natural owner and the first evaluator. The historical review patterns that [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md) retrieves at the change level are the raw material; mining is what turns them from context into capability.
 
 ### The contribution model
 
@@ -593,6 +662,20 @@ Two practical corollaries. First, teams with existing agents should be pulled in
 
 **Inference spent on the deterministic.** Linting, type errors, and policy violations are discovered by the model rather than by the tools that already exist for them. Detect it in model findings that a static check would have produced. Fix with deterministic preprocessing packaged as certified capabilities that run before any agent.
 
+**Skill without verifier.** A skill is certified on its own report of success and reaches high autonomy because it is well written. Detect it by asking what independently checks the skill's output; if the answer is the skill, nothing does. Fix by certifying skill → verifier pairs and setting autonomy by verification confidence.
+
+**Six descriptions of one standard.** The coding agent, the reviewer, the CI job, the maintenance loop, the migration agent, and the IDE each carry their own text for the same rule, and each drifts alone. Detect it in the context inventory's duplicate and conflicting findings. Fix with skill-centric architecture: one package consumed from every point in the lifecycle.
+
+**Registry mistaken for inventory.** The registry says version 3.2 is current; forty repositories run 2.7 and nobody knows. Detect it by scanning the fleet and diffing against the registry. Fix by running both, reconciling them, and treating every mismatch as skill drift with an owner.
+
+**Upgrade without regression.** A newer skill version is installed everywhere because it is newer, and a repository whose conventions it no longer fits starts failing review. Detect it in acceptance rate by repository after the upgrade. Fix by regression-evaluating each upgrade against the skill's eval suite before installation.
+
+**The eval nobody owns.** An evaluation written eighteen months ago is still the gate, and passing it no longer predicts an accepted outcome. Detect it in the eval registry: no owner, no last-validated date, no production correlation. Fix by treating evals as governed assets with expiry and review dates.
+
+**A workflow per repository.** Every codebase has its own review workflow, written from scratch, and a fix to the review process is a hundred thousand edits. Detect it by counting workflows that share no canonical ancestor. Fix with canonical workflows specialised by layer: canonical, organisation, product, repository, task.
+
+**Standards that live in one reviewer.** The same correction is made by hand on every third pull request and never becomes a skill, an eval, or a verifier. Detect it in review comments that repeat. Fix by mining history: extract the standard, codify the skill, generate the eval, generate the verifier, assign the reviewer as owner.
+
 **Instances without versions.** Agents are running, and nobody can say which definition revision each one is on, so a revoked version cannot be stopped because it cannot be found. Detect it by asking the fleet view for the version digest of every running instance; fix by making every instance bind an immutable version and an issued identity, and by making the Agent Fleet view read from those bindings rather than from process lists.
 
 ## In Mission Control
@@ -630,6 +713,13 @@ The intended direction is a registry that continuously calculates certification 
 - Repository- or domain-specific behavior does not belong inside the model. Deterministic systems for known rules, retrieval and skills for dynamic knowledge, fine-tuning for stable behavior; and deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs before any agent.
 - Capability matching turns a step's requirements into eligible, recorded capabilities without widening authority; tool extensibility happens at the registry and gateway, never in the prompt; standardize the core contract and optimize model adapters at the edge.
 - Code-review skills, policy skills, and the wider class of reusable artifacts share one envelope, which is what lets a capability built for one product be matched and certified for another.
+- A skill is an executable unit of organisational knowledge, not merely a prompt: workflow instructions, standards, policies, domain knowledge, review criteria, tools and MCP, hooks, expected outputs, and acceptance criteria.
+- The skill registry is what officially exists (a package manager for capabilities); the skill inventory is what is deployed and consumed (a software inventory). Skill drift runs version → deployment → usage → drift detection → upgrade → regression evaluation, and the regression step is not optional.
+- Skill-centric architecture: the skill is the reusable artifact and every loop is an execution mechanism around it; one skill is consumed from the coding agent, review, CI, the maintenance loop, the migration agent, and the IDE.
+- Certify skill → verifier pairs, not skills. The chain is Definition of Correct → Skill → Execution → Verifier → Evidence → Promotion or Rework, and autonomy follows verification confidence: ask what can be independently verified well enough to automate.
+- Factory opinions are evidence-backed, overridable defaults; canonical workflows are validated patterns for recurring classes, specialised by layer (canonical → organisation → product → repository → task), never by copy.
+- Twelve asset types (skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, context sources) each run owner → version → evaluate → deploy → observe → improve → deprecate. Evals are governed assets in an eval registry with owner, baseline, production correlation, last validated, and expiry.
+- Mine history for standards: history → extract standards → codify skill → generate eval → generate verifier, with the reviewer whose comments were mined as owner.
 - Agent Runtime Management keeps templates, versions, instances, and identities apart: an instance is never more than its version and its issued identity allow, and the Agent Fleet view reads from those bindings so revocation can find and stop what is running.
 
 ## Go deeper
@@ -646,7 +736,8 @@ The intended direction is a registry that continuously calculates certification 
 - [Chapter 33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) for how skills absorb the meta loop.
 - The acceptance bar for an external capability, in one line: it must demonstrate negative authorization, duplicate invocation, timeout after a side effect, reconciliation, revocation, dependency change, recertification, and independent reconstruction of the resulting evidence before it is admitted.
 - [Glossary](../appendix/glossary.md).
-- Dru Knox (Tessl), AI Engineer SF talk on harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
+- Public practitioner talks, 2026: harness engineering as the discipline that ladders up to a software factory, and the skills registry as part of the control plane.
+- Public practitioner talks, 2026: the skill as an executable unit of organisational knowledge, skill registry versus skill inventory, skill drift and its chain, skill-centric architecture, the skill → verifier pair and verification-driven autonomy, factory opinions, canonical workflows and workflow specialisation, the factory asset lifecycle, the eval registry, and historical behaviour mining.
 - David Andre, walkthrough of his open-sourced agent skills repository across Codex, Claude Code, and two smaller open-source harnesses.
 - Mission Control repository glossary and lexicon, reviewed 2026-09-02: Agent Runtime Management (templates, versions, instances, identities) and the Agent Fleet operator view.
 - Tessl documentation (docs.tessl.io), 2026: skill packages, manifests and workspaces, registry install and update mechanics, typed skill schemas, the organization inventory, and reviewer plugins with score thresholds. The Agent Skills specification (agentskills.io) defines the skill folder format.

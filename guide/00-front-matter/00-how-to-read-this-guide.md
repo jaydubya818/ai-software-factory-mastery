@@ -29,6 +29,8 @@ The whole book unfolds from one sentence:
 
 Read it as a value stream, not as eight boxes wired in series. *Intent* is what a builder wants and why. *Plan* is a versioned, approvable proposal for how to achieve and prove it. *Define Agent* means binding an approved, versioned agent configuration to the work, not inventing a new agent for every task. *Execute through Harness* is bounded execution inside a runtime that owns tools, state, permissions, budgets, and stop conditions. *Apply Skills* means the reusable methods selected and frozen before execution are used inside that loop. *Evaluate* is independent evidence about both the artifact and the path that produced it. *Improve* turns evaluation and production outcomes into governed candidates for future runs. *Deliver Software* covers the decision, the release, the production observation, and the measured outcome, not merely an opened pull request.
 
+The line sits inside a larger ring. [Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas) places it as the FACTORY segment of a lifecycle that begins at a signal and ends at an observed outcome that feeds the next signal (SIGNAL → INTENT → FACTORY → OUTCOME → LEARNING), and then unfolds the FACTORY segment into the factory-native software development lifecycle, with an inner loop for autonomy, an outer loop for trust, and a meta loop for improvement. Read the one line for orientation; read that ring and that lifecycle to see where the line starts and stops.
+
 ## Three definitions to retain
 
 Three terms carry the book. Keep them apart.

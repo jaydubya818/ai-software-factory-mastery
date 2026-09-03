@@ -96,6 +96,8 @@ An analogy: a hospital's morbidity-and-mortality review. Every case is examined,
 
 Discovery is where autonomy pays off: analyzing failures, edits, rejections, expensive trajectories, and outcomes is exactly the kind of work an agent does well and tirelessly. *Autonomous discovery, not autonomous authority.*
 
+This stage is the factory's **meta loop**: where the inner loop asks whether the agent can fix its own mistakes and the outer loop asks whether the work can be trusted, the meta loop asks why a run needed intervention and what to change so the next one does not. How far it may go on its own runs through six self-improvement levels, observe → diagnose → recommend → propose → verify → promote, and the line to hold is between the last two: a factory can autonomously open a verified pull request against its own skills, context, tests, or harness, but promotion is a policy decision per action class, never a default ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md#the-six-self-improvement-levels)).
+
 ### Asymmetric autonomy by action class
 
 How far the loop may go on its own is not one setting for the system. It is a policy per **action class**, decided by one question: *what happens if this is wrong, and how easily can we reverse it?* Not "how confident is the model?"

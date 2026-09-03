@@ -4,7 +4,7 @@ part: improve
 chapter: 33
 summary: How the factory turns failures, corrections, and successful strategies into evaluated, human-promoted improvements to its own prompts, skills, tools, tests, and policies — learning autonomously without authorizing itself.
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [learning-loop, signal-diagnosis, recursive-loop, factory-learning-chain, learning-writeback, seven-step-loop, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder]
+infographics: [learning-loop, loop-layers, signal-diagnosis, recursive-loop, factory-learning-chain, learning-writeback, seven-step-loop, self-improvement-levels, closed-loop-factory, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder, factory-flywheel]
 ---
 
 # 33. Governed learning and compounding engineering
@@ -98,6 +98,38 @@ Everything that improves the agent is checked into the repository so an
 improvement improves for everyone — that is the compound loop. Personal
 preferences exist (more on scope below), but the mechanism of learning is the
 shared repo, not the individual's dotfiles.
+[Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md#inner-loop-outer-loop-meta-loop)
+gives the three loops their table, the question each answers, and the
+objective each serves (autonomy, automation, improvement); this chapter is
+about the third.
+
+### Four loop layers
+
+Cut the same machinery the other way, by what each loop consumes and
+produces rather than by where it runs, and there are four layers. Each one
+feeds the next, and a factory that skips a layer has a loop with nothing to
+learn from.
+
+<!-- infographic: loop-layers -->
+> **Infographic — The four loop layers.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Layer | What it does | Examples |
+| --- | --- | --- |
+| **Feedback loops** | Produce raw signals while and after the agent works | Tests, linters, type checks, security scans, build results |
+| **Verification loops** | Turn signals into objective evidence before a result is trusted | Independent verifiers, review agents, acceptance validation, production checks |
+| **Memory loops** | Retain what the factory has learned so it is available next time | Context, historical failures, successful patterns, repository profiles, the golden set |
+| **Optimization (meta) loops** | Update the factory's own prompts, triggers, constraints, skills, and routing from measured outcomes | The learning loop of this chapter, the pruning of Chapter 13, the eval-driven changes below |
+
+The agents in such a factory operate inside these layers rather than in
+prompt-by-prompt interaction: harnesses, persistent memory, and independent
+verification gates run, test, measure, and refine continuously, and the humans
+move from writing every line to designing the contracts, owning the
+governance, judging product intent, and supervising the review gates. The
+feedback layer is the cheapest and the most often built; the memory layer is
+the most often skipped, which is why the same failure is rediscovered by
+every run; the meta layer is the one this chapter governs, because it is
+the only layer that changes the other three.
 
 ### The learning loop
 
@@ -443,6 +475,129 @@ substitutes for the one before it: a canary without a regression run exposes
 users to a candidate nobody checked offline, and a regression run without a
 canary promotes a candidate production has never seen.
 
+### The six self-improvement levels
+
+The seven-step loop says what happens. A second scale says how much of it
+the factory is allowed to do on its own, and it is the scale to use when
+someone asks whether a factory "self-improves", because the word covers six
+different capabilities with six different risk profiles.
+
+<!-- infographic: self-improvement-levels -->
+> **Infographic — Six levels of self-improvement.** *(Jay's graphic goes here.)* Until then, the table below
+> carries the same concept.
+
+| Level | The factory can | What it produces | Who acts |
+| --- | --- | --- | --- |
+| 1. **Observe** | Collect executions, failures, corrections, and outcomes with lineage | Signals | Automation |
+| 2. **Diagnose** | Attribute a signal to a component and a cause | A cluster with a source | Automation |
+| 3. **Recommend** | Say what should change and why | A written recommendation for a person | Automation proposes; a person acts |
+| 4. **Propose** | Produce the change itself: a pull request against a skill, a context file, a test, a verifier, or the harness | A reviewable diff | Automation proposes; a person reviews |
+| 5. **Verify** | Run the regression suite and the with-and-without evaluation on its own proposal | Evidence attached to the diff | Automation |
+| 6. **Promote** | Merge the verified proposal under a policy-defined approval | A new Factory Version | Policy: human for capability and authority changes; automatic only for the bounded-tuning class |
+
+Two things about the scale matter more than the levels. First, level 4 is
+where most factories should aim and most stop short: a factory that writes
+recommendations nobody has time to implement has automated the part of
+improvement that was never the bottleneck. A factory that opens the pull
+request, with the evidence attached, has moved the human to the one
+decision only a human should make. Second, level 6 is not the natural end of
+the scale; it is a policy decision made per action class, and the line the
+whole chapter rests on is drawn between levels 5 and 6: *autonomous proposal
+is not autonomous promotion.* A factory can be fully autonomous through
+level 5 and still never merge anything without the approval its policy names.
+
+### The closed-loop factory: factory as code, scorers, and benchmarks
+
+One published pattern makes the six levels concrete, and its vocabulary is
+worth borrowing. Warp's description of a **closed-loop cloud software
+factory** starts from an engineering mindset applied to coding agents: every
+agent in the factory is tracked and measured against the organization's own
+data and workflows, not a leaderboard. The pattern has four parts.
+
+**The factory is defined as code.** A **factory manifest** plus a directory of
+agent definitions, skills, MCP servers, and model-routing rules, version
+controlled and editable by agents as well as people, the way infrastructure
+is. That buys a measurable baseline ("with this configuration we merged this
+share of agent pull requests at this cost per pull request, routing across
+these models, with these skills"), version control with rollback, branching,
+approvals, and history, and the property the rest of the loop depends on:
+the factory becomes instantiable and testable, and an agent can propose a
+diff to it. In this guide's terms the manifest is the Factory Version of
+[Chapter 10](../03-build/10-the-agent-factory.md) written as a file, and the
+metrics it baselines (pull-request throughput, average cost per pull
+request, automation percentage as average human touchpoints per pull request,
+savings over human work) are the inner-loop economics of
+[Chapter 8](../02-design/08-economics-metrics-and-human-attention.md).
+
+**Scorers grade runs.** A **scorer** is a function from an input (agent runs
+and traces, including the human interactions around them: pull-request
+comments, tracker input) to a grade against a rubric, and it can be graded
+by a human, by code, or by a model as judge. Default dimensions are
+correctness, cost efficiency, and verbosity. Scorers cost money to run, so
+each has a configured sampling rate, a cadence (every few hours, not every
+run), and a batch size. That is the observe-and-evaluate half of the
+seven-step loop, made explicit as a budgeted job rather than a dashboard.
+
+**Self-improvement agents propose diffs.** They read the scored runs, find
+patterns in the failures and successes, and propose diffs to the factory
+definition. Humans review those diffs as pull requests and merge them. That
+is level 4 of the scale above, with the review at level 6 exactly where this
+chapter puts it: factory agents build, scorer agents grade, self-improvement
+agents suggest, humans review and merge factory-definition pull requests.
+
+**Benchmarks are configuration matrices.** A factory benchmark is not an A/B
+test on live traffic. It picks five to ten representative **reference
+tasks**, from scratch or from past runs, varies the configuration (the model
+mix or any other factory primitive), runs the variants in parallel, grades
+them with the same scorers, and produces a results matrix; an agent then
+synthesizes the matrix into a diff that updates the affected primitive, such
+as the routing rules. The loop closes when that diff is reviewed and merged
+like any other.
+
+<!-- infographic: closed-loop-factory -->
+> **Infographic — The closed-loop factory.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    Def["Factory definition as code<br/>manifest · agents · skills · MCPs · routing"] --> Build["Factory agents build"]
+    Build --> Runs["Runs and traces<br/>incl. PR comments, tracker input"]
+    Runs --> Score["Scorer agents grade<br/>sampling · cadence · batch"]
+    Score --> SI["Self-improvement agents<br/>find patterns, propose diffs"]
+    Bench["Benchmarks: reference tasks × configurations,<br/>graded by the same scorers"] --> SI
+    SI --> PR["Pull request against the factory definition"]
+    PR --> Human{"Human review"}
+    Human -->|"merge"| Def
+    Human -->|"reject"| SI
+```
+
+Read against this chapter, the pattern is the Factory Learning chain with a
+different surface: the scorer is the deterministic signal or the LLM-judge
+evaluator, the pattern-finding agent is discovery, the pull request is the
+Improvement Candidate, and the merge is promotion. What the pattern adds is
+the insistence that the factory itself be a diffable artifact, which is the
+precondition for an agent proposing a change to it, and the reminder that
+grading has a cost that must be sampled and scheduled like any other spend.
+
+### Eval-driven factory engineering
+
+The pattern generalizes into a working rhythm for the people who own the
+factory: **hypothesis → change → eval → compare → promote or reject**. It is
+test-driven development applied to the factory. A hypothesis names the
+component and the expected effect ("adding the architecture verifier will cut
+review comments on layering by half at no more than a tenth more cost per
+run"); the change is made as a versioned candidate; the eval runs the
+reference tasks with and without it; the comparison reads the delta on
+quality, success, intervention, latency, tokens, and cost; and the outcome is
+promote or reject, recorded either way. The evaluation machinery (reference
+tasks, graders, the with-and-without discipline, statistical care, and the
+promotion ladder from offline to production) is
+[Chapter 23](../04-prove/23-evaluation-engineering.md#context-evals-with-and-without)'s
+subject and is not repeated here; what this chapter adds is that every
+change to the factory, including the ones the factory proposes about
+itself, goes through that rhythm, and that a change without a hypothesis is
+an experiment nobody can learn from.
+
 ### Compounding engineering: harvesting corrections
 
 <!-- infographic: correction-to-skill -->
@@ -673,6 +828,85 @@ evidence, it is evaluated with and without, and it goes live only through the
 [promotion gate](#baseline-candidate-and-the-promotion-gate). The scan is
 allowed to be read-only precisely so that nobody has to trust it.
 
+### Meta-loops, maintenance loops, and discovery
+
+The two scans above are instances of a general kind. A **meta-loop** is a
+loop whose subject is other loops: it observes, evaluates, diagnoses, and
+proposes improvements to the loops that do the factory's work. Seven are
+common enough to name, and a mature factory runs most of them on a schedule:
+
+- a **failure analyzer**, which clusters run failures by the taxonomy and
+  proposes the fix that removes the class;
+- a **cost optimizer**, which finds the trajectories, routes, and context
+  loads that spend without contributing;
+- a **context-drift detector**, which finds instructions and skills that
+  still describe the framework, architecture, or standard the organization
+  has moved away from;
+- a **skill optimizer**, which reads skill traces for papercuts and drafts
+  the next revision;
+- a **verifier-quality monitor**, which checks the verifiers against later
+  outcomes so that a verifier passing bad work or failing good work is
+  itself a finding;
+- a **routing optimizer**, which reads the model × harness results and the
+  workload distribution and proposes routing changes; and
+- a **factory-health monitor**, which watches the autonomy, automation,
+  quality, and economics figures for the trends the others should be asked
+  to explain.
+
+Every one of them is discovery. Every one produces candidates for the
+promotion gate, and the verifier-quality monitor deserves the strictest
+gate of all, because a loop that can change the judge can reward-hack the
+rest.
+
+Beside the meta-loops sit **maintenance loops**: recurring workflows that
+keep software healthy without waiting for a backlog to prioritize them.
+Dependency upgrades, flaky-test repair, coverage, documentation,
+accessibility, security remediation, architecture conformance, dead-code
+removal, modernization, brand consistency, and debt reduction are all work
+that never competed well for engineering time and that a loop can do on a
+cadence with a verifier attached. The **maintenance agent** is the
+specialized agent that runs one of them, continuously monitoring and
+improving one dimension: test health, dependency health, documentation,
+architecture conformance, context drift, cost, readiness, security hygiene,
+flaky tests, technical debt. The ownership rule is the one to retain: *humans
+own domains; agents maintain dimensions.* A person is accountable for the
+payments service; a maintenance agent keeps its dependencies current across
+every service, and files its work through the same pull-request path as
+everything else.
+
+**Automation discovery** is how new loops are found. Agents read the issues,
+pull requests, comments, logs, CI failures, and repeated commands of a
+repository, find the repeated pattern, and propose it as a **candidate
+skill** (if it is a method) or a **candidate loop** (if it is a recurring
+job with a trigger). The find-automations scan above is one implementation;
+the general rule is that anything a person does the same way three times is
+a candidate for a skill, and anything a skill does on a schedule is a
+candidate for a loop.
+
+**Workflow discovery** is the same idea one level up. A workflow (the
+reason → retrieve → tool → observe → replan → execute → verify sequence an
+agent actually follows) is a versioned, evaluated artifact, and traces and
+evaluations will show that certain sequences reliably solve a class of task
+while others reliably do not. The cycle is **discover → evaluate → encode →
+reuse**: find the sequence in the traces, evaluate it against the class on
+reference tasks, encode it as a canonical workflow with its specializations
+by organization, product, and repository, and reuse it wherever the class
+recurs. That is how a factory ends up with a small library of proven
+workflows rather than a hundred thousand unrelated ones, and every encoded
+workflow enters through the same gate as a skill.
+
+```mermaid
+flowchart LR
+    W["Work loops<br/>build · review · maintain"] --> T["Traces, failures,<br/>corrections, outcomes"]
+    T --> ML["Meta-loops<br/>failure · cost · drift · skill · verifier quality · routing · health"]
+    T --> AD["Automation discovery<br/>repeated pattern → candidate skill or loop"]
+    T --> WD["Workflow discovery<br/>discover → evaluate → encode → reuse"]
+    ML & AD & WD --> C["Candidates"]
+    C --> G["Promotion gate"]
+    G -->|"promote"| W
+    G -->|"new maintenance loop"| W
+```
+
 ### Scope: personal fit versus organizational truth
 
 Corrections occur at different scopes. "Use this tone in my draft" is a
@@ -862,6 +1096,44 @@ ladder is a diagnosis tool in reverse: when a team proposes training, ask
 which rung the problem actually lives on. Most of the time the answer is
 lower, cheaper, and reversible by lunchtime.
 
+### The factory flywheel
+
+Put every loop in this chapter end to end and the factory has one shape,
+which is the reason to build any of it. Intent becomes a **Definition of
+Correct** (what good looks like for this task, repository, or domain,
+written down well enough that an agent and a verifier can both reason
+about it); the definition becomes context; context is packaged into a skill;
+the skill is executed; execution produces evidence; a verifier judges the
+evidence; the judgment is evaluated against the outcome; the outcome is
+learned from; and the learning improves the skill and the context for the
+next turn.
+
+<!-- infographic: factory-flywheel -->
+> **Infographic — The factory flywheel.** *(Jay's graphic goes here.)* Until then, the diagram below
+> carries the same concept.
+
+```mermaid
+flowchart LR
+    I["Intent"] --> DoC["Definition of Correct"]
+    DoC --> Ctx["Context"]
+    Ctx --> Sk["Skill"]
+    Sk --> Ex["Execution"]
+    Ex --> Ev["Evidence"]
+    Ev --> Ver["Verifier"]
+    Ver --> Eval["Evaluation"]
+    Eval --> Out["Outcome"]
+    Out --> Learn["Learning"]
+    Learn -->|"skill and context improvement"| Ctx
+```
+
+The flywheel is a confidence spiral: higher quality earns higher autonomy,
+higher autonomy produces more runs, more runs produce more evidence, more
+evidence produces better context, better context produces better skills,
+better skills produce better verification, and better verification produces
+higher quality. Every loop in this chapter is a bearing on that wheel, and
+the promotion gate is the brake that keeps it from spinning on a false
+signal.
+
 ### What not to build first
 
 The loop described here is the last thing a factory should build, not the
@@ -974,6 +1246,14 @@ threshold.
 | Candidate with authority | An Improvement Candidate edits live configuration or satisfies a receipt | Four human verbs only (approve experiment, snooze, dismiss, reject); recommendations enter as a Mission |
 | Engine lessons trusted | An engine's lessons store is written into instructions or counted as evidence | Read-only after terminal success; additive candidates; telemetry that cannot accept or satisfy receipts |
 | Writeback after failure | Lessons from a failed or cancelled run become candidates | Read the store only after terminal success; missing store means no candidates |
+| Self-improvement agent merges its own diff | A factory-definition change lands with no human review record; level 6 reached by default | Self-improvement agents open pull requests; a policy-named approver merges; autonomous proposal is never autonomous promotion |
+| Factory not diffable | Agents, skills, routing, and MCP configuration live in a UI or in scattered settings; no baseline, no rollback, nothing an agent can propose a change to | Define the factory as code: a versioned manifest plus definitions; every change is a diff |
+| Scorer without a budget | Every run is graded on every dimension by a model judge; grading spend rivals building spend | Configure sampling, cadence, and batch size per scorer; use code and rules where the claim is deterministic |
+| Recommendations nobody implements | The factory stops at level 3; a backlog of findings grows and the same failures recur | Move to level 4: open the pull request with evidence attached, so the human decision is review, not implementation |
+| Meta-loop that can change the judge | A verifier-quality monitor or skill optimizer edits the verifier or evaluator it is measured by | Evaluator and verifier changes take the human path with a separate approver; no loop promotes its own judge |
+| Maintenance loop without a verifier | A dependency-upgrade or dead-code loop merges on green CI alone; regressions surface weeks later | Every maintenance loop pairs with an independent verifier and the same risk classification as human-initiated change |
+| Missing memory layer | Each run rediscovers the failure the last run hit; context never retains historical failures or successful patterns | Build the memory layer: repository profiles, failure history, the golden set, promoted learnings, with provenance |
+| Workflow encoded from one trace | A sequence that worked once is promoted as the canonical workflow for a class | Discover in traces, evaluate on reference tasks for the class, then encode; specialize by layer rather than by copy |
 
 ## In Mission Control
 
@@ -1102,6 +1382,33 @@ a self-operating learning factory.
   WorkOrder as idempotent `learning.candidate.proposed` events, and treats
   them as telemetry: they cannot accept or satisfy receipts. Missing store,
   no candidates.
+- Four loop layers: feedback (raw signals), verification (objective evidence
+  before trust), memory (retained failures and patterns), optimization (the
+  meta layer that changes the other three). Skip the memory layer and every
+  run rediscovers the last run's failure.
+- Six self-improvement levels: observe → diagnose → recommend → propose →
+  verify → promote. Aim for level 4, a pull request with evidence attached.
+  Level 6 is a policy per action class, never a default. Autonomous proposal
+  is not autonomous promotion.
+- The closed-loop factory: the factory defined as code (a manifest plus
+  agents, skills, MCPs, routing), scorers as budgeted graded functions over
+  runs, self-improvement agents proposing diffs that humans review as pull
+  requests, and benchmarks as configuration matrices over reference tasks
+  graded by the same scorers.
+- Eval-driven factory engineering: hypothesis → change → eval → compare →
+  promote or reject. Every change to the factory, including the ones the
+  factory proposes about itself, runs through it.
+- Meta-loops observe loops: failure analyzer, cost optimizer, context-drift
+  detector, skill optimizer, verifier-quality monitor, routing optimizer,
+  factory-health monitor. Maintenance loops keep software healthy on a
+  cadence; humans own domains, agents maintain dimensions. Automation
+  discovery turns repeated patterns into candidate skills and loops;
+  workflow discovery runs discover → evaluate → encode → reuse.
+- The flywheel: Intent → Definition of Correct → Context → Skill → Execution
+  → Evidence → Verifier → Evaluation → Outcome → Learning → better skills and
+  context. Higher quality earns higher autonomy, which produces more runs,
+  more evidence, better context, better skills, better verification, and
+  higher quality. The promotion gate is the brake.
 
 ## Go deeper
 
@@ -1152,6 +1459,18 @@ a self-operating learning factory.
   evidence-linked tickets, with/without proof, weekly scan) and the
   find-automations skill (PR history mining for scheduled or triggered
   automations).
+- Warp, *Closing the loop with self-improving cloud software factories*
+  (2026): the factory defined as code with a manifest, scorers as graded
+  functions over runs with sampling, cadence, and batch size, self-improvement
+  agents proposing factory-definition diffs reviewed as pull requests, and
+  benchmarks as configuration matrices over reference tasks.
+- Public practitioner talks (2026): the four loop layers, the seven
+  meta-loops, maintenance loops and maintenance agents, automation discovery,
+  the six self-improvement levels, workflow discovery, eval-driven factory
+  engineering, and the factory flywheel.
+- [Chapter 13 — Coding harnesses and agent protocols](../03-build/13-coding-harnesses-and-agent-protocols.md#inner-loop-outer-loop-meta-loop)
+  for the three-loops table and harness pruning, the meta loop's most
+  routine output.
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
   referenced in the research canon.
 - Mission Control repository glossary and lexicon, reviewed 2026-09-02: the

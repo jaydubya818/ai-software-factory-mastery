@@ -4,7 +4,7 @@ part: build
 chapter: 13
 summary: How to wrap an interactive coding agent so it can be leased, observed, cancelled, resumed, and substituted inside a factory, and which protocol belongs at which boundary.
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, harness-control-plane, execution-loop, agent-contract, meta-harness, harness-adapter-contract, adapter-admission, protocol-boundaries]
+infographics: [inner-outer-harness, harness-control-plane, execution-loop, agent-contract, meta-harness, three-loops, harness-pruning, harness-adapter-contract, adapter-admission, protocol-boundaries]
 ---
 
 # 13. Coding harnesses and agent protocols
@@ -256,11 +256,84 @@ You choose where to put the seam between the two. Buy a rich inner harness that 
 
 The same tradeoff shows up in the adapter itself. A **thin adapter** preserves native features and exposes the control plane to provider differences. A **thick adapter** normalizes behavior across providers but may erase useful capabilities or invent a false lowest-common-denominator abstraction. The practical answer is to translate only the events and commands the factory contracts require, and to preserve the native payloads as diagnostic artifacts alongside the normalized stream. Think of a travel power adapter: it converts the plug shape so the factory can connect, but it does not pretend every appliance behaves the same.
 
-### Loops inside loops: harness engineering as a discipline
+### Harness engineering
 
-Dru Knox at Tessl uses "inner" and "outer" for a different but complementary idea, and it is worth holding both in your head. His **inner loop** is everything the agent iterates on before a pull request exists: plugins, skills, the test suite, the fast, cheap checks the agent runs constantly. His **outer loop** runs at the PR boundary: slower, more expensive checks that replace human review time, such as agentic QA that drives the product, deeper code review, mutation testing, and targeted verifiers. His **meta loop** sits around both, watching logs, PRs, the issue tracker, and user feedback for mistakes that slipped through, then feeding a fix back into the inner or outer loop so the same mistake is made only once.
+Everything above describes a harness as a thing. **Harness engineering** is the discipline of building it on purpose: designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops that let agents complete increasingly complex work with less intervention at equal or better quality. The sentence to keep is the one practitioners use to explain it to their own teams: *engineer the system in which agents engineer the software.* The engineer's product is no longer the code; it is the place the code gets made.
 
-The two vocabularies reconcile cleanly. The harness is the machine; the loops are what you run through it. Inner-loop improvements drive autonomy (fewer human corrections). Outer-loop improvements drive automation (less human review before acceptance). The meta loop, which [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) treats in depth, drives quality. Knox's name for the practice of building all three is **harness engineering**, and he is candid about why it is hard: the field changes weekly, the work is fundamentally unplanned and competes with shipping, and the signals you need are hidden in local logs or in someone's head until you move the workflow onto legible surfaces.
+That system has a fixed scope, and each item on it is a chapter of this book: context (what good looks like, [Chapter 16](./16-data-knowledge-semantic-and-context-engineering.md)); skills ([Chapter 10](./10-the-agent-factory.md)); tools and the gateway ([Chapter 15](./15-agent-architecture.md)); the environment ([Chapter 14](./14-development-environments-sandboxes-and-compute.md)); tests and verifiers ([Chapter 21](../04-prove/21-quality-and-evidence-architecture.md)); evals ([Chapter 23](../04-prove/23-evaluation-engineering.md)); feedback and observability ([Chapter 28](../05-operate/28-observability-telemetry-and-forensics.md)); and the improvement loops ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)). The harness is the machine; the loops below are what you run through it. Practitioners at Tessl are candid about why the discipline is hard: the field changes weekly, the work is fundamentally unplanned and competes with shipping, and the signals you need are hidden in local logs or in someone's head until you move the workflow onto legible surfaces.
+
+### Inner loop, outer loop, meta loop
+
+The "inner" and "outer" of the harness split above describe two pieces of software. Practitioners also use "inner" and "outer" for a different but complementary idea, three loops that run *through* the harness, and it is worth holding both in your head. Each loop has its own examples, answers its own question, and serves a different objective.
+
+| Loop | What runs in it | The question it answers | Objective |
+|---|---|---|---|
+| **Inner loop** | Fast, cheap feedback during execution: unit tests, types, the compiler, linters, static analysis, architecture rules, policy checks, local verifiers, CLI tools, test-first development; plugins and skills the agent iterates against before a pull request exists | *Can the agent detect and correct its own mistakes before handoff?* | **Autonomy** |
+| **Outer loop** | Deeper, independent verification after or around the work: independent review agents, security review, integration and end-to-end tests, agentic QA that drives the product, browser verification and screenshot inspection, architecture review, mutation testing, acceptance validation, risk assessment, an independent verifier | *Should we trust what it gave us?* | **Automation** |
+| **Meta loop** | Observation of executions, failures, reviews, corrections, and outcomes, feeding back proposals: detect recurring failures, generate tests and lint rules, improve skills, context, and playbooks, propose verifiers, find missing tools, find automatable work, optimize routing, detect unnecessary harness components, detect context drift, improve readiness | *Why did this need intervention, and what do we change so the next agent doesn't?* | **Improvement** |
+
+The objectives are the reason to keep the loops apart. Inner-loop improvements drive autonomy: fewer human corrections per task, because the agent fixed it before anyone looked. Outer-loop improvements drive automation: less human review before acceptance, because independent verification established the trust a reviewer used to supply. The meta loop, which [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) treats in depth, drives improvement, and it is the loop with the most leverage, because a fix to it changes every future run so that the same mistake is made only once. A team that pours effort into the inner loop and none into the outer gets a hundred correct pull requests each waiting for a human to inspect them; a team that builds the outer loop without the inner gets expensive verification of work the agent could have fixed itself.
+
+<!-- infographic: three-loops -->
+> **Infographic — Inner, outer, and meta loops.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TB
+    subgraph Meta["Meta loop — improvement: why did this need intervention?"]
+        subgraph Outer["Outer loop — automation: should we trust it?"]
+            subgraph Inner["Inner loop — autonomy: can it fix its own mistakes?"]
+                A["Agent executes"] --> F["Tests · types · linters · local verifiers"]
+                F -->|"fail"| A
+            end
+            F -->|"pass: PR"| V["Independent review · QA · security · E2E · verifier"]
+            V -->|"rework"| A
+        end
+        V -->|"accepted"| O["Outcome"]
+        O --> M["Observe failures, corrections, outcomes"]
+        M -->|"new tests, rules, skills, verifiers, tools"| F
+        M -->|"new checks, routing, pruning"| V
+    end
+```
+
+### Harness–model co-design and harness profiles
+
+A harness that treats every model the same is leaving performance on the table, and a harness that is built around one model is a lock-in with extra steps. The way through is a distinction: **model-agnostic is not model-uniform**. Model-agnostic means the factory is not structurally dependent on one provider: the contracts, the evidence, the state, and the verification are the same whichever model runs. Model-uniform would mean identical prompts, tool schemas, and workflows for every model family, and that is a different, worse thing, because model families differ in how they use tools, how they edit files, how they respond to prompt structure, and how their reasoning is best configured. **Harness–model co-design** optimizes the harness around each model's behaviour, tool-use patterns, and reasoning style while preserving the common contracts.
+
+The mechanism is a layering: **canonical agent contract → harness profile → model**. The agent contract above stays fixed. A **harness profile** is the model-specific configuration of how the common harness interacts with one model family, and its fields are:
+
+| Harness profile field | What it sets |
+|---|---|
+| Tool schemas | How tools are described and shaped for this family |
+| Edit mechanism | Whole-file rewrite, search-and-replace, patch, or structured edit |
+| Prompt structure | Where instructions, context, and examples go, and in what form |
+| Context strategy | What is loaded per step, in what order, at what size |
+| Compaction | When and how the session is summarized |
+| Reasoning configuration | Effort, thinking budget, or equivalent settings |
+| Subagent behaviour | Whether, when, and on what model subagents are spawned |
+| Retry policy | What is retried, how often, and what counts as a changed attempt |
+| Tool descriptions | The wording that makes this family select the right tool |
+| Escalation | When the profile hands off to a human or a stronger route |
+
+The profile is versioned and evaluated like any other factory asset; the contract beneath it does not change when the profile does. That is also what makes the profile safe to specialize: a profile can be as opinionated as the model family needs, because nothing above it depends on the opinions.
+
+The reason to invest here is a performance equation worth writing on the wall: **P = f(model, harness, workflow, context, tools, feedback, verification)**. Never attribute everything to the model. When an agent underperforms, the model is one of seven terms, and it is usually not the cheapest one to change. The way to find out which term is at fault is **harness effectiveness evaluation**: a **model × harness matrix**. Run model X with harness A, X with B, Y with A, and Y with B on the same reference tasks, and compare success, quality, intervention count, latency, tokens, cost, and verification outcomes. If X beats Y under both harnesses, the model matters; if A beats B under both models, the harness does; if the results cross, the workflow or the profile is the term to look at. Without the matrix, every regression is blamed on whichever component changed most recently.
+
+The matrix is the evidence for a claim this guide makes throughout: the harness is an **intelligence multiplier**. There are three levels of capability, and they are not the same number. **Model capability** is what the weights can reason about and generate. **Agent capability** is what the model can do with tools, context, state, and a loop around it. **Factory capability** is what an organization can reliably delegate, with workflows, governance, verification, economics, and learning wrapped around the agent. A better model raises the first; only harness engineering raises the second; only the factory raises the third. *Model capability ≠ agent capability ≠ factory capability.*
+
+The multiplier has a cost curve, and it goes the wrong way if nobody watches it. **Harness debt** is the accumulated prompts, skills, rules, checks, adapters, and orchestration that once compensated for an agent limitation and no longer justify their cost, because the model improved, the workflow changed, or the check was never load-bearing. Much of it is **compensatory**: built to work around a temporary model weakness, then kept out of habit after the weakness was gone, unlike the institutional knowledge (architecture, policies, conventions) that no model will ever know on its own and that stays load-bearing. **Harness pruning** is the routine that pays it down, and it is the same shape as every other evaluation in this book: take one component → eval with it → eval without it → measure the delta → retain, simplify, or remove. A component that cannot show a delta is debt, however sensible it looked when it was added.
+
+<!-- infographic: harness-pruning -->
+> **Infographic — Harness pruning.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    C["Harness component"] --> W["Eval with"]
+    C --> WO["Eval without"]
+    W & WO --> D["Measure delta"]
+    D -->|"clear gain"| R["Retain"]
+    D -->|"marginal gain"| S["Simplify"]
+    D -->|"no gain or harm"| X["Remove"]
+```
 
 ### Headless execution and the structured event stream
 
@@ -525,6 +598,10 @@ The repository glossary and lexicon reviewed 2026-09-02 describe the admission m
 - Decide which part of the harness to own: adopt commodity agent-loop mechanics, own the agent contract. The harness is how agents execute; the control plane is how the organization governs what they execute.
 - The agent contract fixes input (frozen manifest and frozen scope), output (normalized events, artifacts, structured completion), state semantics (conversation state is evidence, durable state is what recovery relies on), authority, and lifecycle. Behind it, local workers, remote sandboxes, and vendor cloud agents are interchangeable execution backends; delegated and remote execution get the same scope and the same verification, and portability is proven by the conformance suite.
 - An adapter runs prepare → execute → collectResult → cancel → cleanup, returns `factory-result/v1` with a candidate SHA, publishes a capability manifest, and is admitted only when it lacks the six prohibited authorities and the factory worker supplies the five external controls. Engine status is mapped to canonical events under an idempotency key; engine phases are tendencies, never transitions; cancellation runs one way; CI uses a fake engine and live runs are operator evidence; unattended mode is not admitted.
+- Harness engineering: engineer the system in which agents engineer the software. Its scope is context, skills, tools, environment, tests, verifiers, evals, feedback, observability, and improvement loops.
+- Three loops run through the harness. Inner: can the agent fix its own mistakes before handoff? (autonomy). Outer: should we trust what it gave us? (automation). Meta: why did this need intervention, and what do we change so the next agent doesn't? (improvement). Build all three; each serves a different objective.
+- Model-agnostic is not model-uniform. Keep one canonical agent contract, put a versioned harness profile between it and each model family, and never attribute everything to the model: P = f(model, harness, workflow, context, tools, feedback, verification). A model × harness matrix tells you which term is at fault.
+- The harness is an intelligence multiplier: model capability ≠ agent capability ≠ factory capability. Harness debt is the multiplier decaying; prune it with eval-with, eval-without, measure the delta, then retain, simplify, or remove.
 
 ## Go deeper
 
@@ -533,11 +610,12 @@ The repository glossary and lexicon reviewed 2026-09-02 describe the admission m
 - [Chapter 12. Durable execution](./12-durable-execution.md) — leases, heartbeats, and the recovery semantics session resume must honor.
 - [Chapter 14. Development environments, sandboxes, and compute](./14-development-environments-sandboxes-and-compute.md) — the layer beneath the harness.
 - [Chapter 15. Agent architecture: loop, MCP, tools, context, and memory](./15-agent-architecture.md) — what happens inside the inner harness.
-- [Chapter 18. Agent and loop engineering](./18-agent-and-loop-engineering.md) — inner, outer, and meta loops in full.
+- [Chapter 18. Agent and loop engineering](./18-agent-and-loop-engineering.md) — the attempt loop and loop engineering as a discipline.
+- [Chapter 23. Evaluation engineering](../04-prove/23-evaluation-engineering.md) — the with-and-without evaluation that harness pruning and the model × harness matrix depend on.
 - [Chapter 32. Production feedback, automated review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) — the CodeRabbit loop and merge queue in context.
 - [Chapter 7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) — why enforcement cannot live in a hook.
 - [Glossary](../appendix/glossary.md) — inner harness, outer harness, adapter, capability manifest, ACP, AG-UI, A2A, MCP.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Dru Knox (Tessl), AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory, the agent contract, execution backends and delegated execution, frozen scope, conversation versus durable state, portability; Mission Control repository glossary and lexicon, reviewed 2026-09-02 — the adapter lifecycle, `factory-result/v1`, the capability manifest, canonical event types and idempotency key, phase-to-tendency mapping, the fake-engine fixture, and the approve-then-run admission posture.
+- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Tessl, AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; public practitioner talks (2026) — harness engineering as a named discipline and its scope, the three-loops table with the question and objective each serves, harness–model co-design, model-agnostic versus model-uniform, the harness profile fields, the performance equation, the model × harness matrix, the three levels of capability, harness debt and harness pruning; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory, the agent contract, execution backends and delegated execution, frozen scope, conversation versus durable state, portability; Mission Control repository glossary and lexicon, reviewed 2026-09-02 — the adapter lifecycle, `factory-result/v1`, the capability manifest, canonical event types and idempotency key, phase-to-tendency mapping, the fake-engine fixture, and the approve-then-run admission posture.
 - Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) — the meta-harness layer (composition, policy, collaboration, sandbox) and Omnigent as one implementation; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) — the unified wrapper across interactive harnesses, its standard defaults, cost visibility, and the single MCP gateway.
 - Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.

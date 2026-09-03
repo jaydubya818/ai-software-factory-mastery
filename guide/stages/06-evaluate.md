@@ -113,6 +113,8 @@ A **separate verifier Attempt** then runs the plan: a different identity, a diff
 
 The producing agent cannot change the Candidate and inherit the old evidence. A new Candidate is a new Verification Subject and a new verifier Attempt.
 
+The Verification Plan is the factory's **verification contract**: every claim the work must demonstrate paired with the evidence that settles it and the mechanism that produces it, handed to the producer before work starts and to the verifier after it ends, and the proportion of claims with a reliable independent verifier is what sets how much autonomy the change can be given. The verifier is itself validated — run against known-good and known-bad artifacts so its false-failure and false-success rates are measured — because a gate nobody has tested is a gate that is not there; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) defines both.
+
 ### Claims versus evidence
 
 "Tests passed" is a claim. The test system's recorded result, tied to the exact Candidate digest, with the run identifier and the environment, is evidence. *Evidence should come from the system performing the check, not from the system being checked.* The rule generalizes: a security scanner's finding list bound to the digest is evidence; the agent's note that it "ran the scanner" is not. A model grader's verdict is evidence only when the grader is validated and its verdict is recorded with its calibration version.

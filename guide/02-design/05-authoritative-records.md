@@ -4,7 +4,7 @@ part: design
 chapter: 5
 summary: The twelve records that carry intent, authority, causality, evidence, and acceptance through an AI Software Factory, the companion records (Constitution, Mission Spec, Quality Contract, Factory Version, manifest, Context Package, Candidate, Verification Subject) that pin down what the spine would otherwise carry loosely, the traceability chain that joins them, and how a factory keeps a lower-level fact from silently rewriting a higher-level decision.
 absorbs: [04-domain-model/01-authoritative-delivery-hierarchy.md, 04-domain-model/02-factory-configuration-workflows-and-execution-manifests.md, 04-domain-model/05-factory-system-inventory-classification-and-lifecycle.md]
-infographics: [delivery-hierarchy, record-lifecycles, authoritative-state-machines, factory-configuration, traceability-chain]
+infographics: [delivery-hierarchy, record-lifecycles, authoritative-state-machines, factory-configuration, traceability-chain, factory-data-model]
 ---
 
 # 5. Authoritative records: from company to release
@@ -193,6 +193,43 @@ flowchart LR
 ```
 
 Every hop is a reference to a stable identifier, never a copy of text, so that a revised requirement can enumerate exactly which assertions, WorkOrders, criteria, checks, and receipts it invalidates. Plan approval sits on this chain with precise semantics: a human approves one exact Plan revision, bound to an exact Mission Spec and Constitution; a change in intent creates a new revision and never mutates the approved one; and approval does not dispatch execution, it authorises the release of governed WorkOrders. *Intelligence can recommend. Authority is granted separately.* The planner that produced the Plan is replaceable; the Plan, once approved, is governed. [Chapter 6](./06-intent-and-specification-engineering.md) builds the top of this chain; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) and [Chapter 24](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) build the bottom.
+
+### The factory data model
+
+Step back from the organisational and companion records and the whole thing has a canonical shape that practitioners building factories in the open have converged on independently. The **factory data model** is the canonical representation of signals, intent, plans, tasks, executions, artifacts, evidence, verification, approvals, deployments, and outcomes, and its object chain reads:
+
+`Signal → Intent → Plan → Task → Attempt → Artifact → Evidence → Verification → Decision → Deployment → Outcome`
+
+It is the same spine as this chapter's hierarchy with the organisational scope folded away and two ends extended. The reconciliation is direct:
+
+| Canonical object | This chapter's record | Note |
+| --- | --- | --- |
+| Signal | *(new; see below)* | The observable event that precedes intent |
+| Intent | Goal, Mission, Mission Spec | Why the work exists and what it means |
+| Plan | Approved Plan, Quality Contract | How, and how success will be judged |
+| Task | WorkOrder, Task | The canonical chain uses one word for the authority-and-acceptance unit and the operational unit; this chapter keeps them apart |
+| Attempt | Attempt, Run, execution manifest, Context Package | One immutable try with its frozen inputs |
+| Artifact | Candidate | The output, by digest |
+| Evidence | Evidence, receipt | Criterion-linked proof against the exact artifact |
+| Verification | Verification Subject, Quality Gate | The binding of artifact to frozen verification plan and its result |
+| Decision | Approval, acceptance | Authority granted separately from correctness |
+| Deployment | Pull Request, Release | Merge, deploy, activate, observe |
+| Outcome | Production verification, observed outcome | What actually happened, which becomes the next signal |
+
+<!-- infographic: factory-data-model -->
+> **Infographic — The canonical object chain.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    S["Signal"] --> I["Intent"] --> P["Plan"] --> T["Task"] --> A["Attempt"] --> AR["Artifact"] --> E["Evidence"] --> V["Verification"] --> D["Decision"] --> DP["Deployment"] --> O["Outcome"]
+    O -.->|"becomes the next"| S
+    AG["Agents, models, harnesses<br/>(replaceable)"] -. "produce, never own" .-> A
+    AG -. "produce, never own" .-> AR
+```
+
+The reason to hold the canonical chain beside the detailed hierarchy is the sentence it exists to enforce: *agents and models change; the durable artifacts remain.* Every object in the chain is a record the control plane owns, and none of them is a property of the agent that produced it. Swap the model, replace the harness, retire an agent definition, and the Intent, Plan, Attempt, Artifact, Evidence, and Outcome records are unchanged, still linked, and still answer the governance questions. A factory whose data lives in an agent's memory or a vendor's session log has the opposite property, and it will discover that on the day the vendor changes.
+
+The chain also adds a record this chapter has not yet named. A **Signal** is an observable event indicating a potential need for change: customer feedback, a support case, a bug report, telemetry, an incident, an issue, an analytics shift, a security finding, a performance regression, an engineering discussion. It sits before intent, and it is a record rather than an inbox because the factory's boundary is signal-to-outcome, not ticket-to-code ([Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas)). Signals need ingestion, classification, correlation, deduplication, prioritisation, and routing into actionable work, and a Goal or Mission created from one should reference it, so that the Outcome at the far end of the chain can be compared with the Signal that started it. An Outcome that produces new signals closes the loop; a Signal that produced no Intent is a decision not to act, and that decision is worth recording too.
 
 ### Record lifecycles
 
@@ -472,6 +509,8 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - The traceability chain, spec requirement → Plan assertion → WorkOrder blueprint → acceptance criterion → verification check, is built from stable identifiers so a revision can enumerate what it invalidates. The planner is replaceable; the Plan is governed.
 - A Goal above the Mission owns an outcome, never execution state. A host binding and a code scope say where and on what work may run, and dispatch is blocked until both exist. A Run is one agent turn beneath an Attempt. The Software Factory is a thin versioned configuration, not a second lifecycle.
 - Seven state machines (Mission, Plan, WorkOrder, Task, Attempt, Verification, Approval) and five rules: no state implies the next; Task Done ≠ WorkOrder accepted ≠ engine done ≠ Definition of Done; a failed Attempt does not make the Task terminal while recovery is active; none of UNKNOWN, MISSING, PENDING, FAILED, or STALE is success; approval is its own machine.
+- The canonical factory data model is Signal → Intent → Plan → Task → Attempt → Artifact → Evidence → Verification → Decision → Deployment → Outcome; it is this chapter's hierarchy with the scope records folded away and both ends extended. Agents and models change; the durable artifacts remain.
+- A Signal is a record, not an inbox: the factory's boundary is signal-to-outcome, and an Outcome should be comparable with the Signal that started it.
 
 ## Go deeper
 
@@ -481,5 +520,6 @@ Schema presence is not proof of a coherent product journey. The complete hierarc
 - [24. Quality contracts, proof packages, and certificates](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) for the evidence side; [25. CI/CD, progressive delivery, and production verification](../04-prove/25-cicd-progressive-delivery-and-production-verification.md) for the Release stages.
 - [30. Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md) for the command envelope and outbox.
 - [Glossary](../appendix/glossary.md); [Mission Control case study: implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md).
+- Sources for the factory data model and the Signal record: public practitioner talks, 2026.
 - Primary sources at the pinned commits: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 Product Strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions Contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Domain Contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [Information Architecture](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/information-architecture.md), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Factory configuration](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/factory/configuration.ts), [PR checks and governed merge](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/prChecks.ts), [Execution manifest compiler](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/executionManifest.ts), [Workflow contract gate](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/convex/lib/factoryWorkflowContract.ts), [Structured handoff](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/packages/workflow-engine/src/handoff.ts), [Todo 025](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/025-complete-p1-freeze-agent-execution-manifests.md), [Todo 026](https://github.com/jaydubya818/MissionControl/blob/9d5f8e36aff45a001a8848cc0516b3dc800e29b8/todos/026-complete-p1-structured-workflow-contracts-context.md).
 - Source notes: Jay West, "AI Software Factory mission" (Intent layer outputs: Missions, WorkOrders, acceptance criteria, constraints, risk, evidence, ownership); Jay West, factory architecture notes and Mission Control walkthrough (Project Constitution, Mission Spec, Quality Contract, Factory Version, frozen manifest and Context Package, Candidate, Verification Subject, currentness, traceability chain, approval semantics); Mission Control repository glossary and lexicon, reviewed 2026-09-02 (Goal, host binding, code scope, Run, the thin Software Factory configuration, and the seven authoritative state lists with their rules).

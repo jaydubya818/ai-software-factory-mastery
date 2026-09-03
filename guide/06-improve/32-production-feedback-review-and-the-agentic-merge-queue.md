@@ -4,7 +4,7 @@ part: improve
 chapter: 32
 summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
 absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
-infographics: [review-at-scale, review-pipeline, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
+infographics: [review-compression, review-at-scale, review-pipeline, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
 ---
 
 # 32. Production feedback, automated review, and the agentic merge queue
@@ -403,7 +403,46 @@ composite-score failure Chapter 23 warns about.
 
 ### Scaling automated review across a large estate
 
-One repository with one reviewer agent is a demo. A large organisation has hundreds of repositories, some of them decades-old products with millions of lines and their own conventions, and the design question is how automated review stays accurate, cheap, and governable across all of them at once. The answer is ten mechanisms that work together; each one removes a specific way the naive design fails.
+One repository with one reviewer agent is a demo. A large organisation has hundreds of repositories, some of them decades-old products with millions of lines and their own conventions, and the design question is how automated review stays accurate, cheap, and governable across all of them at once. Before the mechanisms, the shape of the problem, because it is the problem the whole factory eventually runs into.
+
+The **review bottleneck** is the state in which agent production exceeds the human capacity to inspect and approve it. It arrives on a schedule. In traditional delivery the bottleneck is writing code. In agent-assisted delivery it moves to reviewing code, because writing got cheap and reviewing did not. In a factory it moves again, to defining what correct means, verifying that it was met, and handling the exceptions — which is what human review was silently doing all along. A team that automates implementation and leaves review untouched has not removed a bottleneck; it has relocated one to the people least able to absorb it ([Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) calls the pattern bottleneck migration).
+
+The answer is **review compression**: a funnel of five stages in which each stage removes what it can settle before the next, so that human judgment is applied only where nothing cheaper could decide.
+
+<!-- infographic: review-compression -->
+> **Infographic — The review compression funnel.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TD
+    All["Every change"] --> D["1. Deterministic checks<br/>compile · tests · lint · policy · architecture rules"]
+    D -->|"settled: fix or pass"| D2["Removed from the funnel"]
+    D -->|"remaining claims"| V["2. Specialised verifiers<br/>security · accessibility · schema · performance"]
+    V -->|"settled"| V2["Removed"]
+    V -->|"remaining judgment"| R["3. Agent reviewers<br/>context-driven review lenses"]
+    R -->|"clean, low risk"| R2["Auto-merge or sampled"]
+    R -->|"findings or risk"| C["4. Risk classification<br/>tier from the nine inputs"]
+    C -->|"Low · Medium"| C2["Automated review + sampled human review"]
+    C -->|"High · Critical"| H["5. Human judgment<br/>where nothing cheaper could decide"]
+```
+
+Deterministic checks go first because they are exact and free; a reviewer, human or agent, should never be the one to discover that the build is broken. Specialised verifiers go second because they settle whole classes of claim — no accessibility regression, no secret in source, migration has a down step — that a general reviewer would only notice sometimes. Agent reviewers go third, on what remains, with the context described below. Risk classification then decides who sees the result, and human judgment is the last stage, not the first. Each stage's throughput is the next stage's ceiling, and the funnel is measured by how much reaches the bottom: the share of changes that need a human at all, and the touchpoints per accepted outcome that [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) tracks. The five-row risk-based autonomy table of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) is this funnel read as policy.
+
+Stage three is where most automated review stalls, and the reason is what the reviewer is given. **Generic review** hands the reviewer a diff and asks whether it is good; the answer is the model's general opinion of code, which is the same opinion for every repository and wrong for most of them. **Context-driven review** hands the reviewer the diff *and* the repository profile, the architecture, the applicable standards, the historical decisions in this area, the relevant skills, and the component's own rules, and asks whether the change is correct *here*. The difference is not model quality; it is that the second reviewer can say "this violates the dependency direction this repository enforces" and the first can only say "consider whether this dependency is appropriate."
+
+Context-driven review is delivered through a **specialised review lens**: a targeted review capability activated by the characteristics of the change rather than by the repository or the reviewer's mood. Four lenses cover most changes, and change classification (below) is what activates them:
+
+| Change characteristic | Lens | What it reviews for |
+| --- | --- | --- |
+| Frontend | UI lens | Accessibility, design-system conformance, UI architecture, copy and consistency |
+| Backend | Service lens | API contracts, reliability, data handling, performance budgets |
+| Authentication or authorisation | Security lens | Identity, session handling, privilege boundaries, secrets |
+| Infrastructure | Platform lens | Security posture, cost, reliability, blast radius of configuration |
+
+A lens is a skill in the sense of [Chapter 10](../03-build/10-the-agent-factory.md) — versioned, owned, evaluated on its own eval set — and a change that touches two surfaces activates two lenses, each with its own findings and its own precision record. The specialised-reviewers row in the table below is the fleet of lenses; this is what each one is.
+
+There is one more move, and it is the one that shrinks the funnel from the top instead of the bottom. **Context shift-left** gives the standard to the producing agent, not only to the reviewer. If the accessibility rule reaches only the review lens, every violation is generated, caught, sent back, and regenerated at full cost. If it reaches the implementer, most violations are never generated. The sequence becomes standards → generate correctly → verify, and review becomes defence in depth rather than the first line. [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) owns the mechanism — the Definition of Correct is the same artifact on both sides, and context routing puts it there — and the consequence for this chapter is that the best review pipeline is the one whose lenses find less every quarter, because the standards they enforce reached the producer first. A lens whose finding rate never falls is a standard that has not been shifted left.
+
+With the shape in place, the mechanisms. There are ten, and they work together; each one removes a specific way the naive design fails.
 
 <!-- infographic: review-at-scale -->
 > **Infographic — Review at scale: profile, index, classify, tier, contextualise, specialise, evaluate, escalate, report, govern.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
@@ -657,6 +696,9 @@ Merge-maintenance policy checklist:
 | Threshold set by feel | Confidence threshold chosen once, never compared with outcomes; dropped findings discarded | Set per repository class from measured precision; retain dropped findings and check them against later incidents |
 | Memory in the prompt | Repository lessons appended to the reviewer's instructions in place; nobody can say which version learned what | Keep repository memory as a versioned record that feeds the profile and suppression rules through the promotion gate |
 | Duplicates counted as findings | The same defect reported three times inflates finding counts and reviewer precision | Deduplicate on affected code and category before aggregation; one record, all evidence |
+| Human review at the top of the funnel | People discover broken builds and lint failures; the share of changes needing a human never falls | Compress: deterministic checks, then specialised verifiers, then agent reviewers, then risk classification, then human judgment |
+| Generic reviewer on every repository | Findings are the model's general opinion of code; maintainers dismiss most of them | Context-driven review: diff plus profile, architecture, standards, history, skills, component rules; activate lenses by change characteristic |
+| Standard lives only in the reviewer | The same violation is generated, caught, and regenerated on every PR; the lens's finding rate never falls | Shift the standard left to the producer; review becomes defence in depth |
 
 ## In Mission Control
 
@@ -726,6 +768,15 @@ precision, human attention, merge latency, and change-failure outcomes.
   no verdict means fail.
 - "Does this PR need a human?" and "are the files right?" are two checks:
   change-risk policy and change-verify invariants.
+- The review bottleneck moves from writing to reviewing to defining correctness
+  and verification. Compress review through five stages — deterministic checks,
+  specialised verifiers, agent reviewers, risk classification, human judgment —
+  and measure the share of changes that reach the bottom.
+- Context-driven review beats generic review: diff plus repository profile,
+  architecture, standards, history, skills, and component rules, delivered
+  through specialised lenses (frontend, backend, auth, infra) activated by the
+  change. Shift the standard left to the producer so that review is defence in
+  depth; a lens whose finding rate never falls is a standard that never moved.
 
 ## Go deeper
 
@@ -752,7 +803,14 @@ precision, human attention, merge latency, and change-failure outcomes.
   signal aggregation, risk-tiered review, reviewer feedback as a learning
   signal, review findings that teach, the twelve-step review pipeline,
   finding deduplication and noise suppression, confidence thresholds, the
-  human-review baseline, and repository memory.
+  human-review baseline, and repository memory; public practitioner talks,
+  2026 — the review bottleneck and its migration, review compression,
+  context-driven review versus generic review, specialised review lenses, and
+  context shift-left.
+- [Chapter 7 — Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md)
+  for the five-row risk-based autonomy table the funnel implements;
+  [Chapter 8 — Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+  for touchpoints per accepted outcome and bottleneck migration.
 - [Chapter 16 — Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
   for changed-symbol retrieval and repository profiles as review context;
   [Chapter 28 — Observability, telemetry, and forensics](../05-operate/28-observability-telemetry-and-forensics.md)

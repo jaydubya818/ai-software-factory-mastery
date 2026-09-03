@@ -4,7 +4,7 @@ part: operate
 chapter: 31
 summary: How an organization measures factory maturity by evidence rather than enthusiasm, advances one corridor at a time, chooses what to buy, build, and host, and satisfies the enterprise controls that decide whether a factory can run at all.
 absorbs: [03-operating-model/04-enterprise-adoption-and-factory-maturity-model.md]
-infographics: [tech-stack-five-layers, maturity-model, adoption-path, build-vs-buy, commodity-vs-differentiated, gravity-well, contribution-model, fde-loop, release-clocks, deployment-topologies, usage-layers]
+infographics: [tech-stack-five-layers, maturity-model, skills-loops-factory-ladder, adoption-path, build-vs-buy, commodity-vs-differentiated, gravity-well, contribution-model, fde-loop, release-clocks, deployment-topologies, usage-layers]
 ---
 
 # 31. Enterprise adoption and the infrastructure landscape
@@ -54,6 +54,35 @@ flowchart LR
 These levels line up with the autonomy levels of chapter [3](../01-understand/03-first-principles-trust-evidence-and-authority.md), but they describe the organization rather than a single scope's ceiling. Level 5 is an operating condition, not a badge. A critical event demotes or quarantines a scope immediately, and the dotted arrows in the diagram are as much part of the model as the solid ones.
 
 An organization with widespread Copilot use and no governed WorkOrders is at Level 1 no matter how much code the assistants write, because nothing has been delegated: no persistent state, no bounded authority, no independent evidence. That is not a criticism. It is the correct starting point for the path below.
+
+### A second lens: skills, loops, factory
+
+The six levels above rate an organisation by how much authority it has safely delegated, with proof. A second maturity ladder in public use rates the same organisation by what it has *built*: whether its knowledge is reusable, whether its workflows run without a person starting them, whether those workflows observe and improve themselves, and whether the loops are connected into a system. The two lenses are complementary rather than competing, because an organisation can build a great deal of loop machinery without earning the right to delegate authority through it, and can delegate a narrow corridor with almost no machinery at all. Rate both.
+
+<!-- infographic: skills-loops-factory-ladder -->
+> **Infographic — The skills → loops → factory ladder beside the six levels.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+  S0["L0 AI assistance<br/>human → agent → human"] --> S1["L1 Skills<br/>intent → skill → agent → result"]
+  S1 --> S2["L2 Automated workflows<br/>trigger → skill → agent → result"]
+  S2 --> S3["L3 Loops<br/>trigger → skill → execute → verify → evaluate → learn"]
+  S3 --> S4["L4 Factory<br/>many connected loops; humans engineer and govern"]
+  S4 --> S5["L5 Adaptive factory<br/>proposes improvements to itself under governed promotion"]
+```
+
+| Skills-to-factory level | What exists | What the humans do | Nearest authority level above | Why the mapping is loose |
+| --- | --- | --- | --- | --- |
+| L0 AI assistance | A person prompts an agent and reads the answer | Everything except the typing | 0–1 | Assistance carries no reusable knowledge and no delegated authority |
+| L1 Skills | Reusable, versioned skills: knowledge is captured once and consumed many times | Write the skills; still initiate every run | 1 | A skill makes a human faster; it does not yet delegate |
+| L2 Automated workflows | Triggers start skill-driven runs without a person: on a schedule, a webhook, an event | Define triggers; review outputs | 2 | Automation without verification is delegated execution with human review of every result |
+| L3 Loops | Runs observe, verify, evaluate, and learn; the next run is better than the last | Own intent, standards, and exceptions; tune the loop | 3 | A loop with independent verification is what governed autonomy needs to run unattended |
+| L4 Factory | Many interconnected loops across the lifecycle | Intent → standards → exceptions → factory engineering → governance | 3–4 | Whether policy may authorise merge or deploy is an authority decision the loop count does not settle |
+| L5 Adaptive factory | The factory identifies its own deficiencies and proposes improvements to its skills, routing, context, evals, and workflows, with independent verification and governed promotion | Govern promotion; decide what the factory may change about itself | 5 | Self-improvement without governed promotion is a Level 5 claim with a Level 2 control |
+
+The last column is the reason to keep both lenses. A team at skills-to-factory L4 with weak evidence is running many loops it may not lawfully trust; a team at authority Level 3 with no skills is delegating one corridor by hand-written prompt and will not be able to repeat it. The corridors below move an organisation up the authority ladder; the skill registry, the loop engineering of [Chapter 18](../03-build/18-agent-and-loop-engineering.md), and the meta loop of [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) move it up this one.
+
+Two properties of the second ladder are worth stating because they change how the adoption path is planned. The first is that the factory is a **continuum**, not a destination: AI assistance → skills → automation → loops → connected loops → factory, with the share of work done by loops rising step by step and never required to reach everything ([Chapter 2](../01-understand/02-the-factory-in-one-view.md) gives the four working modes this continuum passes through). The second is where it ends up: *eventually engineers spend more time engineering the factory than doing the work it automates.* That is not a warning. It is the description of the L4 job, and it is the last step of the bottleneck migration [Chapter 1](../01-understand/01-why-software-engineering-is-changing.md) describes, arriving as planned. An organisation that budgets for the tooling and not for the factory engineers will stall at L2 with a large collection of triggers and nobody whose job is to make them better.
 
 ### Score eight dimensions, and let hard gates override averages
 
@@ -541,6 +570,8 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - The first ninety days: understand, then align on a few durable contracts and prove one workflow, then harden toward self-service. No imported architecture, no migration mandate, no self-improvement before a baseline.
 - Choose topology (managed, BYOC, VPC, self-hosted, on-premises) from residency, networking, and key custody. Fill the enterprise control checklist before it is sent to you, and write vendor-exit criteria before signing.
 - The credible executive message is "we expand proven corridors."
+- Rate maturity through two lenses: the six authority levels (how much has been safely delegated, with proof) and the skills → loops → factory ladder (L0 assistance, L1 skills, L2 automated workflows, L3 loops, L4 factory, L5 adaptive factory). Machinery without evidence and evidence without machinery both stall.
+- The factory is a continuum, not a destination, and eventually engineers spend more time engineering the factory than doing the work it automates. Budget for the factory engineers, not only the tooling.
 
 ## Go deeper
 
@@ -549,5 +580,5 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 - Related for the two bands and the loop: [10. The Agent Factory](../03-build/10-the-agent-factory.md) for where productised artifacts live; [20. Autonomous engineering workflows](../03-build/20-autonomous-engineering-workflows.md) for the wedge workflow.
 - Case studies: [Mission Control implementation maturity and evidence map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) · [Capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) · [Coverage and maturity](../appendix/coverage-and-maturity.md)
 - Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on composition over inheritance, outposts, and why there is no open-source control plane; Jay West, "The 12-layer production AI agent stack" coverage audit, section 13 (enterprise and open-source infrastructure); Jay West, agent platform and runtime technology glossary; Jay West, AI Software Factory mission (twelve-month plan, five-year roadmap, adoption metrics); Jay West, audience-framing notes (the eight audiences); Jay West, factory architecture notes, on build versus buy, the contribution model, existing agents, forward-deployed engineering, multi-tenancy, release clocks, scale bottlenecks, the five lessons, the first ninety days, commodity versus differentiated layers and the platform boundary, and the forward-deployed loop (embed, observe, co-build, productise, contribute, reuse, scale)
-- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four layers of agent usage, the shift from interactive sessions to managed agents, the per-agent roadmap, the managed-agent examples, and the published scale figures; *The 4 Layers of an Agent System Explained* (public post, 2026) for the meta-harness as the governance layer across many harnesses, which is what makes a managed-agent fleet operable
+- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four layers of agent usage, the shift from interactive sessions to managed agents, the per-agent roadmap, the managed-agent examples, and the published scale figures; *The 4 Layers of an Agent System Explained* (public post, 2026) for the meta-harness as the governance layer across many harnesses, which is what makes a managed-agent fleet operable; public practitioner talks, 2026, for the skills → loops → factory maturity ladder, the factory as a continuum, and the observation that engineers come to spend more time engineering the factory than doing the work it automates
 - External canon: [DORA delivery metrics](https://dora.dev/) · [NIST Secure Software Development Framework](https://csrc.nist.gov/projects/ssdf/) · Team Topologies (Skelton and Pais) · Google SRE

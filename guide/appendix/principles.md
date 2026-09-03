@@ -283,6 +283,30 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **The next generation will be judged by how much trustworthy change a platform can move from human intent to production without scaling human effort linearly with it.** The closing measure of the whole book. → [36. Where this is going](../06-improve/36-where-this-is-going.md)
 
+## Loops, correctness, and the factory around the agent
+
+**You cannot reliably automate what you have not adequately defined.** Context engineering precedes automation; the Definition of Correct comes before the loop that enforces it. → [16. Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+
+**The agent is not the factory.** The factory is the system around the agent: context, harness, skills and tools, inner loop, outer loop, control plane, meta loop. → [2. The factory in one view](../01-understand/02-the-factory-in-one-view.md)
+
+**Autonomy is not automation.** Autonomy is how little correction the agent needed; automation is how much of the workflow ran without a person. A hundred correct pull requests each approved by hand is high autonomy and no automation. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+
+**Inner loop for autonomy, outer loop for trust, meta loop for improvement.** Three loops at three speeds; keep them apart and each has one objective. → [13. Coding harnesses and agent protocols](../03-build/13-coding-harnesses-and-agent-protocols.md)
+
+**The more completely an outcome can be specified and independently verified, the more safely it can be delegated.** Verification completeness sets the autonomy ceiling, not model capability. → [21. Quality and evidence architecture](../04-prove/21-quality-and-evidence-architecture.md)
+
+**Add no agentic complexity unless evals show improvement.** More agents, context, models, or verification is not better by default; every component earns its place with a with-and-without measurement. → [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md)
+
+**Automation moves bottlenecks upstream to intent and downstream to verification.** Implementation, then review, then verification and context and intent and governance, then factory engineering. Watch the stage after the one you just automated. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+
+**Owning your factory means owning what correct means.** Own intent, standards, context, skills, policies, evals, and outcomes; adopt models, runtimes, sandboxes, infrastructure, and commodity tooling. → [11. Control plane, orchestrator, and execution plane](../03-build/11-control-plane-orchestrator-and-execution-plane.md)
+
+**Spend intelligence where intelligence creates value.** Route by complexity, risk, and value; a rename gets a cheap model, a cross-system migration gets the frontier and several validators. → [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md)
+
+**Validate the validator.** A bad verifier with a good agent is a false failure; a bad verifier with a bad agent is a false success. The mechanisms that judge agent work are themselves evaluated. → [21. Quality and evidence architecture](../04-prove/21-quality-and-evidence-architecture.md)
+
+**More context is not better context.** Every context source is measured by its utility with and without; stale, redundant, and misleading knowledge is pruned. → [16. Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+
 ## Mission Control
 
 **The goal isn't autonomous coding; it's governed autonomous software delivery.** Mission Control exists to make increased autonomy operationally trustworthy, not maximal. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
@@ -385,5 +409,20 @@ The principles above are sentences. Underneath them are forty concepts a reader 
 38. **Build vs Adopt** — Adopt commodity execution mechanics behind standard contracts; build the differentiated control plane and Builder Experience. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 39. **Forward-Deployed Engineering** — Embed → Observe → Co-build → Productise → Contribute → Reuse → Scale; the measure is how quickly teams stop needing it. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 40. **Migration and Adoption** — A gravity well rather than a mandate: gateway, then evaluation, then observability, then governed tools, then runtime, one proven corridor at a time. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
+
+**And ten more**
+
+The forty above populate the six areas. Ten further concepts run across them, from the loop-and-context vocabulary the factory-native lifecycle of [Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas) relies on.
+
+41. **Definition of Correct** — The machine-consumable description of acceptable work for a task, component, repository, or domain: requirements, standards, policies, architecture, constraints, acceptance criteria, verification rules. → [6](../02-design/06-intent-and-specification-engineering.md), [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+42. **Verification Contract** — The structured list of claims that must be demonstrated before completion and how each is validated; the second half of a complete specification. → [21](../04-prove/21-quality-and-evidence-architecture.md)
+43. **Inner, Outer, and Meta Loop** — Fast deterministic feedback during execution (autonomy), independent verification around it (trust), and improvement across executions (learning). → [13](../03-build/13-coding-harnesses-and-agent-protocols.md)
+44. **Harness Engineering** — Designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops in which agents engineer the software. → [13](../03-build/13-coding-harnesses-and-agent-protocols.md)
+45. **Agent Readiness** — A scored assessment of whether a codebase and environment let agents safely understand, modify, execute, and verify: testability, CLI accessibility, reproducibility, documentation, context, sandboxability, observability. → [15](../03-build/15-agent-architecture.md), [20](../03-build/20-autonomous-engineering-workflows.md)
+46. **Context as Code** — Context that is versioned, reviewed, tested, evaluated, owned, distributed, deprecated, drift-detected, measured, and rolled back. → [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
+47. **Human Touchpoints per Accepted Outcome** — Every event at which a person had to intervene for progress, counted per outcome accepted; the automation metric. → [8](../02-design/08-economics-metrics-and-human-attention.md)
+48. **Risk-Based Autonomy** — Change risk classification (files, dependencies, criticality, sensitivity, blast radius, size, coverage, confidence, history) sets verification depth, reviewer, approval, deployment policy, and model spend. → [7](../02-design/07-governance-policy-and-risk-proportional-approval.md)
+49. **Factory Data Model** — Signal → Intent → Plan → Task → Attempt → Artifact → Evidence → Verification → Decision → Deployment → Outcome; agents and models change, the durable artifacts remain. → [5](../02-design/05-authoritative-records.md)
+50. **Signal-to-Outcome** — The factory's real boundary: it begins at an observable need for change and ends at an observed production outcome that becomes the next signal, not at ticket-to-code. → [2](../01-understand/02-the-factory-in-one-view.md), [5](../02-design/05-authoritative-records.md)
 
 For the terms these principles rely on, see the [glossary](./glossary.md).

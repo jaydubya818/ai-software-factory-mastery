@@ -4,7 +4,7 @@ part: design
 chapter: 7
 summary: How organizational intent becomes bounded machine authority — versioned policy, authorization envelopes, risk bands and risk-tiered review, decision rights, separation of duties, human-in-the-loop done right, waivers as product data, trust ceilings, autonomy per action class, ten control families, and the emergency controls that revoke authority when a run turns unsafe.
 absorbs: [08-security-and-governance/01-governance-policy-and-risk-proportional-approval.md, 08-security-and-governance/06-agentic-governance-control-framework.md, 08-security-and-governance/07-authority-autonomy-and-emergency-control.md]
-infographics: [policy-decision-flow, risk-tier-review, risk-proportional-autonomy, autonomy-matrix, recipe-ladder, emergency-control]
+infographics: [policy-decision-flow, risk-tier-review, risk-proportional-autonomy, autonomy-matrix, risk-classification-inputs, recipe-ladder, emergency-control]
 ---
 
 # 7. Governance, policy, and risk-proportional approval
@@ -146,6 +146,72 @@ Put the bands, tiers, and decision owners together and you get a one-page **auto
 | Change touching customer data or its classification | Red | 4 | Multi-party: Product Owner, Security Owner, Compliance Owner, Release Approver | Data-handling review, exception record if any rule is bypassed, immutable audit |
 
 This is the mission's Human Decision Layer made concrete: low-risk documentation is autonomous, moderate application change needs PR approval, high-risk production or security change needs architecture and release approval, and anything critical involving customer data needs multi-party approval. Organizations will move rows and rename columns. What they must keep is that each row names an accountable owner and a minimum evidence set.
+
+### Risk-based autonomy
+
+The bands, the review tiers, and the autonomy matrix are one model seen from three angles, and it helps to say so plainly before adding anything. The band (Green, Yellow, Red) is the label policy attaches to a change. The review tier (Low, Medium, High) is the review path the label selects. The matrix is the band and the tier written out per change type with an owner and an evidence set. **Risk-based autonomy** is the same model read as a statement of what the factory may do on its own, and a mature factory's version of it has five rows rather than three, because the ends of the scale split:
+
+| Risk | Typical change | Autonomy posture | Band · tier |
+| --- | --- | --- | --- |
+| Low | Documentation | Auto-merge | Green · Low |
+| Low | Tests, flaky-test repair | Auto-merge after independent verification | Green · Low |
+| Medium | Internal tooling, bounded feature in an existing module | Automated review, then sampled human review | Yellow · Medium |
+| High | Customer-facing production change | Human approval on a full review package | Red · High |
+| Critical | Authentication, security boundaries, customer data | Specialised verification plus mandatory human approval, multi-party where policy says so | Red · High, Tier 4 |
+
+Read against the earlier tables, only two things have changed. The Low band has split in two, because documentation and tests differ in what must be proven before an unattended merge: a docs change needs a lint and a link check, a test change needs the test to run on the exact commit and touch no production code. And the High band has split in two, because a customer-facing feature and an authentication change differ in who must verify, not only who must approve: the critical row adds a specialised verifier — a security validator, a data-handling review — that the high row does not need. The Medium row also sharpens what "lightweight human review" means in the tiered-review table: automated review runs first, on every change, and human review is *sampled* rather than universal once the automated reviewers have a measured record, which is the review-compression funnel of [Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md). None of this loosens the first-version rule. In a V1 the two auto-merge rows still end at a review-ready pull request with a human merging; the rows describe where the factory goes once verification completeness ([Chapter 21](../04-prove/21-quality-and-evidence-architecture.md)) and trust calibration have been proven, and a factory earns each row separately.
+
+The label itself comes from a classifier, and the classifier reads observables, not opinions. The nine dimensions of the tiered-review section — blast radius, reversibility, sensitivity, novelty, verification strength, and the rest — are the *consequence* dimensions the policy reasons about. **Change risk classification** feeds them from nine inputs the factory can measure on every change: files changed, dependencies touched, component criticality, security sensitivity, blast radius, change size, test coverage, agent confidence, and historical failure rate of the same area. The inputs produce a tier, and the tier selects four policies at once: the verification policy (which validators must run and how deep), the reviewer policy (automated only, sampled human, named human, specialised domain owner), the approval policy (none, single, dual, multi-party), and the deployment policy (direct, canary, staged, rehearsed rollback).
+
+<!-- infographic: risk-classification-inputs -->
+> **Infographic — Nine inputs, one tier, five policies.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph In["Nine classification inputs"]
+        F["files changed"]
+        D["dependencies"]
+        C["component criticality"]
+        S["security sensitivity"]
+        B["blast radius"]
+        Z["change size"]
+        T["test coverage"]
+        A["agent confidence"]
+        H["historical failure rate"]
+    end
+    In --> Tier["Risk tier"]
+    Tier --> V["Verification policy"]
+    Tier --> R["Reviewer policy"]
+    Tier --> P["Approval policy"]
+    Tier --> Dp["Deployment policy"]
+    Tier --> M["Model and verification spend"]
+```
+
+One input needs a warning label. Agent confidence appears in the list, and this chapter has already said that confidence is not a control. The two are consistent because the input works in one direction only: low confidence may *raise* the tier and add verification; high confidence never lowers it. The model may tell the classifier it is unsure; it may not tell the classifier it is certain and expect fewer checks.
+
+The last arrow in the diagram is the one most governance models omit. *Risk determines verification depth and model spend.* A Low change should not be routed to the most expensive model or run under three validators, and a Critical change should not be left to a cheap model and one test run to save money. The tier is the single place the factory decides how much intelligence and how much verification a change deserves, which is why the routing chapter ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)) reads the same tier the reviewer policy does.
+
+### The autonomy ceiling and the human judgment boundary
+
+Put the classifier, the verification contract, and the trust score together and the level of autonomy a workflow can safely reach has a name: the **autonomy ceiling**, the maximum safe autonomous execution supported by the factory's current intent, context, tooling, verification, policy, and risk controls. The model does not set the ceiling. Weak verification lowers it, because claims without verifiers cannot be trusted unattended. Poor context lowers it, because an agent that does not know the standards will violate them. Unclear intent lowers it, because nothing can be verified against an outcome nobody wrote down. No sandbox lowers it, because a mistake has no containment. What raises the ceiling is the same list run the other way — a fuller verification contract, better context, sharper intent, a tighter runtime — plus a proven rollback path and a trust record. When a team asks for more autonomy, the productive answer is to name the term that is holding the ceiling down and fix it, because a model upgrade lifts none of them.
+
+Above the ceiling, and independent of it, is the **human judgment boundary**: the set of decision points that stay human because they require taste, ambiguity resolution, accountability, prioritisation, novel synthesis, or risk acceptance. Seven kinds of decision recur:
+
+| Decision | Why it stays human |
+| --- | --- |
+| Product direction | What should exist is a matter of judgment about users, not of correctness |
+| Architectural trade-offs | The right answer depends on constraints nobody has written down yet |
+| High-risk changes | Someone accountable must own the consequence |
+| Ambiguous requirements | Resolving ambiguity is choosing, and choosing needs authority |
+| Novel customer situations | No prior case defines "correct" |
+| Policy exceptions | An exception is a risk acceptance, and software cannot accept risk |
+| Risk acceptance itself | The named owner of the decision-rights matrix above |
+
+The boundary is not a list of things agents are bad at; it is a list of things that are someone's job to answer for. The design goal that follows is to *move humans to the highest-value judgment points*: take them out of the checks a deterministic gate can make and out of the reviews a specialised verifier can do, and put the attention that frees up onto the seven decisions above. A factory in which humans still check that tests ran on the current commit has its people below the boundary doing a gate's work; a factory in which nobody owns product direction has automated past it.
+
+### Cost-bounded autonomy
+
+The bands answer how risky a change may be before a human is needed. Verification completeness answers how well the claims can be proven. Neither answers how much the factory may spend before it stops and asks, and an agent that runs unattended without that third boundary will spend its way through a budget on a task it cannot finish. **Cost-bounded autonomy** is the rule that an agent operates autonomously within three boundaries at once — a risk boundary, a verification boundary, and an economic boundary — and stops or escalates at whichever it reaches first. The economic boundary is stated in the same vocabulary as the other two: "proceed up to this spend, then escalate," with the spend set per tier so that a Low change has a small ceiling and a Critical change a larger one plus an approver for exceeding it. [Chapter 8](./08-economics-metrics-and-human-attention.md) defines the execution budgets that implement the economic boundary at task, mission, repository, team, and organisation level; here the point is that the authorization envelope carries all three boundaries, and preflight checks all three before any lease is granted.
 
 ### Decision rights
 
@@ -448,6 +514,9 @@ Control evidence binds the exact control version, subject, environment, identity
 | Recipe lowers policy | A RED-classified WorkOrder ran under a Build recipe with baseline checks only | Policy engine reclassifies from actual scope and risk after recipe selection | Recipes may add controls, never remove them |
 | Experience level widens permission | Switching to Advanced exposes an action the role does not hold | Move the check to server-side authorization; treat the level as presentation | Levels change disclosure only |
 | Plan approval dispatched execution | Attempts start the moment a Plan is approved | Separate the dispatch command; require preflight | Distinct plan-approver, acceptor, and merger grants |
+| Confidence lowers the tier | A high agent-confidence input reduces verification on a change that later fails | Confidence may raise a tier, never lower it | Remove the downward path from the classifier; re-run it on the failed change |
+| Same spend at every tier | Low changes run on the frontier model with three validators; Critical changes run on a cheap model with one | Tier selects verification depth and model spend together | Bind the routing policy and the verification policy to the same tier |
+| Autonomy without an economic boundary | An unattended agent spends the mission budget on a task it cannot finish | Execution budget per tier in the envelope; stop or escalate at the ceiling | Cost-bounded autonomy: risk, verification, and economic boundaries checked at preflight |
 
 ## In Mission Control
 
@@ -494,12 +563,17 @@ The repository glossary and lexicon reviewed 2026-09-02 state the V1 posture in 
 - Risk-proportional autonomy in a first version: GREEN bounded reversible work proceeds to a review-ready PR; YELLOW needs Plan approval and merge approval; RED runs in a restricted sandbox with extra reviewers. Merge is human-only in V1 in every band.
 - Plan-approver, acceptor, and merger are distinct grants, and plan approval never starts execution. Preflight checks repository, branch, environment, executor, tools, secrets, capacity, policy, budget, and scope before any lease.
 - A recipe (Scout, Plan, Build, Quality, Build+Test, Build+Review, Plan+Build+Test, Full SDLC) recommends a posture and never lowers active policy. An experience level changes what is shown, never what is permitted.
+- Bands, review tiers, and the autonomy matrix are one model. Risk-based autonomy reads it as five rows: Low docs auto-merge; Low tests auto-merge after verification; Medium internal work gets automated review and sampled human review; High customer-facing work needs human approval; Critical auth, security, and data changes need specialised verification and mandatory human approval. Each row is earned separately, and V1 still merges by hand.
+- Change risk classification reads nine inputs — files changed, dependencies, component criticality, security sensitivity, blast radius, change size, test coverage, agent confidence, historical failure rate — into a tier that selects verification, reviewer, approval, and deployment policy at once. Risk determines verification depth and model spend. Confidence may raise a tier, never lower it.
+- The autonomy ceiling is set by intent, context, tooling, verification, policy, and risk controls, not by the model; weak verification, poor context, unclear intent, and no sandbox all lower it. The human judgment boundary — product direction, architectural trade-offs, high-risk changes, ambiguous requirements, novel customer situations, policy exceptions, risk acceptance — stays human because someone must answer for it. Move humans to the highest-value judgment points.
+- Cost-bounded autonomy: an agent runs unattended inside a risk boundary, a verification boundary, and an economic boundary, and stops or escalates at whichever it reaches first.
 
 ## Go deeper
 
 - [Chapter 3 — First principles: trust, evidence, and authority](../01-understand/03-first-principles-trust-evidence-and-authority.md), [Chapter 4 — The human–agent operating model](../02-design/04-the-human-agent-operating-model.md), [Chapter 5 — Authoritative records](../02-design/05-authoritative-records.md)
 - [Chapter 12 — Durable execution](../03-build/12-durable-execution.md) for leases and attempt manifests; [Chapter 26 — Security](../04-prove/26-security.md); [Chapter 29 — Resilience, incidents, and the control tower](../05-operate/29-resilience-incidents-and-the-control-tower.md); [Chapter 30 — Control surfaces, event contracts, and storage](../05-operate/30-control-surfaces-event-contracts-and-storage.md); [Chapter 33 — Governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md)
-- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Study Guide* (weeks 5–6 autonomy matrix); Jay West, factory architecture notes (risk-classification dimensions, risk-tiered review, human-in-the-loop done right, autonomy per action class, waivers as product data, the model proposes and policy authorizes); Mission Control North Star and V1 Product Strategy docs at `8014d5af`; Mission Control repository glossary and lexicon, reviewed 2026-09-02 (risk-proportional autonomy, human merge only, separation of duties roles, recipes, experience levels, preflight)
+- Sources: Jay West, *AI Software Factory Mission* (Governance Layer, Human Decision Layer, Human Accountability Model); *AI Software Factory Study Guide* (weeks 5–6 autonomy matrix); Jay West, factory architecture notes (risk-classification dimensions, risk-tiered review, human-in-the-loop done right, autonomy per action class, waivers as product data, the model proposes and policy authorizes); Mission Control North Star and V1 Product Strategy docs at `8014d5af`; Mission Control repository glossary and lexicon, reviewed 2026-09-02 (risk-proportional autonomy, human merge only, separation of duties roles, recipes, experience levels, preflight); public practitioner talks, 2026 (the five-row risk-based autonomy table, change risk classification inputs and the four policies a tier selects, the autonomy ceiling, the human judgment boundary, cost-bounded autonomy)
+- Where the tier's other consumers live: [Chapter 17 — Models: routing, profiles, and capability selection](../03-build/17-models-routing-and-capability-selection.md) for model spend; [Chapter 21 — Quality and evidence architecture](../04-prove/21-quality-and-evidence-architecture.md) for verification completeness; [Chapter 32 — Production feedback, review, and the agentic merge queue](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) for review compression; [Chapter 8 — Economics, metrics, and human attention](./08-economics-metrics-and-human-attention.md) for execution budgets
 - Mission Control code at `8014d5af`: `convex/factory/configuration.ts`, `convex/governance/policyEnvelopes.ts`, `convex/lib/armPolicy.ts`, `convex/governance/approvalRecords.ts`, `convex/approvals.ts`, `convex/governance/permissions.ts`, `convex/governance/roles.ts`, `convex/governance/roleAssignments.ts`, `convex/lib/githubAppReadiness.ts`, `convex/githubAppConnections.ts`, `apps/mission-control-ui/src/ApprovalsModal.tsx`
 - Standards: [NIST AI RMF 1.0](https://doi.org/10.6028/NIST.AI.100-1); [NIST Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1); [NIST SSDF](https://csrc.nist.gov/projects/ssdf/); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); [SLSA 1.2](https://slsa.dev/spec/v1.2/); [SPIFFE Workload API](https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/)
 - [Glossary](../appendix/glossary.md)

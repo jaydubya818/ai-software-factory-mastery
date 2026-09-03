@@ -4,7 +4,7 @@ part: understand
 chapter: 2
 summary: The whole factory on one page — three definitions and the five systems around them, the one-line value stream, the master whiteboard with its cross-cutting controls, the six architectural areas and the layer-ownership table, the canonical layered stack from compute to control plane, the seven layers of Mission Control, the stage-by-stage lifecycle contract, the five platform commitments, and the capability model the rest of the book expands.
 absorbs: [00-overview/01-ai-software-factory-and-mission-control.md, 00-overview/03-platform-blueprint-and-operating-playbook.md, 00-overview/04-intent-to-delivery-lifecycle.md, 00-overview/05-software-factory-stack-boundaries.md]
-infographics: [three-definitions, five-systems, factory-in-one-line, master-whiteboard, six-areas, layered-stack, seven-layers, lifecycle]
+infographics: [three-definitions, five-systems, factory-in-one-line, master-whiteboard, six-areas, lifecycle-above-the-areas, factory-native-sdlc, layered-stack, seven-layers, lifecycle]
 ---
 
 # 2. The factory in one view
@@ -36,9 +36,24 @@ flowchart LR
     SF -->|"validated production value"| Out["Customer outcome"]
 ```
 
-The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities such as agents, skills, tools, model profiles, and configurations. The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value. **Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority; it is not the definition of the complete factory and should not absorb every execution or delivery responsibility into one service. The Agent Factory supplies parts; the software factory uses them to turn governed intent into value; Mission Control is one concrete control plane, studied with its gaps visible. Seen from Mission Control's side, the same three things stack as layers: a coding agent or harness performs bounded engineering work; the Software Factory is the production system around that work (workflow, execution environment, policies, budgets, verification, recovery, delivery contract) that repeatedly produces trusted change; and the control plane above coordinates missions and factories across projects, preserves durable state and authority, and routes scarce human attention. *The harness performs the work. The factory produces trusted change. The control plane governs authority and attention.* Harnesses stay replaceable execution backends; the governed delivery contract is what is not replaceable.
+The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities such as agents, skills, tools, model profiles, and configurations. The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value. A second phrasing of the same definition is worth holding beside it because it names the parts and the people: a software factory is *a governed system of reusable skills and continuously operated loops that performs a meaningful portion of the software development lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory*. The first phrasing says what the factory composes; the second says what it is made of (skills and loops), what it does (a meaningful share of the lifecycle, not all of it), and where the humans went. **Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority; it is not the definition of the complete factory and should not absorb every execution or delivery responsibility into one service. The Agent Factory supplies parts; the software factory uses them to turn governed intent into value; Mission Control is one concrete control plane, studied with its gaps visible. Seen from Mission Control's side, the same three things stack as layers: a coding agent or harness performs bounded engineering work; the Software Factory is the production system around that work (workflow, execution environment, policies, budgets, verification, recovery, delivery contract) that repeatedly produces trusted change; and the control plane above coordinates missions and factories across projects, preserves durable state and authority, and routes scarce human attention. *The harness performs the work. The factory produces trusted change. The control plane governs authority and attention.* Harnesses stay replaceable execution backends; the governed delivery contract is what is not replaceable.
 
 Chapter 1's table separated assistant, agent, platform, and factory: an assistant leaves the governed lifecycle and outcome ownership outside its boundary; a coding agent leaves portfolio control, durable governance, and complete delivery lineage outside; an agent platform may still need a delivery operating model designed around it; a factory governs the path from intent to validated value while humans keep accountability and material risk decisions. Multi-agent orchestration must be available, but a simple job should use the simplest executor that satisfies its contract.
+
+### Skills → loops → factory
+
+The second definition above is built from two smaller units, and it helps to see them before the five systems, because they are what the systems exist to run. A **skill** is a reusable, versioned definition of how a class of work is performed or what good looks like: workflow instructions, standards, policies, domain knowledge, review criteria, tools, hooks, expected outputs, and acceptance criteria. It is an executable unit of organisational knowledge, not a prompt with a name. A **loop** is a repeatedly executed agent workflow with observation, evaluation, and feedback that improves future runs: Trigger → Context → Execute → Observe → Verify → Evaluate → Learn → Improve → next run. Plain automation is Trigger → Execute → Output; a loop is automation that watches itself and gets better. Put many skills inside many loops, connect the loops, govern the whole, and you have the factory of the definition.
+
+That composition gives four modes of working, and most organisations are in more than one at once:
+
+| Mode | Who builds | What the humans do |
+| --- | --- | --- |
+| Traditional | Humans | Write the software |
+| Agent-assisted | Humans with agents | Write the software faster, with help |
+| Agentic | Agents, on delegated units | Delegate bounded units of work and review the results |
+| Factory | The system | Engineer and govern the system that produces the software |
+
+The modes are not a ladder you climb once. The factory is a **continuum**: AI assistance → skills → automation → loops → connected loops → factory, and the share of work done by loops rises over time while the share done by hand falls. Nothing in the definition requires the loops to do everything; "a meaningful portion of the lifecycle" is the honest boundary, and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) lays the continuum out as a maturity model, L0 through L5, beside the book's own.
 
 ### Five systems, five verbs
 
@@ -184,6 +199,72 @@ flowchart LR
 ```
 
 The quantity the whole arrangement is tuned for is **trusted throughput**: accepted, verified outcomes per unit of time and cost, never generated lines, prompts, or tokens. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) makes it the factory's throughput measure; every area above either raises it or protects it, and any change that raises raw output while lowering the accepted, verified share is a step backwards however impressive the demo. The forty concepts that populate the six areas and the surrounding concern are listed, with their chapters, in [Appendix F](../appendix/principles.md#the-forty-concepts-to-have-cold).
+
+### The lifecycle above the six areas
+
+The six areas describe what the factory is made of. One level up is what the factory is *for*, and that lifecycle starts earlier and ends later than most architecture diagrams admit. The factory does not begin at a ticket and end at a merge. It begins at a **signal**, an observable event indicating a potential need for change (customer feedback, a support case, a bug, telemetry, an incident, an issue, an analytics shift, a security finding, a performance regression, an engineering discussion), and it ends at an observed outcome that produces the next signal. Its boundary is signal-to-outcome, not ticket-to-code.
+
+<!-- infographic: lifecycle-above-the-areas -->
+> **Infographic — Signal → Intent → Factory → Outcome → Learning, with the six areas inside.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    subgraph F["FACTORY: produce and verify"]
+        direction LR
+        I["Intent"] --> H["Harness"] --> C["Capability"] --> M["Model"] --> T["Trust"] --> L["Learning"]
+    end
+    S["SIGNAL<br/>observe what needs to change"] --> IN["INTENT<br/>decide the outcome"]
+    IN --> F
+    F --> O["OUTCOME<br/>observe what happened"]
+    O --> LE["LEARNING<br/>improve the factory"]
+    LE -.->|next cycle| S
+    DM["Factory data model · control plane<br/>signal, intent, plan, task, attempt, artifact, evidence, verification, decision, deployment, outcome"]
+    DM -. beneath everything .-> F
+```
+
+Read the outer ring first. SIGNAL observes what needs to change. INTENT decides the outcome, which is the human judgment the rest of the ring serves. FACTORY produces and verifies, and inside it the six areas run in their familiar order: Intent → Harness → Capability → Model → Trust → Learning. OUTCOME observes what actually happened in production. LEARNING improves the factory before the ring turns again. Beneath all of it sit the factory data model and the control plane, because none of the ring's transitions is real until it is a record ([Chapter 5](../02-design/05-authoritative-records.md) defines the object chain).
+
+Three concerns cut across every position on the ring, and they are the ones an organisation ends up staffing whatever else it builds. The **control plane** governs: inventory, identity, permissions, policy, budgets, deployment, scheduling, observability ([Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)). The **context plane** knows: institutional knowledge, skills, standards, repository intelligence, history, retrieval, and the lifecycle that keeps all of it current ([Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)). **Factory engineering** builds, measures, maintains, and improves the loops themselves ([Chapter 18](../03-build/18-agent-and-loop-engineering.md), [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)). The first two are planes because they have state; the third is a discipline because it has practitioners, and [Chapter 4](../02-design/04-the-human-agent-operating-model.md) names the roles.
+
+Zoom into the FACTORY segment and the six areas unfold into a **factory-native software development lifecycle**, the sequence a single piece of work follows and the shape every later chapter assumes.
+
+<!-- infographic: factory-native-sdlc -->
+> **Infographic — The factory-native SDLC with its three loops.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart LR
+    I["Intent"] --> SW["Shape work"]
+    SW --> RT["Route context,<br/>skills, capability"]
+    RT --> AX["Agent execution"]
+    AX <-->|"inner loop:<br/>self-correct"| IL["Deterministic<br/>feedback"]
+    AX --> IV["Independent<br/>verification"]
+    IV <-->|"outer loop:<br/>establish trust"| OL["Verifiers,<br/>reviewers"]
+    IV --> RC["Risk<br/>classification"]
+    RC --> AP["Approval<br/>human or automated"]
+    AP --> D["Deploy"]
+    D --> OB["Observe<br/>outcomes"]
+    OB --> ML["Meta loop"]
+    ML -->|"improve context, skills,<br/>tests, tools, routing, harness"| RT
+```
+
+The lifecycle has three loops at three speeds, and keeping them apart is the single most useful habit this diagram teaches. The **inner loop** runs during execution: fast, cheap, deterministic feedback (tests, types, compiler, linters, architecture rules, policy checks) that lets the agent detect and correct its own mistakes before handoff; its objective is autonomy. The **outer loop** runs around the work: deeper, independent verification (review agents, security review, integration and end-to-end tests, browser verification, acceptance validation, risk assessment) that answers whether anyone should trust what the agent produced; its objective is automation, because only trusted work can move without a human. The **meta loop** runs across many executions: it observes failures, corrections, reviews, and outcomes and proposes changes to context, skills, tests, tools, routing, and the harness so that the next agent does not need the intervention the last one did; its objective is learning. [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) treats the three loops as the core of harness engineering; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) owns verification; [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) owns the meta loop.
+
+With the lifecycle in view, the six-area table earlier in this chapter can be filled in with what each area actually holds. The names are the same; the contents are the concepts the rest of the book defines.
+
+| Area | Holds | Chapters |
+| --- | --- | --- |
+| Intent | Signal intelligence, work shaping, Definition of Correct, product taste, the human judgment boundary, acceptance criteria, verification contracts | [4](../02-design/04-the-human-agent-operating-model.md), [6](../02-design/06-intent-and-specification-engineering.md), [7](../02-design/07-governance-policy-and-risk-proportional-approval.md) |
+| Harness | Inner, outer, and meta loops; the deterministic feedback surface; harness profiles per model family; agent affordances; harness debt and pruning; the universal meta-harness | [11](../03-build/11-control-plane-orchestrator-and-execution-plane.md), [13](../03-build/13-coding-harnesses-and-agent-protocols.md), [18](../03-build/18-agent-and-loop-engineering.md) |
+| Capability | Skills as executable organisational knowledge; the skill registry and inventory; skill drift; context as code; context inventory, drift, deduplication, and pruning; institutional versus compensatory context; memory taxonomy | [10](../03-build/10-the-agent-factory.md), [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) |
+| Model | Workload-distribution routing, Pareto-optimal routing, dynamic intelligence escalation and downgrading, cache-aware routing, cost prediction, execution budgets, intelligence budgets, model-agnostic but not model-uniform | [17](../03-build/17-models-routing-and-capability-selection.md) |
+| Trust | Verifiers and the skill–verifier pair; verification completeness; validating the validator; context firewalls and fresh-context verification; risk-based autonomy; agent readiness; architecture linting | [21](../04-prove/21-quality-and-evidence-architecture.md), [22](../04-prove/22-testing-strategy-for-agentic-change.md), [26](../04-prove/26-security.md) |
+| Learning | Scorers and self-improvement agents; eval-driven factory engineering; micro-evals and the test–eval continuum; eval drift and the eval registry; automation discovery; the factory flywheel; self-improvement levels from observe to promote | [23](../04-prove/23-evaluation-engineering.md), [33](../06-improve/33-governed-learning-and-compounding-engineering.md) |
+
+Two lines close the picture and they are worth keeping as a pair.
+
+> *The agent is not the factory. The factory is the system around the agent: context says what good looks like, the harness gives a controlled place to work, skills and tools give capabilities, the inner loop self-corrects, the outer loop establishes trust, the control plane governs, and the meta loop learns.*
+
+And the one-sentence synthesis that the lifecycle ring expresses: a software factory is a signal-to-outcome system in which durable intent becomes work, a harness coordinates models and capabilities, deterministic feedback helps agents self-correct, independent verification establishes trust, routing controls economics, humans keep the highest-value judgment boundaries, and production outcomes continuously improve the system. Every clause of that sentence is a chapter.
 
 ### The system map
 
@@ -437,10 +518,16 @@ At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d
 - Six architectural areas (intent, harness, capability, model, trust, learning) and fourteen owned layers; the platform centralises undifferentiated, risky capability and domain teams federate their workflows.
 - Memory hooks: Intent → Plan → Route → Execute → Verify → Deliver → Learn; Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale.
 - The mental model in one breath: Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption and transformation, optimised for trusted throughput (accepted, verified outcomes per unit of time and cost).
+- The second definition: a governed system of reusable skills and continuously operated loops that performs a meaningful portion of the lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory. A skill is executable organisational knowledge; a loop is automation that watches itself.
+- Four modes (traditional, agent-assisted, agentic, factory) on one continuum: AI assistance → skills → automation → loops → connected loops → factory. The share done by loops rises; it never has to reach everything.
+- The lifecycle above the areas is SIGNAL → INTENT → FACTORY → OUTCOME → LEARNING, and around again; the factory's boundary is signal-to-outcome, not ticket-to-code, and the data model and control plane sit beneath every transition.
+- Three cross-cutting concerns: the control plane governs, the context plane knows, factory engineering builds and improves the loops.
+- The factory-native SDLC runs three loops at three speeds: inner for autonomy, outer for trust, meta for improvement.
+- The agent is not the factory; the factory is the system around the agent.
 
 ## Go deeper
 
 - [Chapter 3](./03-first-principles-trust-evidence-and-authority.md) for autonomy levels and trust; [Chapter 5](../02-design/05-authoritative-records.md) for the record spine in full; [Chapter 10](../03-build/10-the-agent-factory.md), [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md), [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md), and [Chapter 14](../03-build/14-development-environments-sandboxes-and-compute.md) for each layer of the stack; [Chapter 19](../03-build/19-the-12-layer-production-ai-agent-stack.md) for the AI-engineering cut of the same system.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), [implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), and [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md); [Appendix F](../appendix/architecture-communication.md) for executive versions of this chapter's diagrams; the [glossary](../appendix/glossary.md) for the canonical terms (AI Software Factory, Agentic Builders Experience, model-independent, Agent Harness, Agent Definition, Execution Loop, Tool Integration, Context Management, Control Mechanism, Execution Environment, Evaluation System, Feedback System, Self-improvement, Skills Framework, Autonomous Agent, Builder Intent, Task Decomposition, Build vs. Buy, Agentic Standards).
-- Sources: Jay West, *AI Software Factory Mission* (seven layers, twelve-state lifecycle); *AI Software Factory Study Guide*, chapter 24 (five-layer whiteboard); Jay West, "Key terms and definitions" and "Factory in one line" notes (five commitments, capability taxonomy, canonical terms); Jay West, factory architecture notes (master whiteboard, six architectural areas, layer-ownership table, five-system distinction, memory hooks, the six-areas-plus-adoption mental model optimised for trusted throughput); HumanLayer × BAML livestream, "Software factory design patterns" (five-layer stack, build versus buy, composition over inheritance, the dev-environment argument, the underserved control plane).
+- Sources: Jay West, *AI Software Factory Mission* (seven layers, twelve-state lifecycle); *AI Software Factory Study Guide*, chapter 24 (five-layer whiteboard); Jay West, "Key terms and definitions" and "Factory in one line" notes (five commitments, capability taxonomy, canonical terms); Jay West, factory architecture notes (master whiteboard, six architectural areas, layer-ownership table, five-system distinction, memory hooks, the six-areas-plus-adoption mental model optimised for trusted throughput); HumanLayer × BAML livestream, "Software factory design patterns" (five-layer stack, build versus buy, composition over inheritance, the dev-environment argument, the underserved control plane); public practitioner talks, 2026 (skills, loops, and the four modes; the lifecycle above the six areas; the factory-native SDLC and its three loops; the three cross-cutting planes; signal-to-outcome as the factory boundary).
 - Primary references carried from v1: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [domain contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [orchestration architecture decision](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/001-orchestration-architecture.md), [React entry point](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/main.tsx), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Hono orchestration service](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/index.ts); [Anthropic, Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic, Trustworthy Agents in Practice](https://www.anthropic.com/research/trustworthy-agents); [OpenAI, A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/); [OpenAI, Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/); [OpenAI, Harness Engineering](https://openai.com/index/harness-engineering/); [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28); [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework); [NIST SSDF](https://csrc.nist.gov/projects/ssdf/); [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/initiatives/agentic-security-initiative/); [SLSA Provenance 1.2](https://slsa.dev/spec/v1.2/provenance).

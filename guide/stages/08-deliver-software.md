@@ -77,6 +77,8 @@ flowchart LR
 
 The tiers move trust to where evidence and reversibility justify it. Low-risk work stops consuming senior attention; high-risk work gets more of it than a flat process would ever give. Autonomy for the low tier is a policy grant, not an inference; the factory's autonomy ceiling ([Chapter 3](../01-understand/03-first-principles-trust-evidence-and-authority.md)) still applies, and any tier can be demoted automatically when evidence weakens. [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) defines the policy model.
 
+Read as a statement of what may proceed unattended, the tiers become **risk-based autonomy**: documentation auto-merges, tests auto-merge after verification, internal changes get automated review with sampled human review, customer-facing changes need human approval, and auth, security, and data changes need specialised verification plus mandatory approval — five rows that [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) reconciles with the bands above. The mechanism that keeps the human at the bottom of that table rather than the top is **review compression** — deterministic checks, then specialised verifiers, then agent reviewers, then risk classification, then human judgment only where nothing cheaper could decide — which [Chapter 32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) builds out.
+
 ### Human-in-the-loop done right
 
 Human-in-the-loop does not mean approval after every action. It means risk-based authority: high autonomy for low-risk, deterministic, reversible work; an evidence and approval bar that rises with blast radius, uncertainty, and irreversibility. *Autonomy should scale with reversibility, not confidence.*

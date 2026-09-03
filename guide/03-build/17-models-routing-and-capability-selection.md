@@ -4,7 +4,7 @@ part: build
 chapter: 17
 summary: Models are interchangeable execution resources; a factory routes each step to the cheapest qualified model profile by capability, quality, latency, cost, context, data policy, availability, and history, records why, and promotes new routes only through canaries and human approval.
 absorbs: [06-ai-engineering/02-model-routing-evaluations-and-capability-selection.md]
-infographics: [model-router, model-profile-lifecycle, escalation-ladder]
+infographics: [model-router, model-profile-lifecycle, escalation-ladder, adaptive-routing]
 ---
 
 # 17. Models: routing, profiles, and capability selection
@@ -259,6 +259,58 @@ The second is that **default model selection is routing policy**, and for intera
 
 Where this leads is **dynamic routing**: selecting the model per task from language, repository, modality, and history rather than per lane. That organisation lists it as roadmap, not as something it runs, and the ordering matters. Dynamic routing is safe only after the benchmark, the model-agnostic harness, and the per-agent scoring exist, because a router without them is choosing on folklore. It is the "learned routing" of the styles weighed below, and it waits for the evidence.
 
+### Agent effectiveness, not leaderboard rank
+
+The benchmark-from-real-work method has a name for what it measures, and the name is worth keeping because it names what a leaderboard does not. **Agent effectiveness** is the measured ability of a configuration — model, harness, profile, context, and tools together — to achieve accepted outcomes across the real workload at acceptable quality, latency, and cost. The question is "which configuration works on our work," and a public leaderboard cannot answer it, because it ranks models on tasks that are not yours, in a harness that is not yours, with no verifier and no reviewer in the loop. A model that leads a coding leaderboard by three points can trail on a factory's own migration tasks by twenty, and the only way to know is to run it there.
+
+What "our work" means is the **workload distribution**: the actual distribution of task types, complexity, risk, domains, and recurring patterns the factory runs, measured from its own history rather than assumed. The workload taxonomy above is the classification; the distribution is the weights — how much of the work is routine test repair, how much is cross-service refactoring, how much touches security boundaries. The distribution is the routing target. A router tuned on an evenly weighted benchmark optimises for a factory that does not exist; a router tuned on the distribution puts its accuracy where the volume is and its spend where the risk is. It is also what turns the Pareto rule into a policy: **Pareto-optimal routing** is the lowest-cost route that satisfies the quality, security, latency, and risk requirements *for each class in the distribution*, and the frontier is drawn per class, not once for the whole factory.
+
+### Adaptive routing during execution
+
+Everything above routes before a step begins. The ladder climbs at the start of a step and the routing decision is frozen into the Attempt. But a step is not one model call; it is a loop with dozens of them, and the evidence about whether the chosen capability is enough arrives while the loop runs. **Dynamic intelligence escalation** upgrades the model mid-execution when that evidence shows the current capability is unlikely to succeed — repeated errors with no strategy change, a plan that keeps being revised, a verifier failing on the same claim — moving cheap → specialised → frontier without discarding the work done so far. Its mirror is **intelligence downgrading**: once a strong model has done the reasoning, it hands the mechanical remainder — applying the plan across forty files, writing the boilerplate tests, formatting — to a cheap model or a deterministic tool. Together they are **adaptive model routing during execution**, and they replace a single up-front bet with a sequence of smaller ones.
+
+The naive form is a trap, and the trap has a name. A model call carries state: the prompt cache, the compacted context, the working memory of what the loop has learned. Switching models can destroy that state, and the cheapest model is not cheapest if the switch costs a full re-read of the repository and a compaction pass. **Cache-aware routing** puts six inputs into the mid-execution decision instead of one:
+
+| Input | What it asks |
+| --- | --- |
+| Candidate price | The raw per-token cost of the route the naive router would pick |
+| Switching cost | What is lost when the route changes: cache, compacted context, in-flight tool state |
+| Cache value | How much of the current context is cached and would be paid for again |
+| Compaction cost | The tokens and quality lost to summarising the window for a new model |
+| Expected remaining work | How much of the step is left to pay for on either route |
+| Success probability | How likely each route is to finish without another escalation |
+
+The decision is the expected cost to a verified outcome on each route, given all six, and it often says "stay" where price alone says "switch." Every escalation and downgrade is a routing decision in its own right, recorded in the routing trace with the evidence that triggered it, so that the meta-loop of [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) can later see which triggers were worth acting on.
+
+<!-- infographic: adaptive-routing -->
+> **Infographic — Escalate, downgrade, stay: routing while the loop runs.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+
+```mermaid
+flowchart TD
+    Start["Step starts on ladder-chosen route"] --> Loop["Execution loop"]
+    Loop --> Obs{"Evidence during execution"}
+    Obs -->|"repeated failure · no progress · verifier keeps failing"| Esc["Escalation candidate: next tier up"]
+    Obs -->|"reasoning done · mechanical remainder"| Down["Downgrade candidate: cheap model or deterministic tool"]
+    Obs -->|"progressing"| Loop
+    Esc --> Cache{"Cache-aware decision: price · switching cost · cache value · compaction · remaining work · success probability"}
+    Down --> Cache
+    Cache -->|"switch"| Rec["Record routing decision + trigger"] --> Loop
+    Cache -->|"stay"| Loop
+    Esc -->|"budget ceiling reached"| Human["Escalate to a person"]
+```
+
+### The intelligence budget and parallel candidates
+
+The ladder and the adaptive router decide route by route. Above them sits an allocation the factory should be able to state before any route is chosen: the **intelligence budget**, the amount and class of reasoning a piece of work is allotted according to its complexity, risk, and value. Four examples fix the scale. Renaming a variable across a module gets a cheap model or a codemod. A bounded feature inside an existing module gets a specialised code model. A cross-system architectural change gets a frontier model. A security-critical migration gets a frontier model *and* multiple independent validators, because here the budget buys verification as well as generation. The budget is set by the risk tier of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) — risk determines verification depth and model spend — and the tier is why a rename never reaches the frontier and a migration never runs on the cheap route to save money.
+
+At the top of the budget is a technique that is easy to over-use. **Parallel candidate execution** runs several independent agents on the same problem and then selects, combines, or verifies the results. It raises the chance of a good candidate at the cost of multiplying inference, and it adds a selection step that is itself a judgment. It is worth it in one condition: when the value of the outcome clearly exceeds the multiplied inference cost — a hard design problem, an incident where an hour matters, a migration whose failure costs more than ten runs. It is not worth it as a default, and a factory that runs three candidates for every step has tripled its bill to raise its success rate on work that one candidate was already passing. The with/without evaluation of [Chapter 23](../04-prove/23-evaluation-engineering.md) is the test: measure the marginal value of the extra candidates per workload class, keep the technique where the ratio is high, and remove it where it is not. Parallel candidates are also a place where correlated failure hides; three runs of the same model on the same context are not three opinions, and a selection among them is not independent verification.
+
+### Opinionated defaults, open contracts
+
+Two design commitments hold the whole chapter together, and they pull in opposite directions on purpose. The first is **opinionated defaults**: the factory ships strong defaults for its common workflows — the lane pools, the subagent model, the escalation thresholds, the intelligence budget per tier — so that a builder never has to choose a model to get good work. The second is **open contracts**: everything those defaults are made of — the calling convention, the tool schemas, the skill format, the context package, the state records, the verification contract — is portable, so that a default can be replaced without rewriting anything that depends on it. Defaults are where the factory's opinion lives; contracts are what keep the opinion from becoming a dependency.
+
+Behind both is a design assumption that this chapter has been making since its first section, and it is better stated than implied. **Intelligence commoditisation** is the expectation that differentiation moves away from raw model access and toward the systems that apply intelligence — context, workflow, harness, verification, integration, data, policy, learning, and adoption. It is an assumption, not a certainty; models may keep differentiating for years. But a factory designed as if the model were the moat is fragile in exactly the way this chapter has been describing: it names a vendor, it cannot switch, and its advantage expires with the next release. A factory designed as if intelligence were a commodity treats every model as a profile in a catalog, invests in the harness and the verifiers that are its own, and is not surprised when the frontier moves. If the assumption turns out wrong, that factory has still lost nothing; if it turns out right, it is the only kind that survives.
+
 ### The hidden cost of switching models
 
 The livestream conversation surfaced a constraint that catalogs and policies do not capture. A model is not only a capability; it is a workflow that a human has learned. One host had tried and failed to move his team wholesale from one model to another, because the way a person works with a model is personal. Some engineers plan hard up front and remove roadblocks before starting; others iterate. Neither is wrong, and forcing either to work the other way makes them slower and unhappier. Each model has its own tweaks and nuance to learn, and the analogy the hosts reached for was switching keyboards: after moving to a Kinesis, one of them felt he had lost three months before his hands caught up. The productivity dip is real, and the payoff is intuition, not output.
@@ -308,6 +360,11 @@ Weigh the routing styles with open eyes. Static routing is predictable but ages 
 | Route without a trace | Decisions exist, outcomes are elsewhere; promotion argued from anecdote | Join every routing decision to usage, fallback events, validation, and acceptance as a routing trace |
 | Fallback list unqualified | The fallback model was never evaluated for the lane it falls into | Pre-qualify every fallback profile for the same lane and eligibility as the primary |
 | Specialisation ignored | A reasoning model runs mechanical edits; a code model plans an incident response | Registry records specialisation; workload classes map to kinds |
+| Routed by leaderboard | The model that tops a public ranking underperforms on the factory's own migrations | Measure agent effectiveness on the workload distribution; draw the Pareto frontier per class |
+| Route frozen for the whole loop | A cheap model fails the same claim five times and the step runs to its budget before anyone escalates | Dynamic intelligence escalation on in-loop evidence; downgrade the mechanical remainder |
+| Switch destroys the cache | The router moves to a cheaper model mid-step and pays for a full re-read and compaction | Cache-aware routing: price, switching cost, cache value, compaction cost, remaining work, success probability |
+| Parallel candidates by default | Three candidates per step triple the bill on work one candidate was passing; the selection among them is mistaken for verification | Reserve parallel candidate execution for outcomes whose value exceeds the multiplied cost; measure with/without per class; never count correlated candidates as independent |
+| Vendor as moat | The factory's advantage is a model contract that expires with the next release | Opinionated defaults over open contracts; design as if intelligence were a commodity and invest in harness, context, and verification |
 
 ## In Mission Control
 
@@ -336,11 +393,16 @@ The pure resolver filters deprecated, unavailable, rate-limited, unapproved, inc
 - Routing policy is written in eight dimensions: capability-, complexity-, risk-, cost-, quality-, latency-, security-aware, and fallback. A workload taxonomy gives each task class its lane, floor, tier range, and budget-aware escalation thresholds; shadow mode and canary evaluation prove a route; routing traces join every decision to its outcome.
 - The routing question is: what is the cheapest capability that reliably satisfies this task's quality, security, latency, and risk requirements? It need not be an LLM.
 - Don't spend inference on what software can determine reliably. Deterministic preprocessing (static analysis, linting, type checking, security scanning, tests, policy checks, rules engines, change classification, dependency analysis) runs first; the residue climbs Deterministic → cheap model → specialised model → frontier model, never everything → frontier.
+- Measure agent effectiveness — accepted outcomes across the real workload distribution at acceptable quality, latency, and cost — not leaderboard rank. The distribution is the routing target, and the Pareto frontier is drawn per workload class.
+- Route while the loop runs: escalate on evidence of failure, downgrade the mechanical remainder, and decide each switch cache-aware — price, switching cost, cache value, compaction cost, remaining work, success probability. The cheapest model is not cheapest if the switch destroys the context.
+- Set an intelligence budget by complexity, risk, and value: rename → cheap; feature → specialised; cross-system architecture → frontier; security-critical migration → frontier plus multiple validators. Run parallel candidates only where outcome value exceeds the multiplied cost, and never count them as independent verification.
+- Opinionated defaults, open contracts. Assume intelligence commoditises — differentiation lives in context, workflow, harness, verification, integration, data, policy, and learning — and design so that being wrong about it costs nothing.
 
 ## Go deeper
 
 - Related chapters: [15. Agent architecture](./15-agent-architecture.md) for the model literacy table and the execution manifest; [18. Agent and loop engineering](./18-agent-and-loop-engineering.md) for sub-agents on different models; [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md); [33. Governed learning](../06-improve/33-governed-learning-and-compounding-engineering.md) for promotion gates; [29. Resilience](../05-operate/29-resilience-incidents-and-the-control-tower.md) for provider failover.
 - Mission Control at `b31e275`: [routing resolver](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/modelRouting.ts), [routing policies](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/modelRoutingPolicies.ts), [routing decisions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/modelRoutingDecisions.ts), [context evaluations](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/evals.ts), [operating standard](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/software-factory/MODEL_ROUTING_OPERATIONS.md).
 - Sources: HumanLayer × BAML livestream, "Software factory design patterns" (routing by task, sub-agents by model, the hidden cost of switching models); Jay West, "Factory in one line" notes (models as interchangeable execution resources; the ten router criteria); Jay West, factory architecture notes (capability versus identity, the capability registry, ordered routing, the no-model outcome, token economics and budgets, model specialisation and eligibility, fallback models, the eight routing dimensions, the workload taxonomy, shadow mode and canary evaluation, routing traces, deterministic preprocessing, and the escalation ladder); the 12-layer production AI agent stack (Model Engineering: task-specific profiles, configuration lifecycle, structured-output reliability, model-switching ergonomics); the AI Software Factory study guide, chapter 6 (model routing).
-- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four-step benchmark-driven selection method, the code-review agent example and its Pareto plot, the subagent default model, and dynamic routing as roadmap; *Six layers of a working agentic system* (public post, 2026) for the rule that a model swap is one configuration change because no vendor is hardcoded.
+- Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the four-step benchmark-driven selection method, the code-review agent example and its Pareto plot, the subagent default model, and dynamic routing as roadmap; *Six layers of a working agentic system* (public post, 2026) for the rule that a model swap is one configuration change because no vendor is hardcoded; public practitioner talks, 2026, for agent effectiveness and the workload distribution, Pareto-optimal routing per class, dynamic intelligence escalation and downgrading, cache-aware routing, the intelligence budget, parallel candidate execution, opinionated defaults with open contracts, and intelligence commoditisation as a design assumption.
+- Where the tier that sets the intelligence budget is defined: [7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md). Where the with/without test for parallel candidates lives: [23. Evaluation engineering](../04-prove/23-evaluation-engineering.md).
 - [Glossary](../appendix/glossary.md).

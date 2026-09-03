@@ -226,6 +226,8 @@ Alongside it the harness emits a **completion report** with a status of `succeed
 
 This page describes the harness as one boundary. In practice it splits in two: an **inner harness** that runs the model-tool-observation loop for one session (often a vendor's coding agent), and an **outer harness** that supervises it through lifecycle events, loads skills, enforces budgets and retries, and applies the completion contract. The split is conceptual; a small system may implement both in one process with separate contracts. [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) covers the split, the protocols between them, and why a lowest-common-denominator adapter that drops hooks, cancellation, or tool events buys portability at the cost of blindness.
 
+Two loops run through that harness, and they serve different objectives: the **inner loop** is the fast, cheap feedback (tests, types, linters, local verifiers) that lets the agent detect and correct its own mistakes before handoff and so drives autonomy, while the **outer loop** is the deeper, independent verification at the pull-request boundary that decides whether the work can be trusted and so drives automation. Building both on purpose, together with the context, tools, environment, evals, and observability around them, is **harness engineering**: engineering the system in which agents engineer the software ([Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md#inner-loop-outer-loop-meta-loop)).
+
 ### Who decides what
 
 | Decision | Owner |

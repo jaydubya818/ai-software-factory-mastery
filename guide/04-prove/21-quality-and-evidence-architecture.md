@@ -160,6 +160,51 @@ The implementation worker cannot be the sole authority that declares its own suc
 
 A common shortcut is to run a second model. Using a different model can reduce correlated reasoning error, but model diversity alone does not establish independence. Two agents that share the same state, the same commands, and the same assumptions will reproduce the same mistake with different phrasing. Independence is established through systems and execution paths, not through titles or vendor names.
 
+### The verification contract
+
+Independence says who may check. It does not say what must be checked. That is the job of the **verification contract**: a structured specification, attached to the work before it starts, of the claims that must be demonstrated before completion and how each one is validated. Where the acceptance criteria above describe what must be true, the contract is the executable form of that list: every criterion paired with the evidence that would settle it and the mechanism that produces the evidence. Three rows show the shape.
+
+| Claim | Evidence that settles it | Mechanism |
+| --- | --- | --- |
+| Login works | A browser test authenticates with a real session | Deterministic end-to-end run in a clean environment |
+| No accessibility regression | The accessibility verifier passes on every changed screen | Rule-based verifier over the rendered artifact |
+| Latency stays under the threshold | The benchmark stays under the number for the exact commit | Benchmark run recorded as a receipt |
+
+The contract is the same artifact on both sides of the work. The producing agent reads it to know what it is building toward — this is the task-level part of the Definition of Correct that [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) assembles from requirements, standards, policies, architecture, constraints, acceptance criteria, and verification rules — and the validator reads it to know what to prove. It is also what makes an outcome a **verifiable outcome**: one whose correctness can be established by deterministic checks or by independent evaluation reliable enough to stand in for them. The principle that follows is the organizing rule of this whole part: *the more completely an outcome can be specified and independently verified, the more safely its execution can be delegated.* A change with three verifiable claims and three verifiers can run unattended. The same change with three claims and one verifier cannot, whatever the model's benchmark score.
+
+That gives the factory a metric it can steer by. **Verification completeness** is the proportion of a change's important claims that have an independent, reliable verifier. It sits at the head of a chain: verification completeness raises trust, trust raises the permissible level of autonomy, and permissible autonomy raises how much of the workflow can run without a human initiating or approving it. Read backwards, the chain is a diagnosis. When a team says it cannot let agents merge, the question is not "which model" but "which claims have no verifier," and the remedy is to build the missing verifier, not to add a reviewer. This is **verification-driven autonomy**: autonomy increases as verification confidence increases, and the design question to ask of every workflow is "what can we independently verify well enough to automate safely?" [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) turns that answer into the risk tiers and the autonomy ceiling; here the point is that the ceiling is set by the contract, not the model.
+
+Two disciplines keep the contract from becoming a formality. The first is a rule about what the validator is allowed to see. **Context isolation** between producer and verifier — the context firewall of [Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) — means the verifier receives the goal, the artifact, and the verification contract, and never the producer's reasoning. A verifier that reads a plausible explanation of a wrong result will agree with it; one that has to reconstruct correctness from the artifact alone cannot be talked into anything. **Fresh-context verification** is that rule applied fully: a clean window, no shared state, agreement that means something because the two never shared a context. It is the evidence-architecture reason behind the "separate execution path" requirement above — not only a separate process, but a separate view of the problem.
+
+The second discipline is to **validate the validator**. A verifier is a component with a failure rate of its own, and its failures are asymmetric. A bad verifier facing a good agent produces a **false failure**: sound work is rejected, rework is spent, and the team learns to distrust the gate. A bad verifier facing a bad agent produces a **false success**: defective work passes, and the team learns to trust a gate that is not there. The second is worse because it is invisible until production. So the factory evaluates its verifiers the way it evaluates its agents — against known-good and known-bad artifacts, with a measured false-failure and false-success rate — and the chain becomes producer → verifier → verifier evaluation → policy. Policy then decides what each verifier's verdict is worth: a verifier with a measured false-success rate near zero can gate an auto-merge; one with an unknown rate can only inform a human. [Chapter 23](./23-evaluation-engineering.md) describes the evaluation machinery; the verifier-quality monitor of [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) is the meta-loop that keeps running it.
+
+### Orchestrator, worker, validator
+
+Put the contract, the firewall, and the independence rule together and the canonical execution pattern falls out. An **orchestrator** decomposes the outcome into bounded units and coordinates them; a **worker** executes one unit at a time; a **validator** independently checks each unit against its contract. Pass moves to the next unit. Fail returns the unit for bounded rework. When the units are consolidated, a final verification checks the whole against the whole contract, because units that are individually correct can still compose into a wrong result.
+
+The pattern's most important property is **milestone validation**: intermediate outcomes are verified at checkpoints rather than only at the end. Fifty tasks followed by one final validation is a plan for a disaster you discover last. Task, verify, task, verify, milestone, verify keeps every failure close to its cause, keeps rework small, and keeps the evidence trail continuous, which is what selective invalidation later depends on.
+
+```mermaid
+flowchart TD
+    O["Orchestrator: decompose + coordinate"] --> W1["Worker: unit 1"]
+    W1 --> V1["Validator: unit 1 vs contract"]
+    V1 -->|pass| W2["Worker: unit 2"]
+    V1 -->|fail| W1
+    W2 --> V2["Validator: unit 2 vs contract"]
+    V2 -->|pass| M["Milestone validation"]
+    V2 -->|fail| W2
+    M -->|fail| O
+    M -->|pass| C["Consolidation"]
+    C --> F["Final verification vs whole contract"]
+    F --> R["Receipts"]
+    Contract["Verification contract"] -.-> V1
+    Contract -.-> V2
+    Contract -.-> M
+    Contract -.-> F
+```
+
+The orchestrator never validates its own decomposition, the worker never validates its own unit, and the validator never edits the artifact. Each role has exactly one job, and the receipts the validator emits are what the rest of this chapter consumes.
+
 ### Validators are not voters
 
 Security, performance, correctness, and accessibility validators answer different questions. Two passes do not outvote a security failure, any more than two dermatologists clearing a patient overrules the cardiologist who did not. When valid receipts conflict, the conflict itself becomes evidence, and governance increases rather than relaxes.
@@ -290,6 +335,14 @@ The waiver contract, since it is the part most often done badly:
 
 **Merge is treated as done.** Lead time is measured to merge, change failure is never attributed back to a Mission, and customer value is assumed. Detect it by asking whether any record stops the clock. The fix is production validation bound to the Mission outcome.
 
+**Claims without a verifier.** The contract lists five claims and the required-evidence plan can produce receipts for two; the other three are checked by a reviewer reading the diff, or not at all. Detect it by computing verification completeness per change and per tier. The fix is to build the missing verifier before raising autonomy, never to raise autonomy and hope.
+
+**The verifier is never verified.** A verifier passes everything, or fails sound work, and nobody knows which because it has never been run against known-good and known-bad artifacts. Detect it by asking for each verifier's measured false-success and false-failure rate; silence is the finding. The fix is validate-the-validator as a scheduled evaluation, with policy weighting each verdict by the verifier's record.
+
+**The validator reads the producer's reasoning.** The verifier is handed the worker's transcript along with the artifact and agrees with a fluent explanation of a wrong result. Detect it by inspecting what the validator package contained. The fix is the context firewall: goal, artifact, contract, nothing else.
+
+**Validation only at the end.** Fifty units run to completion and the first check is the final one; the failure is found last and the rework is the whole mission. Detect it by counting units executed between validator receipts. The fix is milestone validation in the orchestrator → worker → validator pattern.
+
 ## In Mission Control
 
 This assessment is pinned to commit [`8014d5af`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c), studied 2026-08-08.
@@ -326,11 +379,16 @@ Existing project documentation reports focused tests and local lifecycle evidenc
 - Independence comes from separate execution paths and identities, not from a second model or a different job title.
 - Validators are not voters. Conflict is evidence, and it raises governance.
 - Validate continuously from intent to production. Lead time stops at validated customer value, not at merge.
+- A verification contract pairs every claim with the evidence that settles it and the mechanism that produces it. The more completely an outcome can be specified and independently verified, the more safely its execution can be delegated.
+- Verification completeness → trust → permissible autonomy → automation. When agents cannot be trusted to merge, ask which claims have no verifier, and build it.
+- Validate the validator. A bad verifier produces false failures against good work and false successes against bad work; measure both and let policy weight each verdict by the record.
+- The verifier gets goal, artifact, and contract — never the producer's reasoning. Orchestrator decomposes, worker executes, validator checks; verify at every milestone, not only at the end.
 
 ## Go deeper
 
 - Next in this part: [22. Testing strategy for agentic change](./22-testing-strategy-for-agentic-change.md), [23. Evaluation engineering](./23-evaluation-engineering.md), [24. Quality contracts, proof packages, and certificates](./24-quality-contracts-proof-packages-and-certificates.md), [25. CI/CD, progressive delivery, and production verification](./25-cicd-progressive-delivery-and-production-verification.md).
 - The records these receipts attach to: [5. Authoritative records](../02-design/05-authoritative-records.md). The metrics: [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md). The principles: [3. First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md).
 - Terms: [Glossary](../appendix/glossary.md).
-- Sources: Jay West, *AI Software Factory mission* ("Validation layer", "Your quality stack", "Success metrics"); Jay West, *Use the factory run to teach failure* (the completion-versus-acceptance scenario).
+- Sources: Jay West, *AI Software Factory mission* ("Validation layer", "Your quality stack", "Success metrics"); Jay West, *Use the factory run to teach failure* (the completion-versus-acceptance scenario); public practitioner talks, 2026 — the verification contract, verifiable outcomes, verification completeness and its chain to autonomy, verification-driven autonomy, validate-the-validator, fresh-context verification, and the orchestrator → worker → validator pattern with milestone validation.
+- The Definition of Correct the contract is drawn from: [16. Data, knowledge, semantic, and context engineering](../03-build/16-data-knowledge-semantic-and-context-engineering.md). The meta-loop that keeps verifiers honest: [33. Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md).
 - Mission Control at `8014d5af`: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Domain contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [Verification receipt evidence](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/verification-receipt.md), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [WorkOrder governance](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/workOrderGovernance.ts), [WorkOrder commands](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/workOrders.ts), [Mission governance](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [GitHub CI ingestion](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/githubCi.ts), [Execution Run Inspector](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/controlPlane/ExecutionRunInspector.tsx).
