@@ -7,7 +7,7 @@ export type DocumentRecord = (typeof documents)[number];
 /** The book map (guide/README.md). Served at /docs/guide but kept out of the reading sequence. */
 export const bookMap = documents.find((document) => document.contentType === "overview");
 
-/** Front matter and the 36 numbered chapters, in reading order. */
+/** Front matter and the 44 numbered chapters, in reading order. */
 export const chapters = documents.filter((document) => document.chapter !== null);
 
 /** Everything that is reference material: appendices, case studies, research. */
@@ -20,7 +20,7 @@ export function getStage(number: number) {
   return stages.find((document) => document.stage === number);
 }
 
-/** Reading sequence for previous/next: front matter → stages 1..8 → chapters 1..36 → appendices. */
+/** Reading sequence for previous/next: front matter → stages 1..8 → chapters 1..44 → appendices. */
 const frontMatter = chapters.filter((document) => document.chapter === 0);
 const numberedChapters = chapters.filter((document) => document.chapter !== 0);
 export const readingSequence = [...frontMatter, ...stages, ...numberedChapters, ...appendices];

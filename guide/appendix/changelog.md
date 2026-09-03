@@ -14,6 +14,30 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-03 — Structural reading and navigation pass
+
+### Added
+
+- Split eight overloaded chapters along their existing topic boundaries, taking
+  the guide from 36 to 44 numbered chapters without dropping their underlying
+  material.
+- Added [Mission Control operator surfaces](./operator-surfaces.md) as Appendix
+  G, moving the eleven-surface catalog out of the case-study chapter while
+  keeping direct links to every surface.
+- Added compatibility redirects for all 28 renumbered production chapter URLs
+  and all 72 anchors whose sections moved into a new second-half chapter.
+
+### Changed
+
+- Designated the eight-stage value stream and six architectural areas as the
+  two canonical Chapter 2 models; other frames are now explicitly labeled as
+  lenses, references, or implementation views.
+- Reduced every chapter's "Retain this" section to five to seven durable points.
+- Marked 32 high-priority entries among the glossary's fifty core concepts with
+  a key badge and explained the marker in the front matter.
+- Recomputed chapter numbers, ranges, citations, navigation, search content,
+  coverage surfaces, and the visual atlas for the 44-chapter structure.
+
 ## 2026-09-03 — Public-source integration and consistency pass
 
 ### Added
@@ -34,30 +58,28 @@ grouped.
 
 - Resolved a terminology collision on **model adapter**: the glossary's
   trained-weights sense is now **trained adapter**; **model adapter** is
-  reserved for the per-provider integration layer defined in Chapter 10 and
-  used in Chapter 17.
+  reserved for the per-provider integration layer defined in Chapter 11 and
+  used in Chapter 21.
 - Merged duplicate glossary entries for **loop engineering** (three entries
   collapsed to two: the bounded feedback path within one execution graph,
   and the wider discipline) and **workload identity** (two near-identical
   entries merged to one).
 - Follow-up review caught three issues in the pass above: an "example"
-  repository URL in Chapter 24 that still resolved as a real dead link (now
+  repository URL in Chapter 31 that still resolved as a real dead link (now
   `example.com`, the domain reserved for documentation); a "Retain this"
-  line in Chapter 33 that still stated learning writeback reads only after
+  line in Chapter 40 that still stated learning writeback reads only after
   success without the surrounding section's caveat for separately labeled
   failed-run signals (reconciled); and the research-canon provenance table,
   which named sources without linking most of them — now carries a
   confirmed-live link for every source where one exists, and says plainly
   where none could be found rather than leaving the gap implicit.
 
-### Known gaps
+### Resolved in the structural pass
 
-- A word-count and structural review found several chapters running well
-  past a comfortable single-sitting length (Chapters 8, 10, 13, 16, 17, 18,
-  23, and 33 in particular), competing "canonical" mental models in Chapter
-  2, and "Retain this" sections that restate rather than summarize. A
-  structural split and a mental-model consolidation pass are planned but not
-  yet done; see the reviewer guide for the current punch list.
+- The word-count review found eight chapters running past a comfortable
+  single-sitting length, competing "canonical" models in Chapter 2, and
+  "Retain this" sections that restated rather than summarized. The structural
+  reading and navigation pass above closed those three findings.
 
 ## 2026-08-30 — Reference architecture depth release
 

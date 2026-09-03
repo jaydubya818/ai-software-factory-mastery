@@ -35,7 +35,7 @@ const actors: Actor[] = [
     never: ["Widen their own authority", "Grade their own work", "Promote their own improvements to production"],
     records: ["Attempts", "Artifacts", "Self-reports — which are never evidence"],
     without: "Nothing scales. Every line is written and checked by a person, and the factory is a process document.",
-    href: "/docs/03-build/15-agent-architecture",
+    href: "/docs/03-build/18-agent-architecture",
     chapter: "Chapter 15 · Agent architecture",
   },
   {
@@ -46,7 +46,7 @@ const actors: Actor[] = [
     never: ["Decide what the intent is", "Accept risk on a human's behalf", "Trust a model's report as a fact"],
     records: ["WorkOrders", "Leases and checkpoints", "Execution manifest", "Traces"],
     without: "A model with no boundary: a chat box that can touch production and remembers nothing when it crashes.",
-    href: "/docs/03-build/11-control-plane-orchestrator-and-execution-plane",
+    href: "/docs/03-build/13-control-plane-orchestrator-and-execution-plane",
     chapter: "Chapter 11 · Control plane, orchestrator, and execution plane",
   },
   {
@@ -57,8 +57,8 @@ const actors: Actor[] = [
     never: ["Be replaced by the agent's report", "Be replaced by telemetry", "Outlive the version it proved"],
     records: ["Verification run", "Evidence bundle", "Certificate"],
     without: "Confident failure. \"Tests pass,\" said by the thing being tested.",
-    href: "/docs/04-prove/21-quality-and-evidence-architecture",
-    chapter: "Chapter 21 · Quality and evidence architecture",
+    href: "/docs/04-prove/27-quality-and-evidence-architecture",
+    chapter: "Chapter 27 · Quality and evidence architecture",
   },
 ];
 

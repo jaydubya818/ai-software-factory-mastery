@@ -153,7 +153,7 @@ packages prove behavior at an exact revision; where a status claim
 disagrees, current source and retained evidence win and the ledger is
 corrected. This case study, including this section, is subordinate to it.
 The narrative treatment is in
-[Chapter 34](../../06-improve/34-mission-control-as-a-living-case-study.md).
+[Chapter 42](../../06-improve/42-mission-control-as-a-living-case-study.md).
 
 ## Versioned references
 

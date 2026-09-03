@@ -17,11 +17,11 @@ Read it front to back, or enter at the part that matches your question.
 | Part | Question it answers | Chapters |
 | --- | --- | --- |
 | I. Understand | What is an AI Software Factory, what are its parts, and what principles hold it together? | 1–3 |
-| II. Design | What records, decisions, authority, and economics must exist before any agent runs? | 4–9 |
-| III. Build | How do you assemble capabilities, runtime, harnesses, environments, AI layers, and workflows? | 10–20 |
-| IV. Prove | How do you know the factory's output is correct, safe, and releasable? | 21–26 |
-| V. Operate | How do you run it as a production platform? | 27–31 |
-| VI. Improve | How does it get better without authorizing itself? | 32–36 |
+| II. Design | What records, decisions, authority, and economics must exist before any agent runs? | 4–10 |
+| III. Build | How do you assemble capabilities, runtime, harnesses, environments, AI layers, and workflows? | 11–26 |
+| IV. Prove | How do you know the factory's output is correct, safe, and releasable? | 27–33 |
+| V. Operate | How do you run it as a production platform? | 34–38 |
+| VI. Improve | How does it get better without authorizing itself? | 39–44 |
 
 Start with [How to read this guide](./guide/00-front-matter/00-how-to-read-this-guide.md),
 then [Chapter 1](./guide/01-understand/01-why-software-engineering-is-changing.md).
@@ -76,9 +76,10 @@ human authority. It is not the definition of the complete factory.
 
 ## Repository layout
 
-- `guide/` — the book: front matter, six parts (36 chapters), appendices
+- `guide/` — the book: front matter, six parts (44 chapters), appendices
   (glossary, Mission Control case studies, research canon, coverage and
-  maturity, changelog, reviewer guide, architecture communication).
+  maturity, changelog, reviewer guide, architecture communication, operator
+  surfaces).
 - `archive/guide-v1/` — the previous curriculum, preserved unchanged for
   provenance. `docs/plans/coverage-map.md` records where every v1 chapter went.
 - `source-material/` — Jay's original mission, study guide, and capability

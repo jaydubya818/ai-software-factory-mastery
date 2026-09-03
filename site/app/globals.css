@@ -1034,6 +1034,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 html[data-theme="dark"] .path-card, html[data-theme="dark"] .search-result, html[data-theme="dark"] .section-documents > a, html[data-theme="dark"] .markdown-body table { background: var(--surface); }
 html[data-theme="dark"] .markdown-body { color: #ccd6d1; }
+html[data-theme="dark"] .markdown-body a { color: var(--accent-text); text-decoration-color: #5f8f78; }
 html[data-theme="dark"] .markdown-body code { border-color: var(--line); background: var(--surface-2); color: #dbe7e0; }
 html[data-theme="dark"] .markdown-body th { background: var(--surface-2); }
 html[data-theme="dark"] .coverage-home-callout, html[data-theme="dark"] .architecture-home-callout { background: var(--surface-2); border-color: var(--line); }

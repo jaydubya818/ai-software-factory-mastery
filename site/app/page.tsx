@@ -32,7 +32,7 @@ export default function Home() {
           <p className="hero-credibility">
             <span>By Jay West</span><i aria-hidden="true">·</i>
             <span>2026 edition</span><i aria-hidden="true">·</i>
-            <span>Eight stages, {numbered.length} chapters, six appendices</span><i aria-hidden="true">·</i>
+            <span>Eight stages, {numbered.length} chapters, seven reference groups</span><i aria-hidden="true">·</i>
             <a href="https://github.com/jaydubya818/ai-software-factory-mastery" rel="noreferrer" target="_blank">Open source on GitHub (MIT)</a>
           </p>
         </section>
@@ -59,8 +59,8 @@ export default function Home() {
             <span>Start by outcome</span>
             <Link href="/docs/appendix/architecture-communication">I have to explain or fund this <small>executive</small></Link>
             <Link href="/docs/02-design/05-authoritative-records">I have to draw the boundaries <small>architect</small></Link>
-            <Link href="/docs/03-build/10-the-agent-factory">I have to build it <small>builder</small></Link>
-            <Link href="/docs/05-operate/27-the-factory-as-a-platform">I have to run it <small>operator</small></Link>
+            <Link href="/docs/03-build/11-the-agent-factory">I have to build it <small>builder</small></Link>
+            <Link href="/docs/05-operate/34-the-factory-as-a-platform">I have to run it <small>operator</small></Link>
           </div>
         </section>
 

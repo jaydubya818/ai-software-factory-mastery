@@ -7,7 +7,7 @@ import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Table of Contents · The AI Software Factory Guide",
-  description: "The full table of contents: front matter, six parts, thirty-six chapters, and the appendices.",
+  description: "The full table of contents: front matter, six parts, forty-four chapters, and the appendices.",
 };
 
 export default function GuidePage() {
@@ -24,7 +24,7 @@ export default function GuidePage() {
             <h1>The AI Software Factory Guide</h1>
           </div>
           <div>
-            <p>Six parts, thirty-six chapters, and a reference shelf. Read it front to back, or enter at the part that matches your question.</p>
+            <p>Six parts, forty-four chapters, and a reference shelf. Read it front to back, or enter at the part that matches your question.</p>
             <div className="hero-actions">
               {firstChapter && <Link className="button button-primary" href={`/docs/${firstChapter.slug}`}>Start with chapter 1</Link>}
               <Link className="button button-secondary" href="/docs/00-front-matter/00-how-to-read-this-guide">How to read this guide</Link>

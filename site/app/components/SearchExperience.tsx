@@ -7,7 +7,7 @@ import { loadSearchIndex, searchDocuments, type SearchDocument, type SearchHit }
 const starters: { title: string; description: string; href: string; meta: string }[] = [
   { title: "The factory in one view", description: "The whole system on one page — five systems, five verbs, the one line.", href: "/docs/01-understand/02-the-factory-in-one-view", meta: "Chapter 2" },
   { title: "Execute through Harness", description: "The model reasons; the harness controls. Where bounded execution lives.", href: "/docs/stages/04-execute-through-harness", meta: "Stage 4" },
-  { title: "Quality and evidence architecture", description: "Generation is cheap; evidence creates trust.", href: "/docs/04-prove/21-quality-and-evidence-architecture", meta: "Chapter 21" },
+  { title: "Quality and evidence architecture", description: "Generation is cheap; evidence creates trust.", href: "/docs/04-prove/27-quality-and-evidence-architecture", meta: "Chapter 27" },
   { title: "Canonical glossary", description: "Every term, defined by the responsibility it owns.", href: "/docs/appendix/glossary", meta: "Appendix A" },
   { title: "Principles to have cold", description: "The book in fifty lines.", href: "/docs/appendix/principles", meta: "Appendix F" },
 ];
