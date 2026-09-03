@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: complete
 priority: p1
 issue_id: "003"
 tags: [documentation, navigation, redirects, vercel]
@@ -70,8 +70,8 @@ Use Option 2. Commit the structural migration and summary pass as separate, revi
 - [x] The operator-surfaces catalog is published and navigable as an appendix.
 - [x] Every Retain-this section has 5–7 concise bullets without losing critical governance caveats.
 - [x] Content generation, build, lint, 26-test suite, internal links, external links, accessibility, and browser smoke tests pass.
-- [ ] The feature branch and updated `main` are pushed to GitHub.
-- [ ] The canonical Vercel project is deployed to production and the public URL is verified.
+- [x] The feature branch and updated `main` are pushed to GitHub.
+- [x] The canonical Vercel project is deployed to production and the public URL is verified.
 
 ## Work Log
 
@@ -107,3 +107,17 @@ Use Option 2. Commit the structural migration and summary pass as separate, revi
 
 - Route-level redirects are not enough for a structural documentation migration; moved anchors need their own compatibility map.
 - The final accessibility issue was dark-theme link contrast inside rendered Markdown, not the new chapter structure.
+
+### 2026-09-03 - Released to production
+
+**By:** Codex
+
+**Actions:**
+
+- Pushed `codex/phase-1-4-structural-migration` to GitHub and merged it into `main` as `ec8e397`.
+- Deployed Vercel production deployment `dpl_49cYH7XJBjxzbMoHTxEM4rHYYrYn` with `READY` status.
+- Verified through the Vercel API that `ai-software-factory-mastery.vercel.app` points to that deployment.
+
+**Learnings:**
+
+- The repository must be linked to the canonical `ai-software-factory-mastery` Vercel project; the similarly named `site` project does not own the production hostname.
