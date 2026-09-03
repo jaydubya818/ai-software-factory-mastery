@@ -12,6 +12,8 @@ mission_control_commit: d902fae7032c0696b531c44ae88829c652516fc6
 This glossary defines terms by the responsibility they own. A useful definition
 also states what the concept does not prove or authorize.
 
+Entries marked 🔑 are among the [fifty concepts to have cold](./principles.md#fifty-concepts-to-have-cold) — the on-ramp for a first-time reader. Everything else here stays for reference; nothing is trimmed to make room for the marker.
+
 ## Factory concepts
 
 **AI Software Factory** — A governed engineering operating model that turns
@@ -37,7 +39,7 @@ revokes reusable agents, skills, tools, model profiles, and configurations. It
 supplies capabilities to an AI Software Factory but does not authorize or
 accept a particular delivery outcome.
 
-**Capability Registry** — The authoritative service that assigns canonical
+**Capability Registry** 🔑 — The authoritative service that assigns canonical
 identity, stores immutable versions and provenance, resolves dependencies and
 compatibility, records evaluation and certification, and enforces lifecycle
 state for reusable factory capabilities. A searchable catalog may present its
@@ -117,7 +119,7 @@ Evaluate → Improve → Deliver Software`. It is a mnemonic, not a literal call
 graph: skills execute inside the harnessed loop and improvement changes future
 versions through governed promotion.
 
-**Builder Intent** — The outcome a builder is trying to achieve together with
+**Builder Intent** 🔑 — The outcome a builder is trying to achieve together with
 its business reason, constraints, acceptance criteria, risk, source references,
 and stop conditions. Intent is the product interface; a literal prompt is only
 one input used to clarify it.
@@ -153,7 +155,7 @@ and a promotion or deprecation record; nothing moves because time passed.
 **Multi-agent system** — Several specialised agents working toward one goal
 through explicit handoffs, shared typed state, and bounded authority per
 agent. Every extra agent is tokens, latency, and failure surface; the guide's
-rule is one agent until a boundary demands a second (Chapter 18).
+rule is one agent until a boundary demands a second (Chapter 23).
 
 **Agent** — A model-driven worker that can reason, choose tools, act, observe the
 result, and continue toward a bounded objective. Capability does not imply
@@ -182,7 +184,7 @@ instructions, capabilities, eligible models, tools, skills, context policy,
 permissions, budgets, stop conditions, escalation, success criteria, and
 evaluation policy. It is configuration, not a credential.
 
-**Agent Harness** — The systems surrounding a model that make agent execution
+**Agent Harness** 🔑 — The systems surrounding a model that make agent execution
 usable and controllable through tools, context, state, lifecycle, budgets,
 stop conditions, telemetry, and structured results. This guide separates the
 inner harness from the outer harness so that execution behavior is not confused
@@ -267,12 +269,12 @@ diversity, release cadence, issue response time, and governance model. For a
 commercial foundation, the analogous signals are runway, roadmap transparency,
 and customer base.
 
-**Agent Runtime** — The execution substrate that starts, observes, controls,
+**Agent Runtime** 🔑 — The execution substrate that starts, observes, controls,
 and terminates agent sessions or Attempts using an exact harness, environment,
 identity, and model route. Runtime capability does not establish business
 authority.
 
-**Skill** — A reusable, versioned, evaluated method that supplies instructions,
+**Skill** 🔑 — A reusable, versioned, evaluated method that supplies instructions,
 decision criteria, examples, and tool-use patterns for a class of tasks. A
 skill teaches behavior; it does not grant authority or certify its own result.
 
@@ -334,7 +336,7 @@ model profile, tools, skills, context, state, policy, budgets, stop conditions,
 handoffs, and evaluation into a reproducible Agent Definition. Capability does
 not grant permission to act.
 
-**Harness Engineering** — The discipline of controlling and recording complete
+**Harness Engineering** 🔑 — The discipline of controlling and recording complete
 agent sessions through lifecycle hooks, state, checkpoints, tool events,
 artifacts, receipts, replay, and run comparison. A transcript alone is not a
 reproducible run record.
@@ -359,14 +361,14 @@ system: (1) reliability, evaluation, security, and delivery; (2) knowledge,
 retrieval, and memory; (3) models, tools, and execution; (4) agent
 orchestration and runtime; (5) experience and interface. Products fill the
 layers; the control plane and the Agent Factory sit above them and are owned,
-not bought (Chapter 31).
+not bought (Chapter 38).
 
 **AI Infrastructure** — The shared model, data, knowledge, tool, identity,
 runtime, environment, compute, telemetry, and evaluation services used to build
 and operate AI systems. Infrastructure supplies capabilities; product and
 control-plane contracts determine their authorized use.
 
-**Control plane** — The authoritative system for intent, policy, identity,
+**Control plane** 🔑 — The authoritative system for intent, policy, identity,
 authorization, workflow state, approvals, evidence requirements, audit, and
 governance decisions. It decides what may happen.
 
@@ -403,9 +405,9 @@ tests, deterministic controls, documentation, instructions, skills, tools,
 context, routing, or workflows. Observation may be automated; promotion remains
 scoped and reviewable.
 
-**Definition of Correct** — A machine-consumable description of acceptable work for a task, component, repository, or domain: requirements, standards, policies, architecture, constraints, acceptance criteria, and verification rules together. What good looks like, written down well enough that an agent and a verifier can both reason about it (Chapter 16).
+**Definition of Correct** 🔑 — A machine-consumable description of acceptable work for a task, component, repository, or domain: requirements, standards, policies, architecture, constraints, acceptance criteria, and verification rules together. What good looks like, written down well enough that an agent and a verifier can both reason about it (Chapter 19).
 
-**Skills → loops → factory** — The maturity path from codified capability to improving automation to an operating model: L0 AI assistance, L1 skills, L2 automated workflows, L3 loops, L4 factory, L5 adaptive factory. The share of work done by loops rises along a continuum; there is no day the factory is declared complete (Chapters 2, 31).
+**Skills → loops → factory** — The maturity path from codified capability to improving automation to an operating model: L0 AI assistance, L1 skills, L2 automated workflows, L3 loops, L4 factory, L5 adaptive factory. The share of work done by loops rises along a continuum; there is no day the factory is declared complete (Chapters 2, 38).
 
 **Four modes of engineering** — Traditional (humans build software); agent-assisted (humans build with agents); agentic (humans delegate units of work); factory (humans engineer and govern the system that produces the software) (Chapter 2).
 
@@ -415,13 +417,13 @@ scoped and reviewable.
 
 **Three cross-cutting planes** — The control plane (inventory, identity, permissions, policy, budgets, deployment, scheduling, observability), the context plane (institutional knowledge, skills, standards, repository intelligence, history, retrieval, lifecycle), and factory engineering (building, measuring, maintaining, and improving the loops) — the three systems that surround the six areas (Chapter 2).
 
-**Factory data model** — The canonical representation of the work: signal → intent → plan → task → attempt → artifact → evidence → verification → decision → deployment → outcome. Agents and models change; these durable objects remain (Chapter 5).
+**Factory data model** 🔑 — The canonical representation of the work: signal → intent → plan → task → attempt → artifact → evidence → verification → decision → deployment → outcome. Agents and models change; these durable objects remain (Chapter 5).
 
-**Signal** — An observable event indicating a potential need for software change — customer feedback, support, bugs, telemetry, incidents, issues, analytics, security findings, regressions. The factory's boundary is signal-to-outcome, not ticket-to-code (Chapter 20).
+**Signal** — An observable event indicating a potential need for software change — customer feedback, support, bugs, telemetry, incidents, issues, analytics, security findings, regressions. The factory's boundary is signal-to-outcome, not ticket-to-code (Chapter 26).
 
-**Signal intelligence** — Ingesting, classifying, correlating, deduplicating, prioritising, and routing signals into actionable factory work: what happened, does it matter, is it a duplicate, who owns it, how severe, should anything change (Chapter 20).
+**Signal intelligence** — Ingesting, classifying, correlating, deduplicating, prioritising, and routing signals into actionable factory work: what happened, does it matter, is it a duplicate, who owns it, how severe, should anything change (Chapter 26).
 
-**Signal-to-deployment loop** — Signals → triage → prioritisation → intent → plan → execution → verification → deployment → production outcomes → new signals. The closed loop the factory runs end to end (Chapter 20).
+**Signal-to-deployment loop** — Signals → triage → prioritisation → intent → plan → execution → verification → deployment → production outcomes → new signals. The closed loop the factory runs end to end (Chapter 26).
 
 **Work shaping** — Turning ambiguous demand into bounded, agent-legible work with explicit goals, constraints, scope, risk, and verification criteria. The human moves from writing implementation to shaping executable intent (Chapters 4, 6).
 
@@ -431,35 +433,35 @@ scoped and reviewable.
 
 **Software-factory process engineer** — An engineer who improves the systems, constraints, feedback, and workflows through which agents produce software, treating a recurring failure as a harness problem rather than fixing the instance again (Chapter 4).
 
-**Skill-centric architecture** — The skill is the reusable artifact and the loop is an execution mechanism around it, so one skill is consumed by the development agent, code review, CI, maintenance loops, migration agents, and the IDE alike instead of being buried in one workflow (Chapter 10).
+**Skill-centric architecture** — The skill is the reusable artifact and the loop is an execution mechanism around it, so one skill is consumed by the development agent, code review, CI, maintenance loops, migration agents, and the IDE alike instead of being buried in one workflow (Chapter 12).
 
-**Skill drift** — A deployed skill that has gone stale relative to its authoritative source, dependencies, policies, or operating environment. Detected by comparing inventory against registry; remedied by upgrade and regression evaluation (Chapter 10).
+**Skill drift** — A deployed skill that has gone stale relative to its authoritative source, dependencies, policies, or operating environment. Detected by comparing inventory against registry; remedied by upgrade and regression evaluation (Chapter 12).
 
-**Skill → verifier pair** — A skill says how to do the work; its paired verifier proves it was done. The chain runs Definition of Correct → skill → execution → verifier → evidence → promotion or rework (Chapter 10).
+**Skill → verifier pair** — A skill says how to do the work; its paired verifier proves it was done. The chain runs Definition of Correct → skill → execution → verifier → evidence → promotion or rework (Chapter 12).
 
-**Factory opinion** — A reusable, evidence-backed default workflow or architectural choice encoded into the factory yet overridable — between a rigid workflow and a blank general-purpose agent (Chapters 10, 27).
+**Factory opinion** — A reusable, evidence-backed default workflow or architectural choice encoded into the factory yet overridable — between a rigid workflow and a blank general-purpose agent (Chapters 12, 34).
 
-**Canonical workflow** — A reusable, empirically validated execution pattern for a recurring class of work (code review, incident investigation, dependency upgrade, migration, feature). Specialised in layers — organisation, product, repository, task — rather than duplicated (Chapter 10).
+**Canonical workflow** — A reusable, empirically validated execution pattern for a recurring class of work (code review, incident investigation, dependency upgrade, migration, feature). Specialised in layers — organisation, product, repository, task — rather than duplicated (Chapter 12).
 
-**Factory asset lifecycle** — Every versioned factory artifact — skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, context sources — has an owner and passes through version → evaluate → deploy → observe → improve → deprecate (Chapter 10).
+**Factory asset lifecycle** — Every versioned factory artifact — skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, context sources — has an owner and passes through version → evaluate → deploy → observe → improve → deprecate (Chapter 12).
 
-**Historical behaviour mining** — Extracting implicit standards and definitions of correctness from PR history, review comments, tickets, incidents, production failures, accepted fixes, and decisions, then codifying a skill, generating an eval, and generating a verifier (Chapter 10).
+**Historical behaviour mining** — Extracting implicit standards and definitions of correctness from PR history, review comments, tickets, incidents, production failures, accepted fixes, and decisions, then codifying a skill, generating an eval, and generating a verifier (Chapter 12).
 
-**Factory as code** — The whole factory — a manifest plus the agent definitions, skills, MCPs, routing rules, and policies it references — held in versioned files, so it has a measurable baseline, rollback and review, and agents can propose diffs to it (Chapters 27, 33).
+**Factory as code** — The whole factory — a manifest plus the agent definitions, skills, MCPs, routing rules, and policies it references — held in versioned files, so it has a measurable baseline, rollback and review, and agents can propose diffs to it (Chapters 34, 41).
 
-**Closed-loop factory** — Factory infrastructure that is defined as code, lives in the cloud, is driven by APIs rather than a UI, ships with evals, improvement loops, and benchmarks, and is multi-model and multi-agent, so agents and humans can improve it from its own data (Chapter 27).
+**Closed-loop factory** — Factory infrastructure that is defined as code, lives in the cloud, is driven by APIs rather than a UI, ships with evals, improvement loops, and benchmarks, and is multi-model and multi-agent, so agents and humans can improve it from its own data (Chapter 34).
 
-**Factory ownership** — Owning a factory means owning what correct means and controlling how work is produced and verified — intent, standards, context, skills, policies, evals, outcomes — while adopting models, runtime components, sandboxes, infrastructure, and commodity tooling (Chapter 11).
+**Factory ownership** — Owning a factory means owning what correct means and controlling how work is produced and verified — intent, standards, context, skills, policies, evals, outcomes — while adopting models, runtime components, sandboxes, infrastructure, and commodity tooling (Chapter 13).
 
-**Opinionated defaults, open contracts** — Strong default workflows for common work alongside portable contracts for models, tools, skills, context, state, and verification: an easy path without lock-in (Chapters 17, 27).
+**Opinionated defaults, open contracts** — Strong default workflows for common work alongside portable contracts for models, tools, skills, context, state, and verification: an easy path without lock-in (Chapters 22, 34).
 
-**Intelligence commoditisation** — The design assumption, not a certainty, that as capable models proliferate, differentiation moves from access to raw intelligence to the systems that apply it: context, workflow, harness, verification, integration, data, policy, learning (Chapter 17).
+**Intelligence commoditisation** — The design assumption, not a certainty, that as capable models proliferate, differentiation moves from access to raw intelligence to the systems that apply it: context, workflow, harness, verification, integration, data, policy, learning (Chapter 21).
 
-**Three levels of capability** — Model capability (what the model can reason about), agent capability (what it accomplishes with tools, context, state, and a loop), factory capability (what an organisation can reliably delegate with workflows, governance, verification, economics, and learning). Each is larger than the last only if the layer around it is built (Chapter 13).
+**Three levels of capability** — Model capability (what the model can reason about), agent capability (what it accomplishes with tools, context, state, and a loop), factory capability (what an organisation can reliably delegate with workflows, governance, verification, economics, and learning). Each is larger than the last only if the layer around it is built (Chapter 16).
 
 ## Tools, context, models, and interoperability
 
-**Tool** — A typed executable capability through which an agent observes or
+**Tool** 🔑 — A typed executable capability through which an agent observes or
 changes an external system. A tool supplies capability; policy and credentials
 determine whether a particular call is authorized.
 
@@ -492,7 +494,7 @@ design documents, deployments, datasets, table usage) that any agent can
 consult in natural language before acting. Grounding through it is the main
 lever on requests per turn; it is knowledge, not authority.
 
-**Model Context Protocol (MCP)** — An interoperability protocol for exposing
+**Model Context Protocol (MCP)** 🔑 — An interoperability protocol for exposing
 tools, resources, prompts, and negotiated extensions between hosts and servers.
 MCP standardizes communication and discovery; it does not by itself establish
 tenant isolation, trustworthy tool behavior, least privilege, or acceptance.
@@ -552,7 +554,7 @@ modeling and maintenance cost.
 or identifiers refer to the same canonical entity while preserving provenance,
 uncertainty, and correction history.
 
-**Retrieval-Augmented Generation (RAG)** — A pattern in which model input is
+**Retrieval-Augmented Generation (RAG)** 🔑 — A pattern in which model input is
 augmented with information retrieved from external sources. RAG does not by
 itself establish source quality, permission, freshness, semantic correctness,
 or grounded output.
@@ -611,7 +613,7 @@ separates product workflows from provider-specific APIs.
 **Reasoning effort** — The thinking budget granted to a model invocation.
 Output and reasoning tokens bill at multiples of input tokens, so the effort
 default is a cost lever set by policy per task class, raised only where
-measured quality demands it (Chapter 18).
+measured quality demands it (Chapter 23).
 
 **Hallucination** — A confident, fluent output that is not grounded in the
 context or the world. In a factory it is treated as an evidence problem, not
@@ -649,7 +651,7 @@ events and completion report out, with cancellation, budgets, and lifecycle
 hooks. The organization owns the contract and adopts the loop mechanics
 behind it.
 
-**Workload taxonomy** — The classification of tasks by complexity, risk,
+**Workload taxonomy** 🔑 — The classification of tasks by complexity, risk,
 latency, security sensitivity, and required capability that routing policy is
 written against. A task class, not a prompt, is the unit routing decides on.
 
@@ -674,7 +676,7 @@ dependency analysis run before any model is invoked, so that inference is
 spent only on what software cannot decide reliably. The sequence is
 deterministic → cheap model → specialised model → frontier model.
 
-**Repository profile** — The versioned readiness record for one repository:
+**Repository profile** 🔑 — The versioned readiness record for one repository:
 languages, build and test systems, ownership, conventions, architectural
 boundaries, hot paths, defect history, risk classification, admitted
 workflows, and learned lessons. One shared platform, many profiles; not one
@@ -688,72 +690,72 @@ stays minimal and relevant across a large codebase.
 **Trained adapter** — A small set of additional weights trained on top of a
 frozen base model so that a tuned behaviour can be attached, versioned, and
 detached without retraining, and so the base model stays replaceable
-underneath it. Distinct from a **model adapter** (Chapter 10, Chapter 17),
+underneath it. Distinct from a **model adapter** (Chapter 11, Chapter 21),
 which is the per-provider translation layer that lets one calling convention
 reach many models — a trained adapter changes what a model has learned; a
 model adapter changes how it is called.
 
-**Context as code** — Treating agent context — skills, rules, instructions, policies, repository guidance — like source: versioned, reviewed, tested, evaluated, owned, distributed, deprecated, drift-detected, measured, and rolled back (Chapter 16).
+**Context as code** 🔑 — Treating agent context — skills, rules, instructions, policies, repository guidance — like source: versioned, reviewed, tested, evaluated, owned, distributed, deprecated, drift-detected, measured, and rolled back (Chapter 20).
 
-**Context lifecycle management** — Create → review → version → distribute → execute → observe → evaluate → improve → deprecate, applied to every unit of context; the Context CDL is the enforced implementation (Chapter 16).
+**Context lifecycle management** — Create → review → version → distribute → execute → observe → evaluate → improve → deprecate, applied to every unit of context; the Context CDL is the enforced implementation (Chapter 20).
 
-**Context inventory** — A continuously maintained inventory of skills, instruction files, prompts, policies, MCP configurations, agent definitions, repository guidance, standards, and plugin configurations, used to detect duplicate, stale, conflicting, missing, unowned, outdated, or unsafe context (Chapter 16).
+**Context inventory** — A continuously maintained inventory of skills, instruction files, prompts, policies, MCP configurations, agent definitions, repository guidance, standards, and plugin configurations, used to detect duplicate, stale, conflicting, missing, unowned, outdated, or unsafe context (Chapter 20).
 
-**Context drift** — Divergence between documented agent instructions and the actual software, architecture, standards, or environment — a skill still says Framework X after the organisation moved to Y (Chapter 16).
+**Context drift** — Divergence between documented agent instructions and the actual software, architecture, standards, or environment — a skill still says Framework X after the organisation moved to Y (Chapter 20).
 
-**Context deduplication** — Discover → compare → consolidate → establish a source of truth → distribute, so four competing security-review skills become one definition of correct (Chapter 16).
+**Context deduplication** — Discover → compare → consolidate → establish a source of truth → distribute, so four competing security-review skills become one definition of correct (Chapter 20).
 
-**Context utility** — The measured contribution of a context source to agent performance: the task with the source versus without, in quality, success, latency, and cost. Sources that do not earn their place are pruned (Chapter 16).
+**Context utility** — The measured contribution of a context source to agent performance: the task with the source versus without, in quality, success, latency, and cost. Sources that do not earn their place are pruned (Chapter 20).
 
-**Context pruning** — Removing stale, redundant, low-value, or misleading knowledge from what agents can reach. More knowledge is more noise unless it is curated (Chapter 16).
+**Context pruning** — Removing stale, redundant, low-value, or misleading knowledge from what agents can reach. More knowledge is more noise unless it is curated (Chapter 20).
 
-**Compensatory context** — Context created to work around a temporary model weakness. Expected to be short-lived and re-evaluated as models improve; see harness debt (Chapters 13, 16).
+**Compensatory context** — Context created to work around a temporary model weakness. Expected to be short-lived and re-evaluated as models improve; see harness debt (Chapters 16, 20).
 
-**Institutional context** — Durable organisational knowledge — architecture, policies, standards, terminology, security requirements, workflows, product and design principles, conventions — that no model will inherently know: how this organisation builds software (Chapter 16).
+**Institutional context** — Durable organisational knowledge — architecture, policies, standards, terminology, security requirements, workflows, product and design principles, conventions — that no model will inherently know: how this organisation builds software (Chapter 20).
 
-**Company brain** — A governed enterprise knowledge layer from which agents retrieve organisational context: code, history, PRs, tickets, chat, documents, decisions, runbooks, incidents, requirements, policies, standards. Its value is measured by context utility, not by breadth (Chapter 16).
+**Company brain** — A governed enterprise knowledge layer from which agents retrieve organisational context: code, history, PRs, tickets, chat, documents, decisions, runbooks, incidents, requirements, policies, standards. Its value is measured by context utility, not by breadth (Chapter 20).
 
-**Context routing** — Deciding which context a task receives — skills, policies, architecture, repository context, history — from its classification. A routing system distinct from model routing (Chapter 16).
+**Context routing** — Deciding which context a task receives — skills, policies, architecture, repository context, history — from its classification. A routing system distinct from model routing (Chapter 20).
 
-**Context shift-left** — Giving the producing agent the same standard the reviewer would apply, so work is generated correctly and review becomes defence in depth rather than the primary teaching mechanism (Chapters 16, 32).
+**Context shift-left** — Giving the producing agent the same standard the reviewer would apply, so work is generated correctly and review becomes defence in depth rather than the primary teaching mechanism (Chapters 20, 39).
 
-**Context firewall (context isolation)** — An intentional information boundary between agents in different roles — creator and verifier, planner and executor, executor and security reviewer, customer data and general worker — to preserve independence, reduce bias, and enforce least privilege (Chapter 16).
+**Context firewall (context isolation)** — An intentional information boundary between agents in different roles — creator and verifier, planner and executor, executor and security reviewer, customer data and general worker — to preserve independence, reduce bias, and enforce least privilege (Chapter 20).
 
-**Fresh-context verification** — Verification run from a clean context, given only the goal, the artifact, and the verification contract, so the verifier reconstructs correctness instead of inheriting the producer's assumptions (Chapters 16, 21).
+**Fresh-context verification** — Verification run from a clean context, given only the goal, the artifact, and the verification contract, so the verifier reconstructs correctness instead of inheriting the producer's assumptions (Chapters 20, 27).
 
-**Structured external state** — Persistent information outside model weights and transient context — preferences, skills, policies, plans, repository profiles, decisions, outcomes, factory state — named by kind rather than lumped as memory (Chapter 16).
+**Structured external state** — Persistent information outside model weights and transient context — preferences, skills, policies, plans, repository profiles, decisions, outcomes, factory state — named by kind rather than lumped as memory (Chapter 20).
 
-**Memory taxonomy** — Working (current execution), episodic (past executions and outcomes), semantic (facts and organisational knowledge), procedural (skills and workflows), preference (user and team choices), and durable factory state (plans, checkpoints, attempts, approvals, artifacts) (Chapter 16).
+**Memory taxonomy** — Working (current execution), episodic (past executions and outcomes), semantic (facts and organisational knowledge), procedural (skills and workflows), preference (user and team choices), and durable factory state (plans, checkpoints, attempts, approvals, artifacts) (Chapter 20).
 
-**Institutional knowledge representation** — A maintained representation of architecture, history, decisions, and conventions optimised for its reader. The human representation and the agent representation are different artifacts (Chapter 16).
+**Institutional knowledge representation** — A maintained representation of architecture, history, decisions, and conventions optimised for its reader. The human representation and the agent representation are different artifacts (Chapter 19).
 
-**Canonical knowledge structure** — An opinionated representation of a domain's knowledge built around its recurring questions — for software: architecture, components, interfaces, dependencies, ownership, history, decisions, conventions (Chapter 16).
+**Canonical knowledge structure** — An opinionated representation of a domain's knowledge built around its recurring questions — for software: architecture, components, interfaces, dependencies, ownership, history, decisions, conventions (Chapter 19).
 
-**Harness profile** — A model-specific configuration of how the common harness works with a model family: tool schemas, edit mechanism, prompt structure, context strategy, compaction, reasoning configuration, subagent behaviour, retries, escalation. Canonical agent contract → harness profile → model (Chapter 13).
+**Harness profile** — A model-specific configuration of how the common harness works with a model family: tool schemas, edit mechanism, prompt structure, context strategy, compaction, reasoning configuration, subagent behaviour, retries, escalation. Canonical agent contract → harness profile → model (Chapter 16).
 
-**Harness–model co-design** — Optimising the harness around each model's behaviour, tool-use patterns, and reasoning style while keeping the platform contracts common. Model-agnostic is not model-uniform (Chapter 13).
+**Harness–model co-design** — Optimising the harness around each model's behaviour, tool-use patterns, and reasoning style while keeping the platform contracts common. Model-agnostic is not model-uniform (Chapter 16).
 
-**Performance equation** — Observed agent performance is a property of model × harness × workflow × context × tools × feedback × verification. Never attribute a success or failure to the model alone (Chapter 13).
+**Performance equation** — Observed agent performance is a property of model × harness × workflow × context × tools × feedback × verification. Never attribute a success or failure to the model alone (Chapter 16).
 
-**Harness as intelligence multiplier** — A harness does not merely invoke a model; it multiplies the model's usefulness by supplying workflow, context, tools, feedback, verification, and adaptation. Model capability ≠ agent capability ≠ factory capability (Chapter 13).
+**Harness as intelligence multiplier** — A harness does not merely invoke a model; it multiplies the model's usefulness by supplying workflow, context, tools, feedback, verification, and adaptation. Model capability ≠ agent capability ≠ factory capability (Chapter 16).
 
-**Universal meta-harness** — An execution system that constructs or selects the workflow needed for a defined outcome — given goal, constraints, and a verification contract it chooses decomposition, workers, skills, strategy, and verification — instead of running a predetermined sequence (Chapters 11, 13).
+**Universal meta-harness** — An execution system that constructs or selects the workflow needed for a defined outcome — given goal, constraints, and a verification contract it chooses decomposition, workers, skills, strategy, and verification — instead of running a predetermined sequence (Chapters 13, 15).
 
-**Outcome-driven execution** — Execution governed by verifiable desired outcomes rather than prescribed steps: produce X subject to Y and prove conditions A–F before completion (Chapter 11).
+**Outcome-driven execution** — Execution governed by verifiable desired outcomes rather than prescribed steps: produce X subject to Y and prove conditions A–F before completion (Chapter 13).
 
-**Agent effectiveness** — The measured ability of an agent configuration to reach accepted outcomes across the organisation's real workload distribution at acceptable quality, latency, and cost — not its rank on a public benchmark (Chapter 17).
+**Agent effectiveness** — The measured ability of an agent configuration to reach accepted outcomes across the organisation's real workload distribution at acceptable quality, latency, and cost — not its rank on a public benchmark (Chapter 22).
 
-**Workload distribution** — The actual distribution of task types, complexity, risk, domains, and execution patterns an organisation's agents encounter; the target routing and evaluation optimise against (Chapter 17).
+**Workload distribution** — The actual distribution of task types, complexity, risk, domains, and execution patterns an organisation's agents encounter; the target routing and evaluation optimise against (Chapter 22).
 
-**Dynamic intelligence escalation** — Upgrading to a more capable model during execution when evidence shows the current capability is unlikely to succeed efficiently; its inverse, intelligence downgrading, hands mechanical remainders to a cheaper model or a deterministic tool. Together, adaptive routing during execution (Chapter 17).
+**Dynamic intelligence escalation** — Upgrading to a more capable model during execution when evidence shows the current capability is unlikely to succeed efficiently; its inverse, intelligence downgrading, hands mechanical remainders to a cheaper model or a deterministic tool. Together, adaptive routing during execution (Chapter 22).
 
-**Cache-aware routing** — Including cache value, switching cost, compaction cost, expected remaining work, and success probability in the routing decision, because the cheapest model is not cheapest if switching destroys context state (Chapter 17).
+**Cache-aware routing** — Including cache value, switching cost, compaction cost, expected remaining work, and success probability in the routing decision, because the cheapest model is not cheapest if switching destroys context state (Chapter 22).
 
-**Intelligence budget** — The amount and class of reasoning allocated to an outcome by its complexity, risk, and value: a rename gets a cheap model, a feature a specialised one, a cross-system architecture change a frontier model, a security-critical migration a frontier model plus multiple validators (Chapter 17).
+**Intelligence budget** — The amount and class of reasoning allocated to an outcome by its complexity, risk, and value: a rename gets a cheap model, a feature a specialised one, a cross-system architecture change a frontier model, a security-critical migration a frontier model plus multiple validators (Chapter 22).
 
-**Parallel candidate execution** — Running independent agents on the same problem and selecting, combining, or verifying their results. Worth it only when outcome value exceeds the added inference cost; correlated candidates add cost without independence (Chapter 17).
+**Parallel candidate execution** — Running independent agents on the same problem and selecting, combining, or verifying their results. Worth it only when outcome value exceeds the added inference cost; correlated candidates add cost without independence (Chapter 22).
 
-**Agent affordance** — An interface or property deliberately built to make a capability easier and safer for agents: a CLI or API instead of a UI, a structured query instead of raw logs, an environment manifest, structured errors (Chapter 20).
+**Agent affordance** — An interface or property deliberately built to make a capability easier and safer for agents: a CLI or API instead of a UI, a structured query instead of raw logs, an environment manifest, structured errors (Chapter 26).
 
 ## Governed delivery records
 
@@ -862,7 +864,7 @@ sequence number. An Attempt contains many Runs; a Run never needs approval and
 never decides the Attempt's outcome. "The run finished" is not "the Attempt
 completed".
 
-**Evidence** — An attributable receipt or artifact that supports or refutes an
+**Evidence** 🔑 — An attributable receipt or artifact that supports or refutes an
 acceptance criterion. Useful evidence identifies the verifier, method,
 environment, source commit, artifact, time, and result.
 
@@ -891,7 +893,7 @@ UNKNOWN, MISSING, PENDING, FAILED, or STALE is success.
 
 ## Governance concepts
 
-**Policy** — A versioned rule that determines whether an action is permitted,
+**Policy** 🔑 — A versioned rule that determines whether an action is permitted,
 blocked, or requires approval based on identity, scope, risk, evidence, and
 environment.
 
@@ -915,7 +917,7 @@ state, while routine activity remains available for inspection. Its opposite
 is an activity feed, which measures messages, tokens, or generated code and
 trains the operator to stop looking.
 
-**Independent validation** — Evaluation performed through a separate execution
+**Independent validation** 🔑 — Evaluation performed through a separate execution
 and evidence path from the implementation that produced the change. Different
 people are useful but not sufficient; technical separation is the core control.
 
@@ -996,7 +998,7 @@ and flags; it never becomes the authority that accepts, promotes, or waives.
 and actions an agent may touch, resolved before execution and enforced at the
 gateway. Anything outside it does not exist for the agent.
 
-**Human-in-the-loop** — An operating mode in which a person performs a required
+**Human-in-the-loop** 🔑 — An operating mode in which a person performs a required
 decision, approval, correction, or risk judgment inside the workflow. Human
 presence is useful only when the decision and evidence are explicit.
 
@@ -1049,7 +1051,7 @@ touched, size, blast radius — from the diff and the codebase index, so that
 the risk tier, the reviewers, and the budget are selected by what the change
 is rather than applied uniformly.
 
-**Hierarchical context** — Review or execution context assembled in layers —
+**Hierarchical context** 🔑 — Review or execution context assembled in layers —
 organisation-wide standards, product-line conventions, repository-specific
 rules and history — with the more specific layer overriding the general one
 and every layer versioned.
@@ -1091,7 +1093,7 @@ compared with the current baseline on the frozen evaluation set, may not fall
 below declared thresholds on any protected measure, and no aggregate
 improvement excuses a failed hard gate.
 
-**Risk-based autonomy** — Agent authority and required oversight set by the risk of the proposed action: documentation auto-merges; tests auto-merge after verification; internal tooling gets automated review with sampled human review; customer-facing production needs human approval; auth, security, and data need specialised verification and mandatory approval (Chapter 7).
+**Risk-based autonomy** 🔑 — Agent authority and required oversight set by the risk of the proposed action: documentation auto-merges; tests auto-merge after verification; internal tooling gets automated review with sampled human review; customer-facing production needs human approval; auth, security, and data need specialised verification and mandatory approval (Chapter 7).
 
 **Change risk classification** — Evaluating a proposed change — files, dependencies, component criticality, security sensitivity, blast radius, size, test coverage, agent confidence, historical failure rate — to assign a risk tier that drives verification depth, reviewer, approval, deployment policy, and model spend (Chapter 7).
 
@@ -1099,13 +1101,13 @@ improvement excuses a failed hard gate.
 
 **Cost-bounded autonomy** — Autonomy permitted while execution stays inside quality, risk, and economic boundaries — complete the migration autonomously up to a budget, then escalate. Risk boundary, verification boundary, economic boundary (Chapter 7).
 
-**Review bottleneck** — The constraint that appears when agent production exceeds human capacity to inspect and approve it. The bottleneck migrates from writing code to reviewing it to defining correctness, verification, and exceptions (Chapter 32).
+**Review bottleneck** — The constraint that appears when agent production exceeds human capacity to inspect and approve it. The bottleneck migrates from writing code to reviewing it to defining correctness, verification, and exceptions (Chapter 39).
 
-**Review compression** — Removing low-value review work before an artifact reaches a person: inner-loop checks, deterministic verification, specialised verifiers, agent reviewers, risk classification, then human judgment only where necessary (Chapter 32).
+**Review compression** — Removing low-value review work before an artifact reaches a person: inner-loop checks, deterministic verification, specialised verifiers, agent reviewers, risk classification, then human judgment only where necessary (Chapter 39).
 
-**Specialised review lens** — A targeted review capability activated by the characteristics of a change — frontend gets accessibility, design system, and UI architecture; backend gets API, reliability, data, performance; authentication gets security and identity; infrastructure gets security, cost, reliability (Chapter 32).
+**Specialised review lens** — A targeted review capability activated by the characteristics of a change — frontend gets accessibility, design system, and UI architecture; backend gets API, reliability, data, performance; authentication gets security and identity; infrastructure gets security, cost, reliability (Chapter 39).
 
-**Agent-legible workflow** — A workflow whose intent, execution, feedback, decisions, and outcomes exist as structured, retrievable artifacts: ticket is intent, PR is proposed change, comments are feedback, CI is verification, merge is accepted outcome, incident is delayed outcome (Chapter 20).
+**Agent-legible workflow** — A workflow whose intent, execution, feedback, decisions, and outcomes exist as structured, retrievable artifacts: ticket is intent, PR is proposed change, comments are feedback, CI is verification, merge is accepted outcome, incident is delayed outcome (Chapter 26).
 
 ## Quality and assurance concepts
 
@@ -1131,7 +1133,7 @@ or materially unsafe trajectory.
 contract against an exact candidate and manifest. A rerun creates a new record;
 it does not replace the history of an errored or failing run.
 
-**Evals** — Shorthand for structured evaluation: representative tasks, graders,
+**Evals** 🔑 — Shorthand for structured evaluation: representative tasks, graders,
 and comparisons that measure whether an agent, skill, or model change actually
 works, with and without the change. See Evaluation Engineering, Eval Task,
 Evaluation Run, and Context eval.
@@ -1453,45 +1455,45 @@ head: CI status, review lenses, mutation-testing results where required, and
 the policy decision for the risk band. It is a gate, not a merge; a human
 still merges in a first version.
 
-**Verification contract** — A structured specification of the claims that must be demonstrated before work counts as complete and how each will be validated: login works — browser test authenticates; no accessibility regression — verifier passes; latency under threshold — benchmark. Stronger than acceptance criteria alone (Chapter 21).
+**Verification contract** 🔑 — A structured specification of the claims that must be demonstrated before work counts as complete and how each will be validated: login works — browser test authenticates; no accessibility regression — verifier passes; latency under threshold — benchmark. Stronger than acceptance criteria alone (Chapter 27).
 
-**Verifiable outcome** — An outcome whose correctness can be established by deterministic checks or sufficiently reliable independent evaluation. The more completely an outcome can be specified and verified, the more safely its execution can be delegated (Chapter 21).
+**Verifiable outcome** — An outcome whose correctness can be established by deterministic checks or sufficiently reliable independent evaluation. The more completely an outcome can be specified and verified, the more safely its execution can be delegated (Chapter 27).
 
-**Verification completeness** — The proportion of important outcome claims for which the factory has an independent, reliable verifier. Higher completeness → higher trust → higher permissible autonomy → higher automation (Chapter 21).
+**Verification completeness** — The proportion of important outcome claims for which the factory has an independent, reliable verifier. Higher completeness → higher trust → higher permissible autonomy → higher automation (Chapter 27).
 
-**Verification-driven autonomy** — Autonomy increases as verification confidence increases. The question is not how autonomous agents should be but what can be verified well enough to automate safely (Chapters 10, 21).
+**Verification-driven autonomy** — Autonomy increases as verification confidence increases. The question is not how autonomous agents should be but what can be verified well enough to automate safely (Chapters 11, 27).
 
-**Validate the validator** — Evaluating the mechanisms that judge agent work, because a bad verifier with a good agent yields false failures and with a bad agent yields false successes. Producer → verifier → verifier evaluation → policy or human authority (Chapter 21).
+**Validate the validator** — Evaluating the mechanisms that judge agent work, because a bad verifier with a good agent yields false failures and with a bad agent yields false successes. Producer → verifier → verifier evaluation → policy or human authority (Chapter 27).
 
-**Orchestrator → worker → validator** — The canonical execution pattern: an orchestrator decomposes and coordinates, workers execute bounded units, a validator independently checks each; pass continues, fail reworks; consolidation then final verification (Chapter 21).
+**Orchestrator → worker → validator** — The canonical execution pattern: an orchestrator decomposes and coordinates, workers execute bounded units, a validator independently checks each; pass continues, fail reworks; consolidation then final verification (Chapter 27).
 
-**Milestone validation** — Verifying intermediate outcomes at explicit checkpoints before later execution continues — task, verify, task, verify, milestone, verify — so errors cannot compound across fifty tasks to one final surprise (Chapter 21).
+**Milestone validation** — Verifying intermediate outcomes at explicit checkpoints before later execution continues — task, verify, task, verify, milestone, verify — so errors cannot compound across fifty tasks to one final surprise (Chapter 27).
 
-**Test–eval continuum** — Unit test → integration test → behavioural test → deterministic verifier → rubric eval → LLM judge → production outcome. Use the most deterministic mechanism available for the claim; never an LLM judge to check whether the compiler succeeded (Chapter 23).
+**Test–eval continuum** — Unit test → integration test → behavioural test → deterministic verifier → rubric eval → LLM judge → production outcome. Use the most deterministic mechanism available for the claim; never an LLM judge to check whether the compiler succeeded (Chapter 29).
 
-**Micro-eval** — A small, focused evaluation — often ten cases — that detects one behavioural or system regression: caching, compaction, tool selection, retrieval, edit behaviour, retry handling. Between a test and an eval (Chapter 23).
+**Micro-eval** — A small, focused evaluation — often ten cases — that detects one behavioural or system regression: caching, compaction, tool selection, retrieval, edit behaviour, retry handling. Between a test and an eval (Chapter 29).
 
-**With/without evaluation** — Evaluating every factory capability against its absence — skill, retrieval, repository memory, verifier, expensive model, subagent — to prevent cargo-cult architecture (Chapter 23).
+**With/without evaluation** — Evaluating every factory capability against its absence — skill, retrieval, repository memory, verifier, expensive model, subagent — to prevent cargo-cult architecture (Chapter 30).
 
-**Marginal capability value** — The measurable improvement in accepted outcomes attributable to a component relative to its cost and complexity: change in quality, success, and human effort over change in cost, latency, and complexity (Chapter 23).
+**Marginal capability value** — The measurable improvement in accepted outcomes attributable to a component relative to its cost and complexity: change in quality, success, and human effort over change in cost, latency, and complexity (Chapter 30).
 
-**Factory simplicity principle** — Add no agentic complexity unless evals show it improves the outcome. More agents, context, models, or verification are not automatically better; every component earns its place (Chapter 23).
+**Factory simplicity principle** — Add no agentic complexity unless evals show it improves the outcome. More agents, context, models, or verification are not automatically better; every component earns its place (Chapter 30).
 
-**Eval-driven factory engineering** — Continuous empirical evaluation deciding which models, workflows, skills, tools, context strategies, verifiers, and harness components are retained, modified, promoted, or removed: hypothesis → change → eval → compare → promote or reject (Chapters 23, 33).
+**Eval-driven factory engineering** — Continuous empirical evaluation deciding which models, workflows, skills, tools, context strategies, verifiers, and harness components are retained, modified, promoted, or removed: hypothesis → change → eval → compare → promote or reject (Chapters 30, 41).
 
-**Harness effectiveness evaluation** — Comparing model × harness combinations on task success, quality, human intervention, latency, tokens, cost, and verification success, to tell a model problem from a harness problem from a workflow problem (Chapters 13, 23).
+**Harness effectiveness evaluation** — Comparing model × harness combinations on task success, quality, human intervention, latency, tokens, cost, and verification success, to tell a model problem from a harness problem from a workflow problem (Chapters 16, 30).
 
-**Benchmark half-life** — The period a benchmark stays representative and decision-useful before saturation, contamination, workload change, or optimisation against it erodes its value. Evals need lifecycle management (Chapter 23).
+**Benchmark half-life** — The period a benchmark stays representative and decision-useful before saturation, contamination, workload change, or optimisation against it erodes its value. Evals need lifecycle management (Chapter 30).
 
-**Eval drift** — Divergence between what an evaluation measures and what the organisation now considers real success. Eval → monitor → compare with production outcomes → refresh → retire (Chapter 23).
+**Eval drift** — Divergence between what an evaluation measures and what the organisation now considers real success. Eval → monitor → compare with production outcomes → refresh → retire (Chapter 30).
 
-**Benchmark overfitting** — Optimising agents or workflows for benchmark performance in ways that do not improve, and may degrade, production experience. The optimisation target is production outcomes, not a leaderboard (Chapter 23).
+**Benchmark overfitting** — Optimising agents or workflows for benchmark performance in ways that do not improve, and may degrade, production experience. The optimisation target is production outcomes, not a leaderboard (Chapter 30).
 
-**Eval registry** — A governed inventory of evaluations — name, purpose, workload class, dataset, rubric, owner, baseline, current score, model and harness compatibility, last validated, production correlation, review date — so evals are first-class factory assets (Chapters 10, 23).
+**Eval registry** — A governed inventory of evaluations — name, purpose, workload class, dataset, rubric, owner, baseline, current score, model and harness compatibility, last validated, production correlation, review date — so evals are first-class factory assets (Chapters 11, 30).
 
-**Scorer** — A function from a set of agent runs (traces plus the human interactions around them) to a grade against a rubric, assigned by a person, by code, or by a judge model; run on a sampling strategy and cadence because scoring costs money (Chapters 23, 33).
+**Scorer** — A function from a set of agent runs (traces plus the human interactions around them) to a grade against a rubric, assigned by a person, by code, or by a judge model; run on a sampling strategy and cadence because scoring costs money (Chapters 30, 41).
 
-**Benchmark matrix** — A set of representative reference tasks run in parallel under several factory configurations and graded by the same scorers, yielding a matrix of results from which a change to the factory definition is derived (Chapters 23, 33).
+**Benchmark matrix** — A set of representative reference tasks run in parallel under several factory configurations and graded by the same scorers, yielding a matrix of results from which a change to the factory definition is derived (Chapters 30, 41).
 
 ## Runtime concepts
 
@@ -1797,7 +1799,7 @@ review path.
 environment, compute, tool, storage, network, and human-review capacity for
 expected demand, growth, failure, and recovery reserves.
 
-**Cost per accepted outcome** — Total model, compute, environment, tool,
+**Cost per accepted outcome** 🔑 — Total model, compute, environment, tool,
 storage, retry, validation, and human-attention cost divided by independently
 accepted outcomes. It is more decision-useful than token price alone.
 
@@ -1884,7 +1886,7 @@ of designing it; the harness owns it.
 graph, what runs when evaluation says the goal is not complete: observe,
 diagnose, refine or replan, retry, under termination criteria (maximum
 iterations, time, token, and cost budgets) set by the harness rather than
-the model (Chapter 13). An iteration cap is containment, not a substitute
+the model (Chapter 15). An iteration cap is containment, not a substitute
 for progress detection. This is the mechanism the wider discipline of the
 same name — **loop engineering**, below — is engineering.
 
@@ -1941,31 +1943,31 @@ be counted, deduplicated, or measured.
 at promotion time, with the completion record and forensic bundle in hand.
 The control tower routes on owners; an incident without one is telemetry.
 
-**Loop engineering** — The discipline of designing agent workflows that grow more reliable, efficient, and capable through repeated execution and measured feedback: trigger design, context assembly, execution, state, logging, verification, evaluation, outcome capture, failure classification, refinement, regression testing, controlled promotion. A loop acts, observes, reasons, and repeats to a termination condition; a chain runs once (Chapter 18).
+**Loop engineering** — The discipline of designing agent workflows that grow more reliable, efficient, and capable through repeated execution and measured feedback: trigger design, context assembly, execution, state, logging, verification, evaluation, outcome capture, failure classification, refinement, regression testing, controlled promotion. A loop acts, observes, reasons, and repeats to a termination condition; a chain runs once (Chapter 24).
 
-**Inner loop** — Fast, inexpensive feedback available during execution — tests, types, compiler, linters, static analysis, architecture rules, policy checks, local verifiers — that lets the producing agent detect and correct its own mistakes before handoff. Its objective is autonomy (Chapter 13).
+**Inner loop** 🔑 — Fast, inexpensive feedback available during execution — tests, types, compiler, linters, static analysis, architecture rules, policy checks, local verifiers — that lets the producing agent detect and correct its own mistakes before handoff. Its objective is autonomy (Chapter 16).
 
-**Outer loop** — Deeper, independent verification performed after or around the producing agent's work — review agents, security review, integration and end-to-end tests, agentic QA, browser verification, acceptance validation, risk assessment — to decide whether the result is trustworthy. Its objective is automation (Chapter 13).
+**Outer loop** 🔑 — Deeper, independent verification performed after or around the producing agent's work — review agents, security review, integration and end-to-end tests, agentic QA, browser verification, acceptance validation, risk assessment — to decide whether the result is trustworthy. Its objective is automation (Chapter 16).
 
-**Meta loop** — The governed loop that observes executions, failures, reviews, corrections, and outcomes and proposes improvements to the factory itself — new tests, lint rules, skills, context, verifiers, routing, pruning. Its objective is learning, and its defining constraint is that it may not self-authorize, mutate governance, bypass verification, or become a token sink: signals are observed, clustered, turned into candidates, reviewed by a human, trialled as experiments, and only then promoted. Also written meta-loop (Chapters 13, 33).
+**Meta loop** 🔑 — The governed loop that observes executions, failures, reviews, corrections, and outcomes and proposes improvements to the factory itself — new tests, lint rules, skills, context, verifiers, routing, pruning. Its objective is learning, and its defining constraint is that it may not self-authorize, mutate governance, bypass verification, or become a token sink: signals are observed, clustered, turned into candidates, reviewed by a human, trialled as experiments, and only then promoted. Also written meta-loop (Chapters 16, 41).
 
-**Four loop layers** — Feedback loops (raw signals: tests, linters, scans), verification loops (objective evidence before trusting results), memory loops (retained context, failures, and patterns), and optimisation loops (updating the factory's own prompts, triggers, and constraints from metrics) (Chapter 33).
+**Four loop layers** — Feedback loops (raw signals: tests, linters, scans), verification loops (objective evidence before trusting results), memory loops (retained context, failures, and patterns), and optimisation loops (updating the factory's own prompts, triggers, and constraints from metrics) (Chapter 40).
 
-**Harness debt** — Accumulated prompts, skills, rules, checks, adapters, and orchestration that once compensated for agent limitations and no longer justify their complexity or cost as models improve (Chapter 13).
+**Harness debt** — Accumulated prompts, skills, rules, checks, adapters, and orchestration that once compensated for agent limitations and no longer justify their complexity or cost as models improve (Chapter 16).
 
-**Harness pruning** — Systematically removing obsolete instructions, checks, workarounds, and orchestration: component → evaluate with → evaluate without → measure the delta → retain, simplify, or remove (Chapter 13).
+**Harness pruning** — Systematically removing obsolete instructions, checks, workarounds, and orchestration: component → evaluate with → evaluate without → measure the delta → retain, simplify, or remove (Chapter 16).
 
-**Agent readiness** — The degree to which a repository, system, or environment can be safely and effectively operated by agents, scored across testability, CLI accessibility, build reproducibility, documentation, context quality, sandboxability, credential access, observability, deterministic validation, architecture clarity, environment reproducibility, and dependency health — the Agent Readiness Score (Chapter 20).
+**Agent readiness** 🔑 — The degree to which a repository, system, or environment can be safely and effectively operated by agents, scored across testability, CLI accessibility, build reproducibility, documentation, context quality, sandboxability, credential access, observability, deterministic validation, architecture clarity, environment reproducibility, and dependency health — the Agent Readiness Score (Chapter 26).
 
-**Deterministic feedback surface** — The set of machine-readable checks and signals — compiler, types, tests, coverage, linters, architecture checks, security scans, performance thresholds, structured logs, metrics, build results, schema validation — that let an agent judge its own progress without human judgment. Its coverage is feedback surface density (Chapter 20).
+**Deterministic feedback surface** — The set of machine-readable checks and signals — compiler, types, tests, coverage, linters, architecture checks, security scans, performance thresholds, structured logs, metrics, build results, schema validation — that let an agent judge its own progress without human judgment. Its coverage is feedback surface density (Chapter 26).
 
-**Architecture linting** — Machine-enforceable checks that turn architectural intent — dependency direction, layer boundaries, ownership, API contracts, naming, security boundaries, observability requirements, forbidden dependencies, data-access rules — into feedback agents consume while implementing. Architecture becomes an executable constraint (Chapter 20).
+**Architecture linting** — Machine-enforceable checks that turn architectural intent — dependency direction, layer boundaries, ownership, API contracts, naming, security boundaries, observability requirements, forbidden dependencies, data-access rules — into feedback agents consume while implementing. Architecture becomes an executable constraint (Chapter 26).
 
-**Factory-friendly architecture** — Software designed so agents can safely understand, modify, execute, and verify it: strong typing, clear module boundaries, fast tests, deterministic builds, integrated tooling, CLI accessibility, explicit interfaces, reproducible environments, machine-readable errors, strong contracts (Chapter 20).
+**Factory-friendly architecture** — Software designed so agents can safely understand, modify, execute, and verify it: strong typing, clear module boundaries, fast tests, deterministic builds, integrated tooling, CLI accessibility, explicit interfaces, reproducible environments, machine-readable errors, strong contracts (Chapter 26).
 
-**Execution budget** — A policy-defined maximum of tokens, spend, compute, time, tool calls, retries, or model tier that a workflow may consume before it must stop, escalate, or request authorisation; set at task, mission, repository, team, and organisation levels (Chapter 8).
+**Execution budget** — A policy-defined maximum of tokens, spend, compute, time, tool calls, retries, or model tier that a workflow may consume before it must stop, escalate, or request authorisation; set at task, mission, repository, team, and organisation levels (Chapter 9).
 
-**Cost prediction** — Estimating the inference, compute, tool, and verification cost of an outcome before or during execution, so the factory can answer what an outcome will probably cost the way cloud infrastructure does (Chapter 8).
+**Cost prediction** — Estimating the inference, compute, tool, and verification cost of an outcome before or during execution, so the factory can answer what an outcome will probably cost the way cloud infrastructure does (Chapter 9).
 
 ## Platform experience and agentic security
 
@@ -2135,7 +2137,7 @@ and trend analysis. It cannot override policy or grant authority directly.
 **Trust band** — An operator-facing interpretation of the Trust Score: Very Low,
 Low, Moderate, High, or Trusted.
 
-**Promotion** — A human-approved increase in eligible autonomy after sustained
+**Promotion** 🔑 — A human-approved increase in eligible autonomy after sustained
 evidence. A model upgrade or isolated success cannot promote itself.
 
 **Demotion** — A policy-driven reduction in eligible autonomy after declining
@@ -2220,7 +2222,7 @@ Board the eight recipes (Scout, Plan, Build, Quality, Build+Test,
 Build+Review, Plan+Build+Test, Full SDLC) are rule-based recommendations, and
 a recipe never lowers active policy.
 
-**Model routing** — The policy-governed selection of which model serves a given
+**Model routing** 🔑 — The policy-governed selection of which model serves a given
 step, based on declared eligibility, capability, cost, and risk. A routing
 decision is a configuration outcome; it does not widen the authority of the
 work being routed.
@@ -2341,7 +2343,7 @@ Retrieval/Context → Prompt → Skill → Routing → Fine-tuning → Preferenc
 optimisation and training. Climb one rung at a time with evidence that the
 rung below was insufficient; never jump straight to training.
 
-**Fine-tuning** — Updating a model's weights, or an adapter on top of a frozen
+**Fine-tuning** 🔑 — Updating a model's weights, or an adapter on top of a frozen
 base, on a governed dataset so that a stable, well-specified behaviour no
 longer has to be re-taught in every context window. Domain-level tuning (a
 stable vocabulary or convention) is the most defensible use; behavioural
@@ -2354,7 +2356,7 @@ and rollback.
 examples of correct output, either directly or through a reward model. The
 top rung of the adaptation ladder and the least attributable.
 
-**RLHF** — Reinforcement learning from human feedback: the best-known family
+**RLHF** 🔑 — Reinforcement learning from human feedback: the best-known family
 of preference-optimisation methods, in which a reward model trained on human
 preference data guides updates to the policy model's weights. It consumes
 exactly the acceptance, edit, override, and dismissal signals the factory
@@ -2389,21 +2391,21 @@ below which it is routed to a person as a question, and below which it is
 dropped and counted. Dropped findings are kept so a later incident can show
 the threshold was wrong.
 
-**Maintenance loop** — A recurring agent workflow that continuously maintains or improves software health without waiting for backlog prioritisation: dependency upgrades, flaky-test repair, coverage, documentation, accessibility, security remediation, architecture conformance, dead code, modernisation, debt (Chapter 33).
+**Maintenance loop** — A recurring agent workflow that continuously maintains or improves software health without waiting for backlog prioritisation: dependency upgrades, flaky-test repair, coverage, documentation, accessibility, security remediation, architecture conformance, dead code, modernisation, debt (Chapter 41).
 
-**Maintenance agent** — A specialised agent responsible for one dimension of software or factory health — test health, dependencies, documentation, architecture conformance, context drift, cost, readiness, security hygiene. Humans own domains; agents maintain dimensions (Chapter 33).
+**Maintenance agent** — A specialised agent responsible for one dimension of software or factory health — test health, dependencies, documentation, architecture conformance, context drift, cost, readiness, security hygiene. Humans own domains; agents maintain dimensions (Chapter 41).
 
-**Meta-loops that observe loops** — Loops whose purpose is to observe, evaluate, diagnose, or improve other loops: failure analyser, cost optimiser, context-drift detector, skill optimiser, verifier-quality monitor, routing optimiser, factory-health monitor (Chapter 33).
+**Meta-loops that observe loops** — Loops whose purpose is to observe, evaluate, diagnose, or improve other loops: failure analyser, cost optimiser, context-drift detector, skill optimiser, verifier-quality monitor, routing optimiser, factory-health monitor (Chapter 41).
 
-**Automation discovery** — Agents analysing issues, PRs, comments, logs, CI failures, and repeated commands to find repeated patterns that become candidate skills and candidate loops — the factory proposing its own expansion (Chapter 33).
+**Automation discovery** — Agents analysing issues, PRs, comments, logs, CI failures, and repeated commands to find repeated patterns that become candidate skills and candidate loops — the factory proposing its own expansion (Chapter 41).
 
-**Self-improvement levels** — Observe → diagnose → recommend → propose (a PR to a skill, context, test, or harness) → verify (against the regression suite) → promote (after policy-defined approval). Autonomous proposal is never autonomous promotion (Chapter 33).
+**Self-improvement levels** — Observe → diagnose → recommend → propose (a PR to a skill, context, test, or harness) → verify (against the regression suite) → promote (after policy-defined approval). Autonomous proposal is never autonomous promotion (Chapter 41).
 
-**Self-improvement agent** — An agent that reads scored runs, finds patterns in failures and successes, and proposes diffs to the factory definition for humans to review and merge (Chapter 33).
+**Self-improvement agent** — An agent that reads scored runs, finds patterns in failures and successes, and proposes diffs to the factory definition for humans to review and merge (Chapter 41).
 
-**Workflow discovery** — Using execution traces and evaluation results to find sequences of reasoning, retrieval, tool use, delegation, and verification that reliably solve a class of task: discover → evaluate → encode → reuse (Chapter 33).
+**Workflow discovery** — Using execution traces and evaluation results to find sequences of reasoning, retrieval, tool use, delegation, and verification that reliably solve a class of task: discover → evaluate → encode → reuse (Chapter 41).
 
-**Factory flywheel** — Intent → Definition of Correct → context → skill → execution → evidence → verifier → evaluation → outcome → learning → improved skills and context, repeated; higher quality earns higher autonomy, more runs, more evidence, better context, better verification, higher quality (Chapter 33).
+**Factory flywheel** — Intent → Definition of Correct → context → skill → execution → evidence → verifier → evaluation → outcome → learning → improved skills and context, repeated; higher quality earns higher autonomy, more runs, more evidence, better context, better verification, higher quality (Chapter 41).
 
 ## Architecture, governance, and operations concepts
 
@@ -2544,15 +2546,15 @@ template, migration script, or document that a bespoke solution becomes when
 it is productised: versioned in the Agent Factory with an owner and an
 evaluation, rather than a branch in one team's repository.
 
-**Harness engineering (discipline)** — Designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops that let agents complete increasingly complex work with less intervention at equal or better quality: engineering the system in which agents engineer the software (Chapter 13).
+**Harness engineering (discipline)** — Designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops that let agents complete increasingly complex work with less intervention at equal or better quality: engineering the system in which agents engineer the software (Chapter 16).
 
-**Factory control plane** — The control plane's explicit responsibility list: loop inventory, scheduling, triggers, permissions, identity, model configuration, context deployment, skill versions, policy, budgets, observability, logs, evaluations, verification, dashboards, promotion. Own this even where runtimes are adopted (Chapter 11).
+**Factory control plane** — The control plane's explicit responsibility list: loop inventory, scheduling, triggers, permissions, identity, model configuration, context deployment, skill versions, policy, budgets, observability, logs, evaluations, verification, dashboards, promotion. Own this even where runtimes are adopted (Chapter 13).
 
-**Context plane** — The cross-cutting system holding institutional knowledge, skills, standards, repository intelligence, history, retrieval, and the context lifecycle (Chapters 2, 16).
+**Context plane** — The cross-cutting system holding institutional knowledge, skills, standards, repository intelligence, history, retrieval, and the context lifecycle (Chapters 2, 20).
 
-**Factory engineering** — Building, measuring, maintaining, and improving the loops that produce software — the work engineers increasingly do instead of the work the loops automate (Chapters 2, 33).
+**Factory engineering** — Building, measuring, maintaining, and improving the loops that produce software — the work engineers increasingly do instead of the work the loops automate (Chapters 2, 41).
 
-**Factory continuum** — AI assistance → skills → automation → loops → connected loops → factory. The share of work performed by loops rises gradually; there is no completion date (Chapter 31).
+**Factory continuum** — AI assistance → skills → automation → loops → connected loops → factory. The share of work performed by loops rises gradually; there is no completion date (Chapter 38).
 
 **Bottleneck migration** — As generation capacity grows the constraint moves: implementation is scarce, then review, then verification, context quality, intent definition, and governance, then factory engineering itself. Automation moves bottlenecks upstream to intent and downstream to verification (Chapters 1, 8).
 
@@ -2621,11 +2623,11 @@ or failure.
 
 **Human leverage ratio** — Accepted, verified outcome per unit of human attention — verified outcomes per human hour, or accepted change volume per touchpoint. The factory should raise human leverage, not token consumption (Chapter 8).
 
-**Cost per verified outcome** — Total factory cost — generation, retrieval, tools, subagents, retries, verification, human effort — to produce an outcome that has independently satisfied its verification contract. The engineering sub-metric beneath cost per accepted outcome (Chapter 8).
+**Cost per verified outcome** — Total factory cost — generation, retrieval, tools, subagents, retries, verification, human effort — to produce an outcome that has independently satisfied its verification contract. The engineering sub-metric beneath cost per accepted outcome (Chapter 9).
 
-**Factory economics** — The full cost of the factory — inference, compute, tooling, sandboxes, storage, verification, retries, human review, failure remediation, opportunity cost — against its full return: velocity, quality, human leverage, backlog elimination, risk reduction, broader participation (Chapter 8).
+**Factory economics** — The full cost of the factory — inference, compute, tooling, sandboxes, storage, verification, retries, human review, failure remediation, opportunity cost — against its full return: velocity, quality, human leverage, backlog elimination, risk reduction, broader participation (Chapter 9).
 
-**Factory ROI** — Value created relative to the full cost of operating and improving the factory: engineering hours avoided, cycle time, defects prevented, debt eliminated, throughput, review burden, reliability, incident remediation, expanded contribution, less context switching (Chapter 8).
+**Factory ROI** — Value created relative to the full cost of operating and improving the factory: engineering hours avoided, cycle time, defects prevented, debt eliminated, throughput, review burden, reliability, incident remediation, expanded contribution, less context switching (Chapter 9).
 
 **Core factory metrics** — PR throughput, average cost per PR, automation percent (human touchpoints per PR), savings over human work, and acceleration of shipped product — inner-loop measures more granular than DORA, available only from a closed-loop factory (Chapter 8).
 

@@ -123,7 +123,7 @@ export function VisualAtlas() {
         kicker="Production AI engineering"
         title="The twelve disciplines around the agent"
         description="Building the agent is one layer. Production reliability comes from the connected engineering disciplines that define inputs, meaning, behavior, proof, recovery, and improvement."
-        href="/docs/03-build/19-the-12-layer-production-ai-agent-stack"
+        href="/docs/03-build/25-the-12-layer-production-ai-agent-stack"
       >
         <ol className="atlas-discipline-grid">
           {productionDisciplines.map(([number, title, description, prevention]) => (
@@ -138,7 +138,7 @@ export function VisualAtlas() {
         kicker="Runtime coordination"
         title="Orchestration connects intelligence to controlled execution"
         description="The orchestrator coordinates models, state, tools, knowledge, policy, reliability, observability, and budgets. Each component owns a narrow decision."
-        href="/docs/03-build/11-control-plane-orchestrator-and-execution-plane"
+        href="/docs/03-build/13-control-plane-orchestrator-and-execution-plane"
         dark
       >
         <div className="atlas-orchestration-frame">
@@ -156,7 +156,7 @@ export function VisualAtlas() {
         kicker="Minimum sufficient autonomy"
         title="Choose the simplest architecture that can safely solve the problem"
         description="This is a selection ladder, not a maturity score. Higher levels add power and new obligations; they are not automatically better."
-        href="/docs/03-build/18-agent-and-loop-engineering"
+        href="/docs/03-build/24-loop-engineering-patterns-and-defaults"
       >
         <ol className="atlas-patterns">
           {patterns.map(([number, title, flow, use, controls]) => <li key={number}><span>{number}</span><div><h3>{title}</h3><code>{flow}</code><p>{use}</p><small>{controls}</small></div></li>)}
@@ -169,7 +169,7 @@ export function VisualAtlas() {
         kicker="State, knowledge, and time"
         title="Memory is a governed write, retrieval, update, and forgetting system"
         description="A vector database is one retrieval mechanism. Memory architecture decides what should persist, why it remains valid, who may retrieve it, and when it must be corrected or deleted."
-        href="/docs/03-build/15-agent-architecture"
+        href="/docs/03-build/18-agent-architecture"
       >
         <div className="atlas-memory-grid">
           {memoryTypes.map(([title, purpose, content, rule]) => <article key={title}><span>{purpose}</span><h3>{title} memory</h3><p>{content}</p><small>{rule}</small></article>)}
@@ -182,7 +182,7 @@ export function VisualAtlas() {
         kicker="Convergent execution"
         title="Every attempt ends in verify, correct, retry, stop, or escalate"
         description="A production loop does not merely call the model again. It diagnoses the failure class, changes only eligible state, enforces budgets, and preserves every attempt."
-        href="/docs/03-build/18-agent-and-loop-engineering"
+        href="/docs/03-build/23-agent-and-loop-engineering"
         dark
       >
         <div className="atlas-loop">
@@ -218,7 +218,7 @@ export function VisualAtlas() {
         kicker="Observe → evaluate → detect → respond → improve"
         title="Observe behavior without confusing telemetry with authority"
         description="Traces, logs, metrics, cost, latency, and quality explain system behavior. They influence decisions only through explicit validators and governed records."
-        href="/docs/05-operate/28-observability-telemetry-and-forensics"
+        href="/docs/05-operate/35-observability-telemetry-and-forensics"
       >
         <div className="atlas-obs">
           <div className="atlas-obs-block">
@@ -271,7 +271,7 @@ export function VisualAtlas() {
         kicker="Interoperability boundaries"
         title="Use protocols for connection—not as substitutes for governance"
         description="Each protocol joins a different boundary. The factory still owns identity, policy, scope, evidence, failure, versioning, and lifecycle."
-        href="/docs/03-build/13-coding-harnesses-and-agent-protocols"
+        href="/docs/03-build/15-coding-harnesses-and-agent-protocols"
       >
         <div className="atlas-protocol-grid">
           {protocols.map(([name, boundary, description, nonclaim]) => <article key={name}><span>{boundary}</span><h3>{name}</h3><p>{description}</p><small>{nonclaim}</small></article>)}

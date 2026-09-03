@@ -211,7 +211,7 @@ flowchart LR
     X --> V
 ```
 
-The quality stack that drives this loop includes test selection based on change impact, deterministic checks, model-based evaluation, cross-agent review, production telemetry, canary releases, feature toggles, automated rollback, evidence capture, failure classification, and learning from historical defects. The target is not "test before release" but *continuous validation* of intent, plan, implementation, deployment, and production behaviour. [Part IV](../04-prove/21-quality-and-evidence-architecture.md) builds this stack in detail; here the point is that it is what makes the autonomy ladder climbable.
+The quality stack that drives this loop includes test selection based on change impact, deterministic checks, model-based evaluation, cross-agent review, production telemetry, canary releases, feature toggles, automated rollback, evidence capture, failure classification, and learning from historical defects. The target is not "test before release" but *continuous validation* of intent, plan, implementation, deployment, and production behaviour. [Part IV](../04-prove/27-quality-and-evidence-architecture.md) builds this stack in detail; here the point is that it is what makes the autonomy ladder climbable.
 
 ### Risk determines control
 
@@ -352,16 +352,14 @@ The target is for Mission Control to calculate effective autonomy at dispatch fr
 - Effective autonomy is the minimum of the Factory, Mission, WorkOrder, policy, and trust ceilings.
 - Promotion is a human decision on sustained, scoped evidence — initially 100 WorkOrders over 30 days at 99 percent independent validation with zero critical violations. Demotion may be automatic, and quarantine is immediate for authority, evidence, or containment breaches.
 - The Trust Score is numeric inside and banded outside; hard overrides beat weighted averages; failures decay over 90 days but never leave the record.
-- Validator disagreement increases governance. Results are evidence, not votes.
 - Humans approve evidence and risk through decision packets, not agent activity through logs.
 - Quality is the acceleration engine: reliable validation → trust → autonomy → speed.
-- Agents perform work; a named human remains accountable for the system, the policy, and the accepted outcome.
 
 ## Go deeper
 
 - Next: [Chapter 4, The human–agent operating model](../02-design/04-the-human-agent-operating-model.md) turns these principles into roles, decision rights, and a governed lifecycle.
 - [Chapter 7, Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) develops the Green/Yellow/Red policy model.
-- [Chapter 21, Quality and evidence architecture](../04-prove/21-quality-and-evidence-architecture.md) and [Chapter 24, Quality contracts, proof packages, and certificates](../04-prove/24-quality-contracts-proof-packages-and-certificates.md) build the validation stack that earns trust.
-- [Chapter 33, Governed learning and compounding engineering](../06-improve/33-governed-learning-and-compounding-engineering.md) covers learning-versus-promotion.
+- [Chapter 27, Quality and evidence architecture](../04-prove/27-quality-and-evidence-architecture.md) and [Chapter 31, Quality contracts, proof packages, and certificates](../04-prove/31-quality-contracts-proof-packages-and-certificates.md) build the validation stack that earns trust.
+- [Chapter 40, Governed learning and compounding engineering](../06-improve/40-governed-learning.md) covers learning-versus-promotion.
 - [Glossary](../appendix/glossary.md) entries: Factory Operational Autonomy Levels, Trust Score, trust band, Risk Review, decision packet, quarantine.
 - Sources: Jay West, *AI Software Factory Mission* (risk-based autonomy model, core factory principles, quality as the acceleration engine, human accountability model); Jay West, *AI Software Factory Study Guide* (chapters 6–8: human in/on/out of the loop, level examples, the trust equation); *Factory in one line and five platform commitments* (study-guide preparation notes); Mission Control [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Factory Configuration](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/configuration.ts), and [WorkOrder governance](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/workOrderGovernance.ts) at the studied commit.

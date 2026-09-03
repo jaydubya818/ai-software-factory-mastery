@@ -18,15 +18,15 @@ const chapterSlugs = {
   1: "01-understand/01-why-software-engineering-is-changing",
   2: "01-understand/02-the-factory-in-one-view",
   3: "01-understand/03-first-principles-trust-evidence-and-authority",
-  19: "03-build/19-the-12-layer-production-ai-agent-stack",
-  36: "06-improve/36-where-this-is-going",
+  25: "03-build/25-the-12-layer-production-ai-agent-stack",
+  44: "06-improve/44-where-this-is-going",
 };
 
 test("generated content reflects the book structure", async () => {
   const documents = await generatedDocuments();
   const chapters = documents.filter((document) => document.chapter !== null && document.chapter > 0);
-  assert.equal(chapters.length, 36, "36 numbered chapters");
-  assert.deepEqual(chapters.map((document) => document.chapter), Array.from({ length: 36 }, (_, index) => index + 1));
+  assert.equal(chapters.length, 44, "44 numbered chapters");
+  assert.deepEqual(chapters.map((document) => document.chapter), Array.from({ length: 44 }, (_, index) => index + 1));
   assert.ok(documents.some((document) => document.slug === "00-front-matter/00-how-to-read-this-guide" && document.chapter === 0));
   assert.ok(documents.some((document) => document.slug === "guide" && document.contentType === "overview"));
   assert.ok(documents.some((document) => document.slug === "appendix/glossary"));
@@ -72,7 +72,7 @@ test("renders every primary surface", async () => {
   for (const [route, expected] of routes) assert.match(await htmlFor(route), expected);
 });
 
-test("guide table of contents lists front matter and all 36 chapters with summaries", async () => {
+test("guide table of contents lists front matter and all 44 chapters with summaries", async () => {
   const html = await htmlFor("/guide");
   const documents = await generatedDocuments();
   const chapters = documents.filter((document) => document.chapter !== null);
@@ -87,7 +87,7 @@ test("guide table of contents lists front matter and all 36 chapters with summar
   assert.match(html, /Part VI — Improve/);
   assert.match(html, /Appendices/);
   assert.match(html, /href="\/docs\/appendix\/glossary"/);
-  assert.equal(docLinks(html).filter((link) => /^\/docs\/0[1-6]-/.test(link)).length, 36);
+  assert.equal(docLinks(html).filter((link) => /^\/docs\/0[1-6]-/.test(link)).length, 44);
   assert.doesNotMatch(html, /reading time|mark complete|selected path|interview mode|learning path/i);
 });
 
@@ -120,9 +120,9 @@ test("reading sequence runs front matter → chapters → appendices", async () 
   const stageEight = await htmlFor("/docs/stages/08-deliver-software");
   assert.match(stageEight, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "stage 8 links forward to chapter 1");
 
-  const last = await htmlFor(`/docs/${chapterSlugs[36]}`);
-  assert.match(last, /Chapter 36/);
-  assert.match(last, /href="\/docs\/appendix\//, "chapter 36 links forward into the appendix");
+  const last = await htmlFor(`/docs/${chapterSlugs[44]}`);
+  assert.match(last, /Chapter 44/);
+  assert.match(last, /href="\/docs\/appendix\//, "chapter 44 links forward into the appendix");
 
   const glossary = await htmlFor("/docs/appendix/glossary");
   assert.match(glossary, /Canonical Glossary/);
@@ -138,12 +138,16 @@ test("legacy routes redirect or disappear", async () => {
 
   const old = await render("/docs/00-overview/02-canonical-glossary");
   assert.equal(old.status, 404);
+
+  const renumbered = await render("/docs/03-build/10-the-agent-factory");
+  assert.ok(renumbered.status >= 300 && renumbered.status < 400);
+  assert.match(renumbered.headers.get("location") ?? "", /\/docs\/03-build\/11-the-agent-factory$/);
 });
 
 test("reference shelf lists the appendices with a plain search box", async () => {
   const html = await htmlFor("/topics");
   assert.match(html, /Search the guide/);
-  for (const slug of ["appendix/glossary", "appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/research/initial-canon", "appendix/mission-control/02-verification-first-software-factory"]) {
+  for (const slug of ["appendix/glossary", "appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/operator-surfaces", "appendix/research/initial-canon", "appendix/mission-control/02-verification-first-software-factory"]) {
     assert.match(html, new RegExp(`href="/docs/${slug}"`), `lists ${slug}`);
   }
   assert.match(html, /Mission Control case studies/);
@@ -157,19 +161,19 @@ test("atlas links resolve to existing chapters", async () => {
   const links = docLinks(html);
   assert.ok(links.length >= 10, "atlas has at least ten chapter links");
   for (const link of links) assert.ok(slugs.has(link.replace(/^\/docs\//, "")), `${link} resolves`);
-  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[19]}"`), "12-layer stack links to chapter 19");
-  assert.match(html, /href="\/docs\/03-build\/13-coding-harnesses-and-agent-protocols"/);
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[25]}"`), "12-layer stack links to chapter 25");
+  assert.match(html, /href="\/docs\/03-build\/15-coding-harnesses-and-agent-protocols"/);
   assert.match(html, /href="\/docs\/02-design\/07-governance-policy-and-risk-proportional-approval"/);
-  assert.match(html, /href="\/docs\/05-operate\/28-observability-telemetry-and-forensics"/);
+  assert.match(html, /href="\/docs\/05-operate\/35-observability-telemetry-and-forensics"/);
   assert.match(html, /href="\/docs\/02-design\/08-economics-metrics-and-human-attention"/);
-  assert.match(html, /href="\/docs\/03-build\/15-agent-architecture"/);
-  assert.match(html, /href="\/docs\/03-build\/18-agent-and-loop-engineering"/);
+  assert.match(html, /href="\/docs\/03-build\/18-agent-architecture"/);
+  assert.match(html, /href="\/docs\/03-build\/23-agent-and-loop-engineering"/);
 });
 
 test("every internal /docs link on rendered pages resolves to a generated document", async () => {
   const documents = await generatedDocuments();
   const slugs = new Set(documents.map((document) => document.slug));
-  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", `/docs/${chapterSlugs[2]}`, `/docs/${chapterSlugs[19]}`, "/docs/appendix/glossary"];
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", `/docs/${chapterSlugs[2]}`, `/docs/${chapterSlugs[25]}`, "/docs/appendix/glossary"];
   const broken = [];
   for (const route of routes) {
     for (const link of docLinks(await htmlFor(route))) {

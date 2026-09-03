@@ -217,7 +217,7 @@ This chapter is conceptual, so the build steps are the commitments you make befo
 3. **Make authority explicit.** For every unit of work, be able to answer: which repository, tools, environments, budgets, credentials, and risks are authorized, and who approved them.
 4. **Separate the states.** Attempted, completed, validated, approved, merged, deployed, and verified in production are different records with different owners.
 5. **Decide what humans always approve.** Use the list above as a starting policy and treat any expansion of agent authority as a governed change.
-6. **Pick the first workflow.** Choose one painful, repeatable, measurable workflow (governed issue-to-pull-request is the recommended wedge; see [Chapter 20](../03-build/20-autonomous-engineering-workflows.md)) and prove it before expanding.
+6. **Pick the first workflow.** Choose one painful, repeatable, measurable workflow (governed issue-to-pull-request is the recommended wedge; see [Chapter 26](../03-build/26-autonomous-engineering-workflows.md)) and prove it before expanding.
 7. **Define the three measures with start events, stop events, evidence, exclusions, denominators, qualifying events, and windows** before you have data, so the data cannot be argued into a better story later.
 8. **Plan for governance to cost time before it saves time,** and scale controls with risk rather than applying maximum ceremony to every change.
 
@@ -246,22 +246,17 @@ Against the twelve threshold capabilities at `8014d5a`: versioned planning and i
 ## Retain this
 
 - The unit of production is validated customer value, not code; the lead-time clock starts at a governed Mission and stops at validated outcome, not at merge.
-- The scarce resource is accountable human judgment, not tokens or lines of code.
-- Governance is part of the execution architecture, not a compliance report added afterward.
 - Trust the governed operating system, not the probabilistic model; failures must be detectable, contained, recoverable, and attributable.
 - Humans own intent, risk acceptance, and irreversible decisions; agents own bounded execution; the shared layer is where the model is most credible.
-- The factory governs the deployment decision and lineage; it delegates the mechanics to existing delivery platforms.
 - Completion, validation, acceptance, merge, deployment, and production verification are different decisions and must stay different states.
-- Multi-agent orchestration is a capability, not a default shape; validation is independent only when execution, evidence, and acceptance authority are separated.
 - Lead time, change failure rate, and leverage must improve together; quality does not merely constrain autonomy, reliable validation is what lets autonomy safely increase.
-- Automatic observation is valuable; automatic self-modification of governed behavior is not acceptable.
 - Automation moves bottlenecks upstream to intent and downstream to verification: implementation, then review, then verification and context and intent and governance, then factory engineering. The people move with it, into contract design, governance, product-intent judgment, and review-gate supervision.
 
 ## Go deeper
 
 - Next: [Chapter 2, The factory in one view](./02-the-factory-in-one-view.md) for the whole system on one page, and [Chapter 3, First principles](./03-first-principles-trust-evidence-and-authority.md) for autonomy levels and the trust model.
 - [Chapter 4, The human–agent operating model](../02-design/04-the-human-agent-operating-model.md) and [Chapter 7, Governance](../02-design/07-governance-policy-and-risk-proportional-approval.md) develop the ownership split and the always-human decisions.
-- [Chapter 8, Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) for the complete measurement system; [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) for governed learning.
-- [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) and the [Mission Control implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) for the versioned assessment behind "In Mission Control."
+- [Chapter 8, Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) for the complete measurement system; [Chapter 40](../06-improve/40-governed-learning.md) for governed learning.
+- [Chapter 42](../06-improve/42-mission-control-as-a-living-case-study.md) and the [Mission Control implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) for the versioned assessment behind "In Mission Control."
 - Sources: Jay West, *AI Software Factory Mission* (long-term mission, future operating model, five things you are building); *AI Software Factory Study Guide*, chapters 1–4 (core thesis, the waiting problem, the four problem statements, the sociotechnical framing); *Mission Control North Star* (business-hours/overnight model, the seven work states); "How to get to a software factory," AI Engineer SF conversation and talk (autonomy, automation, quality; the moving bottleneck; the backlog goes away); IndyDevDan, "Software factories give leverage on your prompt"; public practitioner talks, 2026 (bottleneck migration; the human role transformation into contract designers, governance owners, product-intent judges, and review-gate supervisors).
 - Primary references carried from v1: [Mission Control North Star at `8014d5a`](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md); [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md); [V1 decision log](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/ai-software-factory-v1-decisions.md); the [research canon](../appendix/research/initial-canon.md); [glossary](../appendix/glossary.md).

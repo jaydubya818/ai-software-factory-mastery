@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { adjacentDocuments, appendixGroups, chapters, documents, getDocument, partForDocument, stages, SITE_URL } from "../../../lib/content";
 import { guideParts } from "../../../lib/guide";
+import { legacyDocumentRedirects } from "../../../lib/legacy-routes";
 import { ChapterTOC } from "../../components/ChapterTOC";
 import { DocumentNav } from "../../components/DocumentNav";
+import { LegacyAnchorRedirect } from "../../components/LegacyAnchorRedirect";
 import { Markdown } from "../../components/Markdown";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
@@ -17,7 +19,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const document = getDocument(slug.join("/"));
+  const requestedSlug = slug.join("/");
+  const document = getDocument(requestedSlug) ?? getDocument(legacyDocumentRedirects[requestedSlug] ?? "");
   if (!document) return { title: "Document not found" };
   const title = `${document.title} · The AI Software Factory Guide`;
   return { title, description: document.description, alternates: { canonical: `/docs/${document.slug}` }, openGraph: { title, description: document.description, images: [] }, twitter: { card: "summary", title, description: document.description, images: [] } };
@@ -50,7 +53,11 @@ export default async function DocumentPage({ params }: PageProps) {
   const { slug } = await params;
   const currentSlug = slug.join("/");
   const document = getDocument(currentSlug);
-  if (!document) notFound();
+  if (!document) {
+    const legacyTarget = legacyDocumentRedirects[currentSlug];
+    if (legacyTarget) redirect(`/docs/${legacyTarget}`);
+    notFound();
+  }
 
   const part = partForDocument(document);
   const headings = document.headings.filter((heading) => heading.depth === 2);
@@ -71,6 +78,7 @@ export default async function DocumentPage({ params }: PageProps) {
 
   return (
     <>
+      <LegacyAnchorRedirect currentSlug={currentSlug} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader />
       <main className="docs-layout">

@@ -26,7 +26,7 @@ test("every internal link reachable from the home page resolves", async () => {
 });
 
 test("unpublished repository files link out to GitHub instead of a dead route", async () => {
-  const html = await htmlFor("/docs/06-improve/34-mission-control-as-a-living-case-study");
+  const html = await htmlFor("/docs/06-improve/42-mission-control-as-a-living-case-study");
   assert.doesNotMatch(html, /href="\.\.?\/[^"]*\.md/, "no raw relative .md links survive");
   assert.match(html, /github\.com\/jaydubya818\/ai-software-factory-mastery\/blob\/main\/guide\/appendix\/mission-control\/evidence/);
 });
