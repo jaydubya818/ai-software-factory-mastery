@@ -2,8 +2,8 @@
 title: Initial AI Software Factory Research Canon
 status: active
 audience: [architect, senior-engineer, platform, security, quality, product, ai-engineer]
-last_verified: 2026-08-30
-last_reviewed: 2026-08-30
+last_verified: 2026-09-03
+last_reviewed: 2026-09-03
 ---
 
 # Initial AI Software Factory Research Canon
@@ -107,6 +107,42 @@ tests, and direct operation supply different forms of evidence.
 | [Team Topologies](https://teamtopologies.com/book) | Study cognitive load, team boundaries, interaction modes, platforms, and fast flow. |
 | [Toyota Production System](https://global.toyota/en/company/vision-and-philosophy/production-system/) | Study flow, quality at the source, just-in-time work, automation with a human touch, waste, and continuous improvement without forcing a literal manufacturing analogy onto software. |
 
+## Practitioner talks, livestreams, and public engineering posts
+
+Several chapters cite material that did not come from a paper, a spec, or
+vendor documentation: public conference talks, engineering blog posts, and
+one livestream. This section is the provenance record for that material,
+since a bare in-text mention ("public practitioner talks, 2026") does not
+carry a title or date on its own.
+
+| Source | What it is | Chapters that draw on it |
+| --- | --- | --- |
+| Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* | Public engineering blog post and AI Engineer 2026 conference talk, published August 2026, byline @udaykiran. Public, named scale figures (pull requests attributed to agents, skills built, cost-per-session trend) and the six-term cost equation. | Chapters 8, 13, 17, 18, 31 |
+| *The 4 Layers of an Agent System Explained* | Public post with an accompanying infographic (credited to Databricks), published September 2026. Loop, Graph, Harness, and Meta-harness as nested layers, with Omnigent cited as one open-source meta-harness implementation. | Chapters 13, 18, 31 |
+| *Six layers of a working agentic system* | Public post and infographic, 2026, unsigned. A six-layer stack from trigger through runtime and operations, framed around the production question each layer answers. | Chapters 8, 17 |
+| Warp, *Closing the loop with self-improving cloud software factories* | Public post at warp.dev, published August 2026. Factory-as-code, the closed loop of factory agents, scorer agents, and self-improvement agents, and the PR-throughput/cost/automation-percent metric set. | Chapters 8, 23, 27 |
+| *What Is Loop Engineering?* | Public explainer post, published June 2026, unsigned. The loop-versus-chain distinction, the ReAct origin, the five-part loop anatomy, and the four loop patterns (retry, plan-execute-verify, explore-narrow, human-in-the-loop). | Chapter 18 |
+| HumanLayer × BAML livestream, "Software factory design patterns" | Public livestream conversation between Dexter (HumanLayer) and Vaibhav (BAML), 2026. Inner/outer harness terminology, the control plane as an underserved layer, routing by task, and the prototype-to-sliced-PR review workflow. | Chapters 6, 10, 11, 13, 17, 27, 31 |
+| IndyDevDan, "Software factories give leverage on your prompt" and "Engineering Time, Focus and Attention" | Public practitioner talks/posts, 2026. The agentic operating level and the argument that a factory's payoff is capacity freed for exploration, not raw speed. | Chapters 1, 8, 18, 20 |
+| Luke (Goose / Factory), "Multi-agent systems and the bottleneck of human attention" | Public practitioner talk, 2026. Human attention as the binding constraint on multi-agent systems. | Chapters 8, 18, 20 |
+| 0xCodez, "Graph engineering: the 14-step roadmap from linear chains to routed, branching, parallel graphs" | Public practitioner talk, 2026. | Chapter 18 |
+| Tessl documentation and public tutorials (docs.tessl.io) | Public vendor documentation and tutorials, 2026: skill schemas, with/without skill evaluation, and the scenario-generation and skill-optimizer patterns. | Chapters 10, 23 |
+
+**"Public practitioner talks, 2026."** A recurring, deliberately anonymized
+citation covering several additional 2026 public conference talks and
+technical explainer posts on software-factory practice — skills, loops, and
+harness engineering; risk-based autonomy and review compression; signal-to-
+outcome architecture and verification contracts; model routing and factory
+economics; and code review at scale. The speakers asked not to be named or
+linked in this guide, and their employers' internal product names are
+excluded per that same request; the ideas are presented as the guide's own
+synthesis rather than attributed to an individual or a venue. Where a claim
+from this pool carries a specific public number or measurement, the chapter
+says so and names the narrower source (usually Uber Engineering, above)
+instead of using this label. Sections D, E, and F of the pass-8 source
+synthesis (2026-09-02, held with the guide's working notes) are the
+underlying transcripts this label draws on.
+
 ## Mission Control
 
 Mission Control is the primary implementation case study. Study notes must
@@ -114,6 +150,15 @@ reference the exact commit, relevant product decision or ADR, source paths,
 tests, observed browser or runtime behavior, and known gaps. Mission Control
 documentation is evidence about Mission Control. It is not the universal
 definition of an AI Software Factory.
+
+In addition to the versioned source paths cited inline, several chapters draw
+on Jay West's own unpublished working material: the *AI Software Factory
+Mission* statement, the *AI Software Factory Study Guide* (a chaptered
+internal curriculum), a set of factory-architecture notes, and the Mission
+Control repository's own glossary and lexicon (reviewed 2026-09-02). These
+are primary-author source material — the same status as interview notes —
+not independently published references, and are cited as such rather than
+implied to be external literature.
 
 ## Canon maintenance
 

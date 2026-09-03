@@ -2,7 +2,7 @@
 title: Guide Changelog
 status: active
 audience: [all]
-last_verified: 2026-08-30
+last_verified: 2026-09-03
 lifecycle: [learn]
 risk: variable
 topics: [changelog, releases, review]
@@ -13,6 +13,42 @@ topics: [changelog, releases, review]
 Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
+
+## 2026-09-03 — Public-source integration and consistency pass
+
+### Added
+
+- Folded four rounds of public source material into the existing chapters:
+  a public taxonomy of skills, loops, and the factory maturity model; the
+  Mission Control repository's own lexicon (genericized); and a synthesis of
+  six public sources on loop engineering, harness engineering, context
+  engineering, and factory economics (Uber Engineering's published Uber-scale
+  figures, two public "layers of an agent system" explainer posts, a public
+  loop-engineering explainer, and Warp's closed-loop factory post).
+- A provenance table in the [research canon](./research/initial-canon.md)
+  for every practitioner talk, livestream, and public engineering post the
+  guide draws on, including what the recurring "public practitioner talks,
+  2026" citation covers and why it does not name speakers or venues.
+
+### Changed
+
+- Resolved a terminology collision on **model adapter**: the glossary's
+  trained-weights sense is now **trained adapter**; **model adapter** is
+  reserved for the per-provider integration layer defined in Chapter 10 and
+  used in Chapter 17.
+- Merged duplicate glossary entries for **loop engineering** (three entries
+  collapsed to two: the bounded feedback path within one execution graph,
+  and the wider discipline) and **workload identity** (two near-identical
+  entries merged to one).
+
+### Known gaps
+
+- A word-count and structural review found several chapters running well
+  past a comfortable single-sitting length (Chapters 8, 10, 13, 16, 17, 18,
+  23, and 33 in particular), competing "canonical" mental models in Chapter
+  2, and "Retain this" sections that restate rather than summarize. A
+  structural split and a mental-model consolidation pass are planned but not
+  yet done; see the reviewer guide for the current punch list.
 
 ## 2026-08-30 — Reference architecture depth release
 

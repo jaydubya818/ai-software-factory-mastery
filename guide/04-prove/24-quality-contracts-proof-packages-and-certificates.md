@@ -419,7 +419,7 @@ evidence_envelope:
   evidence_type: "test-result"
   subject:
     kind: "git-commit"
-    uri: "git+https://github.com/acme/service"
+    uri: "git+https://github.com/example-org/example-service"
     digest: {sha1: "..."}
   claim:
     assertion_ids: ["ASSERT-101-A"]
@@ -518,7 +518,7 @@ If any one of the five disagrees with the others, the gate reports `STALE`, not 
 
 ### Acceptance is not verification
 
-The gate decision and the acceptance decision answer different questions and are owned by different parties. **Verification** asks: did the artifact satisfy the machine-checkable contract? It is deterministic and, given the same subject and contract, always yields the same answer. **Acceptance** asks: are we authorizing this to progress? It is a decision by someone with the authority to make it, informed by verification but not reducible to it. A verified artifact can be held because the business timing is wrong; an accepted artifact can never be one that failed verification. The two must stay separate so that neither can impersonate the other: a passing gate cannot quietly become acceptance, and an accepting human cannot quietly wave through a failing gate.
+The gate decision and the acceptance decision answer different questions and are owned by different parties. **Verification** asks: did the artifact satisfy the machine-checkable contract? At its strongest — a deterministic check against the same subject and contract — it always yields the same answer; that is the target every verifier is built toward, and flaky, nondeterministic, or LLM-as-judge verifiers are weaker instruments that owe a confidence figure rather than a bare pass, exactly because they fall short of it ([Chapter 23](../04-prove/23-evaluation-engineering.md)). **Acceptance** asks: are we authorizing this to progress? It is a decision by someone with the authority to make it, informed by verification but not reducible to it. A verified artifact can be held because the business timing is wrong; an accepted artifact can never be one that failed verification. The two must stay separate so that neither can impersonate the other: a passing gate cannot quietly become acceptance, and an accepting human cannot quietly wave through a failing gate.
 
 *Correctness and authority are separate concerns.*
 

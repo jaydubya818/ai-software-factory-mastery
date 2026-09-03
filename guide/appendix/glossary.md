@@ -643,11 +643,6 @@ workflow node, fallback, or human decision from observable state and policy.
 Model classification may inform the decision but cannot bypass deterministic
 eligibility.
 
-**Loop Engineering** — The design of bounded agent iteration, including
-generation, verification, diagnosis, repair or replanning, changed-hypothesis
-retry, convergence, budgets, stop conditions, fallback, and escalation. An
-iteration cap is containment, not a substitute for progress detection.
-
 **Agent contract** — The stable interface a harness exposes to the control
 plane regardless of which vendor loop runs inside it: manifest in, ordered
 events and completion report out, with cancellation, budgets, and lifecycle
@@ -690,10 +685,13 @@ modules a change actually touches, plus their dependents, rather than by
 similarity to the diff text. It is how review and implementation context
 stays minimal and relevant across a large codebase.
 
-**Model adapter** — A small set of additional weights trained on top of a
+**Trained adapter** — A small set of additional weights trained on top of a
 frozen base model so that a tuned behaviour can be attached, versioned, and
 detached without retraining, and so the base model stays replaceable
-underneath it. Standardise the core contract; optimise adapters at the edge.
+underneath it. Distinct from a **model adapter** (Chapter 10, Chapter 17),
+which is the per-provider translation layer that lets one calling convention
+reach many models — a trained adapter changes what a model has learned; a
+model adapter changes how it is called.
 
 **Context as code** — Treating agent context — skills, rules, instructions, policies, repository guidance — like source: versioned, reviewed, tested, evaluated, owned, distributed, deprecated, drift-detected, measured, and rolled back (Chapter 16).
 
@@ -1882,10 +1880,13 @@ joined by stateful edges with conditional routing, parallel branches,
 subgraphs, checkpoints, and resumability. Graph engineering is the discipline
 of designing it; the harness owns it.
 
-**Loop engineering** — The bounded feedback path taken when evaluation says
-the goal is not complete: observe, diagnose, refine or replan, retry, under
-termination criteria (maximum iterations, time, token, and cost budgets) set
-by the harness rather than the model.
+**Loop engineering (the bounded feedback path)** — Within one execution
+graph, what runs when evaluation says the goal is not complete: observe,
+diagnose, refine or replan, retry, under termination criteria (maximum
+iterations, time, token, and cost budgets) set by the harness rather than
+the model (Chapter 13). An iteration cap is containment, not a substitute
+for progress detection. This is the mechanism the wider discipline of the
+same name — **loop engineering**, below — is engineering.
 
 **Secure tool gateway** — The single door between an agent's Act step and the
 world: MCP servers, APIs, code execution, databases, files, and other agents,
@@ -1946,7 +1947,7 @@ The control tower routes on owners; an incident without one is telemetry.
 
 **Outer loop** — Deeper, independent verification performed after or around the producing agent's work — review agents, security review, integration and end-to-end tests, agentic QA, browser verification, acceptance validation, risk assessment — to decide whether the result is trustworthy. Its objective is automation (Chapter 13).
 
-**Meta loop** — The loop that observes executions, failures, reviews, corrections, and outcomes and proposes improvements to the factory itself — new tests, lint rules, skills, context, verifiers, routing, pruning. Its objective is learning; also written meta-loop (Chapters 13, 33).
+**Meta loop** — The governed loop that observes executions, failures, reviews, corrections, and outcomes and proposes improvements to the factory itself — new tests, lint rules, skills, context, verifiers, routing, pruning. Its objective is learning, and its defining constraint is that it may not self-authorize, mutate governance, bypass verification, or become a token sink: signals are observed, clustered, turned into candidates, reviewed by a human, trialled as experiments, and only then promoted. Also written meta-loop (Chapters 13, 33).
 
 **Four loop layers** — Feedback loops (raw signals: tests, linters, scans), verification loops (objective evidence before trusting results), memory loops (retained context, failures, and patterns), and optimisation loops (updating the factory's own prompts, triggers, and constraints from metrics) (Chapter 33).
 
@@ -2029,7 +2030,9 @@ grant it does not hold.
 **Workload identity** — A cryptographically issued identity for a non-human
 principal (an agent, worker, or service) — SPIFFE, OIDC, mTLS — with
 short-lived credentials, so that authorisation and audit attach to the
-workload itself and never to a borrowed human credential.
+workload itself and never to a borrowed human credential. It identifies the
+actor but does not itself authorize a resource operation; that is a separate
+policy decision made using the identity.
 
 **Just-in-time access** — Authority granted for one bounded purpose, one scope,
 and one window, then withdrawn. In the factory it is granted to an Attempt
@@ -2088,10 +2091,6 @@ recorded and verified; peer output is untrusted content.
 **Denial of wallet** — Resource exhaustion intended to cause excessive model,
 compute, tool, storage, or human-review cost. Budgets, quotas, backpressure,
 anomaly detection, and bounded retries limit exposure.
-
-**Workload identity** — A cryptographically verifiable identity issued to a
-running workload and used to obtain scoped, short-lived access. It identifies
-the actor but does not itself authorize a resource operation.
 
 **Delegated authorization** — The attributable chain by which an accountable
 principal permits a specific workload to perform bounded actions for an exact
@@ -2294,12 +2293,6 @@ safety, causal validity, or freedom from bias.
 **Promotion recommendation** — The evidence-backed suggestion that a validated
 improvement be adopted into the standing factory configuration. It remains a
 recommendation until a human with the relevant authority accepts it.
-
-**Meta-loop** — The governed loop by which the factory improves its own
-configuration and process: signals are observed, clustered, turned into
-candidates, reviewed by a human, trialled as experiments, and only then
-promoted. Its defining constraint is that it may not self-authorize, mutate
-governance, bypass verification, or become a token sink.
 
 **Recursive improvement boundary** — The invariant that the system improving
 the factory is subject to the same policy, verification, and acceptance

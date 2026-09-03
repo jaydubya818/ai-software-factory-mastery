@@ -2,7 +2,7 @@
 title: Capability Coverage and Maturity
 status: canonical-navigation
 audience: [all]
-last_verified: 2026-08-30
+last_verified: 2026-09-03
 lifecycle: [intent, plan, execute, verify, deliver, learn]
 risk: variable
 topics: [coverage, maturity, review-status]
@@ -53,6 +53,7 @@ repository class, risk level, environment, version, and observation window.
 | Governance controls and emergency authority | Review ready | Control operating effectiveness and emergency timing are unproven |
 | Evaluation science and controlled learning | Review ready additions plus earlier drafts | Production optimization lifecycle unproven |
 | Hands-on mastery | Thirteen executable specifications available | Accepted runs remain limited; the original golden path is blocked |
+| Public-source integration (loop, harness, and context engineering; factory economics; skills-to-loops-to-factory taxonomy) | Review ready; folded into existing chapters across passes 5–8 | Sourced from public talks, posts, and one livestream — see the [research canon](research/initial-canon.md) for provenance; a structural split of the longest resulting chapters is planned but not done |
 
 ## Evidence required to advance a chapter
 

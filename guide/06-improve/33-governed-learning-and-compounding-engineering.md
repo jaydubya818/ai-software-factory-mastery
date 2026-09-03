@@ -353,12 +353,15 @@ inference and without a model quietly deciding which of the factory's
 failures deserve attention. Models enter later, in the experiment, where
 their output is measured against a frozen baseline.
 
-*A cluster needs three occurrences before it becomes a candidate.* One
-failure is an incident; two are a coincidence worth noting; three of the
-same deterministic signal, clustered by the versioned failure taxonomy, are a
-pattern, and only a pattern earns an **Improvement Candidate**. The threshold
-is deliberately low enough to catch real recurrence early and high enough to
-keep single loud failures from flooding the queue.
+*A cluster needs a small, policy-set number of occurrences — three is a
+reasonable default — before it becomes a candidate.* One failure is an
+incident; two are a coincidence worth noting; a handful of the same
+deterministic signal, clustered by the versioned failure taxonomy, are a
+pattern, and only a pattern earns an **Improvement Candidate**. Set the
+threshold low enough to catch real recurrence early and high enough to keep
+single loud failures from flooding the queue; a low-volume repository or a
+severe failure class may reasonably set it lower, and a noisy, high-volume
+one may set it higher.
 
 *The candidate has four human verbs and no authority.* A reviewer can
 **approve an experiment** (the candidate becomes a frozen baseline-versus-
@@ -408,11 +411,17 @@ flowchart LR
     C -. "cannot" .-> A["Accept · satisfy a receipt · change config"]
 ```
 
-The mechanics are narrow on purpose. After a terminal *successful* engine
-run, and only then, the factory worker reads the engine's lessons store
-read-only; it never writes to it, and it never reads it after a failed or
-cancelled run, because lessons written on the way to a failure are
-hypotheses the engine did not get to test. Rows that match this Attempt
+The mechanics are narrow on purpose, and the default is deliberately
+conservative rather than the only defensible choice. After a terminal
+*successful* engine run, and only then, the factory worker reads the
+engine's lessons store read-only; it never writes to it, and by default it
+does not read it after a failed or cancelled run, on the reasoning that
+lessons written on the way to a failure are hypotheses the engine did not
+get to test and so are more likely to be wrong than lessons from a run that
+finished. A factory that wants signal from failed runs too can read them in,
+provided it labels them separately as unverified and keeps them out of the
+same candidate pool as lessons from success — the risk is treating an
+untested hypothesis as if it had been. Rows that match this Attempt
 become **learning candidates**, recorded additively on the Attempt and its
 WorkOrder (nothing on either record is overwritten), and each one is emitted
 as an idempotent `EVIDENCE_CREATED` event of type
@@ -474,6 +483,15 @@ and is the last vote before the candidate becomes the default. No instrument
 substitutes for the one before it: a canary without a regression run exposes
 users to a candidate nobody checked offline, and a regression run without a
 canary promotes a candidate production has never seen.
+
+This four-instrument sequence is the reference default, not a fixed
+requirement for every candidate at every risk tier. [Chapter 7's](../02-design/07-governance-policy-and-risk-proportional-approval.md)
+risk tiers apply here as everywhere else: a low-risk, easily reversible
+candidate (a documentation-only skill edit, a lint-rule addition) may be
+sized down to regression plus a short canary by policy, while a candidate
+that touches governance, security, or the promotion gate itself should
+never skip an instrument. What must not happen, at any tier, is a later
+instrument standing in for an earlier one that was never run.
 
 ### The six self-improvement levels
 
@@ -1242,7 +1260,7 @@ threshold.
 | Jumping straight to training | A behavior that could have been a rule or a retrieval fix is fine-tuned; the failure is now unattributable and bound to one model version | Climb the adaptation ladder one rung at a time and record why each lower rung was insufficient |
 | Preference data without provenance | RLHF or a reward model trained on acceptance signals polluted by deadlines and reformatting | Hand specialists governed dataset versions and experiment manifests, never raw traces; fix signal quality first |
 | Model in the signal path | Refreshing the learning view spends inference; a model decides which failures count | Signals are deterministic over persisted evidence; zero model calls on refresh |
-| Candidate from one occurrence | The queue fills with single failures dressed as patterns | Cluster by the versioned taxonomy; three occurrences before a candidate |
+| Candidate from one occurrence | The queue fills with single failures dressed as patterns | Cluster by the versioned taxonomy; require a policy-set minimum occurrence count (three is a reasonable default) before a candidate |
 | Candidate with authority | An Improvement Candidate edits live configuration or satisfies a receipt | Four human verbs only (approve experiment, snooze, dismiss, reject); recommendations enter as a Mission |
 | Engine lessons trusted | An engine's lessons store is written into instructions or counted as evidence | Read-only after terminal success; additive candidates; telemetry that cannot accept or satisfy receipts |
 | Writeback after failure | Lessons from a failed or cancelled run become candidates | Read the store only after terminal success; missing store means no candidates |
@@ -1372,7 +1390,8 @@ a self-operating learning factory.
   at a time with the evidence that the rung below was insufficient. Never jump
   straight to training.
 - The Factory Learning chain is persisted evidence → deterministic signal →
-  recurring cluster (three occurrences) → Improvement Candidate → human review
+  recurring cluster (a policy-set minimum occurrence count, three by default)
+  → Improvement Candidate → human review
   (approve experiment, snooze, dismiss, reject) → experiment → Mission → Plan
   → WorkOrder. Refresh makes zero model calls; a candidate has no authority
   over live configuration or acceptance; an accepted `EVAL_SCENARIO` creates a

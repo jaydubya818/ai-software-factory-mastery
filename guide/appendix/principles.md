@@ -345,9 +345,9 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 **One authoritative lifecycle.** Mission, Plan, WorkOrder, Task, Attempt, evidence, pull request, acceptance, merge, deployment, and production verification stay separate; no lower state silently completes its parent. → [34. Mission Control as a living case study](../06-improve/34-mission-control-as-a-living-case-study.md)
 
-## The forty concepts to have cold
+## Fifty concepts to have cold
 
-The principles above are sentences. Underneath them are forty concepts a reader should be able to define, place in the mental model of [Chapter 2](../01-understand/02-the-factory-in-one-view.md) (Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption, optimised for trusted throughput), and point at the chapter that owns. Each line is the concept, one sentence, and the chapter.
+The principles above are sentences. Underneath them are fifty concepts a reader should be able to define, place in the mental model of [Chapter 2](../01-understand/02-the-factory-in-one-view.md) (Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption, optimised for trusted throughput), and point at the chapter that owns. Forty populate the six areas directly; a further ten run across them, from the loop-and-context vocabulary the factory-native lifecycle relies on. Each line is the concept, one sentence, and the chapter.
 
 **Intent**
 
@@ -410,9 +410,9 @@ The principles above are sentences. Underneath them are forty concepts a reader 
 39. **Forward-Deployed Engineering** — Embed → Observe → Co-build → Productise → Contribute → Reuse → Scale; the measure is how quickly teams stop needing it. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 40. **Migration and Adoption** — A gravity well rather than a mandate: gateway, then evaluation, then observability, then governed tools, then runtime, one proven corridor at a time. → [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)
 
-**And ten more**
+**Running across all six areas**
 
-The forty above populate the six areas. Ten further concepts run across them, from the loop-and-context vocabulary the factory-native lifecycle of [Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas) relies on.
+The ten concepts below are the loop-and-context vocabulary the factory-native lifecycle of [Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas) relies on.
 
 41. **Definition of Correct** — The machine-consumable description of acceptable work for a task, component, repository, or domain: requirements, standards, policies, architecture, constraints, acceptance criteria, verification rules. → [6](../02-design/06-intent-and-specification-engineering.md), [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)
 42. **Verification Contract** — The structured list of claims that must be demonstrated before completion and how each is validated; the second half of a complete specification. → [21](../04-prove/21-quality-and-evidence-architecture.md)

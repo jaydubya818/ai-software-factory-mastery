@@ -24,7 +24,7 @@ it is not equivalent to an operating AI Software Factory.
 - Target repository: `jaydubya818/mission-control-factory-lab`
 - Target baseline: `a4c864d743e2304feb2979870f41efbbae5d632b`
 - Target tag: `lab-baseline-v1`
-- Hosted baseline validation: [GitHub Actions run 31239800515](https://github.com/jaydubya818/mission-control-factory-lab/actions/runs/31239800515)
+- Hosted baseline validation: GitHub Actions run `31239800515` on the private `jaydubya818/mission-control-factory-lab` repository (not a public link; verifiable by anyone with repository access)
 
 The target baseline passed formatting, type checking, two API tests, production
 build, one Chromium browser test, and a dependency audit with zero known

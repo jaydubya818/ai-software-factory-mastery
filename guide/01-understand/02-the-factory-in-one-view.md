@@ -198,7 +198,7 @@ flowchart LR
     Adoption --> TT["Optimised for trusted throughput"]
 ```
 
-The quantity the whole arrangement is tuned for is **trusted throughput**: accepted, verified outcomes per unit of time and cost, never generated lines, prompts, or tokens. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) makes it the factory's throughput measure; every area above either raises it or protects it, and any change that raises raw output while lowering the accepted, verified share is a step backwards however impressive the demo. The forty concepts that populate the six areas and the surrounding concern are listed, with their chapters, in [Appendix F](../appendix/principles.md#the-forty-concepts-to-have-cold).
+The quantity the whole arrangement is tuned for is **trusted throughput**: accepted, verified outcomes per unit of time and cost, never generated lines, prompts, or tokens. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) makes it the factory's throughput measure; every area above either raises it or protects it, and any change that raises raw output while lowering the accepted, verified share is a step backwards however impressive the demo. The fifty concepts that populate the six areas and the surrounding concern are listed, with their chapters, in [Appendix F](../appendix/principles.md#fifty-concepts-to-have-cold).
 
 ### The lifecycle above the six areas
 
