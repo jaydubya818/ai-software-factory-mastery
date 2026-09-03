@@ -419,7 +419,7 @@ evidence_envelope:
   evidence_type: "test-result"
   subject:
     kind: "git-commit"
-    uri: "git+https://example.com/example-org/example-service"
+    uri: "git+https://example.com"
     digest: {sha1: "..."}
   claim:
     assertion_ids: ["ASSERT-101-A"]
