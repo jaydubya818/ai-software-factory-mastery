@@ -1396,11 +1396,12 @@ a self-operating learning factory.
   → WorkOrder. Refresh makes zero model calls; a candidate has no authority
   over live configuration or acceptance; an accepted `EVAL_SCENARIO` creates a
   scenario with PR lineage.
-- Learning writeback reads an execution engine's lessons store read-only after
-  terminal success, records additive learning candidates on the Attempt and
-  WorkOrder as idempotent `learning.candidate.proposed` events, and treats
-  them as telemetry: they cannot accept or satisfy receipts. Missing store,
-  no candidates.
+- Learning writeback reads an execution engine's lessons store read-only, by
+  default only after terminal success (a factory that also wants failed-run
+  lessons reads them in separately, labeled unverified), records additive
+  learning candidates on the Attempt and WorkOrder as idempotent
+  `learning.candidate.proposed` events, and treats them as telemetry: they
+  cannot accept or satisfy receipts. Missing store, no candidates.
 - Four loop layers: feedback (raw signals), verification (objective evidence
   before trust), memory (retained failures and patterns), optimization (the
   meta layer that changes the other three). Skip the memory layer and every

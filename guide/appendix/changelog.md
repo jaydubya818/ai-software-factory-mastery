@@ -40,6 +40,15 @@ grouped.
   collapsed to two: the bounded feedback path within one execution graph,
   and the wider discipline) and **workload identity** (two near-identical
   entries merged to one).
+- Follow-up review caught three issues in the pass above: an "example"
+  repository URL in Chapter 24 that still resolved as a real dead link (now
+  `example.com`, the domain reserved for documentation); a "Retain this"
+  line in Chapter 33 that still stated learning writeback reads only after
+  success without the surrounding section's caveat for separately labeled
+  failed-run signals (reconciled); and the research-canon provenance table,
+  which named sources without linking most of them — now carries a
+  confirmed-live link for every source where one exists, and says plainly
+  where none could be found rather than leaving the gap implicit.
 
 ### Known gaps
 

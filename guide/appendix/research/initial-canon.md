@@ -111,22 +111,26 @@ tests, and direct operation supply different forms of evidence.
 
 Several chapters cite material that did not come from a paper, a spec, or
 vendor documentation: public conference talks, engineering blog posts, and
-one livestream. This section is the provenance record for that material,
-since a bare in-text mention ("public practitioner talks, 2026") does not
-carry a title or date on its own.
+one livestream. This section is a provenance record for that material —
+what each citation actually is, and a direct link wherever one could be
+independently confirmed live. It is not full provenance in the sense of a
+link for every row: several of these were named to us without a URL, and a
+few sit behind an explicit request from the speaker not to be linked (see
+the anonymized-label note below); those are recorded as precisely as we can
+without guessing at a link.
 
-| Source | What it is | Chapters that draw on it |
-| --- | --- | --- |
-| Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* | Public engineering blog post and AI Engineer 2026 conference talk, published August 2026, byline @udaykiran. Public, named scale figures (pull requests attributed to agents, skills built, cost-per-session trend) and the six-term cost equation. | Chapters 8, 13, 17, 18, 31 |
-| *The 4 Layers of an Agent System Explained* | Public post with an accompanying infographic (credited to Databricks), published September 2026. Loop, Graph, Harness, and Meta-harness as nested layers, with Omnigent cited as one open-source meta-harness implementation. | Chapters 13, 18, 31 |
-| *Six layers of a working agentic system* | Public post and infographic, 2026, unsigned. A six-layer stack from trigger through runtime and operations, framed around the production question each layer answers. | Chapters 8, 17 |
-| Warp, *Closing the loop with self-improving cloud software factories* | Public post at warp.dev, published August 2026. Factory-as-code, the closed loop of factory agents, scorer agents, and self-improvement agents, and the PR-throughput/cost/automation-percent metric set. | Chapters 8, 23, 27 |
-| *What Is Loop Engineering?* | Public explainer post, published June 2026, unsigned. The loop-versus-chain distinction, the ReAct origin, the five-part loop anatomy, and the four loop patterns (retry, plan-execute-verify, explore-narrow, human-in-the-loop). | Chapter 18 |
-| HumanLayer × BAML livestream, "Software factory design patterns" | Public livestream conversation between Dexter (HumanLayer) and Vaibhav (BAML), 2026. Inner/outer harness terminology, the control plane as an underserved layer, routing by task, and the prototype-to-sliced-PR review workflow. | Chapters 6, 10, 11, 13, 17, 27, 31 |
-| IndyDevDan, "Software factories give leverage on your prompt" and "Engineering Time, Focus and Attention" | Public practitioner talks/posts, 2026. The agentic operating level and the argument that a factory's payoff is capacity freed for exploration, not raw speed. | Chapters 1, 8, 18, 20 |
-| Luke (Goose / Factory), "Multi-agent systems and the bottleneck of human attention" | Public practitioner talk, 2026. Human attention as the binding constraint on multi-agent systems. | Chapters 8, 18, 20 |
-| 0xCodez, "Graph engineering: the 14-step roadmap from linear chains to routed, branching, parallel graphs" | Public practitioner talk, 2026. | Chapter 18 |
-| Tessl documentation and public tutorials (docs.tessl.io) | Public vendor documentation and tutorials, 2026: skill schemas, with/without skill evaluation, and the scenario-generation and skill-optimizer patterns. | Chapters 10, 23 |
+| Source | What it is | Link | Chapters that draw on it |
+| --- | --- | --- | --- |
+| Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* | Public engineering blog post and AI Engineer 2026 conference talk, published August 2026, byline @udaykiran. Public, named scale figures (pull requests attributed to agents, skills built, cost-per-session trend) and the six-term cost equation. | [uber.com/us/en/blog/efficient-software-factory](https://www.uber.com/us/en/blog/efficient-software-factory/) (confirmed live 2026-09-03) | Chapters 8, 13, 17, 18, 31 |
+| *The 4 Layers of an Agent System Explained* | Public post with an accompanying infographic (credited to Databricks), published September 2026. Loop, Graph, Harness, and Meta-harness as nested layers, with Omnigent cited as one open-source meta-harness implementation. | No stable URL confirmed for the infographic post itself. Databricks has published closely related material on the same architecture: [Omnigent, a meta-harness](https://www.databricks.com/blog/introducing-omnigent-meta-harness-combine-control-and-share-your-agents) and [What is an AI Agent Harness?](https://www.databricks.com/blog/ai-harness) (both confirmed live 2026-09-03) | Chapters 13, 18, 31 |
+| *Six layers of a working agentic system* | Public post and infographic, 2026, unsigned. A six-layer stack from trigger through runtime and operations, framed around the production question each layer answers. | No URL confirmed; a search for the content turned up substantially the same six-layer model published under a vendor name on our exclusion list, which is almost certainly why this was handed to us unsigned. We are not linking that source and are not aware of an independent public post to link instead. | Chapters 8, 17 |
+| Warp, *Closing the loop with self-improving cloud software factories* | Public post, published August 2026. Factory-as-code, the closed loop of factory agents, scorer agents, and self-improvement agents, and the PR-throughput/cost/automation-percent metric set. | No warp.dev post under this exact title was confirmed. The closest verified match on factory-as-code and self-improvement loops is [A guide to cloud software factories for engineering leaders](https://www.warp.dev/blog/a-guide-to-cloud-software-factories-for-engineering-leaders) (confirmed live 2026-09-03), but it does not cover scorer agents or the specific metric set, so the fuller synthesis likely also draws on a Warp talk or post we could not independently locate. | Chapters 8, 23, 27 |
+| *What Is Loop Engineering?* | Public explainer post, published June 2026, unsigned. The loop-versus-chain distinction, the ReAct origin, the five-part loop anatomy, and the four loop patterns (retry, plan-execute-verify, explore-narrow, human-in-the-loop). | No URL confirmed. | Chapter 18 |
+| HumanLayer × BAML livestream, "Software factory design patterns" | Public livestream conversation between Dexter (HumanLayer) and Vaibhav (BAML), 2026. Inner/outer harness terminology, the control plane as an underserved layer, routing by task, and the prototype-to-sliced-PR review workflow. | No URL confirmed for the recording. | Chapters 6, 10, 11, 13, 17, 27, 31 |
+| IndyDevDan, "Software factories give leverage on your prompt" and "Engineering Time, Focus and Attention" | Public practitioner talks/posts, 2026. The agentic operating level and the argument that a factory's payoff is capacity freed for exploration, not raw speed. | No URL confirmed. | Chapters 1, 8, 18, 20 |
+| Luke (Goose / Factory), "Multi-agent systems and the bottleneck of human attention" | Public practitioner talk, 2026. Human attention as the binding constraint on multi-agent systems. | No URL confirmed. | Chapters 8, 18, 20 |
+| 0xCodez, "Graph engineering: the 14-step roadmap from linear chains to routed, branching, parallel graphs" | Public practitioner talk, 2026. | No URL confirmed. | Chapter 18 |
+| Tessl documentation and public tutorials | Public vendor documentation and tutorials, 2026: skill schemas, with/without skill evaluation, and the scenario-generation and skill-optimizer patterns. | [docs.tessl.io](https://docs.tessl.io/) (root confirmed live 2026-09-03; specific pages not individually verified) | Chapters 10, 23 |
 
 **"Public practitioner talks, 2026."** A recurring, deliberately anonymized
 citation covering several additional 2026 public conference talks and
