@@ -23,6 +23,8 @@ The words for progress are just as loose. "The agent is defined" may mean a prom
 
 ### Three definitions
 
+*Reference model — the vocabulary the two canonical models below are built from, not a peer of either.*
+
 <!-- infographic: three-definitions -->
 > **Infographic — Agent Factory, AI Software Factory, Mission Control.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
 
@@ -42,6 +44,8 @@ Chapter 1's table separated assistant, agent, platform, and factory: an assistan
 
 ### Skills → loops → factory
 
+*Reference model — the building blocks (skill, loop) that the two canonical models below are made of.*
+
 The second definition above is built from two smaller units, and it helps to see them before the five systems, because they are what the systems exist to run. A **skill** is a reusable, versioned definition of how a class of work is performed or what good looks like: workflow instructions, standards, policies, domain knowledge, review criteria, tools, hooks, expected outputs, and acceptance criteria. It is an executable unit of organisational knowledge, not a prompt with a name. A **loop** is a repeatedly executed agent workflow with observation, evaluation, and feedback that improves future runs: Trigger → Context → Execute → Observe → Verify → Evaluate → Learn → Improve → next run. Plain automation is Trigger → Execute → Output; a loop is automation that watches itself and gets better. Put many skills inside many loops, connect the loops, govern the whole, and you have the factory of the definition.
 
 That composition gives four modes of working, and most organisations are in more than one at once:
@@ -56,6 +60,8 @@ That composition gives four modes of working, and most organisations are in more
 The modes are not a ladder you climb once. The factory is a **continuum**: AI assistance → skills → automation → loops → connected loops → factory, and the share of work done by loops rises over time while the share done by hand falls. Nothing in the definition requires the loops to do everything; "a meaningful portion of the lifecycle" is the honest boundary, and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) lays the continuum out as a maturity model, L0 through L5, beside the book's own.
 
 ### Five systems, five verbs
+
+*Reference model — an ownership cut (who runs which system) layered on top of the six architectural areas below, not a third canonical model.*
 
 Zoom out one step further and the three definitions sit inside five systems that any enterprise ends up running, whatever it calls them. Keeping them apart is the single most useful thing you can do before an architecture review, because each has a different owner, a different release clock, and a different failure signature.
 
@@ -74,6 +80,8 @@ Zoom out one step further and the three definitions sit inside five systems that
 *The Agent Factory creates. The runtime executes. The harness controls. Knowledge grounds. The Software Factory delivers. The control plane governs.* The harness is listed on its own line because it is owned, versioned, and fails differently from the runtime that hosts it: the runtime decides whether an Attempt runs at all; the harness decides what the model may do once it is running. The Agent Factory can plug into the control plane as a capability source; the control plane never becomes the place where agents are authored, and the runtime never becomes the place where authority is decided. Two design rules follow. Use the lightest orchestration model that satisfies the workflow: a single-agent loop for most bounded work, an explicit-state workflow engine only where branching, waiting, and parallelism make state a first-class problem. And choose implementation language per subsystem, not by ideology: the retrieval pipeline, the runtime, and the control plane have different ecosystems, and a factory that forces one language on all five systems pays for the purity in every one of them.
 
 ### The factory in one line
+
+**Canonical model 1 of 2 (primary, reader-facing) — the eight-stage value stream.** Every other frame in this chapter is a lens on this model or on the six architectural areas below, never a peer of either.
 
 <!-- infographic: factory-in-one-line -->
 > **Infographic — Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -103,6 +111,8 @@ Two shorter hooks carry the same stream when you need it from memory. The seven-
 The same stream reads differently depending on who is looking at it, and it helps to keep both readings. From the builder's chair it is the **Builder loop**: Intent → Plan → Configure agents, harnesses, skills, and tools → Execute → Verify and evaluate → Deliver → Observe → Improve. From the control plane it is the **governed delivery lifecycle**: Mission → approved Plan → WorkOrder → Task → Attempt → candidate → independent evidence → pull request → human decision → release → observed outcome → governed learning. The first is what a person experiences; the second is what the records enforce, and every arrow in either form is a gate, not an optimistic handoff. [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) lays the lifecycle out stage by stage with what each stage does not authorize.
 
 ### The master whiteboard
+
+*Zoomed-in lens on canonical model 1 (the one-line value stream) — the same eight stages expanded with the risk, evidence, and delivery detail the mnemonic compresses away.*
 
 Before the layered stack, here is the version you would draw top to bottom on a whiteboard if someone asked what the factory actually does to a piece of work. It is longer than the one-line mnemonic because it shows where risk, evidence, and delivery sit, and it puts the controls where they belong: alongside everything, not in a box at the end.
 
@@ -149,6 +159,8 @@ The compact version fits on one line and is worth being able to reproduce: build
 
 ### Six architectural areas and who owns each layer
 
+**Canonical model 2 of 2 (supporting, system-facing) — the same factory cut by responsibility instead of by sequence.** Use this model when assigning teams and ownership; use canonical model 1 above when describing the flow of a piece of work. The fourteen-layer table nested below it is a zoomed-in implementation view of this model, not a third model.
+
 The whiteboard is a flow. The same system cut by responsibility gives six architectural areas, which is the cut to use when assigning teams, because each area has a distinct kind of expertise and a distinct failure signature.
 
 <!-- infographic: six-areas -->
@@ -186,6 +198,8 @@ The ownership rule for the whole table is the one that keeps a platform team fro
 
 ### Six areas, one surrounding concern
 
+*Reference model — canonical model 2 read as a narrative sequence, plus the adoption concern that surrounds it.*
+
 Read in order, the six areas are also the mental model of the whole book, and it is worth being able to say it in one breath. **Intent → Harness → Capability → Model → Trust → Learning**: a builder's intent is turned into governed work; a harness executes it durably; capabilities (agents, skills, tools, context) equip the run; a model, chosen by routing rather than by name, does the reasoning; trust (evaluation, verification, policy, security, observability, human authority) decides what may proceed; and learning turns what happened into the next version. Around all six sits a seventh concern that is not an area but a condition of the other six existing at all: **Adoption and transformation**, meaning forward-deployed engineering, migration, builder journeys, co-building, reusable artifacts, platform adoption, and the workforce change that comes with them ([Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)). A factory nobody adopts has six excellent areas and no throughput.
 
 ```mermaid
@@ -201,6 +215,8 @@ flowchart LR
 The quantity the whole arrangement is tuned for is **trusted throughput**: accepted, verified outcomes per unit of time and cost, never generated lines, prompts, or tokens. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) makes it the factory's throughput measure; every area above either raises it or protects it, and any change that raises raw output while lowering the accepted, verified share is a step backwards however impressive the demo. The fifty concepts that populate the six areas and the surrounding concern are listed, with their chapters, in [Appendix F](../appendix/principles.md#fifty-concepts-to-have-cold).
 
 ### The lifecycle above the six areas
+
+*Reference model — zooms out one level from canonical model 2, placing the six areas inside a wider signal-to-outcome ring.*
 
 The six areas describe what the factory is made of. One level up is what the factory is *for*, and that lifecycle starts earlier and ends later than most architecture diagrams admit. The factory does not begin at a ticket and end at a merge. It begins at a **signal**, an observable event indicating a potential need for change (customer feedback, a support case, a bug, telemetry, an incident, an issue, an analytics shift, a security finding, a performance regression, an engineering discussion), and it ends at an observed outcome that produces the next signal. Its boundary is signal-to-outcome, not ticket-to-code.
 
@@ -268,7 +284,7 @@ And the one-sentence synthesis that the lifecycle ring expresses: a software fac
 
 ### The system map
 
-This is the canonical architecture diagram of the book. Everything later is a zoom into one of its boxes.
+*Implementation view of canonical model 2 — the same responsibilities drawn as a deployable component stack. Everything later in the book is a zoom into one of its boxes.*
 
 <!-- infographic: layered-stack -->
 > **Infographic — The layered stack: control path and execution stack.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -317,6 +333,8 @@ The inner/outer split is a conceptual boundary, not a requirement for two deploy
 
 ### Build, buy, or bring your own
 
+*Implementation view — a procurement cut of the system map above, not a new model.*
+
 Practitioners who have built factories in the open describe the same five layers from the bottom: **compute**, **development environment**, **inner harness**, **outer harness**, and **control plane and orchestration**. Every one can be bought or built. Compute is a mature market: your own EC2 or Kubernetes, a rack of spare laptops, a managed sandbox API that provisions into your cloud, or execution sent entirely to a vendor; how much cloud you bring depends on the layers above.
 
 The development environment is the controversial layer and the one teams most often end up owning. It is more than an image with the right runtime: it is the toolchains that compile and test your software, a way to see what the agent built (a preview URL), the shared internal services a real product needs at development time (a team may run four layers locally while the application depends on fifty shared services), and **identity**, the credentials and bindings that let a session reach internal systems. That is why it is its own layer rather than part of the harness or the infrastructure. Once execution moves into a vendor's cloud, "use this base image" is easy, but opening your network to a session in someone else's compute, and debugging a toolchain on an emulated kernel, is friction. The largest companies solved this long ago with on-demand cloud workstations, no local checkouts, and shareable internal URLs pointed at the right services; the industry is rebuilding that golden stack. For small applications a vertical cloud agent may suffice; for real products, expect to own this layer.
@@ -338,6 +356,8 @@ Composition works only when interfaces are products with versioned contracts:
 A lowest-common-denominator adapter that drops hooks, cancellation, provenance, or tool events buys apparent portability and real operational blindness. Today's candidate protocols between control plane and harness are narrow and carry no lifecycle hooks because every inner harness exposes different ones ([Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) covers ACP, AG-UI, MCP, and hooks). Swappability is proven by behavioral compatibility tests, never by a matching product name.
 
 ### Seven layers of Mission Control
+
+*Reference model — Mission Control's own architecture, a different cut of the same system, not a peer of the two canonical models.*
 
 Where the stack describes components, Mission Control's own architecture is seven functional layers of a control plane, a different cut of the same system.
 
@@ -366,6 +386,8 @@ The **intent layer** turns product objectives, customer problems, bugs, feature 
 On a whiteboard, use five horizontal bands instead: human intent (product goals, issues, incidents, security findings); Mission Control (missions, work orders, orchestration, policy, approvals); specialized agents (investigation, planning, coding, testing, review, operations); engineering systems (GitHub, Jira, CI/CD, cloud, observability, documentation); and evidence and learning (tests, audit logs, telemetry, cost, outcomes, feedback). Put humans beside it at five decision points: intent, plan, code, release, exceptions. The closing line is the whole argument: separating intent, execution, governance, and evidence is what lets an organization increase autonomy without losing control.
 
 ### The lifecycle, stage by stage
+
+*Implementation view of canonical model 1 — the record and governance detail behind each of the eight stages.*
 
 <!-- infographic: lifecycle -->
 > **Infographic — The intent-to-delivery lifecycle and its record spine.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -424,6 +446,8 @@ Optimize the whole stream; cutting token cost while raising human correction or 
 
 ### Five platform commitments
 
+*Reference model — product commitments layered on both canonical models, not a third model.*
+
 Five commitments tie stack and lifecycle to a product. **Builder intent becomes the interface**: start with the outcome a builder wants, not the agent topology; developers first, then product managers, quality engineers, designers, security engineers, and other builders, each expressing intent, constraints, criteria, and risk through a surface suited to their work without understanding the model, agent, tool, or orchestration underneath. **Models become interchangeable execution resources**: they sit behind a governed gateway, routing is model-independent and based on required capability, measured quality, cost, latency, context window, security and data policy, availability, historical task performance, and fallback behavior; a provider name is never the architecture. **The harness, not the model, creates production reliability**: models reason and propose; the harness owns tools, state, permissions, recovery, stop conditions, sandboxing, execution control, observability, time, and budget. **Agents do not certify their own work**: completion requires independent verification, deterministic checks, trajectory evaluation, and baseline comparison, with human authority for consequential actions, and both artifact and path are evaluated. **Learning is automated; promotion is governed**: production signals may build datasets, cluster failures, and propose changes to prompts, skills, tools, routes, or policies, but a candidate becomes the default only after evaluation, baseline comparison, risk-appropriate approval, controlled rollout, and retained rollback.
 
 | Persona | Intent they express | Evidence they need back |
@@ -437,6 +461,8 @@ Five commitments tie stack and lifecycle to a product. **Builder intent becomes 
 Every builder surface shows lifecycle state, approvals, failures, recovery actions, costs, and evidence, and hides internal agent complexity unless it helps the builder decide.
 
 ### The capability model
+
+*Reference model — a book-organization cut of the two canonical models, mapping capability areas to Parts and chapters.*
 
 The capability taxonomy groups what a factory must do into seven areas, and the book's parts map onto them. **Intent and planning** (intent recognition and goal interpretation, task decomposition and definition, planning and dependency mapping, acceptance criteria, constraint identification, agent routing, dynamic replanning) is [Chapter 6](../02-design/06-intent-and-specification-engineering.md). **Agent definitions** (role, instructions, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, success criteria; configuration and provenance, never a credential) is [Chapter 10](../03-build/10-the-agent-factory.md). The **agent harness** (runtime, execution loop, model abstraction and routing, context and context-window management, tools and MCP, state, memory, sandboxes, guardrails, human-in-the-loop, observability, error recovery, orchestration) spans [Chapters 11–18](../03-build/11-control-plane-orchestrator-and-execution-plane.md). The **skills framework** (coding, testing, debugging, deployment, security, repository, organization-specific, and workflow skills; tool composition, versioning, discovery, evaluation, staged rollout, retirement) is in [Chapters 10](../03-build/10-the-agent-factory.md) and [18](../03-build/18-agent-and-loop-engineering.md). **Evaluation** (task completion, intent alignment, correctness, code quality, functional behavior, security, policy compliance, regression, LLM-as-judge, deterministic evals, quality metrics, evaluation datasets, production evals) is Part IV. **Feedback and self-improvement** (failure and root-cause analysis, feedback loop, strategy, skill, context, prompt, and tool optimization, eval-driven development, learning from success, regression detection, experimentation and A/B testing, continuous improvement) is Part VI. **Software delivery** (repository, branching, pull requests, code review, CI/CD, unit, integration, and end-to-end testing, static analysis, build verification, verification gates, artifact management, deployment, rollback, release management, production validation, observability) is [Chapter 25](../04-prove/25-cicd-progressive-delivery-and-production-verification.md). A passing agent run is not a release decision.
 
