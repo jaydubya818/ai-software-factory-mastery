@@ -8,6 +8,8 @@
   "scripts": {
     "content:generate": "node scripts/generate-content.mjs",
     "editorial:check": "node scripts/check-editorial-integrity.mjs",
+    "infographics:generate": "node scripts/generate-infographics.mjs",
+    "infographics:list": "node scripts/list-infographic-slots.mjs",
     "links": "node scripts/check-links.mjs",
     "predev": "npm run content:generate",
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
@@ -50,6 +52,7 @@
     "globals": "16.4.0",
     "playwright": "1.62.1",
     "react-server-dom-webpack": "^19.2.8",
+    "sharp": "^0.35.4",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.59.3",

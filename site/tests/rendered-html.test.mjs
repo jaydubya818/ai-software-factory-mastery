@@ -41,6 +41,7 @@ test("generated content reflects the book structure", async () => {
     assert.ok(Array.isArray(chapter.infographics), `${chapter.slug} has infographics`);
     assert.ok(chapter.summary.length > 0, `${chapter.slug} has a summary`);
     assert.ok(chapter.part, `${chapter.slug} has a part`);
+    assert.doesNotMatch(chapter.content, /graphic goes here/i, `${chapter.slug} has no publishing placeholder`);
   }
 });
 

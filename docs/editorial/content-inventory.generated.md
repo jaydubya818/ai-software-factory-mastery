@@ -43,7 +43,7 @@ Headings:
 ### 01-understand/01-why-software-engineering-is-changing.md
 
 - Type: chapter
-- Words: 4889
+- Words: 4917
 
 Headings:
 
@@ -72,7 +72,7 @@ Headings:
 ### 01-understand/02-the-factory-in-one-view.md
 
 - Type: chapter
-- Words: 4212
+- Words: 4248
 
 Headings:
 
@@ -104,7 +104,7 @@ Headings:
 ### 01-understand/03-first-principles-trust-evidence-and-authority.md
 
 - Type: chapter
-- Words: 5101
+- Words: 5127
 
 Headings:
 
@@ -135,7 +135,7 @@ Headings:
 ### 02-design/04-the-human-agent-operating-model.md
 
 - Type: chapter
-- Words: 8123
+- Words: 8175
 
 Headings:
 
@@ -174,7 +174,7 @@ Headings:
 ### 02-design/05-authoritative-records.md
 
 - Type: chapter
-- Words: 10408
+- Words: 10452
 
 Headings:
 
@@ -203,7 +203,7 @@ Headings:
 ### 02-design/06-intent-and-specification-engineering.md
 
 - Type: chapter
-- Words: 6568
+- Words: 6605
 
 Headings:
 
@@ -235,7 +235,7 @@ Headings:
 ### 02-design/07-governance-policy-and-risk-proportional-approval.md
 
 - Type: chapter
-- Words: 10868
+- Words: 10919
 
 Headings:
 
@@ -273,7 +273,7 @@ Headings:
 ### 02-design/08-economics-metrics-and-human-attention.md
 
 - Type: chapter
-- Words: 11731
+- Words: 11764
 
 Headings:
 
@@ -311,7 +311,7 @@ Headings:
 ### 02-design/09-multi-repository-design.md
 
 - Type: chapter
-- Words: 4277
+- Words: 4289
 
 Headings:
 
@@ -342,7 +342,7 @@ Headings:
 ### 03-build/10-the-agent-factory.md
 
 - Type: chapter
-- Words: 13329
+- Words: 13390
 
 Headings:
 
@@ -393,7 +393,7 @@ Headings:
 ### 03-build/11-control-plane-orchestrator-and-execution-plane.md
 
 - Type: chapter
-- Words: 10451
+- Words: 10494
 
 Headings:
 
@@ -434,7 +434,7 @@ Headings:
 ### 03-build/12-durable-execution.md
 
 - Type: chapter
-- Words: 5295
+- Words: 5324
 
 Headings:
 
@@ -464,7 +464,7 @@ Headings:
 ### 03-build/13-coding-harnesses-and-agent-protocols.md
 
 - Type: chapter
-- Words: 11455
+- Words: 11533
 
 Headings:
 
@@ -503,7 +503,7 @@ Headings:
 ### 03-build/14-development-environments-sandboxes-and-compute.md
 
 - Type: chapter
-- Words: 7501
+- Words: 7543
 
 Headings:
 
@@ -538,7 +538,7 @@ Headings:
 ### 03-build/15-agent-architecture.md
 
 - Type: chapter
-- Words: 9941
+- Words: 9971
 
 Headings:
 
@@ -570,7 +570,7 @@ Headings:
 ### 03-build/16-data-knowledge-semantic-and-context-engineering.md
 
 - Type: chapter
-- Words: 10986
+- Words: 11060
 
 Headings:
 
@@ -608,7 +608,7 @@ Headings:
 ### 03-build/17-models-routing-and-capability-selection.md
 
 - Type: chapter
-- Words: 8655
+- Words: 8684
 
 Headings:
 
@@ -641,7 +641,7 @@ Headings:
 ### 03-build/18-agent-and-loop-engineering.md
 
 - Type: chapter
-- Words: 9493
+- Words: 9522
 
 Headings:
 
@@ -667,7 +667,7 @@ Headings:
 ### 03-build/19-the-12-layer-production-ai-agent-stack.md
 
 - Type: chapter
-- Words: 4586
+- Words: 4603
 
 Headings:
 
@@ -700,7 +700,7 @@ Headings:
 ### 03-build/20-autonomous-engineering-workflows.md
 
 - Type: chapter
-- Words: 8996
+- Words: 9031
 
 Headings:
 
@@ -727,7 +727,7 @@ Headings:
 ### 04-prove/21-quality-and-evidence-architecture.md
 
 - Type: chapter
-- Words: 7141
+- Words: 7162
 
 Headings:
 
@@ -758,7 +758,7 @@ Headings:
 ### 04-prove/22-testing-strategy-for-agentic-change.md
 
 - Type: chapter
-- Words: 3652
+- Words: 3663
 
 Headings:
 
@@ -782,7 +782,7 @@ Headings:
 ### 04-prove/23-evaluation-engineering.md
 
 - Type: chapter
-- Words: 10549
+- Words: 10574
 
 Headings:
 
@@ -818,7 +818,7 @@ Headings:
 ### 04-prove/24-quality-contracts-proof-packages-and-certificates.md
 
 - Type: chapter
-- Words: 7785
+- Words: 7826
 
 Headings:
 
@@ -860,7 +860,7 @@ Headings:
 ### 04-prove/25-cicd-progressive-delivery-and-production-verification.md
 
 - Type: chapter
-- Words: 4862
+- Words: 4891
 
 Headings:
 
@@ -898,7 +898,7 @@ Headings:
 ### 04-prove/26-security.md
 
 - Type: chapter
-- Words: 8448
+- Words: 8485
 
 Headings:
 
@@ -937,7 +937,7 @@ Headings:
 ### 05-operate/27-the-factory-as-a-platform.md
 
 - Type: chapter
-- Words: 6253
+- Words: 6293
 
 Headings:
 
@@ -965,7 +965,7 @@ Headings:
 ### 05-operate/28-observability-telemetry-and-forensics.md
 
 - Type: chapter
-- Words: 5790
+- Words: 5825
 
 Headings:
 
@@ -996,7 +996,7 @@ Headings:
 ### 05-operate/29-resilience-incidents-and-the-control-tower.md
 
 - Type: chapter
-- Words: 6385
+- Words: 6442
 
 Headings:
 
@@ -1026,7 +1026,7 @@ Headings:
 ### 05-operate/30-control-surfaces-event-contracts-and-storage.md
 
 - Type: chapter
-- Words: 6490
+- Words: 6529
 
 Headings:
 
@@ -1060,7 +1060,7 @@ Headings:
 ### 05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md
 
 - Type: chapter
-- Words: 12020
+- Words: 12130
 
 Headings:
 
@@ -1101,7 +1101,7 @@ Headings:
 ### 06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md
 
 - Type: chapter
-- Words: 9593
+- Words: 9657
 
 Headings:
 
@@ -1131,7 +1131,7 @@ Headings:
 ### 06-improve/33-governed-learning-and-compounding-engineering.md
 
 - Type: chapter
-- Words: 13556
+- Words: 13662
 
 Headings:
 
@@ -1173,7 +1173,7 @@ Headings:
 ### 06-improve/34-mission-control-as-a-living-case-study.md
 
 - Type: chapter
-- Words: 13679
+- Words: 13722
 
 Headings:
 
@@ -1235,7 +1235,7 @@ Headings:
 ### 06-improve/35-mastering-the-factory.md
 
 - Type: chapter
-- Words: 7094
+- Words: 7137
 
 Headings:
 
@@ -1277,7 +1277,7 @@ Headings:
 ### 06-improve/36-where-this-is-going.md
 
 - Type: chapter
-- Words: 3869
+- Words: 3884
 
 Headings:
 

@@ -53,7 +53,13 @@ function stripUnfilledInfographicCallouts(markdown, assets) {
       output.push(line);
       continue;
     }
-    if (pendingSlot && /^>\s*\*\*Infographic\s*[—-]/.test(line) && !assets.has(pendingSlot)) {
+    const callout = pendingSlot ? line.match(/^>\s*\*\*(Infographic\s*[—-]\s*[^*]+)\*\*/) : null;
+    if (callout && !assets.has(pendingSlot)) {
+      pendingSlot = null;
+      continue;
+    }
+    if (callout) {
+      output.push(`> **${callout[1]}**`);
       pendingSlot = null;
       continue;
     }

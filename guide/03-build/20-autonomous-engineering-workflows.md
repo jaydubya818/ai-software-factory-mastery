@@ -4,7 +4,7 @@ part: build
 chapter: 20
 summary: How to admit a repository the factory is allowed to change, define the first workflow (governed issue-to-pull-request delivery) and the eight workflow products that follow it, and give each workflow its own trigger, proof shape, authority, and autonomy.
 absorbs: [autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md, autonomous-workflows/02-autonomous-engineering-workflow-catalog.md, autonomous-workflows/03-change-workflows-features-defects-tests-and-modernization.md, autonomous-workflows/04-operational-workflows-security-incidents-production-and-knowledge.md]
-infographics: [repository-onboarding, repository-profile, agent-readiness, signal-to-deployment, issue-to-pr-wedge, workflow-catalog]
+infographics: [repository-onboarding, repository-profile, signal-to-deployment, issue-to-pr-wedge, workflow-catalog]
 ---
 
 # 20. Autonomous engineering workflows
