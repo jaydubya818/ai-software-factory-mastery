@@ -33,7 +33,8 @@ test("generated content reflects the book structure", async () => {
   assert.equal(documents.filter((document) => document.contentType === "lab").length, 0, "labs removed");
   assert.equal(documents.filter((document) => document.contentType === "stage").length, 8, "8 stages");
   assert.ok(documents.filter((document) => document.contentType === "case study").length >= 3);
-  for (const key of ["readingMinutes", "hasQuickRead", "hasInterviewQuestions", "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
+  const removedHiringMetadata = String.fromCharCode(104, 97, 115, 73, 110, 116, 101, 114, 118, 105, 101, 119, 81, 117, 101, 115, 116, 105, 111, 110, 115);
+  for (const key of ["readingMinutes", "hasQuickRead", removedHiringMetadata, "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
     assert.ok(!(key in documents[0]), `${key} should not be generated`);
   }
   for (const chapter of chapters) {
@@ -88,7 +89,7 @@ test("guide table of contents lists front matter and all 36 chapters with summar
   assert.match(html, /Appendices/);
   assert.match(html, /href="\/docs\/appendix\/glossary"/);
   assert.equal(docLinks(html).filter((link) => /^\/docs\/0[1-6]-/.test(link)).length, 36);
-  assert.doesNotMatch(html, /reading time|mark complete|selected path|interview mode|learning path/i);
+  assert.doesNotMatch(html, /reading time|mark complete|selected path|learning path/i);
 });
 
 test("chapter 2 renders with part label, chapter number, TOC, and prev/next", async () => {
@@ -106,7 +107,7 @@ test("chapter 2 renders with part label, chapter number, TOC, and prev/next", as
   assert.match(html, /<!-- infographic: |class="mermaid|language-mermaid/, "the mermaid fallback still renders");
   assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "previous links to chapter 1");
   assert.match(html, new RegExp(`href="/docs/${chapterSlugs[3]}"`), "next links to chapter 3");
-  assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|Interview practice|\d+ min read|status-badge|document-status/i);
+  assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|\d+ min read|status-badge|document-status/i);
 });
 
 test("reading sequence runs front matter → chapters → appendices", async () => {
@@ -180,11 +181,14 @@ test("every internal /docs link on rendered pages resolves to a generated docume
 });
 
 test("keeps requested exclusions out of public routes", async () => {
-  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/docs/appendix/glossary"];
+  const documents = await generatedDocuments();
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", ...documents.map((document) => `/docs/${document.slug}`)];
   const terms = [
     [87, 111, 114, 107, 100, 97, 121],
     [72, 111, 112, 112, 101, 114],
     [87, 111, 114, 107, 98, 101, 110, 99, 104],
+    [77, 101, 116, 97, 32, 70, 97, 99, 116, 111, 114, 121],
+    [73, 110, 116, 101, 114, 118, 105, 101, 119],
   ].map((codes) => String.fromCharCode(...codes));
   const excluded = new RegExp(`\\b(?:${terms.join("|")})\\b`, "i");
 

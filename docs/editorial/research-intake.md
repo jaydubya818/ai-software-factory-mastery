@@ -57,6 +57,31 @@ The authoritative foundations used to verify the accepted guidance are listed
 with authors, titles, dates, URLs, source type, and derived claims in Appendix
 E's “External foundations” table.
 
+### Estate-scale code-review study artifacts
+
+- Source: user-supplied `codex-clipboard-85e906b6-5d2a-4413-96f7-0df4f6f7d457.png`
+  and attachment `076aabef-30cc-4157-9219-22be6b746d8d/pasted-text.txt`.
+- Source type: internal synthesis; original author, publication date, and URL
+  are unavailable.
+- Publication date: unknown.
+- Access date: 2026-09-03.
+- Proposed canonical owner: Chapter 32, supported by Chapters 16, 17, 20, 21,
+  23, 26, and 33.
+- Reader problem solved: selecting and operating review capabilities across a
+  heterogeneous repository estate without surrendering policy, evidence,
+  security, or learning to a reviewer implementation.
+- Current material replaced or corrected: the supplied sequence placed learning
+  before evidence and human disposition; the canonical pipeline keeps Outcome
+  before Learn. Employer-specific language and unverified scale claims were not
+  imported.
+- Evidence strength and limitations: suitable as architecture prompts only;
+  vendor examples, organization scale, and claimed internal practices require
+  independent source records before publication.
+- Decision: accept missing build/adopt benchmarking, capability routing and
+  fallback, untrusted-repository controls, and scorecard material; reject a new
+  lifecycle, product-specific terminology, and the supplied graphic as public
+  evidence.
+
 ## Pending
 
 No pending items.

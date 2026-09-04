@@ -89,7 +89,7 @@ material from the source transcripts actually present.
 32. Production feedback, review, and the agentic merge queue — `07-quality-engineering/05`; transcript feedback/merge sections
 33. Governed learning and compounding engineering — `03-operating-model/03`, `05`; `06-ai-engineering/07`
 34. Mission Control as a living case study — `09-mission-control-case-studies/01`–`03` (condensed narrative)
-35. Mastering the factory: explaining, defending, and building it — `11-interview-mastery/01`; mission 12-month/30-day plans; five audiences
+35. Mastering the factory: explaining, defending, and building it — legacy executive-mastery source; mission 12-month/30-day plans; five audiences
 36. Where this is going — transcript "evolution", extensible software, open interfaces; research canon pointers
 
 ### Appendices (reference)

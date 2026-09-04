@@ -113,7 +113,7 @@ The appendices support lookup and verification rather than the main teaching seq
 - The [research canon](../appendix/research/initial-canon.md) records external sources and provenance.
 - The [Mission Control maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) is the canonical source for implemented, partial, and future case-study claims.
 - [Coverage and maturity](../appendix/coverage-and-maturity.md), the [changelog](../appendix/changelog.md), and the [reviewer guide](../appendix/reviewer-guide.md) track the state of the guide itself.
-- The [software architecture and system design study guide](../appendix/architecture-communication.md) supports architecture interviews, reviews, and defense.
+- The [software architecture and system design study guide](../appendix/architecture-communication.md) supports architecture design, technical reviews, and design defense.
 
 Protocol and vendor details are time-sensitive. The owning chapters link to official specifications and state the review boundary. They should be reverified before a production decision.
 

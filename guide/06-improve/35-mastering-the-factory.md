@@ -3,7 +3,6 @@ title: "Mastering the factory: explaining, defending, and building it"
 part: improve
 chapter: 35
 summary: A mastery program for the person who has to build an AI Software Factory and also explain it, defend it, and lead the organization around it — four fluency levels, five audiences, the objections, the leader's three axes, a twelve-month build, a 30/60/90 for standing one up inside an organization, and a weekly rhythm.
-absorbs: [11-interview-mastery/01-executive-and-interview-mastery.md]
 infographics: [mastery-levels, three-axes, twelve-month-plan, ninety-day-plan, three-release-clocks, five-audiences]
 ---
 

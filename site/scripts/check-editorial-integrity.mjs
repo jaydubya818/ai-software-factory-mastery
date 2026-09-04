@@ -10,6 +10,10 @@ const inventoryPath = path.join(repositoryRoot, "docs", "editorial", "content-in
 const writeInventory = process.argv.includes("--write-inventory");
 const checkOrientation = process.argv.includes("--check-orientation");
 const checkRelease = process.argv.includes("--check-release");
+const excludedPublishedTerms = [
+  [77, 101, 116, 97, 32, 70, 97, 99, 116, 111, 114, 121],
+  [73, 110, 116, 101, 114, 118, 105, 101, 119],
+].map((codes) => String.fromCharCode(...codes));
 
 async function walk(directory) {
   const files = [];
@@ -102,10 +106,15 @@ const infographicAssets = new Set(
 );
 const documents = [];
 let sourceWords = 0;
+const excludedPublishedHits = [];
 
 for (const file of files) {
   const sourcePath = path.relative(guideRoot, file).split(path.sep).join("/");
   const raw = await readFile(file, "utf8");
+  const normalizedRaw = raw.toLowerCase();
+  for (const term of excludedPublishedTerms) {
+    if (normalizedRaw.includes(term.toLowerCase())) excludedPublishedHits.push(`${sourcePath}: ${term}`);
+  }
   const parsed = matter(raw);
   const content = stripUnfilledInfographicCallouts(stripFirstHeading(parsed.content), infographicAssets);
   const chapter = typeof parsed.data.chapter === "number" ? parsed.data.chapter : null;
@@ -183,6 +192,7 @@ const report = {
   duplicateGlossaryTerms: duplicateTerms,
   coreTerms: coreTerms.length,
   vagueSourceAttributions: vagueSources,
+  excludedPublishedTerms: excludedPublishedHits,
   canonicalLabelCandidates: canonicalLabels,
   longestChapters: longestChapters.map(({ sourcePath, words: wordCount }) => ({ sourcePath, words: wordCount })),
   largestRetainSections: retainRows.slice(0, 12).map(({ sourcePath, retain }) => ({ sourcePath, ...retain })),
@@ -198,6 +208,7 @@ console.log(`Stage pages: ${report.stages} / ${report.stageWords} words`);
 console.log(`Glossary entries: ${report.glossaryEntries} / duplicate definitions: ${report.duplicateGlossaryTerms.length}`);
 console.log(`Core-term candidates: ${report.coreTerms}`);
 console.log(`Vague source attributions: ${report.vagueSourceAttributions.length}`);
+console.log(`Excluded published terms: ${report.excludedPublishedTerms.length}`);
 console.log("Longest chapters:");
 for (const row of report.longestChapters) console.log(`  ${row.words}  ${row.sourcePath}`);
 console.log("Largest Retain this sections:");
@@ -245,6 +256,7 @@ if (checkOrientation || checkRelease) {
   expect((chapterTwo?.retain?.words ?? Infinity) <= 220, `Chapter 2 Retain this must contain no more than 220 words; found ${chapterTwo?.retain?.words ?? 0}`);
   for (const stage of stages) expect(stage.words >= 800 && stage.words <= 1500, `${stage.sourcePath} must contain 800–1,500 words; found ${stage.words}`);
   expect(stageWords <= 12000, `stage pages must contain no more than 12,000 words; found ${stageWords}`);
+  expect(excludedPublishedHits.length === 0, `excluded terms remain in published content: ${excludedPublishedHits.join(", ")}`);
 }
 
 if (checkRelease) {

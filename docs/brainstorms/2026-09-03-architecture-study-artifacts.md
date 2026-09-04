@@ -7,7 +7,7 @@ topic: architecture-study-artifacts
 
 ## What We're Building
 
-Use the supplied architecture interview graphics as prompts for improving the
+Use the supplied architecture study graphics as prompts for improving the
 existing software architecture and system design appendix. Add only concepts
 that are missing from the guide: a translation into the canonical eight-stage
 value stream and six-area architecture, a layered estate-scale code-review
@@ -31,6 +31,9 @@ their useful prompts while sending technical depth back to canonical chapters.
   constraints unless a complete source record supports them.
 - Put detailed code-review, runtime, evaluation, and incident mechanisms in
   their existing owning chapters; Appendix E provides drills and cross-links.
+- Keep Chapter 32 as the canonical owner for automated code review. Add only
+  the missing capability-selection, build/adopt, repository-content security,
+  and operating-metrics decisions, while compressing its retained summary.
 
 ## Open Questions
 

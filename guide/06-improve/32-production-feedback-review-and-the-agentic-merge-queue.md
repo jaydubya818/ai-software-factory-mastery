@@ -2,7 +2,7 @@
 title: Production feedback, automated review, and the agentic merge queue
 part: improve
 chapter: 32
-summary: How untrusted user feedback becomes a verified reproduction, a governed issue, and a fix that an agent keeps mergeable without ever taking the merge decision away from a human.
+summary: How untrusted feedback becomes a verified fix; how context-driven review scales across a heterogeneous repository estate; and how evidence, outcomes, and human authority govern review, learning, and mergeability.
 absorbs: [07-quality-engineering/05-production-feedback-reproduction-review-and-merge.md]
 infographics: [review-compression, review-at-scale, review-pipeline, feedback-to-reproduction, signal-to-review-path, fix-review-loop, agentic-merge-queue]
 ---
@@ -431,6 +431,13 @@ Stage three is where most automated review stalls, and the reason is what the re
 
 Context-driven review is delivered through a **specialised review lens**: a targeted review capability activated by the characteristics of the change rather than by the repository or the reviewer's mood. Four lenses cover most changes, and change classification (below) is what activates them:
 
+In a polyglot estate, the profile also selects language-aware parsers, build and
+test adapters, static analyzers, and domain skills while the evidence and policy
+contracts stay common. For a very large codebase, begin with the diff, expand to
+changed symbols and callers, then dependencies, tests, ownership, architecture,
+and history only as uncertainty requires. Context should grow with uncertainty,
+not with repository size.
+
 | Change characteristic | Lens | What it reviews for |
 | --- | --- | --- |
 | Frontend | UI lens | Accessibility, design-system conformance, UI architecture, copy and consistency |
@@ -462,7 +469,7 @@ With the shape in place, the mechanisms. There are ten, and they work together; 
 
 Read together, the ten form a pipeline: *profile* the repository once, *index* it continuously, *classify* each change, pick the *tier*, assemble *hierarchical context*, dispatch the *specialised reviewers* under a *budget*, emit *structured findings*, and *evaluate* the whole thing per class against *layered policy*. The order matters because each step narrows the next one's work; the cost of review then scales with the risk of the change, not with the size of the estate.
 
-Laid out end to end, with the human and the outcome included, the pipeline has twelve steps, and the last two are what make it a factory rather than a linter.
+Laid out end to end, with the human and the outcome included, the pipeline has twelve steps, and the last two are what make it a factory rather than a linter. Intake may begin with a pull request, draft pull request, commit push, IDE action, agent-generated branch, or governed bulk change; normalize each into one candidate identity, base and head revisions, repository, actor, and provenance before review begins.
 
 <!-- infographic: review-pipeline -->
 > **Infographic — The twelve-step review pipeline.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
@@ -491,6 +498,95 @@ Step 10 needs a **human-review baseline**: the measured precision, recall, and t
 Steps 11 and 12 close the loop. An **accepted finding** is one a human acted on and whose action survived to merge; it is the positive label the reviewer's precision is computed from, and it is joined to the outcome (did the change ship clean, or come back as an incident) before it is trusted. Those labels, the dismissals with their reasons, the overrides, and the incidents accumulate into **repository memory**: the per-repository, versioned record of what the reviewer has been right and wrong about here, which findings this codebase's maintainers accept, and which patterns have escaped before. **Review history**, the raw sequence of past reviews, comments, and their resolutions, is the source that memory is distilled from, and it is also retrieved as context in step 5 so that a reviewer can say "this pattern was rejected in PR 4127 for this reason" rather than discovering the argument again. Memory feeds the profile (step 2) and the suppression and threshold rules (step 8), which is why the dotted arrows return there and not to the reviewer's prompt. Learning changes the pipeline's configuration through the promotion gate of [Chapter 33](./33-governed-learning-and-compounding-engineering.md), never the reviewer's instructions in place.
 
 What makes the design governable rather than merely scalable is that every step leaves a record the control plane can act on: the profile is a readiness gate, the classification is an input to the risk tier, the findings are evidence in the decision packet, and the per-class evaluation is what earns a reviewer more autonomy or demotes it. The reviewer never decides its own tier, never widens its own budget, and never grades its own findings.
+
+### Select and operate review capabilities by evidence
+
+The review platform is not the same thing as the reviewer model. The software
+factory should own the repository profile, policy, context assembly, routing,
+normalized finding contract, evidence, human decision, and outcome record.
+Specific reviewers may be internal, external, deterministic, model-based, or a
+composition of several. Keeping that boundary stable makes build versus adopt
+an empirical product decision rather than an architectural ideology.
+
+Benchmark candidate capabilities on a representative matrix of languages,
+frameworks, repository sizes and ages, change types, risk tiers, and known
+failure modes. Use historical changes with adjudicated findings, seeded defects,
+and shadow-mode traffic. Normalize every result into the same finding schema so
+the comparison measures the reviewer rather than its presentation.
+
+| Decision dimension | Evidence required |
+| --- | --- |
+| Detection quality | Precision of published findings, recall on known defects, severity calibration, and critical-miss rate by workload class |
+| Local fit | Correct use of repository, product, architecture, ownership, and historical context without context-window flooding |
+| Security and control | Data handling, retention, regional constraints, identity, tool authority, auditability, and resistance to hostile repository content |
+| Operations | Queue and review latency, availability, rate limits, cancellation, head-revision currentness, and provider-failure behavior |
+| Economics | Model, tool, compute, retry, and human-triage cost at an agreed quality floor |
+| Portability | Versioned contracts, exportable evidence, replaceable models and tools, and no hidden merge authority |
+
+Adopt a generic capability when it clears the benchmark and integrates through
+the platform contracts. Build when a persistent, strategically important gap
+cannot be closed safely or economically. A hybrid is often the practical
+default: adopt commodity detection while owning differentiated context, policy,
+evaluation, routing, evidence, and learning.
+
+Routing starts with versioned rules, not an opaque self-optimizing router. Its
+inputs include language and framework, change kind and surface, risk tier,
+context size, required review lenses, historical evaluator results, latency and
+data-policy constraints, provider availability, and budget. Its output is an
+admitted configuration of deterministic checks, reviewers, tools, context, and
+stopping conditions. Outcome evidence may propose a routing change, but the
+change reaches production only through evaluation and promotion.
+
+A fallback must already be qualified for the same workload and policy class.
+Otherwise the system queues the review, degrades to advisory mode, or fails
+closed according to risk; provider availability never lowers the quality or
+security bar. Measure `cost per accepted finding` as total model, tool, compute,
+retry, and human-triage cost divided by findings whose corrective action
+survives merge. Report no-finding reviews separately so a quiet but ineffective
+reviewer cannot appear economical.
+
+### Treat repository content as untrusted input
+
+Source, comments, documentation, issues, fixtures, generated files, build
+scripts, dependencies, and prior review text can all contain instructions aimed
+at the reviewer. They are evidence to analyze, never authority. Mark their
+provenance, keep trusted policy and system instructions separate, and ensure
+retrieved content cannot widen repository scope, tool access, network egress,
+credentials, time, compute, or budget.
+
+Review should be read-only by default. Any command execution occurs in an
+ephemeral sandbox at an exact revision with short-lived identity, no standing
+secrets, restricted egress, explicit tool grants, resource limits, and retained
+receipts. Policy enforcement and merge authority remain outside the model. Tool
+outputs and retrieved context receive the same untrusted treatment as repository
+files, and sensitive content is redacted before it reaches providers that are
+not authorized to receive it.
+
+Test this boundary deliberately with hostile repository instructions, secret-
+access attempts, cross-repository references, poisoned tool responses, and
+requests to bypass required checks. A model resisting the text is useful; a
+deterministic denial at the authorization boundary is the control.
+
+### Operate review as a product
+
+A review service needs a balanced scorecard segmented by repository and
+workload class and compared with the human-only baseline:
+
+| Dimension | Measures |
+| --- | --- |
+| Finding quality | Published-finding precision, known-defect recall, severity calibration, critical misses, duplicate rate, and stale findings |
+| Human burden | Acceptance, dismissal, correction, and override rates; review minutes and touchpoints per accepted outcome |
+| Flow | Queue time, time to first actionable finding, total review latency, time to merge, superseded-run cancellation, and re-review count |
+| Economics | Cost per review, accepted finding, and accepted outcome, with model, tool, compute, retry, and human cost separated |
+| Safety and reliability | Unauthorized-action attempts, secret or data exposure, policy denials, availability, fallback use, and fail-closed events |
+| Outcomes and learning | Escaped defects, incidents, reverts, repeated findings, candidate-versus-baseline win rate, regressions, and promotion rollback |
+| Adoption | Eligible repositories enabled, repeat usage, opt-outs with reason, developer trust, and product-team retention |
+
+No single number is the objective. Precision without recall misses important
+defects; recall without precision destroys trust; speed without currentness
+reviews the wrong code; adoption without low burden scales noise. Promotion
+requires a stated quality floor plus evidence that safety, human attention, and
+unit economics did not regress.
 
 ### Mergeability and the agentic merge queue
 
@@ -731,52 +827,27 @@ precision, human attention, merge latency, and change-failure outcomes.
 
 ## Retain this
 
-- Review at scale is ten mechanisms in order: repository profiling, incremental indexing, change classification, risk-tiered depth, hierarchical context, specialised reviewers, per-class evaluation, budget-aware escalation, structured findings with evidence, and layered policy. Cost then scales with the risk of the change, not the size of the estate.
-- End to end the pipeline is twelve steps: PR → Profile → Analyze → Classify → Retrieve context → Route → Specialised reviewers → Aggregate → Verify → Human → Outcome → Learn. Aggregation is deduplication, then noise suppression, then a confidence threshold set from measured precision. A reviewer is promoted and demoted against a human-review baseline; accepted findings joined to outcomes become repository memory, distilled from review history and fed back to the profile and suppression rules through the promotion gate.
-- Feedback is untrusted evidence about an observation. It becomes more
-  authoritative only through explicit promotion, and every earlier record is
-  kept.
-- Check the latest version first, deduplicate second, reproduce third. Issues
-  are created after reproduction, never from raw feedback.
-- A verified reproduction is one of the highest-leverage assets in an
-  autonomous maintenance loop; spend tokens generating several and verify on an
-  independent path. If none is clear, a human gets it.
-- Every subsystem has an accuracy number. Sixty percent useful is worth
-  shipping; measure by landed lines of code and reclassify.
-- Cheap regression cases run on every PR; expensive ones by risk; flaky ones are
-  quarantined with an owner.
-- Signal quality is a product problem: deduplicate, correlate, attach severity,
-  confidence, ownership, and risk; surface the smallest set that can change the
-  decision; explain findings well enough to teach. Maximum decision quality per
-  unit of human attention, not maximum signal volume.
-- Review depth is proportional to risk, not to the fact that AI generated the
-  change. Low risk goes to automated verification and possibly autonomous
-  promotion; medium to one reviewer with a summarized packet; high to senior
-  review with stronger controls. Reviewer feedback recalibrates the tiers.
-- Autonomy scales with reversibility, not confidence. Scale trust, not human
-  review.
-- The fix-review loop is a while loop with a maximum of three iterations, then
-  a human. Reviewer satisfaction is not acceptance, and a reviewer cannot
-  certify its own fix.
-- An agent may keep a human-approved candidate mergeable; it must not expand
-  scope or take the merge decision. A material diff invalidates approval.
-- A 20,000-line prototype is a specification, not a PR. Slice it through a
-  reviewed plan with migrations ordered first.
-- Roll a review agent out advisory first, then gate. Severity is consequence
-  times likelihood; a threshold decides what requests changes; unresolved
-  findings carry forward; one review per head, re-verified before publication;
-  no verdict means fail.
-- "Does this PR need a human?" and "are the files right?" are two checks:
-  change-risk policy and change-verify invariants.
-- The review bottleneck moves from writing to reviewing to defining correctness
-  and verification. Compress review through five stages — deterministic checks,
-  specialised verifiers, agent reviewers, risk classification, human judgment —
-  and measure the share of changes that reach the bottom.
-- Context-driven review beats generic review: diff plus repository profile,
-  architecture, standards, history, skills, and component rules, delivered
-  through specialised lenses (frontend, backend, auth, infra) activated by the
-  change. Shift the standard left to the producer so that review is defence in
-  depth; a lens whose finding rate never falls is a standard that never moved.
+- Promote raw feedback only after current-version checking, deduplication, and
+  independently verified reproduction; retain the evidence and uncertainty at
+  every transition.
+- At estate scale, keep one governed platform and specialize through repository
+  profiles, incremental indexes, risk tiers, hierarchical context, review
+  lenses, budgets, structured findings, and layered policy.
+- The twelve-step review path is PR → Profile → Analyze → Classify → Retrieve →
+  Route → Review → Aggregate → Verify → Human → Outcome → Learn. Learning never
+  precedes evidence, disposition, and outcome.
+- Treat every repository and tool output as untrusted input. Sandboxes, scoped
+  identity, explicit grants, restricted egress, and external policy—not model
+  obedience—bound authority.
+- Benchmark internal and external reviewers through one finding contract. Route
+  only evaluated capabilities, preserve the quality and policy bar during
+  provider failure, and optimize total cost per accepted finding.
+- Aggregate before publication: deduplicate, suppress known noise, calibrate
+  thresholds, carry unresolved findings forward, compare with a human baseline,
+  and promote advisory review to a gate only on evidence.
+- Humans retain consequential review and merge authority. Bounded fix and merge-
+  maintenance loops cannot widen scope; material change invalidates approval;
+  accepted findings joined to production outcomes feed governed learning.
 
 ## Go deeper
 

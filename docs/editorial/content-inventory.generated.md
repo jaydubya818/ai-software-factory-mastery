@@ -23,7 +23,7 @@ Headings:
 ### 00-front-matter/01-what-this-guide-covers.md
 
 - Type: chapter
-- Words: 1229
+- Words: 1231
 
 Headings:
 
@@ -1101,7 +1101,7 @@ Headings:
 ### 06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md
 
 - Type: chapter
-- Words: 9042
+- Words: 9593
 
 Headings:
 
@@ -1117,6 +1117,9 @@ Headings:
 - H3 — Automated review and the bounded fix-review loop — `#automated-review-and-the-bounded-fix-review-loop`
 - H3 — Advisory first, then gate — `#advisory-first-then-gate`
 - H3 — Scaling automated review across a large estate — `#scaling-automated-review-across-a-large-estate`
+- H3 — Select and operate review capabilities by evidence — `#select-and-operate-review-capabilities-by-evidence`
+- H3 — Treat repository content as untrusted input — `#treat-repository-content-as-untrusted-input`
+- H3 — Operate review as a product — `#operate-review-as-a-product`
 - H3 — Mergeability and the agentic merge queue — `#mergeability-and-the-agentic-merge-queue`
 - H3 — Slicing large changes — `#slicing-large-changes`
 - H2 — How to build it — `#how-to-build-it`

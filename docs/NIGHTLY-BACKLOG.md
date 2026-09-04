@@ -53,7 +53,7 @@ producing a fake red baseline; unset it first.
   browser resolves under `/docs/` and 404s. Affects
   `05-runtime-architecture/02`, `08-security-and-governance/01` (twice),
   `09-mission-control-case-studies/01`, `10-labs/01`,
-  `11-interview-mastery/01`, and `curriculum` (twice — one of those is
+  the legacy executive-mastery source, and `curriculum` (twice — one of those is
   `../source-material/README.md`).
   Reproduce: build, then scan rendered article bodies for a relative `.md`
   href — `[...articleBody.matchAll(/href="([^"]+)"/g)]` filtered by
