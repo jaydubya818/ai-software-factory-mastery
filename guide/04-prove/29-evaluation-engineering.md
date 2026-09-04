@@ -72,7 +72,7 @@ Changing any behaviorally relevant component creates a new candidate. The evalua
 ### The records of an evaluation program
 
 <!-- infographic: eval-pipeline -->
-> **Infographic — The evaluation pipeline.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The evaluation pipeline.**
 
 ```mermaid
 flowchart LR
@@ -133,7 +133,7 @@ The HumanLayer team's issue-triage work is a useful picture of a dataset being b
 ### Three kinds of grader, and none of them vote
 
 <!-- infographic: grader-types -->
-> **Infographic — Grader types.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Grader types.**
 
 ```mermaid
 flowchart TB

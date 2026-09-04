@@ -22,7 +22,7 @@ A cheap model can produce an expensive outcome when it retries, rereads large co
 Cost per accepted WorkOrder includes model and token spend, tools, infrastructure, CI, storage, human implementation, review, recovery, rework, incidents, and allocated platform operation — with uncertainty stated explicitly. Then compare marginal cost with marginal value. A more expensive model can be cheaper overall if it cuts retries and review. A cheap run that fails validation is inventory, not value.
 
 <!-- infographic: cost-per-validated-change -->
-> **Infographic — Cost per validated change.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Cost per validated change.**
 
 ```mermaid
 flowchart LR
@@ -73,7 +73,7 @@ The levers above are easier to prioritise once the bill is written as a product 
 The six terms fall into three groups, and each group wants a different response. The first two, users and sessions per user, are **adoption**: they measure how much of the organisation's work is flowing through the factory, and the correct response to their growth is to welcome it. The middle three, turns, requests, and tokens, are *the work the agent does on its own behalf, on top of what the engineer actually asked for*: the extra turn spent recovering from an error, the request that searches one more place, the tokens that re-send a tool schema nobody used. This is where almost all optimisation effort belongs: plan faster, cut unwanted turns and errors, cut input tokens. The last term, price per token, is set by the vendor. You do not negotiate it turn by turn; you choose which model runs which workload, which is the routing decision of [Chapter 21](../03-build/21-models-and-capability-selection.md). Measure each term weekly or monthly and forecast it, so that a rising bill can be read as "more adoption" or "more waste" and never as a single undifferentiated number.
 
 <!-- infographic: cost-equation -->
-> **Infographic — The cost equation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The cost equation.**
 
 ```mermaid
 flowchart LR
@@ -121,7 +121,7 @@ Budgets are set better when spend can be estimated first. **Cost prediction** es
 Budget data flows back into design. If one skill costs five times another for the same outcome, that fact should change routing and go into the improvement backlog, not sit in a monthly report. *Economics should influence architecture continuously, not arrive as a surprise on the monthly bill.*
 
 <!-- infographic: budget-feedback-loop -->
-> **Infographic — Budgets as controls and as signals.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Budgets as controls and as signals.**
 
 ```mermaid
 flowchart LR

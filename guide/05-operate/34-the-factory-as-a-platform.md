@@ -78,7 +78,7 @@ What separates a golden path from a template is that it exposes a contract. A pa
 - its extension points, with compatibility obligations attached.
 
 <!-- infographic: platform-golden-path -->
-> **Infographic — The golden path and its escape hatch.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The golden path and its escape hatch.**
 
 ```mermaid
 flowchart TD
@@ -101,7 +101,7 @@ The escape hatch is deliberate. Teams need explicit extension and exception mech
 The first golden path most builders meet is the front door. A **Factory Board** is the guided entry surface: it asks what the builder is trying to do, recommends a **recipe** (the eight postures of [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md), from read-only Scout to Full SDLC), drafts a Mission from the answers, requires a stop condition on the draft, and compiles a Plan for the builder to review. Then it stops. The Factory Board never dispatches and never accepts. Dispatch is a later command, checked by preflight and policy; acceptance is a human decision through the single acceptance command. The board's whole value is that it lowers the cost of starting well without touching the cost of authority, and a board that grows a "run it" button has become a task launcher, which is the thing a control plane is built not to be.
 
 <!-- infographic: factory-board -->
-> **Infographic — Factory Board: recipe → Mission draft → Plan compile, and no further.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Factory Board: recipe → Mission draft → Plan compile, and no further.**
 
 ```mermaid
 flowchart LR
@@ -128,7 +128,7 @@ The third is the platform's adoption measure in disguise. Interactive spend is n
 The surfaces that carry all of this sit inside one shell. An **Engineering OS** (EOS) is the outcome-oriented shell that organises the factory's surfaces by what an engineering organisation is trying to do rather than by which service renders them: **Strategy** (Goals and Missions), **Delivery** (Factory Board, Work Orders, Tasks, the run inspector), **Operations** (Command Center, Factory Overview, Factory Health, incidents), **Intelligence** (observability, evals, routing advisories), **Knowledge** (Memory, Graph, Context, the Registry), and **Governance** (policy, approvals, audit). The catalog and action-parity rules above apply to every surface in the shell; the shell adds only navigation.
 
 <!-- infographic: engineering-os-shell -->
-> **Infographic — The Engineering OS shell.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The Engineering OS shell.**
 
 ```mermaid
 flowchart TB
@@ -180,7 +180,7 @@ Scheduling policy is explicit. Its inputs include priority, deadline, risk, tena
 Think of a hospital triage desk and the operating-theatre roster as two different jobs. Triage decides that you need surgery and how urgently. The roster decides which theatre, which surgeon, and when. Nobody would let the roster quietly downgrade your surgery to a consultation because the theatre was busy.
 
 <!-- infographic: scheduling-and-capacity -->
-> **Infographic — Admission, scheduling, budgets, and backpressure.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Admission, scheduling, budgets, and backpressure.**
 
 ```mermaid
 flowchart LR

@@ -109,7 +109,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="factory-lifecycle"
         number="01"
-        kicker="End-to-end value stream"
+        kicker="Primary model · End-to-end value stream"
         title="From governed intent to confirmed outcome"
         description="The factory is a closed operating loop. Every phase receives an explicit contract, produces durable records, and returns evidence to a named authority."
         href="/docs/01-understand/02-the-factory-in-one-view"
@@ -120,7 +120,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="production-stack"
         number="02"
-        kicker="Production AI engineering"
+        kicker="Reference model · Production AI engineering"
         title="The twelve disciplines around the agent"
         description="Building the agent is one layer. Production reliability comes from the connected engineering disciplines that define inputs, meaning, behavior, proof, recovery, and improvement."
         href="/docs/03-build/25-the-12-layer-production-ai-agent-stack"
@@ -135,7 +135,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="orchestration"
         number="03"
-        kicker="Runtime coordination"
+        kicker="Implementation view · Runtime coordination"
         title="Orchestration connects intelligence to controlled execution"
         description="The orchestrator coordinates models, state, tools, knowledge, policy, reliability, observability, and budgets. Each component owns a narrow decision."
         href="/docs/03-build/13-control-plane-orchestrator-and-execution-plane"
@@ -153,7 +153,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="agent-patterns"
         number="04"
-        kicker="Minimum sufficient autonomy"
+        kicker="Selection lens · Minimum sufficient autonomy"
         title="Choose the simplest architecture that can safely solve the problem"
         description="This is a selection ladder, not a maturity score. Higher levels add power and new obligations; they are not automatically better."
         href="/docs/03-build/24-loop-engineering-patterns-and-defaults"
@@ -166,7 +166,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="memory"
         number="05"
-        kicker="State, knowledge, and time"
+        kicker="Detail view · State, knowledge, and time"
         title="Memory is a governed write, retrieval, update, and forgetting system"
         description="A vector database is one retrieval mechanism. Memory architecture decides what should persist, why it remains valid, who may retrieve it, and when it must be corrected or deleted."
         href="/docs/03-build/18-agent-architecture"
@@ -179,7 +179,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="loop-engineering"
         number="06"
-        kicker="Convergent execution"
+        kicker="Detail view · Convergent execution"
         title="Every attempt ends in verify, correct, retry, stop, or escalate"
         description="A production loop does not merely call the model again. It diagnoses the failure class, changes only eligible state, enforces budgets, and preserves every attempt."
         href="/docs/03-build/23-agent-and-loop-engineering"
@@ -201,7 +201,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="governance"
         number="07"
-        kicker="Enterprise operating model"
+        kicker="Operating lens · Enterprise governance"
         title="Govern the system through seven connected control pillars"
         description="Governance is not a sign-off at the end. It follows the system from inventory and classification through authority, monitoring, incidents, and retirement."
         href="/docs/02-design/07-governance-policy-and-risk-proportional-approval"
@@ -215,7 +215,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="observability"
         number="08"
-        kicker="Observe → evaluate → detect → respond → improve"
+        kicker="Operating lens · Observe → evaluate → detect → respond → improve"
         title="Observe behavior without confusing telemetry with authority"
         description="Traces, logs, metrics, cost, latency, and quality explain system behavior. They influence decisions only through explicit validators and governed records."
         href="/docs/05-operate/35-observability-telemetry-and-forensics"
@@ -268,7 +268,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="protocols"
         number="09"
-        kicker="Interoperability boundaries"
+        kicker="Reference model · Interoperability boundaries"
         title="Use protocols for connection—not as substitutes for governance"
         description="Each protocol joins a different boundary. The factory still owns identity, policy, scope, evidence, failure, versioning, and lifecycle."
         href="/docs/03-build/15-coding-harnesses-and-agent-protocols"
@@ -281,7 +281,7 @@ export function VisualAtlas() {
       <AtlasSection
         id="attention"
         number="10"
-        kicker="Leverage and direct inspection"
+        kicker="Operating lens · Leverage and direct inspection"
         title="Move your attention to the level the risk and evidence justify"
         description="Higher altitude can create leverage, but it reduces direct inspection. Governed control comes from contracts, evidence, and authority—not from assuming higher abstraction is safer."
         href="/docs/02-design/08-economics-metrics-and-human-attention"

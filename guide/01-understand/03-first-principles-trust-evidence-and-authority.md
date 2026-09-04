@@ -42,7 +42,7 @@ This chapter calls the resulting scale **Factory Operational Autonomy Levels**. 
 ### The six levels
 
 <!-- infographic: autonomy-levels -->
-> **Infographic — The six Factory Operational Autonomy Levels.** *(Jay's graphic goes here.)* Until then, the table and diagram below carry the same concept.
+> **Infographic — The six Factory Operational Autonomy Levels.**
 
 Two vocabularies for the levels have grown up side by side in this material — one operational (what the human is responsible for), one descriptive (what the agent is doing). They describe the same ladder, so the table shows both names together with the example that makes each level concrete.
 
@@ -62,7 +62,7 @@ The level is an upper bound, not an entitlement. A Level 4 factory may run one a
 ### Human in, on, and out of the loop
 
 <!-- infographic: human-loop-modes -->
-> **Infographic — Human in, on, and out of the loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Human in, on, and out of the loop.**
 
 The levels map onto three postures for the person. **Human in the loop** means a person reviews, approves, corrects, or guides work at defined points; Levels 0 to 2 live here. **Human on the loop** means the system runs autonomously within policy while a person supervises performance and handles exceptions; Levels 3 and 4 live here. **Human out of the loop** means a workflow can complete without any human intervention, which is appropriate only for work that is well understood, low risk, and well controlled — a narrow slice even at Level 5.
 
@@ -191,7 +191,7 @@ Permission bypass, evidence tampering, suspected compromise, and repeated constr
 ### Quality is the acceleration engine
 
 <!-- infographic: trust-equation -->
-> **Infographic — The trust equation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The trust equation.**
 
 Everything above treats trust as something to be defended. It is also something to be *built*, and what builds it is quality engineering. Most teams treat quality as a gate at the end of the line. In a factory it is the engine that lets the line run faster:
 

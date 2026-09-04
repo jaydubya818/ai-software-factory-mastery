@@ -24,7 +24,7 @@ Agent governance then fails in predictable ways: a policy with no decision owner
 ### Human-led, agent-executed
 
 <!-- infographic: responsibility-split -->
-> **Infographic — What humans own, what agents perform, what they do together.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — What humans own, what agents perform, what they do together.**
 
 The traditional model runs humans plan → humans implement → humans test → humans review → humans deploy → humans investigate → humans document. The target model runs: humans establish intent, constraints, priorities, and risk tolerance → agents investigate and plan → humans review consequential decisions → agents execute → automated systems validate → humans approve according to risk → agents deploy, observe, and continue learning. Human-led does not mean human-performed; agent-executed does not mean agent-authorized. Delegating execution never delegates accountability, and human leadership moves upward — from supervising activity to designing the system in which activity is safe and valuable.
 
@@ -117,7 +117,7 @@ Humans retain the decisions that define value or accept material consequences. A
 ### Three levels of governance and the decision-rights matrix
 
 <!-- infographic: decision-rights -->
-> **Infographic — Decision rights from enterprise risk appetite to a single release.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Decision rights from enterprise risk appetite to a single release.**
 
 The table above names owners inside a delivery organization. Around it sits an enterprise authority system with three levels. **Executive governance** sets strategy, values, risk appetite, prohibited uses, enterprise standards, material exceptions, investment, and final accountability. **Enablement and control** maintains the inventory, policy, architecture standards, assessments, training, lifecycle reviews, control tests, measurement, and reporting. **Accountable system and business owners** own use-case value, implementation, local controls, monitoring, incident response, evidence, and retirement. **Independent assurance** challenges claims and evidence, and data, architecture, security, privacy, legal, compliance, finance, people, and operations join whenever their domain is affected.
 
@@ -158,7 +158,7 @@ Two rules hold the matrix together. The person who produces a consequential arti
 ### The governed lifecycle
 
 <!-- infographic: governed-lifecycle -->
-> **Infographic — The twelve-state Mission lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The twelve-state Mission lifecycle.**
 
 Every Mission passes through the same governed lifecycle. Each state has entry criteria, exit criteria, an owner, required evidence, allowed tools, approval conditions, and failure and escalation paths. This is where quality-engineering discipline becomes the advantage: most teams focus on agent capability, while reliable delivery actually comes from controlled transitions, evidence, validation, and accountability.
 
@@ -240,7 +240,7 @@ The same count, taken per outcome rather than per task, is the operating metric 
 The second measure is whether the work is still there in the morning. **Overnight continuity** is the property that governed work survives everything that ends a conversation: a model change, a context-window limit, a process restart, a handoff between workers, and the end of the chat session that started it. Continuity is not the same as persistence. The durable records of [Chapter 5](./05-authoritative-records.md) make the state survive; continuity also requires that the work *continues* under bounded retries and escalates when the bound is hit, rather than looping silently or waiting for the person who went home. A Mission carries a stop condition for exactly this reason, and a control plane should refuse to compile a Plan from a Mission draft that has none.
 
 <!-- infographic: overnight-continuity -->
-> **Infographic — What ends a conversation, and what the work survives.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — What ends a conversation, and what the work survives.**
 
 ```mermaid
 flowchart LR
@@ -316,7 +316,7 @@ Two second-order effects of the operating model matter for who gets to build. **
 Developers are the first persona, and the word **builder** is chosen deliberately to be wider than that. A builder is anyone who can express intent clearly enough for the factory to translate it into executable work: product managers, quality engineers, designers, security engineers, and other agents. They do not arrive through the same door.
 
 <!-- infographic: builder-entry-points -->
-> **Infographic — Five doors, one factory.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Five doors, one factory.**
 
 ```mermaid
 flowchart LR

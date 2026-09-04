@@ -14,7 +14,7 @@ infographics: [operator-surfaces]
 Mission Control presents one governed lifecycle through eleven job-specific surfaces. Each surface makes a particular decision or record easier to inspect, but presentation never creates authority: the underlying policy, evidence, and lifecycle records remain canonical.
 
 <!-- infographic: operator-surfaces -->
-> **Infographic — The surfaces and what each one refuses to do.** *(Jay's graphic goes here.)*
+> **Infographic — The surfaces and what each one refuses to do.**
 
 ## Command Center
 

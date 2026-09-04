@@ -28,7 +28,7 @@ Every increase in autonomy adds state, permissions, evaluation, cost, uncertaint
 The **selection ladder** runs from fully deterministic to enterprise-integrated. It is a decision ladder, not a maturity score; a lower level is often the correct production architecture.
 
 <!-- infographic: autonomy-selection -->
-> **Infographic — Minimum-sufficient autonomy selection.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Minimum-sufficient autonomy selection.**
 
 ```mermaid
 flowchart TD
@@ -148,7 +148,7 @@ The last row is the one that most often justifies a second agent, and it is the 
 Agent count is an architecture cost to justify, not a maturity signal. Multi-agent designs can decompose large work and add useful independent critique; they also multiply state, context, cost, attack surface, correlated error, handoff ambiguity, and partial failure. Luke's taxonomy gives the five primitives every framework is built from: **delegation** (one agent spawns another and gets a result back; the simplest and most common), **creator-verifier** (a fresh agent with fresh context checks the work, because the implementer has a cost bias toward believing its own code works, which is also why humans do code review), **direct communication** (agents message each other without a coordinator; state fragments and there is no source of truth, so it is hard to get right), **negotiation** (agents contend over a shared resource such as the same API or the same region of the codebase; best when there is a positive-sum trade), and **broadcast** (one agent sends shared constraints or context to many; unglamorous but essential for coherence over long runs).
 
 <!-- infographic: agent-topologies -->
-> **Infographic — Agent topologies and collaboration contracts.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Agent topologies and collaboration contracts.**
 
 ```mermaid
 flowchart LR

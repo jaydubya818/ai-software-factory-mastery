@@ -24,7 +24,7 @@ The feedback path in that diagram is the loop engineered here: observe, diagnose
 The canonical loop is **Generate → Verify → Diagnose → Repair or Replan → Retry → Escalate or Stop**. Verification produces structured findings linked to criteria. A retry requires a changed hypothesis, input, tool, configuration, or recovery action; repeating the same conditions is not a strategy, it is repeated cost.
 
 <!-- infographic: loop-catalog -->
-> **Infographic — The generate → verify → repair → retry → escalate loop catalog.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The generate → verify → repair → retry → escalate loop catalog.**
 
 ```mermaid
 flowchart LR

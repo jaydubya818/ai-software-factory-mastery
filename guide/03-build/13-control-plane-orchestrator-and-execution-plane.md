@@ -30,7 +30,7 @@ Think of an air-traffic control tower and the aircraft it directs. The tower own
 The **control plane** owns governed intent and the rules for changing authoritative state. The **execution plane** consumes a bounded grant of authority, performs effects, and returns observations. Execution results may inform a decision, but they never approve themselves.
 
 <!-- infographic: control-vs-execution-plane -->
-> **Infographic — Control plane versus execution plane.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Control plane versus execution plane.**
 
 ```mermaid
 flowchart LR
@@ -169,7 +169,7 @@ The point is easy to nod at and easy to violate. A workflow that lives inside a 
 The orchestrator connects the two planes without becoming a second source of truth. Its working vocabulary has three words. A **command** expresses intent: dispatch, pause, resume, cancel, retry, approve. A command may be rejected. An **event** reports an observed fact: process started, command completed, artifact produced, validation failed. Events do not automatically grant authority for the next action. **State** is derived from commands and events under explicit rules, and only the state owner performs transitions. Events may request or inform a transition, but they never mutate the projection directly.
 
 <!-- infographic: dispatch-loop -->
-> **Infographic — The dispatch loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The dispatch loop.**
 
 ```mermaid
 flowchart LR
@@ -221,7 +221,7 @@ Mission, WorkOrder, Task, Attempt, workflow step, tool call, pull request, and r
 The workflow-and-attempt machine below names every state a run can be in.
 
 <!-- infographic: orchestration-state-machine -->
-> **Infographic — The orchestration state machine.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The orchestration state machine.**
 
 ```mermaid
 stateDiagram-v2
@@ -260,7 +260,7 @@ Validation belongs to the governance model, but it runs through an execution pat
 The execution plane's most capable component is usually not something the factory wrote. It is an **execution engine**: a coding harness, an epic-delivery engine, or any product that can take a task and produce a change, composed into the factory as a harness adapter ([Chapter 15](./15-coding-harnesses-and-agent-protocols.md)). Engines are good at deciding *how* to plan and implement, and every one of them arrives with opinions about planning, gates, stories, worktrees, and what "done" means. The control plane's job is to accept the first and refuse the rest. The authority split is short enough to memorise:
 
 <!-- infographic: engine-authority-split -->
-> **Infographic — Control plane, engine, human: who decides what.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Control plane, engine, human: who decides what.**
 
 | Question | Decided by | Never decided by |
 | --- | --- | --- |
@@ -284,7 +284,7 @@ Cancellation follows the same direction of authority. A control-plane cancel com
 Executors change. Adapters get new versions, planning and worker backends get swapped, the Factory Version gets edited, superseded, or deleted, and repository policy files get committed over. None of that may change what a historical Attempt meant, or what a running Attempt is allowed to do. The record that guarantees this is the **executor snapshot**: at dispatch, the control plane copies the complete executor configuration onto the Attempt itself, and the Attempt reads only that copy for the rest of its life.
 
 <!-- infographic: executor-snapshot -->
-> **Infographic — The executor snapshot.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The executor snapshot.**
 
 ```mermaid
 flowchart LR
@@ -476,7 +476,7 @@ Contracts carry explicit versions and a producer/consumer support window. Additi
 The versioning rule above is strict because the control plane's contracts are the slowest-moving thing in the factory. Not everything should move that slowly. A factory that ships models, skills, and runtime APIs on one release train either freezes its model routing to the pace of an API migration or exposes its durable contracts to the churn of a prompt tweak. Run three clocks instead.
 
 <!-- infographic: release-clocks -->
-> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Three release clocks.**
 
 | Clock | What moves on it | Pace | Gate |
 |---|---|---|---|

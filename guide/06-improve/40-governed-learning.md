@@ -103,8 +103,7 @@ feeds the next, and a factory that skips a layer has a loop with nothing to
 learn from.
 
 <!-- infographic: loop-layers -->
-> **Infographic — The four loop layers.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — The four loop layers.**
 
 | Layer | What it does | Examples |
 | --- | --- | --- |
@@ -126,8 +125,7 @@ the only layer that changes the other three.
 ### The learning loop
 
 <!-- infographic: learning-loop -->
-> **Infographic — The governed learning loop.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The governed learning loop.**
 
 ```mermaid
 flowchart LR
@@ -206,8 +204,7 @@ retrieval, the tool's behaviour, or the evaluation coverage. Diagnosis is the
 step that turns a complaint into engineering data.
 
 <!-- infographic: signal-diagnosis -->
-> **Infographic — From signal to source.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — From signal to source.**
 
 | Signal | Sources it usually points at |
 | --- | --- |
@@ -280,8 +277,7 @@ checks, a controlled experiment or rollout, measurement, and only then promote,
 reject, or roll back.
 
 <!-- infographic: recursive-loop -->
-> **Infographic — The recursive improvement loop.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The recursive improvement loop.**
 
 ```mermaid
 flowchart LR
@@ -316,8 +312,7 @@ fixed number of links, and each link is a type the next one consumes:
 Candidate → human review → experiment → Mission → Plan → WorkOrder`
 
 <!-- infographic: factory-learning-chain -->
-> **Infographic — The Factory Learning chain.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The Factory Learning chain.**
 
 ```mermaid
 flowchart LR
@@ -389,8 +384,7 @@ That store is a learning signal the factory should not ignore and must not
 trust. **Learning writeback** is the bounded way to use it.
 
 <!-- infographic: learning-writeback -->
-> **Infographic — Learning writeback: read-only, additive, advisory.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Learning writeback: read-only, additive, advisory.**
 
 ```mermaid
 flowchart LR
@@ -436,8 +430,7 @@ long, and the shape to keep is the one it is *not*: it is never Execute →
 automatically rewrite production.
 
 <!-- infographic: seven-step-loop -->
-> **Infographic — Execute → Observe → Evaluate → Learn → Propose → Verify → Promote.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Execute → Observe → Evaluate → Learn → Propose → Verify → Promote.**
 
 ```mermaid
 flowchart LR
@@ -493,8 +486,7 @@ someone asks whether a factory "self-improves", because the word covers six
 different capabilities with six different risk profiles.
 
 <!-- infographic: self-improvement-levels -->
-> **Infographic — Six levels of self-improvement.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — Six levels of self-improvement.**
 
 | Level | The factory can | What it produces | Who acts |
 | --- | --- | --- | --- |

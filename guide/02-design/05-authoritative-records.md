@@ -38,7 +38,7 @@ The full conceptual hierarchy is:
 Two records sit around that spine once a control plane has been operated for a while, and they are drawn in the diagram because they change where authority begins and where it may act. A **Goal** sits above the Mission and holds the strategic result the Mission serves; it owns an outcome, never execution state. Beneath the Repository, a **host binding** and a **code scope** say where and on what the factory may act at all. Both are introduced in full a few sections down.
 
 <!-- infographic: delivery-hierarchy -->
-> **Infographic — The authoritative delivery hierarchy.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The authoritative delivery hierarchy.**
 
 ```mermaid
 flowchart TB
@@ -178,7 +178,7 @@ The state-machine principle that all of these serve is easiest to remember as an
 The companion records make one more thing possible: an unbroken chain from a sentence in the Mission Spec to a check that ran against an exact artifact. The chain is a requirement on the design, not a nice-to-have, because it is the only way to answer "which check proves this requirement?" and "which requirement does this failing check threaten?" without a human reconstructing the answer.
 
 <!-- infographic: traceability-chain -->
-> **Infographic — From requirement to verification check.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From requirement to verification check.**
 
 ```mermaid
 flowchart LR
@@ -217,7 +217,7 @@ It is the same spine as this chapter's hierarchy with the organisational scope f
 | Outcome | Production verification, observed outcome | What actually happened, which becomes the next signal |
 
 <!-- infographic: factory-data-model -->
-> **Infographic — The canonical object chain.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The canonical object chain.**
 
 ```mermaid
 flowchart LR
@@ -236,7 +236,7 @@ The chain also adds a record this chapter has not yet named. A **Signal** is an 
 Each record moves through its own states, and the states are deliberately not shared. The diagram shows the four lifecycles that interact most often. Note the shape: a Plan can only be approved once per version; a WorkOrder that changes materially is superseded rather than edited; an Attempt never leaves a terminal state; Evidence can move from valid to stale without anyone touching it, simply because the artifact it was bound to changed.
 
 <!-- infographic: record-lifecycles -->
-> **Infographic — Record lifecycles.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Record lifecycles.**
 
 ```mermaid
 stateDiagram-v2
@@ -276,7 +276,7 @@ stateDiagram-v2
 The lifecycle diagram above shows the shape. A working control plane needs the exact vocabulary, because operators, dashboards, and adapters all have to agree on what a word means. The table gives the seven state lists a mature control plane keeps, one per record, as they stand in the Mission Control lexicon reviewed for this edition. Your names may differ; the number of machines and the rules beneath the table should not.
 
 <!-- infographic: authoritative-state-machines -->
-> **Infographic — Seven state machines, no implied transitions.** *(Jay's graphic goes here.)* Until then, the table and diagram below carry the same concept.
+> **Infographic — Seven state machines, no implied transitions.**
 
 | Record | States | Terminal |
 | --- | --- | --- |
@@ -321,7 +321,7 @@ The fix is to separate three things that are usually blurred together. Think of 
 The **Factory Configuration** is the operating certificate: an approved, versioned envelope for one repository binding workflow, executor, policy, environment, risk boundary, budget, verifiers, recovery, agent versions, and code scopes. The **workflow contract** is the standard procedure: it defines the graph of roles and steps, their dependencies, inputs, structured outputs, failure policy, handoffs, and concurrency. The **execution manifest** is the dispatch release: an immutable, Attempt-specific compilation of the WorkOrder revision and the active Factory version, recording exactly what the worker received and which authority applied.
 
 <!-- infographic: factory-configuration -->
-> **Infographic — From configuration to execution manifest.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From configuration to execution manifest.**
 
 ```mermaid
 flowchart LR

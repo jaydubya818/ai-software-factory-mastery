@@ -36,8 +36,7 @@ The same rule applies to the numbers on the instruments. Observability and evalu
 Human decisions in a factory are not one thing. A person may need to clarify intent, approve a plan, grant an exception, stop work, accept evidence, merge, release, or promote autonomy. Compressing all of those into a single "Approve" button hides both the meaning and the risk of what is being approved. So the control surface is organised around decision types and authoritative states, and each of the seven primary surfaces exists because a distinct kind of decision lives there.
 
 <!-- infographic: operator-surface -->
-> **Infographic — The seven operator surfaces.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The seven operator surfaces.**
 
 ```mermaid
 flowchart LR
@@ -86,8 +85,7 @@ So the Command Center is **exception-first**. It surfaces exactly seven conditio
 Everything else (runs executing normally, tools being called, tokens being spent) is available one click down, and is not on the home screen. *The scarce resource is not agents; it is human attention.* A hundred agents and one operator is a fine ratio if the operator only ever sees the seven conditions above; it is an impossible ratio if the operator is expected to watch. The shift is from supervising activity to managing exceptions and authority, and the screen has to enforce it, because an operator offered a feed will read the feed.
 
 <!-- infographic: command-center -->
-> **Infographic — The exception-first Command Center.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The exception-first Command Center.**
 
 ```mermaid
 flowchart LR
@@ -122,8 +120,7 @@ The most valuable artifact a control surface produces is what this guide calls a
 The HumanLayer team's pipeline shows the shape in practice. When their factory classifies an incoming issue it assigns a human shepherd, then pings that shepherd in Slack with a packet: here is the bug, here is the reproduction, here is the fix, here is the PR to read. For hard cases the packet changes shape: here is a plan; either pull it into your local agent and implement it yourself, or tell me the plan is good and I will implement it. That packet is not "I'm working on your issue" and it is not a transcript. It is a framed decision with the evidence attached, and its stated aim is to push human time as low as possible without pushing human authority away.
 
 <!-- infographic: decision-packet -->
-> **Infographic — Anatomy of a decision packet.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Anatomy of a decision packet.**
 
 ```mermaid
 flowchart TB
@@ -172,8 +169,7 @@ Operators are not the only people who reach the factory, and the screen is not t
 - a **trace** (the lineage that makes the run debuggable).
 
 <!-- infographic: execution-contract -->
-> **Infographic — Many interfaces, one execution contract.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Many interfaces, one execution contract.**
 
 ```mermaid
 flowchart LR
@@ -199,8 +195,7 @@ This is the cron-and-webhook item on the control plane wish-list done properly. 
 Every event that crosses a boundary inside the factory carries a typed **event envelope**. The envelope is the contract that lets consumers deduplicate, order, verify, and route without parsing the payload. Underneath it sits **durable messaging**: the events are written to a persistent log or broker before any consumer sees them, delivered at least once, and retained long enough to replay, so a consumer that was down when the fact occurred still receives it. **Event schemas**, kept in a schema registry with advertised version ranges, define what each payload type contains and how it may evolve.
 
 <!-- infographic: event-contract -->
-> **Infographic — The event envelope and its journey.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The event envelope and its journey.**
 
 ```mermaid
 flowchart LR

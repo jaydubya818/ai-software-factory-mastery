@@ -3,7 +3,6 @@ title: "Mastering the factory: explaining, defending, and building it"
 part: improve
 chapter: 43
 summary: A mastery program for the person who has to build an AI Software Factory and also explain it, defend it, and lead the organization around it — four fluency levels, five audiences, the objections, the leader's three axes, a twelve-month build, a 30/60/90 for standing one up inside an organization, and a weekly rhythm.
-absorbs: [11-interview-mastery/01-executive-and-interview-mastery.md]
 infographics: [mastery-levels, three-axes, twelve-month-plan, ninety-day-plan, three-release-clocks, five-audiences]
 ---
 
@@ -19,7 +18,7 @@ cannot explain. After reading it you should have a program — fluency levels,
 audiences, objections, a build plan, and a weekly rhythm — that you can run
 on yourself for a year.
 
-[Appendix E, Architecture communication](../appendix/architecture-communication.md),
+[Appendix E, Software architecture and system design study guide](../appendix/architecture-communication.md),
 keeps the reference form of the timed explanations, defense questions, and the
 twenty-minute whiteboard. This chapter absorbs it into a program.
 
@@ -75,8 +74,7 @@ then comes back upright on the same line.
 ### Four levels of fluency
 
 <!-- infographic: mastery-levels -->
-> **Infographic — Four fluency levels.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Four fluency levels.**
 
 ```mermaid
 flowchart LR
@@ -157,8 +155,7 @@ first is building a tool.
 ### The leader's three axes
 
 <!-- infographic: three-axes -->
-> **Infographic — The leader's three axes.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The leader's three axes.**
 
 ```mermaid
 flowchart TB
@@ -194,8 +191,7 @@ cross-organization adoption. Everything else is delegated.
 ### Five audiences, one system
 
 <!-- infographic: five-audiences -->
-> **Infographic — Five audiences, one system.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Five audiences, one system.**
 
 ```mermaid
 flowchart TB
@@ -512,8 +508,7 @@ to production without scaling human effort linearly with it.
 ### The twelve-month build
 
 <!-- infographic: twelve-month-plan -->
-> **Infographic — The twelve-month implementation plan.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The twelve-month implementation plan.**
 
 ```mermaid
 flowchart LR
@@ -575,8 +570,7 @@ into a factory. That calls for a different first ninety days, and the
 governing rule is to understand before you reorganize.
 
 <!-- infographic: ninety-day-plan -->
-> **Infographic — The first ninety days inside an organization.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The first ninety days inside an organization.**
 
 ```mermaid
 flowchart LR
@@ -697,8 +691,7 @@ families:
 ### Three release clocks
 
 <!-- infographic: three-release-clocks -->
-> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Three release clocks.**
 
 ```mermaid
 flowchart LR
@@ -904,7 +897,7 @@ governable.
   for the maturity model behind progressive proof.
 - [Chapter 42 — Mission Control as a living case study](./42-mission-control-as-a-living-case-study.md)
   for the evidence you cite.
-- [Appendix E — Architecture communication](../appendix/architecture-communication.md)
+- [Appendix E — Software architecture and system design study guide](../appendix/architecture-communication.md)
   for the full timed explanations, defense questions, twenty-minute
   whiteboard.
 - [Glossary](../appendix/glossary.md).

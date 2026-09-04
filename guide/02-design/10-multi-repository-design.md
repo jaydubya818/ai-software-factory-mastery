@@ -34,7 +34,7 @@ The practical shape is a **multi-repository workspace**: one directory tree, mat
 The analogy is an airport. Each airline maintains its own aircraft, crews, and schedules; the control tower does not own any of them. It owns the map of the airfield and the rules for moving between gates. The coordination repository is the tower: it organizes movement without becoming a superproject that owns the components.
 
 <!-- infographic: coordination-repo-layout -->
-> **Infographic — Coordination repository layout.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Coordination repository layout.**
 
 ```mermaid
 flowchart TB
@@ -103,7 +103,7 @@ A **cross-repository invariant** is a rule that must hold across the set regardl
 A coordinated change is not one pull request. It is a **coordinated PR** set: several repository-scoped WorkOrders, each producing its own pull request with its own candidate, evidence, approvals, and repository policy, joined by explicit dependencies. The parent Plan holds what no single pull request can: global invariants, integration criteria, **merge ordering**, release sequence, compatibility window, and rollback strategy.
 
 <!-- infographic: coordinated-pr-ordering -->
-> **Infographic — Coordinated PR ordering.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Coordinated PR ordering.**
 
 ```mermaid
 flowchart LR

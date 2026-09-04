@@ -20,7 +20,7 @@ Teams accumulate instructions faster than they can establish whether those instr
 ### What a good skill is
 
 <!-- infographic: skill-anatomy -->
-> **Infographic — Skill anatomy.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Skill anatomy.**
 
 ```mermaid
 flowchart TB
@@ -52,7 +52,7 @@ Skills are also where reasoning gets progressively retired. When a team first me
 *Reason where reasoning creates value. Automate where behavior becomes deterministic.*
 
 <!-- infographic: skill-maturity-lifecycle -->
-> **Infographic — The maturity lifecycle of a capability.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The maturity lifecycle of a capability.**
 
 ```mermaid
 flowchart LR
@@ -75,7 +75,7 @@ The maturity lifecycle says what happens to a skill over time. A second question
 A skill says "here is what to do." It does not prove that it was done, and a factory that trusts a skill's own report of its success has a self-grading agent. So every skill that matters is paired with a **verifier**: a focused mechanism that independently determines whether an execution or its output satisfies a correctness criterion. Verifiers come in several kinds, and the kind is chosen by the claim: deterministic (a script that checks a property), rule-based, test-based, static-analysis, policy-based, model-as-judge, or hybrid. They inspect actions, logs, artifacts, code, tests, and output; they do not inspect the producer's reasoning, which is the context firewall of [Chapter 19](./19-data-knowledge-and-semantic-engineering.md). The smallest verifiers are the one-invariant lint rules of [Chapter 26](./26-autonomous-engineering-workflows.md); the largest are the independent validation of [Chapter 27](../04-prove/27-quality-and-evidence-architecture.md). The **skill → verifier pair** is the unit of trust: the skill says what to do, the verifier says prove you did it, and the chain that connects them runs from definition to decision.
 
 <!-- infographic: skill-verifier-chain -->
-> **Infographic — From Definition of Correct to promotion.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From Definition of Correct to promotion.**
 
 ```mermaid
 flowchart LR
@@ -99,7 +99,7 @@ Between a rigid workflow that cannot handle a variant and a blank agent that rei
 The opinions that recur across every organisation become **canonical workflows**: reusable, empirically validated patterns for a recurring class of work, such as code review, incident investigation, dependency upgrade, migration, or feature delivery. They are validated on reference tasks, not adopted because they read well ([Chapter 40](../06-improve/40-governed-learning.md) covers discovering them from traces). A canonical workflow is then specialised by layer rather than by copy: canonical → organisation → product → repository → task. The organisation layer adds its policies and standards; the product layer adds its architecture and domain rules; the repository layer adds its profile, commands, and local skills; the task layer adds this WorkOrder's acceptance criteria. The result is shared patterns with layered specialisation instead of a hundred thousand unrelated workflows, and it is the same four-level hierarchy [Chapter 19](./19-data-knowledge-and-semantic-engineering.md) uses for context, applied to procedure. A fix to the canonical layer reaches every specialisation on the next resolution, which is the compounding the contribution model promises.
 
 <!-- infographic: workflow-specialisation -->
-> **Infographic — Workflow specialisation by layer.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Workflow specialisation by layer.**
 
 ```mermaid
 flowchart TB
@@ -116,7 +116,7 @@ flowchart TB
 The capability lifecycle earlier in this chapter is drawn for the registry's state machine. Stated as verbs it applies to every asset the factory runs on, and the list is longer than most teams' registry admits. Twelve asset types: skills, prompts, policies, tools, MCP servers, repository profiles, harness profiles, workflows, verifiers, evals, models, and context sources. Each one has an owner, is versioned, is evaluated, is deployed, is observed, is improved, and is deprecated: owner → version → evaluate → deploy → observe → improve → deprecate. An asset that is missing any of the seven is running on the factory without being governed by it, and the ones most often missing are the last five in the list. Repository profiles are edited in place; harness profiles live in a config file; verifiers are copied between repositories; evals are written once and never retired; models are swapped without a deprecation notice; context sources are added and never measured.
 
 <!-- infographic: factory-asset-lifecycle -->
-> **Infographic — The factory asset lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The factory asset lifecycle.**
 
 ```mermaid
 flowchart LR

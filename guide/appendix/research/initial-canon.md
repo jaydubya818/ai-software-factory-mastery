@@ -160,7 +160,7 @@ on Jay West's own unpublished working material: the *AI Software Factory
 Mission* statement, the *AI Software Factory Study Guide* (a chaptered
 internal curriculum), a set of factory-architecture notes, and the Mission
 Control repository's own glossary and lexicon (reviewed 2026-09-02). These
-are primary-author source material — the same status as interview notes —
+are primary-author source material — the same status as private research notes —
 not independently published references, and are cited as such rather than
 implied to be external literature.
 

@@ -66,8 +66,7 @@ as the routing rules. The loop closes when that diff is reviewed and merged
 like any other.
 
 <!-- infographic: closed-loop-factory -->
-> **Infographic — The closed-loop factory.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The closed-loop factory.**
 
 ```mermaid
 flowchart LR
@@ -112,8 +111,7 @@ an experiment nobody can learn from.
 ### Compounding engineering: harvesting corrections
 
 <!-- infographic: correction-to-skill -->
-> **Infographic — From repeated correction to reusable capability.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — From repeated correction to reusable capability.**
 
 ```mermaid
 flowchart LR
@@ -436,8 +434,7 @@ here the rule is simply that scope is classified before anything is proposed.
 ### Baseline, candidate, and the promotion gate
 
 <!-- infographic: promotion-gate -->
-> **Infographic — The promotion gate.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The promotion gate.**
 
 ```mermaid
 stateDiagram-v2
@@ -504,8 +501,7 @@ question that sets the level is never "how confident is the model?" It is
 *"what happens if this is wrong, and how easily can we reverse it?"*
 
 <!-- infographic: autonomy-by-action-class -->
-> **Infographic — Autonomy by action class.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — Autonomy by action class.**
 
 | Action class | Examples | If wrong | Autonomy |
 | --- | --- | --- | --- |
@@ -548,8 +544,7 @@ Fine-tuning → Preference optimization and training, and the rule for
 climbing it is the whole point: *never jump straight to training*.
 
 <!-- infographic: adaptation-ladder -->
-> **Infographic — The adaptation ladder.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — The adaptation ladder.**
 
 | Rung | What changes | Reversibility | Evidence needed to climb past it |
 | --- | --- | --- | --- |
@@ -620,8 +615,7 @@ learned from; and the learning improves the skill and the context for the
 next turn.
 
 <!-- infographic: factory-flywheel -->
-> **Infographic — The factory flywheel.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The factory flywheel.**
 
 ```mermaid
 flowchart LR

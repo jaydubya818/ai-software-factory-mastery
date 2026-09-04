@@ -31,7 +31,7 @@ The context graph answers *where things are*. A second structure answers *which 
 The bottom level is the one most retrieval systems skip, and it is where the biggest savings are. Three retrieval moves make it precise. **Changed-symbol retrieval** starts from the functions, types, and modules the diff actually modifies, resolved through the code index rather than guessed from file paths, and pulls their definitions and immediate usages. **Dependency context** goes one hop out: the callers, callees, contracts, and schemas the changed symbols depend on or are depended on by, so the agent can see what it might break without reading the repository. **Historical review patterns** add what reviewers have said about this area before: the comment that appears on every PR touching this module, the incident that started here, the finding that was dismissed last time and why. Together they give a reviewer or implementer the part of the repository that is relevant to *this* change, at a fraction of the tokens a whole-repository dump would cost, and with far less for the model to be distracted by.
 
 <!-- infographic: context-hierarchy -->
-> **Infographic — The four-level context hierarchy.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The four-level context hierarchy.**
 
 ```mermaid
 flowchart TB
@@ -65,7 +65,7 @@ The factory's first artifact is therefore not a workflow. It is a **Definition o
 Once a Definition of Correct exists, context stops being prose and becomes **context as code**, and the phrase obliges you to ten verbs: version it, review it, test it, evaluate it, own it, distribute it, deprecate it, detect its drift, measure its effectiveness, and roll it back. [Chapter 11](./11-the-agent-factory.md) says rules and skills are context as code; this is the list of what that costs. The verbs arrange themselves into a **context lifecycle**: create → review → version → distribute → execute → observe → evaluate → improve → deprecate. The Context CDL in the next section is the implementation of that lifecycle, not a competitor to it. Draft is create and review; publish is version; install is distribute; the CBOM and the Frozen Context Package are how execute is observed; the context evaluations later in this chapter are evaluate; improve opens a new draft; and deprecate is deprecate. The nine-step lifecycle is the discipline. The four-state CDL is the state machine the control plane can enforce.
 
 <!-- infographic: context-lifecycle -->
-> **Infographic — The context lifecycle and its CDL implementation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The context lifecycle and its CDL implementation.**
 
 ```mermaid
 flowchart LR
@@ -85,7 +85,7 @@ flowchart LR
 The material the compiler selects from is not a heap of files. Skills, rules, and documents that agents are meant to read are **context packages** in a registry: each has a scope and a name, a version, a content hash, a quality score from the authoring-side review of [Chapter 11](./11-the-agent-factory.md), and a security status from the scan of [Chapter 33](../04-prove/33-security.md). Because they are versioned artifacts, they have a lifecycle, and the lifecycle is the **Context CDL** (context definition lifecycle): **draft**, where an author iterates; **publish**, where a version becomes immutable and eligible; **install**, where a workspace, repository, or agent binds that exact version; and **deprecate**, where the version stops being selectable for new installs while historical packages keep resolving. The four states matter because context is the input most often edited in place. A rule file changed on a Tuesday afternoon that is already installed in forty repositories is forty behaviour changes with no version, no review, and no way to say which Attempts ran under which text.
 
 <!-- infographic: context-cdl -->
-> **Infographic — The Context CDL and the CBOM.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The Context CDL and the CBOM.**
 
 ```mermaid
 flowchart LR
@@ -113,7 +113,7 @@ Two of the seven detections need their own names because they fail differently. 
 The last two detections are about value rather than correctness, and they are measured the same way. **Context utility** is the measured contribution of a context source: run the task with the source and without it, and record the quality delta, the success delta, the latency delta, and the cost delta. That is the with-and-without evaluation of [Chapter 29](../04-prove/29-evaluation-engineering.md) applied to one source, and it is the only defensible basis for deciding whether a source stays in the package. **Context pruning** acts on the result: remove stale, redundant, low-value, and misleading knowledge, because more knowledge means more noise, and more noise means worse decisions. A source with no measurable utility is not harmless; it costs tokens on every run and competes for the model's attention with the sources that matter.
 
 <!-- infographic: context-posture -->
-> **Infographic — Context posture management.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Context posture management.**
 
 ```mermaid
 flowchart LR
@@ -157,7 +157,7 @@ Routing has a direction, and the direction is **context shift-left**: give the s
 The same artifact on both sides does not mean the same context on both sides. A **context firewall** (or **context isolation**) is a deliberate information boundary between roles, and four boundaries recur. Creator and verifier: the verifier receives the goal, the artifact, and the verification contract, never the producer's reasoning, so that a plausible explanation cannot substitute for a correct result. Planner and executor: the executor receives the bounded unit, not the deliberations that produced it, so that it cannot re-open the plan. Executor and security reviewer: the reviewer does not inherit the executor's assumptions about what is safe. Customer data and the general worker: a worker that does not need customer data never sees it, which is the permission filter applied at the role level rather than the document level. **Fresh-context verification** is the firewall's strongest form: the verifier reconstructs correctness from a clean context, and its agreement with the producer means something because they did not share a window. [Chapter 23](./23-agent-and-loop-engineering.md) treats context isolation as one of the four reasons to add an agent; this is the boundary that makes the addition worth its cost.
 
 <!-- infographic: context-firewall -->
-> **Infographic — Context routing and the context firewall.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Context routing and the context firewall.**
 
 ```mermaid
 flowchart LR
@@ -178,7 +178,7 @@ flowchart LR
 Single-shot retrieval asks once and packs what it gets. **Agentic retrieval** lets a bounded planner ask several times: retrieve, assess whether the context now in hand is sufficient for the task, and if not, reformulate and retrieve again, until it is sufficient or the bound is reached. That is the **sufficiency loop**, and its value is in the second step. A retrieval planner that can say "I have the changed symbols and their callers, but not the contract test that covers them" will fetch the test; a single-shot retriever will pack whatever ranked highest and let the model discover the gap at inference cost.
 
 <!-- infographic: sufficiency-loop -->
-> **Infographic — The sufficiency loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The sufficiency loop.**
 
 ```mermaid
 flowchart LR
@@ -195,7 +195,7 @@ The loop has three bounds and one prohibition. It is bounded in iterations, in t
 ### Evaluate each layer separately, then together
 
 <!-- infographic: retrieval-evaluation -->
-> **Infographic — Layered evaluation.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Layered evaluation.**
 
 ```mermaid
 flowchart LR

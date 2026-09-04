@@ -52,7 +52,7 @@ Trust does not require every component to be infallible. It requires failures to
 ### The operating loop
 
 <!-- infographic: operating-loop -->
-> **Infographic — The factory operating loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The factory operating loop.**
 
 ```mermaid
 flowchart LR
@@ -90,7 +90,7 @@ Delegation does not transfer accountability. The factory must know which version
 ### Who owns what
 
 <!-- infographic: human-agent-split -->
-> **Infographic — Humans own, agents perform, shared work.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Humans own, agents perform, shared work.**
 
 ```mermaid
 flowchart TB
@@ -186,7 +186,7 @@ The people move with the bottleneck. In a factory, engineers stop being the ones
 ### Success is a three-variable system
 
 <!-- infographic: three-measures -->
-> **Infographic — Lead time, change failure rate, and leverage move together.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Lead time, change failure rate, and leverage move together.**
 
 ```mermaid
 flowchart LR

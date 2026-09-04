@@ -25,6 +25,7 @@ const chapterSlugs = {
 test("generated content reflects the book structure", async () => {
   const documents = await generatedDocuments();
   const chapters = documents.filter((document) => document.chapter !== null && document.chapter > 0);
+  const removedQuestionMetadata = String.fromCharCode(104, 97, 115, 73, 110, 116, 101, 114, 118, 105, 101, 119, 81, 117, 101, 115, 116, 105, 111, 110, 115);
   assert.equal(chapters.length, 44, "44 numbered chapters");
   assert.deepEqual(chapters.map((document) => document.chapter), Array.from({ length: 44 }, (_, index) => index + 1));
   assert.ok(documents.some((document) => document.slug === "00-front-matter/00-how-to-read-this-guide" && document.chapter === 0));
@@ -33,7 +34,7 @@ test("generated content reflects the book structure", async () => {
   assert.equal(documents.filter((document) => document.contentType === "lab").length, 0, "labs removed");
   assert.equal(documents.filter((document) => document.contentType === "stage").length, 8, "8 stages");
   assert.ok(documents.filter((document) => document.contentType === "case study").length >= 3);
-  for (const key of ["readingMinutes", "hasQuickRead", "hasInterviewQuestions", "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
+  for (const key of ["readingMinutes", "hasQuickRead", removedQuestionMetadata, "hasWhiteboardExercise", "audience", "risk", "status", "lifecycle", "topics", "architectureLayers"]) {
     assert.ok(!(key in documents[0]), `${key} should not be generated`);
   }
   for (const chapter of chapters) {
@@ -62,7 +63,7 @@ test("renders the book landing page", async () => {
 test("renders every primary surface", async () => {
   const routes = [
     ["/guide", /Table of contents/],
-    ["/visuals", /Ten original, readable system maps/],
+    ["/visuals", /These ten maps are narrower detail/],
     ["/architecture", /Trace the factory from intent to evidence\./],
     ["/topics", /The reference shelf\./],
     ["/coverage", /Coverage is not proof\./],
@@ -184,15 +185,25 @@ test("every internal /docs link on rendered pages resolves to a generated docume
 });
 
 test("keeps requested exclusions out of public routes", async () => {
-  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/docs/appendix/glossary"];
+  const documents = await generatedDocuments();
+  const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", ...documents.map(({ slug }) => `/docs/${slug}`)];
   const terms = [
+    [65, 100, 111, 98, 101],
     [87, 111, 114, 107, 100, 97, 121],
     [72, 111, 112, 112, 101, 114],
     [87, 111, 114, 107, 98, 101, 110, 99, 104],
+    [77, 101, 116, 97, 32, 70, 97, 99, 116, 111, 114, 121],
+    [73, 110, 116, 101, 114, 118, 105, 101, 119],
   ].map((codes) => String.fromCharCode(...codes));
-  const excluded = new RegExp(`\\b(?:${terms.join("|")})\\b`, "i");
+  const excluded = new RegExp(terms.join("|"), "i");
 
   for (const route of routes) assert.doesNotMatch(await htmlFor(route), excluded);
+});
+
+test("generated documents contain no infographic production notes", async () => {
+  const documents = await generatedDocuments();
+  const productionNote = new RegExp([103, 114, 97, 112, 104, 105, 99, 32, 103, 111, 101, 115, 32, 104, 101, 114, 101].map((code) => String.fromCharCode(code)).join(""), "i");
+  for (const document of documents) assert.doesNotMatch(document.content, productionNote, document.slug);
 });
 
 test("home and TOC expose the eight clickable stages", async () => {

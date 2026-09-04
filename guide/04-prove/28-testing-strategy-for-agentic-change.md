@@ -30,7 +30,7 @@ A useful analogy is a medical workup. No single test diagnoses a patient. A bloo
 ### The risk-based portfolio
 
 <!-- infographic: test-portfolio -->
-> **Infographic — The test portfolio.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The test portfolio.**
 
 ```mermaid
 flowchart TB
@@ -96,7 +96,7 @@ The two are additive, not competing. Evals do not replace the portfolio; they si
 Running the full suite on every Attempt maximizes breadth and can make feedback unusably slow. Running a hand-picked subset is fast and depends entirely on whether the pick was right. **Test-impact analysis** (equivalently, **change-impact test selection**, the first item in Jay's quality stack) is the discipline that makes the subset defensible.
 
 <!-- infographic: change-impact-selection -->
-> **Infographic — Change-impact selection.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Change-impact selection.**
 
 ```mermaid
 flowchart LR

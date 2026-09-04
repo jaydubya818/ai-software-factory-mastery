@@ -26,7 +26,7 @@ A team that stands up an agent runtime for one workflow tends to treat it as a t
 That distinction, model failure versus platform failure, is the one to keep. A poor answer, a wrong plan, a tool called with bad arguments: those are model failures, expected, and the reason evaluation exists. What the platform owes in every one of those cases is determinism about the surrounding facts: what happened, what authority existed, what state changed, and how to recover. *Probabilistic intelligence does not justify probabilistic infrastructure.* The reliability dimensions below are the same ones any distributed workflow engine needs; the difference is that an agent platform reaches the point of needing them earlier than its builders expect.
 
 <!-- infographic: reliability-dimensions -->
-> **Infographic — The reliability dimensions of an agent platform.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — The reliability dimensions of an agent platform.**
 
 | Dimension | What it guarantees | Where this guide covers it |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ Run **game days** against the real scenario list: provider outage, queue corrupt
 Topology is a tradeoff. **Regional failover**, moving the control plane and its authority records to a second region when the first is lost, is the largest of these exercises and the one most likely to produce two active authorities if fencing was designed for a single region. Multi-region active-active improves availability and makes consistency and fencing harder; warm standby is simpler and slower. **Chaos testing** (deliberately injecting the failures on the scenario list into a running system to see whether the declared degraded modes and recovery paths actually engage) reveals coupling and can harm shared environments, so begin with simulation and controlled fault injection. Keeping every provider fallback warm may cost more than accepting bounded unavailability. Start with the simplest topology that meets the scoped objectives.
 
 <!-- infographic: slo-and-dr -->
-> **Infographic — Recovery objectives, degraded modes, and the SLO loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Recovery objectives, degraded modes, and the SLO loop.**
 
 ```mermaid
 flowchart TD
@@ -155,7 +155,7 @@ Air-traffic control is the right analogy and the reason for the name. The tower 
 Every view starts from a **`FactorySystemRecord`**, the governed subject, and links its current lifecycle, risk, autonomy ceiling, owners, releases, workflows, capabilities, models, tools, data, policy decisions, denials, exceptions, evidence freshness, dependencies, incidents, cost, performance, and outcomes. The current response, if any, records owner, severity, state, deadline, action, acknowledgement, verification, and escalation.
 
 <!-- infographic: control-tower -->
-> **Infographic — The control tower loop and its subject model.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The control tower loop and its subject model.**
 
 ```mermaid
 flowchart LR
@@ -255,7 +255,7 @@ When a finding becomes an incident, the tower's loop needs a human procedure ins
 Two lines govern the procedure. *A truthful blocked state is better than a false success*: a WorkOrder that stops and says why is a recoverable situation; a WorkOrder that reports done when it is not has converted a platform failure into a trust failure, and trust recovers more slowly than systems do. And *a production failure should make the platform harder to fail the same way twice*: step six is not optional paperwork; it is the reason the other five were worth doing.
 
 <!-- infographic: incident-procedure -->
-> **Infographic — Contain without destroying evidence.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Contain without destroying evidence.**
 
 ```mermaid
 flowchart TD
@@ -282,7 +282,7 @@ The framework wraps the procedure above in the eight steps Jay runs every incide
 *Clarify* the affected builders, workflows, and business impact; assign severity, an incident commander, technical leads, communications, decision owners, and deadlines. *Contain* by stopping or limiting unsafe execution; the immediate priorities are people and system safety, containment, state preservation, scope, and reliable communication. *Observe* by preserving traces, events, tool calls, and evidence before anything is repaired, so the [forensic bundle](./35-observability-telemetry-and-forensics.md) has what it needs. *Isolate* by determining **which layer failed**: intent, context, model, tool, state, policy, or evaluation. This is the step that distinguishes factory incidents from ordinary outages, because the same symptom (a bad change reached production) has seven different root causes with seven different fixes. *Restore* a known-safe version. *Correct* the immediate defect. *Prevent* recurrence by adding a regression evaluation and controls; the incident becomes an **incident-derived eval case** in the [evaluation suite](../04-prove/29-evaluation-engineering.md). *Measure* whether the fix holds, over a window, against the baseline.
 
 <!-- infographic: incident-framework -->
-> **Infographic — Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure.**
 
 ```mermaid
 flowchart LR

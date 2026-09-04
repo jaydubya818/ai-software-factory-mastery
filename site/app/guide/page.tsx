@@ -61,7 +61,7 @@ export default function GuidePage() {
           <section className="guide-part toc-part" id="stages">
             <header>
               <span>→</span>
-              <div><small>The factory in one line</small><h2>Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</h2><p>Eight stage pages: click any stage for the technical deep dive on how it works, what it produces, and who decides.</p></div>
+              <div><small>The primary reader model</small><h2>Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software</h2><p>Eight concise stage briefs: click any stage for its contract, decision owner, required evidence, common failure, and canonical chapter links.</p></div>
               <strong>{stages.length} stages</strong>
             </header>
             <ol className="toc-list">

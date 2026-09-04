@@ -100,9 +100,9 @@ function slugify(value) {
 }
 
 /**
- * Readers should not see "Infographic — … (Jay's graphic goes here.)" callouts for
- * slots that have no asset yet. The `<!-- infographic: slot -->` marker stays so the
- * renderer can drop the asset in when it arrives; the Mermaid fallback beneath stays too.
+ * Readers should not see editorial production notes for slots that have no asset yet.
+ * The `<!-- infographic: slot -->` marker stays so the renderer can drop the asset in
+ * when it arrives; the Mermaid fallback beneath stays too.
  */
 function stripUnfilledInfographicCallouts(markdown, assets) {
   const lines = markdown.split("\n");
@@ -111,8 +111,12 @@ function stripUnfilledInfographicCallouts(markdown, assets) {
   for (const line of lines) {
     const marker = line.match(/^<!--\s*infographic:\s*([a-z0-9-]+)\s*-->\s*$/i);
     if (marker) { pendingSlot = marker[1]; out.push(line); continue; }
-    if (pendingSlot && /^>\s*\*\*Infographic\s*[—-]/.test(line)) {
+    const callout = pendingSlot ? line.match(/^>\s*\*\*(Infographic\s*[—-]\s*[^*]+)\*\*/) : null;
+    if (callout) {
       if (!assets[pendingSlot]) { pendingSlot = null; continue; }
+      out.push(`> **${callout[1]}**`);
+      pendingSlot = null;
+      continue;
     }
     if (line.trim() !== "") pendingSlot = null;
     out.push(line);

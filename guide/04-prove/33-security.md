@@ -50,7 +50,7 @@ Security design starts with the threat model, not with a control catalog, becaus
 - **Memory poisoning** and retrieval poisoning: an attack that persists in durable memory beyond the run that introduced it.
 
 <!-- infographic: threat-model -->
-> **Infographic — Trust boundaries and threats.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Trust boundaries and threats.**
 
 ```mermaid
 flowchart LR
@@ -128,7 +128,7 @@ The mechanism is **workload identity**: the running worker receives a cryptograp
 Every action is then bound to an **identity chain**: the accountable human or system owner, the authorized WorkOrder, the orchestration service, the worker's workload identity, the agent and capability versions, the tool credential, and any external actor. The useful audit question is not "which agent did this?" It is "which accountable chain delegated which exact authority to which workload, using which credential, for which subject and purpose?"
 
 <!-- infographic: identity-and-secrets-flow -->
-> **Infographic — Identity chain and secret delivery.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Identity chain and secret delivery.**
 
 ```mermaid
 sequenceDiagram
@@ -218,7 +218,7 @@ Evidence must identify source and artifacts by cryptographic digest. Names locat
 Four words that are often used interchangeably mean different things. **Provenance** describes how an artifact was produced: builder, inputs, invocation, environment, outputs. **Attestation** is a typed claim by an identified producer about one or more digest-bound subjects. **Signature** provides integrity and signer authentication for the attestation envelope. **Transparency** makes equivocation or deletion detectable by recording verifiable entries in a log. None is a quality verdict. A perfectly signed vulnerable build remains vulnerable. Provenance answers "how did these bytes come to exist?"; quality evidence answers "why are these bytes acceptable?"; both are required.
 
 <!-- infographic: supply-chain-attestation -->
-> **Infographic — Lineage from Plan to deployed digest.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Lineage from Plan to deployed digest.**
 
 ```mermaid
 flowchart LR
@@ -295,7 +295,7 @@ Policy-as-code enforces repeatable rules, but control ownership, rationale, exce
 The controls above are the guide's own; here is the same ground drawn the way a security organisation draws it, so a CISO and a platform lead can point at the same picture. Seven layers, read top to bottom from "who is this" to "what did we see", with five flows running through them and eight principles underneath. Every row names the chapter or section that owns it in this book; where the factory adds something the security map does not have, the last column says so.
 
 <!-- infographic: agentic-security-architecture -->
-> **Infographic — Agentic AI security architecture: secure identities, trusted agents, intelligent actions.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Agentic AI security architecture: secure identities, trusted agents, intelligent actions.**
 
 | Layer | What it contains | In this guide |
 | --- | --- | --- |

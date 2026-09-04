@@ -76,7 +76,7 @@ Inside the runtime the agent runs a cycle. The taxonomy names it the **execution
 *Understand* means reading the frozen objective and the compiled context, not the raw repository. *Plan* means choosing the next bounded step, which may be revising the Plan the human approved but never silently widening it. *Act* means proposing a tool call. *Observe* means receiving the tool's result as an untrusted observation. *Evaluate* means checking the observation against acceptance criteria, budgets, and policy, with the deterministic checks the runtime owns rather than the model's own opinion. *Adjust* means deciding whether to continue, retry, replan, stop, or escalate. The loop decides the next action; the workflow around it, covered in [chapter 14](./14-durable-execution.md), owns durable progress and authority.
 
 <!-- infographic: agent-loop -->
-> **Infographic — The execution loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The execution loop.**
 
 ```mermaid
 flowchart LR
@@ -110,7 +110,7 @@ The **meta-harness** is the governance layer across harnesses. A real team runs 
 The meta-harness has a stronger form that the four-layer model only implies. A **universal meta-harness** does not run a predetermined workflow; it constructs or selects the workflow an outcome needs. Given a goal, its constraints, and a **verification contract** (the structured list of claims that must be demonstrated before completion and how each is validated), the system decides the decomposition, the workers, the skills, the strategy, and the verification, rather than a human wiring those in advance. That is **outcome-driven execution**: work is governed by verifiable outcomes, not prescribed steps, and the instruction has the shape "produce X subject to Y and prove A through F before completion." In this guide the goal and constraints are the Mission and Plan the control plane of [chapter 13](./13-control-plane-orchestrator-and-execution-plane.md) holds, the verification contract is the quality contract the validator path checks, and the harness of [chapter 15](./15-coding-harnesses-and-agent-protocols.md) is what each chosen worker runs inside; the meta-harness's freedom is over the route, never over the authority, and a route it chooses is still frozen into the execution manifest before the first model call.
 
 <!-- infographic: agent-layers -->
-> **Infographic — Four layers around the model.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Four layers around the model.**
 
 ```mermaid
 flowchart TB
@@ -222,7 +222,7 @@ MCP uses a **host–client–server** architecture over JSON-RPC. The **host** i
 The analogy is a universal power socket. The standard guarantees the plug fits and the voltage matches. It says nothing about whether the appliance is safe, whether you are allowed to run it in this room, or whether it will set the curtains on fire. Capability negotiation proves both sides speak a compatible protocol. It does not prove a server is trustworthy, a tool is safe, or the current WorkOrder authorizes its use.
 
 <!-- infographic: mcp-topology -->
-> **Infographic — MCP topology.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — MCP topology.**
 
 ```mermaid
 flowchart LR
@@ -354,7 +354,7 @@ flowchart LR
 **Context engineering** is the discipline of supplying an agent with the right information, instructions, tools, history, policies, and constraints at the right time. In a factory it is a compilation step, not a copy-paste. The **context compiler** selects the smallest sufficient set of trusted directives and relevant observations for one decision. More context is not automatically better: irrelevant material burns tokens, adds conflicting cues, and can bury the governing constraint. Think of it as packing a briefing folder for one meeting rather than wheeling in the whole filing cabinet.
 
 <!-- infographic: context-assembly -->
-> **Infographic — Context assembly.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Context assembly.**
 
 ```mermaid
 flowchart TB
@@ -405,7 +405,7 @@ Procedural memory itself splits two ways, and the split decides what enters the 
 A safe memory lifecycle is a write-admission flow, and memory quality depends far more on it than on vector search quality.
 
 <!-- infographic: memory-admission -->
-> **Infographic — Memory write admission.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Memory write admission.**
 
 ```mermaid
 stateDiagram-v2

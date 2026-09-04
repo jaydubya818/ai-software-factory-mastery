@@ -48,7 +48,7 @@ Confusing these creates hidden authority. Approving a Plan does not accept a Wor
 Humans define intent, acceptable risk, and the rules under which agents may act. Agents propose, gather evidence, execute authorized work, and recommend outcomes. They never become the owner of business, legal, security, or operational risk. The chain looks like this:
 
 <!-- infographic: policy-decision-flow -->
-> **Infographic — Policy decision flow.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Policy decision flow.**
 
 ```mermaid
 flowchart LR
@@ -90,7 +90,7 @@ The label should be policy-derived and explainable. A useful classifier consider
 The three bands become operational when each one is paired with what the factory may do without asking. **Risk-proportional autonomy** is that pairing, classified by the policy engine rather than by the person opening the WorkOrder, and a defensible first version is deliberately narrow:
 
 <!-- infographic: risk-proportional-autonomy -->
-> **Infographic — Green, Yellow, Red: what proceeds without asking.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Green, Yellow, Red: what proceeds without asking.**
 
 | Band | What the factory may do automatically | What still needs a human | Execution posture |
 | --- | --- | --- | --- |
@@ -105,7 +105,7 @@ Two lines in that table are easy to relax and should not be. First, *merge is hu
 Turning the bands into a review policy starts with the dimensions the classifier actually reads. For a proposed change they are blast radius, reversibility, security sensitivity, data sensitivity, dependency impact, architecture impact, production criticality, novelty, and verification strength. Against those the factory aggregates the evidence it already has: test results, static analysis, security findings, dependency risk, architectural impact, evaluation results, ownership context, and the history of failures in the same area. The classification is then a function of both, and the review path follows from the classification:
 
 <!-- infographic: risk-tier-review -->
-> **Infographic — Risk-tiered review.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Risk-tiered review.**
 
 | Tier | Typical changes | Review path | Band |
 | --- | --- | --- | --- |
@@ -132,7 +132,7 @@ These tiers describe authority for a single grant. The Level 0–5 autonomy ladd
 Put the bands, tiers, and decision owners together and you get a one-page **autonomy matrix** — the single most useful governance artifact to hang on the wall, because it lets an engineer, an auditor, and an executive read the same answer. A worked starting point:
 
 <!-- infographic: autonomy-matrix -->
-> **Infographic — Autonomy matrix.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Autonomy matrix.**
 
 | Change type | Risk band | Autonomy tier | Required approval | Required evidence |
 | --- | --- | --- | --- | --- |
@@ -164,7 +164,7 @@ Read against the earlier tables, only two things have changed. The Low band has 
 The label itself comes from a classifier, and the classifier reads observables, not opinions. The nine dimensions of the tiered-review section — blast radius, reversibility, sensitivity, novelty, verification strength, and the rest — are the *consequence* dimensions the policy reasons about. **Change risk classification** feeds them from nine inputs the factory can measure on every change: files changed, dependencies touched, component criticality, security sensitivity, blast radius, change size, test coverage, agent confidence, and historical failure rate of the same area. The inputs produce a tier, and the tier selects four policies at once: the verification policy (which validators must run and how deep), the reviewer policy (automated only, sampled human, named human, specialised domain owner), the approval policy (none, single, dual, multi-party), and the deployment policy (direct, canary, staged, rehearsed rollback).
 
 <!-- infographic: risk-classification-inputs -->
-> **Infographic — Nine inputs, one tier, five policies.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Nine inputs, one tier, five policies.**
 
 ```mermaid
 flowchart LR
@@ -269,7 +269,7 @@ Where the packets land matters as much as what they contain. An **approval inbox
 Governance also has to meet the builder before a Mission exists, when the question is "what kind of work is this, and how much of the factory does it need?". A **recipe** is a rule-based recommendation for that question: given what the builder has said about the work, it proposes a default posture (which roles run, which checks run, how much autonomy is reasonable) and drafts the Mission accordingly. Eight recipes cover most engineering work, and they form a ladder from cheapest to most complete:
 
 <!-- infographic: recipe-ladder -->
-> **Infographic — Eight recipes, from read-only Scout to Full SDLC.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Eight recipes, from read-only Scout to Full SDLC.**
 
 | Recipe | Use it when | Default posture |
 | --- | --- | --- |
@@ -367,7 +367,7 @@ Each link records delegator, recipient, subject, purpose, scope, constraints, po
 A generic kill switch is not enough, because it cannot say which state, effects, grants, or recovery obligations remain. Air-traffic control does not have one red button; it has "hold," "go around," "divert," and "close the runway," each with a different meaning for the aircraft already in the air. The factory needs the same precision:
 
 <!-- infographic: emergency-control -->
-> **Infographic — Emergency control.** *(Jay's graphic goes here.)* Until then, the table and diagram below carry the same concept.
+> **Infographic — Emergency control.**
 
 | Action | Meaning | State effect | Authority effect | Recovery requirement |
 | --- | --- | --- | --- | --- |

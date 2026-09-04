@@ -67,7 +67,7 @@ NIST's Secure Software Development Framework supports this lifecycle view: it re
 A **Quality Contract** is the machine-readable assurance specification for one version of a WorkOrder or release candidate. The key word is *before*: the agent does not decide what "done" means during execution. Human-owned intent, organizational policy, risk classification, and the approved Factory Configuration compile the contract before any mutation begins. If a test plan is a promise to check things, a contract is the checklist the inspector will actually hold when the work is presented.
 
 <!-- infographic: quality-contract -->
-> **Infographic — Compiling a Quality Contract.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Compiling a Quality Contract.**
 
 ```mermaid
 flowchart LR
@@ -268,7 +268,7 @@ A 98/100 score cannot override one critical security finding, a missing authoriz
 The **Quality Proof Package** is the complete reviewable assurance case for one release candidate. The certificate is a projection of it, the way a passport is a projection of a citizenship file.
 
 <!-- infographic: proof-package -->
-> **Infographic — Anatomy of a Quality Proof Package.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Anatomy of a Quality Proof Package.**
 
 ```mermaid
 flowchart TB
@@ -317,7 +317,7 @@ It does not mean defect-free, permanently safe, or valid for a different artifac
 The proof package is built for audit. The person who has to accept a WorkOrder on a Tuesday afternoon needs a different projection of the same graph, ordered for a decision rather than for completeness. That projection is the **review package**, and the discipline behind it is **evidence-first human review**: the reviewer starts from what was proven and disproven, not from the diff. It carries, in this order:
 
 <!-- infographic: review-package -->
-> **Infographic — The review package, in reading order.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — The review package, in reading order.**
 
 | Section | What it holds | Why it comes here |
 | --- | --- | --- |
@@ -343,7 +343,7 @@ A **waiver** is an authorised decision that a failed or missing check will not b
 The third mechanism is a pair of numbers that should never be shown alone. **Execution progress** is how much of the work has been done: Tasks in DONE over Tasks in total. **Acceptance readiness** is how much of the contract has been proven: blocking criteria with current, verified evidence over blocking criteria in total. A WorkOrder view shows both, because either one alone lies. Five of five Tasks done with two of six criteria verified is a WorkOrder that is finished and not acceptable; two of five Tasks done with six of six criteria verified is a WorkOrder whose remaining Tasks are not on the acceptance path at all. Task count alone is never sufficient for acceptance, and a surface that shows a single progress bar has picked one of the two and hidden the other.
 
 <!-- infographic: two-counts -->
-> **Infographic — Execution progress and acceptance readiness are different numbers.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Execution progress and acceptance readiness are different numbers.**
 
 ```mermaid
 flowchart LR
@@ -471,7 +471,7 @@ Certificate: DRAFT -> ISSUED -> SUSPENDED -> REVOKED | EXPIRED | SUPERSEDED
 ```
 
 <!-- infographic: certificate-lifecycle -->
-> **Infographic — Certificate lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Certificate lifecycle.**
 
 ```mermaid
 stateDiagram-v2

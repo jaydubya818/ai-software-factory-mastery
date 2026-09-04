@@ -27,21 +27,21 @@ test("rewrites sibling and cross-part .md links to site routes", async () => {
   // ../appendix/glossary.md, resolved across directories
   assert.ok(frontMatter.includes("/docs/appendix/glossary"), "a ../ link into the appendix should resolve");
 
-  // ../03-build/18-agent-architecture.md from a stage page
+  // ../03-build/15-coding-harnesses-and-agent-protocols.md from a stage page
   const stage = hrefs(await htmlFor("/docs/stages/04-execute-through-harness"));
   assert.ok(
-    stage.some((href) => href.startsWith("/docs/03-build/18-agent-architecture")),
+    stage.some((href) => href.startsWith("/docs/03-build/15-coding-harnesses-and-agent-protocols")),
     "a ../ link into another part should resolve to that chapter route",
   );
 });
 
 test("normalizes link fragments onto the ids headings actually render with", async () => {
-  const links = hrefs(await htmlFor("/docs/stages/04-execute-through-harness"));
-  const deepLinks = links.filter((href) => href.startsWith("/docs/03-build/18-agent-architecture#"));
-  assert.ok(deepLinks.length >= 1, "the stage page should deep link into chapter 18");
+  const links = hrefs(await htmlFor("/docs/02-design/06-intent-and-specification-engineering"));
+  const deepLinks = links.filter((href) => href.startsWith("/docs/04-prove/27-quality-and-evidence-architecture#"));
+  assert.ok(deepLinks.length >= 1, "the specification chapter should deep link into chapter 27");
 
   // Every fragment those links use must exist as a heading on the target page.
-  const target = await htmlFor("/docs/03-build/18-agent-architecture");
+  const target = await htmlFor("/docs/04-prove/27-quality-and-evidence-architecture");
   const headingIds = new Set([...target.matchAll(/<h[23] id="([^"]+)"/g)].map((match) => match[1]));
 
   for (const href of deepLinks) {

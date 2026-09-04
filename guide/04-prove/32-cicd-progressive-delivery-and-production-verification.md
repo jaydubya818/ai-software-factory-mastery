@@ -48,7 +48,7 @@ An air-traffic controller never says "the flight" without a call sign, and never
 The **artifact record** is the anchor. It binds the source commit, dependency lock, builder identity, environment digest, build commands, SBOM, provenance, signatures, test receipts, and output digest. The same digest then moves through every environment. Configuration changes remain separately versioned and attributable, so a difference between staging and production is a documented configuration difference, never a silent rebuild.
 
 <!-- infographic: delivery-pipeline -->
-> **Infographic — From accepted source to promoted digest.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From accepted source to promoted digest.**
 
 ```mermaid
 flowchart LR
@@ -96,7 +96,7 @@ The **state-machine principle** underneath this is worth stating once, plainly: 
 The post-merge chain deserves the same discipline, because it is where "done" is most often declared early. After merge, the change still has to be **deployed** — the artifact actually placed into an environment; then **activated** — the code path actually reached by traffic, which for a flagged feature or a dark launch may happen days later; and only then **production verified** — observed to behave correctly under real conditions and, beyond that, to produce the outcome the Mission was created for. A merged change that was never deployed, or deployed but never activated, or activated but never verified, has not finished anything.
 
 <!-- infographic: post-merge-chain -->
-> **Infographic — The post-merge chain.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The post-merge chain.**
 
 ```mermaid
 flowchart LR
@@ -128,7 +128,7 @@ flowchart LR
 Rather than exposing every user at once, choose an exposure strategy by how well it contains failure and how representative it is: dark launch, internal cohort, percentage canary, region, tenant, feature flag, or blue-green. Predefine the promotion gates, the maximum exposure at each step, the observation duration, the stop conditions, and the decision owner. Feature flags, kill switches, health gates, and automated rollback give risk-proportional control. Irreversible migrations, security boundaries, customer data, and material business impact still require human risk acceptance even when automation executes the steps.
 
 <!-- infographic: progressive-rollout -->
-> **Infographic — Progressive rollout with gates.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Progressive rollout with gates.**
 
 ```mermaid
 flowchart LR
@@ -176,7 +176,7 @@ Jay's mission defines production validation as a workflow of its own: **deployme
 Rollback is a capability with its own evidence, not a universal undo button. A rollback plan identifies which components are reversible, and what happens to configuration, data, migration state, caches, consumers, and external effects. When reversal is unsafe, because data has already been transformed or a third party has already been notified, use containment and forward correction instead. Regular drills prove access, tooling, data restore, communication, and decision latency before an incident tests them for real.
 
 <!-- infographic: rollback-decision -->
-> **Infographic — Rollback or forward correction.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Rollback or forward correction.**
 
 ```mermaid
 flowchart TD

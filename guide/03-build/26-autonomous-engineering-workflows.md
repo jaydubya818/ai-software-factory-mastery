@@ -4,7 +4,7 @@ part: build
 chapter: 26
 summary: How to admit a repository the factory is allowed to change, define the first workflow (governed issue-to-pull-request delivery) and the eight workflow products that follow it, and give each workflow its own trigger, proof shape, authority, and autonomy.
 absorbs: [autonomous-workflows/01-repository-onboarding-and-codebase-intelligence.md, autonomous-workflows/02-autonomous-engineering-workflow-catalog.md, autonomous-workflows/03-change-workflows-features-defects-tests-and-modernization.md, autonomous-workflows/04-operational-workflows-security-incidents-production-and-knowledge.md]
-infographics: [repository-onboarding, repository-profile, agent-readiness, signal-to-deployment, issue-to-pr-wedge, workflow-catalog]
+infographics: [repository-onboarding, repository-profile, signal-to-deployment, issue-to-pr-wedge, workflow-catalog]
 ---
 
 # 26. Autonomous engineering workflows
@@ -41,7 +41,7 @@ Four of those dimensions are produced by named discovery steps. **Instruction re
 The record separates two kinds of fact. **Authoritative declarations** (owner, data classification, permitted workflows, release authority) require declared sources and an accountable person. **Derived intelligence** (symbols, call graphs, ownership suggestions, test impact, architecture summaries) may be generated, and every derived view records its source commit, method, coverage, confidence, and expiry. The analogy is a building inspection: the surveyor can measure the rooms, but only the registered owner can say who is allowed to knock down a wall.
 
 <!-- infographic: repository-onboarding -->
-> **Infographic — Repository onboarding and codebase intelligence.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Repository onboarding and codebase intelligence.**
 
 ```mermaid
 flowchart LR
@@ -79,7 +79,7 @@ That record is the **repository profile**. It is the machine-readable core of th
 A profile is versioned, owned, and mostly derived: languages, build topology, boundaries, and ownership are generated from the repository and its surrounding systems, then confirmed by an owner, while risk tier and admitted workflows are authoritative declarations. It expires like the rest of the readiness record, and drift detection refreshes it when the repository changes.
 
 <!-- infographic: repository-profile -->
-> **Infographic — One platform, many profiles.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — One platform, many profiles.**
 
 ```mermaid
 flowchart TB
@@ -133,7 +133,7 @@ The smallest unit of that work is an **agent affordance**: an interface or prope
 The wedge that follows begins with a human submitting an issue. Something produced that issue, and a factory whose boundary is ticket-to-code has left the most expensive judgment outside it. A **signal** is any observable event indicating a potential need for change: customer feedback, a support case, a bug report, telemetry, an incident, a chat thread, an analytics anomaly, a security finding, a performance regression, an engineering discussion. *The factory begins before code; its boundary is signal-to-outcome, not ticket-to-code.* **Signal intelligence** is the workflow that ingests, classifies, correlates, deduplicates, prioritises, and routes signals into actionable work, and it answers six questions about each: what happened, does it matter, is it a duplicate, who owns it, how severe is it, and should it change anything at all. Most signals should end at the last question with "no," and a signal workflow that cannot say no is an intake flood with better tooling.
 
 <!-- infographic: signal-to-deployment -->
-> **Infographic — The signal-to-deployment loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The signal-to-deployment loop.**
 
 ```mermaid
 flowchart LR
@@ -153,7 +153,7 @@ The loop is Signals → Triage → Prioritisation → Intent → Plan → Execut
 Do not build the whole factory for every organization first. Choose one painful, repeatable, measurable workflow and prove it. Jay's mission names the wedge: **governed issue-to-pull-request delivery**. In its full form the workflow has thirteen steps; the ten-step version in the mission document is the same path with clarification, post-deployment observation, and closure folded in.
 
 <!-- infographic: issue-to-pr-wedge -->
-> **Infographic — The governed issue-to-pull-request wedge.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The governed issue-to-pull-request wedge.**
 
 ```mermaid
 flowchart TD
@@ -239,7 +239,7 @@ Once the wedge is reliable, expand in order. The catalog turns "use agents for e
 - current maturity and eligible autonomy.
 
 <!-- infographic: workflow-catalog -->
-> **Infographic — The eight initial workflows.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The eight initial workflows.**
 
 ```mermaid
 flowchart LR

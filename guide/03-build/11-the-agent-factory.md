@@ -28,7 +28,7 @@ The Agent Factory and the Software Factory are separate for a reason. The Agent 
 The analogy is an aircraft parts supplier and an airline. The supplier manufactures, tests, certifies, and serial-numbers each part. The airline installs exact serial-numbered parts, records which aircraft carries which, and grounds every aircraft carrying a part when the supplier issues a recall. The supplier does not decide where the aircraft flies. That is the shape of the relationship.
 
 <!-- infographic: capability-supply-chain -->
-> **Infographic — Capability supply chain.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Capability supply chain.**
 
 ```mermaid
 flowchart LR
@@ -161,7 +161,7 @@ Three skill families deserve names because they recur in every factory and are g
 Strip away product names and every Agent Factory has the same shape. Authors produce agent definitions, skills, and tools. Those are bound to model configurations, evaluated against suites and checked against policy, assigned explicit versions, published to a capability registry that supports discovery and deprecation, and consumed by a runtime that resolves exact versions before it executes. Feedback from the runtime flows back to the authors.
 
 <!-- infographic: agent-factory-architecture -->
-> **Infographic — The Agent Factory's architecture.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The Agent Factory's architecture.**
 
 ```mermaid
 flowchart TB
@@ -237,7 +237,7 @@ Compatibility is relational. A tool can be valid alone and unsafe with a particu
 ### The lifecycle
 
 <!-- infographic: capability-lifecycle -->
-> **Infographic — Capability lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Capability lifecycle.**
 
 ```mermaid
 stateDiagram-v2
@@ -275,7 +275,7 @@ The lifecycle above governs the *definition* of an agent. Something still has to
 | Identity | The workload identity the instance authenticates as, with its short-lived credentials and scoped grants | Which principal did this call come from, and what was it allowed? |
 
 <!-- infographic: agent-runtime-management -->
-> **Infographic — Agent Runtime Management.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Agent Runtime Management.**
 
 ```mermaid
 flowchart LR

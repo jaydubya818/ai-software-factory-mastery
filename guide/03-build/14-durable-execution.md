@@ -59,7 +59,7 @@ Five behaviors follow from the record. Workers claim tasks through **leases**, s
 When a worker disappears, the state machine is what lets the platform answer four questions without asking the model anything: what completed? what side effects occurred? what was the last safe checkpoint? what can safely resume? An agent runtime that can answer those is distributed-systems infrastructure. One that cannot is an LLM wrapper with a database attached.
 
 <!-- infographic: attempt-lifecycle -->
-> **Infographic — The attempt lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The attempt lifecycle.**
 
 ```mermaid
 stateDiagram-v2
@@ -91,7 +91,7 @@ A worker atomically claims a pending Attempt and receives a **lease**: a record 
 The **fencing token** is the part that prevents the stale nurse from writing orders. Every material completion write must prove the current lease generation. A worker that lost its lease during a network partition, then reconnects and tries to record success, presents an old generation and is refused. Its event is kept for audit; its authority is gone. Without fencing, "at most one active Attempt per Task" is a hope rather than an invariant.
 
 <!-- infographic: lease-and-recovery -->
-> **Infographic — Lease, heartbeat, fence, and recovery.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Lease, heartbeat, fence, and recovery.**
 
 ```mermaid
 sequenceDiagram
@@ -150,7 +150,7 @@ This table is the operational form of **failure-domain classification**: before 
 Loop Engineering gives the attempt lifecycle its decision rule. After every attempt, exactly one of five things happens.
 
 <!-- infographic: retry-backoff-escalate -->
-> **Infographic — Verify, correct, retry, stop, escalate.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Verify, correct, retry, stop, escalate.**
 
 ```mermaid
 flowchart TD
@@ -174,7 +174,7 @@ Retry budgets are multidimensional. Bound attempts, elapsed time, cost, tokens, 
 Put the lease, the key, and the state machine together and the recovery procedure for a vanished worker writes itself. The wrong move is to restart everything, which repeats side effects and burns budget. The right move is to inspect persisted state and resume from it.
 
 <!-- infographic: mid-workflow-recovery -->
-> **Infographic — Recovery from durable state.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Recovery from durable state.**
 
 ```mermaid
 flowchart TD

@@ -60,8 +60,7 @@ loops closing back from production. The practitioners running factories in
 disagreements cluster at the seams.
 
 <!-- infographic: composable-future -->
-> **Infographic — The composable future.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The composable future.**
 
 ```mermaid
 flowchart TB
@@ -174,8 +173,7 @@ The second large prediction is about what software itself becomes when
 agents can write code cheaply.
 
 <!-- infographic: extensible-software -->
-> **Infographic — Extensible software: trusted core, untrusted extensions.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Extensible software: trusted core, untrusted extensions.**
 
 ```mermaid
 flowchart LR

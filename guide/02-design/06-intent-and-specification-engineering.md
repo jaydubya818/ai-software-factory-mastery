@@ -49,7 +49,7 @@ The **Intent layer** turns that raw material into structured engineering work. I
 - **Dynamic replanning** — adjusting the plan when execution produces unexpected results, without silently changing the goal.
 
 <!-- infographic: intent-to-plan -->
-> **Infographic — From intent to approved plan.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From intent to approved plan.**
 
 ```mermaid
 flowchart LR
@@ -80,7 +80,7 @@ Because builders differ, the factory names **builder personas** and designs for 
 The **builder journey** is the path a persona travels from first contact to routine use: discovery, first intent, first accepted outcome, first trusted production change, repeat use, and, for the builders who stay, **end-to-end ownership** of a workflow they now run through the factory rather than around it. Each stage of the journey has a measurable exit (time to first successful workflow, time to first accepted PR, repeat-use rate) and a characteristic way of failing (the governed path was slower than pasting a prompt into a chat window). Think of a new hire's first month: the organisation that plans the first day, the first commit, and the first on-call shift keeps people; the one that hands over a laptop and a wiki does not.
 
 <!-- infographic: builder-journey -->
-> **Infographic — The builder journey.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The builder journey.**
 
 ```mermaid
 flowchart LR
@@ -135,7 +135,7 @@ Three records share this territory and it is important not to let them merge. Th
 The heart of specification engineering is a four-way distinction that most teams blur into "the acceptance criteria". Each answers a different question, and a specification that is missing any one of the four cannot be enforced.
 
 <!-- infographic: spec-contract -->
-> **Infographic — The specification contract.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The specification contract.**
 
 ```mermaid
 flowchart TB
@@ -210,7 +210,7 @@ Decomposition produces a **task graph**, not a collection of prompts. The differ
 - What evidence does each task produce, and which criterion does it serve?
 
 <!-- infographic: task-graph -->
-> **Infographic — A task graph with its fields.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — A task graph with its fields.**
 
 ```mermaid
 flowchart LR
@@ -255,7 +255,7 @@ The workflow, as described by Dexter of HumanLayer on a livestream with BAML, ru
 The result may be a twenty-thousand-line pull request. Nobody should review that, and nobody will do so at the same bar of quality; a reviewer handed it will resent it. So the large PR is not the deliverable. It is the **slop PR**, and its role is to be the spec. The next prompt is "treat this as the specification; if you were implementing it from scratch, how would you break it into digestible, incrementally shippable pieces, and where do the migrations go?" Models are good at this decomposition. The output is a sequence of pull requests of one to three thousand lines each, merged one at a time, with migrations ordered so each slice is safe on its own. In the reported case the first five slices shipped at roughly one a day; a colleague picked up the last three, disliked the architecture of one, and rewrote it, which was easy precisely because the slice was digestible.
 
 <!-- infographic: prototype-to-pr -->
-> **Infographic — Prototype to sliced pull requests.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Prototype to sliced pull requests.**
 
 ```mermaid
 flowchart LR

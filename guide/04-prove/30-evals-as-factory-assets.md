@@ -24,7 +24,7 @@ Everything above assumes you can see what the agent did. That is harness enginee
 Four activities use those recordings, and they must not be confused with one another.
 
 <!-- infographic: trace-replay-comparison -->
-> **Infographic — Trace, replay, and comparison.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Trace, replay, and comparison.**
 
 ```mermaid
 flowchart LR
@@ -111,7 +111,7 @@ An eval is a factory asset like a skill or a verifier, and the registry is its e
 Evaluation is not one gate. It runs in three windows, each checking what the previous one could not, and together they form what this guide calls **continuous intelligence** — the practice of measuring trust continuously rather than certifying it once.
 
 <!-- infographic: evaluation-windows -->
-> **Infographic — The three evaluation windows.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The three evaluation windows.**
 
 ```mermaid
 flowchart LR

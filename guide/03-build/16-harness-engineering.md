@@ -36,7 +36,7 @@ The "inner" and "outer" of the harness split above describe two pieces of softwa
 The objectives are the reason to keep the loops apart. Inner-loop improvements drive autonomy: fewer human corrections per task, because the agent fixed it before anyone looked. Outer-loop improvements drive automation: less human review before acceptance, because independent verification established the trust a reviewer used to supply. The meta loop, which [Chapter 40](../06-improve/40-governed-learning.md) treats in depth, drives improvement, and it is the loop with the most leverage, because a fix to it changes every future run so that the same mistake is made only once. A team that pours effort into the inner loop and none into the outer gets a hundred correct pull requests each waiting for a human to inspect them; a team that builds the outer loop without the inner gets expensive verification of work the agent could have fixed itself.
 
 <!-- infographic: three-loops -->
-> **Infographic — Inner, outer, and meta loops.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Inner, outer, and meta loops.**
 
 ```mermaid
 flowchart TB
@@ -84,7 +84,7 @@ The matrix is the evidence for a claim this guide makes throughout: the harness 
 The multiplier has a cost curve, and it goes the wrong way if nobody watches it. **Harness debt** is the accumulated prompts, skills, rules, checks, adapters, and orchestration that once compensated for an agent limitation and no longer justify their cost, because the model improved, the workflow changed, or the check was never load-bearing. Much of it is **compensatory**: built to work around a temporary model weakness, then kept out of habit after the weakness was gone, unlike the institutional knowledge (architecture, policies, conventions) that no model will ever know on its own and that stays load-bearing. **Harness pruning** is the routine that pays it down, and it is the same shape as every other evaluation in this book: take one component → eval with it → eval without it → measure the delta → retain, simplify, or remove. A component that cannot show a delta is debt, however sensible it looked when it was added.
 
 <!-- infographic: harness-pruning -->
-> **Infographic — Harness pruning.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Harness pruning.**
 
 ```mermaid
 flowchart LR
@@ -134,8 +134,7 @@ The outer harness is also where "keep going until it is actually done" lives. BA
 The outer harness talks to a specific inner harness through an **adapter**. Each adapter publishes a **Harness Capability Manifest** that declares, truthfully, which lifecycle behaviors it supports and which it does not. Unsupported behavior must be visible, not silently absent, and adapters should fail closed: if a WorkOrder requires a capability the harness cannot prove (say, cancellation mid-tool-call, or verified session resume), the adapter refuses the work rather than pretending.
 
 <!-- infographic: harness-adapter-contract -->
-> **Infographic — The harness adapter contract.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The harness adapter contract.**
 
 ```mermaid
 flowchart TB
@@ -159,7 +158,7 @@ Substitutability is never global. Two adapters are substitutable only for a spec
 The capability manifest says what an adapter can do. **Admission** is the control plane's decision that a specific adapter version may be selected for governed work, and it is made against a harness contract that is the same for every engine, whether the engine is a single-session coding harness or a larger epic-delivery engine that plans, splits work into stories, and runs its own gates. [Chapter 13](./13-control-plane-orchestrator-and-execution-plane.md) gives the authority table and the two admission lists from the control plane's side; this section is the adapter mechanics that make those lists checkable.
 
 <!-- infographic: adapter-admission -->
-> **Infographic — What an adapter runs, and what runs around it.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — What an adapter runs, and what runs around it.**
 
 ```mermaid
 flowchart LR

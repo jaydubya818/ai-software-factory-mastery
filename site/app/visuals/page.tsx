@@ -6,7 +6,7 @@ import { VisualAtlas } from "../components/VisualAtlas";
 
 export const metadata: Metadata = {
   title: "Atlas · The AI Software Factory Guide",
-  description: "A readable visual atlas of the lifecycle, engineering stack, orchestration, agent patterns, memory, loops, governance, observability, protocols, and operator control model.",
+  description: "A readable visual atlas of detail, implementation, operating, and reference lenses supporting the guide's eight-stage value stream and six-area architecture.",
 };
 
 export default function VisualsPage() {
@@ -20,7 +20,7 @@ export default function VisualsPage() {
             <h1>See the whole factory. Then follow each boundary.</h1>
           </div>
           <div>
-            <p>Ten original, readable system maps turn the guide into one connected mental model. Every map links to the chapter behind it.</p>
+            <p>The eight-stage value stream is the primary model; the six-area architecture assigns responsibility. These ten maps are narrower detail, implementation, operating, or reference lenses, each linked to its canonical chapter.</p>
             <div className="hero-actions"><Link className="button button-primary" href="/guide">Table of contents</Link><Link className="button button-secondary" href="/architecture">Inspect the architecture explorer</Link></div>
           </div>
         </header>

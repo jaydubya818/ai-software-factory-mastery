@@ -34,8 +34,7 @@ An analogy that holds: the inner harness is a skilled temp worker who arrives wi
 Neither harness owns Mission approval, WorkOrder acceptance, independent verification, publication authority, merge, or release. Those stay in the control plane and the verification path described in [Chapter 13](./13-control-plane-orchestrator-and-execution-plane.md) and [Chapter 27](../04-prove/27-quality-and-evidence-architecture.md).
 
 <!-- infographic: inner-outer-harness -->
-> **Infographic — Inner and outer harness.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Inner and outer harness.**
 
 ```mermaid
 flowchart LR
@@ -83,7 +82,7 @@ Where a vendor harness already covers a row, the outer harness's job is to verif
 Every harness runs the same loop underneath its product surface. Making it explicit is the fastest way to see where control lives.
 
 <!-- infographic: execution-loop -->
-> **Infographic — The execution loop.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The execution loop.**
 
 ```mermaid
 flowchart TD
@@ -118,7 +117,7 @@ Two properties of the loop carry the whole design. The model proposes the next a
 Strip any production agent — a coding agent, a support agent, an on-call triage agent — down to what survives a framework change, and the same diagram appears. It has one outer boundary, three disciplines inside it, three services beside it, and one floor beneath it. Learn the diagram once and every vendor's architecture page becomes a labelled instance of it.
 
 <!-- infographic: harness-control-plane -->
-> **Infographic — The agent harness as runtime control plane.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The agent harness as runtime control plane.**
 
 ```mermaid
 flowchart TB
@@ -203,7 +202,7 @@ The state distinction is the second thing the contract must be explicit about. *
 Once the contract is owned, the thing that runs the loop becomes a replaceable **execution backend**: a local worker process, a persistent worker pool, a remote sandbox, or a vendor-managed cloud agent. **Delegated execution** is the control plane handing a frozen manifest to a backend it does not host; **remote execution** is the case where that backend is on infrastructure the factory does not control; a **remote agent** is the execution running there, authenticated as a principal, scoped by the manifest, and trusted exactly as far as its evidence can be traced back to one authorized Attempt. The contract is the same for every backend, which is what makes delegation safe: the remote agent gets the same frozen scope, returns the same normalized stream, and cannot acquire authority from its location.
 
 <!-- infographic: agent-contract -->
-> **Infographic — One agent contract, many execution backends.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — One agent contract, many execution backends.**
 
 ```mermaid
 flowchart TB
@@ -231,8 +230,7 @@ A meta-harness supplies four things. **Composition**: a manifest declares which 
 The practical form of a meta-harness inside a large engineering organization is a **unified wrapper**. Uber's engineering team, which runs every interactive coding harness its engineers use through one such wrapper, describes it as owning installation, configuration, authentication, and cost visibility across all of them, and as the place where the standard defaults live: compaction at a fixed token threshold, a medium reasoning effort, a cheaper default model for subagents, prompt-cache lifetimes matched to how people actually pause, and a live cost counter in the status line of whichever harness is running. Because every session passes through it, the wrapper can also collect every trace into one session-analysis dashboard, flag anti-patterns with their cost, and route all MCP traffic through one gateway. None of that changes what any single harness does; it changes what all of them share.
 
 <!-- infographic: meta-harness -->
-> **Infographic — The meta-harness across harnesses.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The meta-harness across harnesses.**
 
 ```mermaid
 flowchart TB
@@ -276,8 +274,7 @@ Vaibhav's counterpoint is that a good abstraction here may not be possible yet, 
 Protocols coexist. An editor talks to a coding agent through ACP; that agent reaches tools through MCP; a factory UI receives events through AG-UI; a remote specialist is contacted through A2A. In every case the control plane still authenticates principals, scopes authority, freezes contracts, reconciles state, and evaluates evidence. Protocol identity is never authority.
 
 <!-- infographic: protocol-boundaries -->
-> **Infographic — Where each protocol lives.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Where each protocol lives.**
 
 ```mermaid
 flowchart LR

@@ -30,8 +30,7 @@ Sandboxing answers *how execution is contained*. Development-environment enginee
 Think of a workshop. Compute is the land and the power supply. The development environment is the fitted-out workshop: the benches, the tools, the parts bins, the keys to the stockroom. The sandbox is the guard on each machine and the rule about what leaves the building. You would not ask the landlord to choose your lathe, and you would not let the lathe decide what ships.
 
 <!-- infographic: environment-vs-compute -->
-> **Infographic — Environment orchestration versus compute allocation.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Environment orchestration versus compute allocation.**
 
 ```mermaid
 flowchart TB
@@ -116,8 +115,7 @@ The operations vocabulary for this is **pets versus cattle** (written "pets vs c
 BAML's setup is a pool of MacBooks and Mac minis with the toolchain preinstalled, chosen because there is no boot time and because they had spare hardware. Each machine runs a small web server reachable through a tunnel, and a hosted dispatcher that listens to Linear, Slack, and GitHub sends it work. Dexter's assessment is that this is a pet setup and a fine place to start: a repository and a script provision a new machine, but a person still has to fetch the hardware and run it. HumanLayer runs the same way, one EC2 or exe.dev server left up all day and re-authenticated to GitHub by hand, because they are not starting thousands of workflows. Small teams may begin with a few persistent workers. The discipline is to automate the **environment bootstrap** anyway (the scripted sequence that takes bare compute to a ready worker: base image, toolchain, checkout, service startup, readiness check) and to prove, periodically, that a replacement can be created from declared state. Dexter's college IT job is the picture to keep: turning corrupted workstations from pets into cattle meant cloning a drive and handing it over rather than diagnosing anything.
 
 <!-- infographic: pets-vs-cattle -->
-> **Infographic — Pets versus cattle for agent workers.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Pets versus cattle for agent workers.**
 
 ```mermaid
 flowchart LR
@@ -147,7 +145,7 @@ The environment layer is also where the factory decides whether prototypes are d
 The failure this prevents is easy to picture. A product manager prototypes a feature in fifteen minutes on an ungoverned sandbox, and the engineering team then spends two weeks reconstructing it inside the real identity model, the real environment, and the real delivery pipeline. Nothing was accelerated; the bottleneck moved. *If a PM can prototype in fifteen minutes but engineers need two weeks to reconstruct everything, we've only moved the bottleneck.*
 
 <!-- infographic: prototype-to-production -->
-> **Infographic — Prototype-to-production continuity.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Prototype-to-production continuity.**
 
 ```mermaid
 flowchart LR
@@ -199,7 +197,7 @@ The list above is a set of mechanisms. What a security reviewer wants to see is 
 Every dimension of the model has the same shape: a default of deny, an explicit grant recorded in the Execution Manifest, and an enforcement point outside the model. The **execution boundary** is the sum of those grants. The table is the reference.
 
 <!-- infographic: isolation-model -->
-> **Infographic — The isolation model: policy dimensions of one Attempt.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — The isolation model: policy dimensions of one Attempt.**
 
 | Dimension | What the grant says | Enforced by | What it prevents |
 |---|---|---|---|
@@ -229,8 +227,7 @@ The mail-room analogy: the worker builds the package and seals it, but only the 
 Sandbox output is untrusted for the same reason. Receipt spools, logs, diffs, test results, and bundles require integrity checks, redaction, scope validation, and independent verification. A compromised sandbox must not be able to forge acceptance by controlling both the artifact and the evidence about it.
 
 <!-- infographic: sandbox-isolation-and-publication -->
-> **Infographic — From frozen manifest to publication boundary.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — From frozen manifest to publication boundary.**
 
 ```mermaid
 flowchart LR

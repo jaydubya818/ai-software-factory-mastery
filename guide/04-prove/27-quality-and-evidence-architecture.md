@@ -28,7 +28,7 @@ Start with the causal chain Jay's mission statement puts at the center of the wh
 That reframes quality engineering. It is not a gate bolted onto the end of agent work. It is the mechanism that decides how much execution authority the system can safely extend. Autonomy is safe exactly to the extent that the system can detect, contain, and explain failure. The analogy Jay reaches for is the factory floor: nobody lets a production line run unattended because the operators feel good about it. They let it run because the line has sensors, tolerances, and stops that catch a bad part before it leaves the station. The sensors are what make unattended operation possible.
 
 <!-- infographic: evidence-architecture -->
-> **Infographic — The evidence architecture.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The evidence architecture.**
 
 ```mermaid
 flowchart LR
@@ -53,7 +53,7 @@ The most important single distinction in this chapter is the one Jay wants the F
 The architectural lesson is that the producing agent or harness reporting "done" must never be represented as sufficient evidence for acceptance. **Completion** is a fact about execution: the attempt ran to its end state. **Acceptance** is a judgment about the outcome: the governed result is acceptable, and someone accountable says so. The two are different records, produced by different parties, and the second cannot be inferred from the first. The scenario also shows what a good failure looks like from the operator's side. They can inspect what completed, what failed, which evidence failed, who owns the decision, why delivery was blocked, and what remediation can happen next. A blocked delivery that is legible is a working factory. A blocked delivery that needs a database query to explain is not.
 
 <!-- infographic: completion-vs-acceptance -->
-> **Infographic — Completion versus acceptance.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Completion versus acceptance.**
 
 ```mermaid
 stateDiagram-v2
@@ -256,7 +256,7 @@ Signal quality is a product problem, not a scanning problem. Aggregation does th
 The goal is to surface the smallest set of signals that could change the decision. Everything else stays available but does not compete for attention. Then close the loop: capture what developers do with each signal — useful, wrong, correct but irrelevant — and feed it into the learning loop so the aggregation improves. A signal that is dismissed nine times in ten is either miscalibrated or misrouted, and the factory should be the one to notice.
 
 <!-- infographic: signal-aggregation -->
-> **Infographic — From signal flood to decision set.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From signal flood to decision set.**
 
 ```mermaid
 flowchart LR

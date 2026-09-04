@@ -40,8 +40,7 @@ Each link is a question an operator will eventually need answered. Who asked for
 To answer those questions later, every run records a fixed set of facts as it happens: the model and its configuration, the retrieved context and its provenance, the tools called, the state transitions, elapsed time, cost, tokens, retries, the policies that fired (and what they decided), and the outcome. None of that is optional detail. It is the minimum that lets a failure be traced to the component that caused it.
 
 <!-- infographic: execution-lineage -->
-> **Infographic — The execution lineage chain.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The execution lineage chain.**
 
 ```mermaid
 flowchart LR
@@ -73,7 +72,7 @@ Authoritative state tells you what the factory decided. Audit tells you who. Evi
 The analogy is a flight recorder. It records everything the aircraft did. It does not decide whether the flight was safe; an investigator does, using the recording as one input among several. Nobody would let the recorder sign off the aircraft for its next flight.
 
 <!-- infographic: telemetry-model -->
-> **Infographic — The telemetry model: spine, record kinds, and the evidence boundary.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The telemetry model: spine, record kinds, and the evidence boundary.**
 
 ```mermaid
 flowchart TD
@@ -99,7 +98,7 @@ flowchart TD
 The four record kinds describe what the factory keeps. The **completion record** describes what a run hands back, and the rule for it is short: *a mature factory never returns just "done"*. A bare success status is the least informative thing an Attempt can say, because it collapses every question an operator, reviewer, or auditor will later ask into one bit. What the run returns instead is a chain of answers, in a fixed order, each one drawn from the records above rather than from the model's own account of itself.
 
 <!-- infographic: completion-record -->
-> **Infographic — The completion record: never just "done".** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The completion record: never just "done".**
 
 ```mermaid
 flowchart LR
@@ -205,7 +204,7 @@ Metrics aggregate well and lose causality; traces explain one run and not a flee
 Each model call records input, output, cached, and, where the provider exposes it, reasoning usage, together with the model route, retries, tool and environment cost, verification cost, storage, and human attention. Costs roll up from Attempt to WorkOrder to workflow to tenant to accepted outcome without double counting: a retry is counted once, at the Attempt that incurred it, and flows up; a shared environment is allocated by the versioned rule from [Chapter 34](./34-the-factory-as-a-platform.md), and the rule is recorded with the number.
 
 <!-- infographic: cost-attribution -->
-> **Infographic — Cost attribution rollup.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Cost attribution rollup.**
 
 ```mermaid
 flowchart BT

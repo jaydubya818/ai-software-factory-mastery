@@ -70,7 +70,7 @@ Two properties of a profile deserve their own attention. **Structured-output rel
 A profile has a **configuration lifecycle** of its own.
 
 <!-- infographic: model-profile-lifecycle -->
-> **Infographic — Model profile lifecycle.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Model profile lifecycle.**
 
 ```mermaid
 stateDiagram-v2

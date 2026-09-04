@@ -32,7 +32,7 @@ Two sentences carry the distinctions. *Knowledge Engineering prepares the corpus
 Every handoff along the path must retain source identity, version or observation time, authority class, sensitivity, tenant, transformation lineage, and the reason for selection. A model citation is worth something only when the system can resolve it back to the exact material that was used.
 
 <!-- infographic: knowledge-pipeline -->
-> **Infographic — From registered source to frozen context package.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — From registered source to frozen context package.**
 
 ```mermaid
 flowchart LR
@@ -104,7 +104,7 @@ Two failures show why all five properties have to hold at once. In the first, an
 ### Semantic engineering: executable meaning
 
 <!-- infographic: semantic-layer -->
-> **Infographic — The semantic layer.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The semantic layer.**
 
 ```mermaid
 flowchart TB
@@ -134,7 +134,7 @@ Everything above is about whether the agent's context is *right*. There is an ec
 The pattern that one large engineering organisation built for this is a **context graph**: a single graph, integrating the organisation's internal systems, whose nodes are the entities an engineer reasons about (services, teams, incidents, pull requests, design documents, deployments, datasets, historical table usage) and whose edges are the relationships between them (owns, depends on, deployed, caused, queried), which any agent can query in natural language before it starts work. Its published scale gives a sense of what "single graph" means in practice: about 24 million nodes and 80 million edges, 86 node types and 117 edge types, drawn from more than thirty internal systems. Those are one organisation's numbers; the shape transfers at any size.
 
 <!-- infographic: context-graph -->
-> **Infographic — The context graph.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The context graph.**
 
 ```mermaid
 flowchart LR

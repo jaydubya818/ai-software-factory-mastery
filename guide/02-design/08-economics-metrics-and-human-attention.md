@@ -44,7 +44,7 @@ flowchart LR
 Below the three executive measures, the mission defines five dimensions in which the factory must demonstrate improvement. Every one of these metrics is a legitimate line on a dashboard; the discipline is knowing which are outcomes and which are diagnostics.
 
 <!-- infographic: five-metric-dimensions -->
-> **Infographic — Five metric dimensions.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Five metric dimensions.**
 
 ```mermaid
 flowchart TD
@@ -156,7 +156,7 @@ His rules are worth keeping exactly. Moving up buys leverage and speed and costs
 The factory version of this ladder is organized by what a reviewer inspects rather than what a coder edits, and it maps cleanly onto Dan's:
 
 <!-- infographic: attention-altitude -->
-> **Infographic — Attention altitude.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Attention altitude.**
 
 ```mermaid
 flowchart TB

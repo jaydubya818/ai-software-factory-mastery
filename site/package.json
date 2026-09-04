@@ -7,6 +7,9 @@
   },
   "scripts": {
     "content:generate": "node scripts/generate-content.mjs",
+    "editorial:check": "node scripts/check-editorial-integrity.mjs",
+    "infographics:generate": "node scripts/generate-infographics.mjs",
+    "infographics:list": "node scripts/list-infographic-slots.mjs",
     "links": "node scripts/check-links.mjs",
     "predev": "npm run content:generate",
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
@@ -31,6 +34,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@cloudflare/vite-plugin": "^1.54.2",
     "@eslint/js": "9.39.4",
     "@next/eslint-plugin-next": "16.2.6",
@@ -46,7 +50,9 @@
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "16.4.0",
+    "playwright": "1.62.1",
     "react-server-dom-webpack": "^19.2.8",
+    "sharp": "^0.35.4",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.59.3",

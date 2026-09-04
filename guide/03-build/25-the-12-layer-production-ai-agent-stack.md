@@ -24,7 +24,7 @@ No single framework fixes these failures because no single framework owns all of
 The twelve disciplines are not twelve teams. A small system combines roles freely. What must remain explicit is the responsibility and the evidence boundary: who owns which decision, and how another component can verify that the decision was made correctly. Think of a hospital rather than a workshop. A surgeon is only one specialist in the building; the outcome depends just as much on intake, diagnostics, pharmacy, anaesthesia, recovery, and the morbidity review afterward, and it depends on each of them handing over a record the next can act on. The agent is the surgeon. The other eleven layers are the hospital.
 
 <!-- infographic: twelve-layer-stack -->
-> **Infographic — The 12-layer production AI agent stack.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The 12-layer production AI agent stack.**
 
 ```mermaid
 flowchart TB
@@ -124,7 +124,7 @@ Each layer below is described the same way: the decision it owns, what it takes 
 ### How the disciplines hand off work
 
 <!-- infographic: layer-handoffs -->
-> **Infographic — Layer hand-offs and feedback paths.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Layer hand-offs and feedback paths.**
 
 ```mermaid
 flowchart LR

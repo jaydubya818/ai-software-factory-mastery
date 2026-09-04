@@ -24,7 +24,7 @@ Keep three things separate. The **model catalog** records provider identity, ver
 Think of an air-traffic controller assigning a runway. The controller does not pick the closest strip; they pick the closest strip that is long enough for this aircraft, clear of traffic, within the wind limits, and open. Distance breaks ties among runways that qualify. A router works the same way: resolve the lowest-cost approved route that satisfies risk, complexity, capabilities, context, tool support, availability, latency, budget, and quality floor, and let cost break ties only among eligible routes.
 
 <!-- infographic: model-router -->
-> **Infographic — The model router.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The model router.**
 
 ```mermaid
 flowchart LR
@@ -107,7 +107,7 @@ The preprocessing set is familiar because every mature engineering organisation 
 What remains climbs an **escalation ladder**, and the ladder runs in one direction: cheapest reliable capability first, frontier last, with a recorded reason for every step up.
 
 <!-- infographic: escalation-ladder -->
-> **Infographic — The escalation ladder.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The escalation ladder.**
 
 ```mermaid
 flowchart TB
@@ -208,7 +208,7 @@ The naive form is a trap, and the trap has a name. A model call carries state: t
 The decision is the expected cost to a verified outcome on each route, given all six, and it often says "stay" where price alone says "switch." Every escalation and downgrade is a routing decision in its own right, recorded in the routing trace with the evidence that triggered it, so that the meta-loop of [Chapter 40](../06-improve/40-governed-learning.md) can later see which triggers were worth acting on.
 
 <!-- infographic: adaptive-routing -->
-> **Infographic — Escalate, downgrade, stay: routing while the loop runs.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — Escalate, downgrade, stay: routing while the loop runs.**
 
 ```mermaid
 flowchart TD

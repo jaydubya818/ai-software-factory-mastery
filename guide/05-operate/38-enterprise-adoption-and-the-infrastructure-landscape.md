@@ -28,8 +28,7 @@ A maturity level describes what an organization can demonstrably do, with retain
 The analogy is a hospital's accreditation. A hospital is not "Level 4" because its cardiology unit is excellent; the accreditation is per service line, the standards are about retained records and repeatable process, and a single serious event can suspend a service line's license the same week. Nobody would accept a hospital rated by how enthusiastic its surgeons are.
 
 <!-- infographic: maturity-model -->
-> **Infographic — The six maturity levels.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The six maturity levels.**
 
 ```mermaid
 flowchart LR
@@ -60,7 +59,7 @@ An organization with widespread Copilot use and no governed WorkOrders is at Lev
 The six levels above rate an organisation by how much authority it has safely delegated, with proof. A second maturity ladder in public use rates the same organisation by what it has *built*: whether its knowledge is reusable, whether its workflows run without a person starting them, whether those workflows observe and improve themselves, and whether the loops are connected into a system. The two lenses are complementary rather than competing, because an organisation can build a great deal of loop machinery without earning the right to delegate authority through it, and can delegate a narrow corridor with almost no machinery at all. Rate both.
 
 <!-- infographic: skills-loops-factory-ladder -->
-> **Infographic — The skills → loops → factory ladder beside the six levels.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The skills → loops → factory ladder beside the six levels.**
 
 ```mermaid
 flowchart LR
@@ -93,8 +92,7 @@ A single number hides the limiting constraint, so the model scores at least eigh
 Nobody transforms the whole SDLC at once. Adoption proceeds through a **corridor**: one repeatable, valuable, reversible use case, such as governed issue to validated pull request, the wedge workflow of chapter [26](../03-build/26-autonomous-engineering-workflows.md). The corridor gets a baseline before any agent touches it (lead time, change failure rate, human effort, wait time, satisfaction, control escapes) and is promoted only on evidence against that baseline. Prove Level 2 in the corridor, stabilize it, then run Level 3 decisions in shadow before enforcing any of them.
 
 <!-- infographic: adoption-path -->
-> **Infographic — The seven-step adoption path.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The seven-step adoption path.**
 
 ```mermaid
 flowchart LR
@@ -142,8 +140,7 @@ The same conversation predicts that a LAMP-stack equivalent will eventually emer
 Composition tells you that each layer is a separate decision. It does not tell you how to make it. For every layer, ask six questions, and write the answers down, because the answers change and the reasoning should be inspectable when they do.
 
 <!-- infographic: build-vs-buy -->
-> **Infographic — The six build-versus-buy questions.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — The six build-versus-buy questions.**
 
 | Question | What it is really asking | Points toward |
 | --- | --- | --- |
@@ -163,7 +160,7 @@ The six questions give a decision per layer. Stepping back, the answers sort eve
 The line between the bands is the **platform boundary**: the set of contracts at which the organization's own components meet adopted ones. Where that boundary sits is a strategic decision, and it moves: a capability that is differentiated today (a review agent, say) becomes commodity as products mature, and a platform that cannot move its boundary is stuck owning yesterday's differentiation. What keeps the boundary movable is an **open architecture**: components on either side of it communicate through **standard contracts** (the execution manifest, the event envelope, the tool and capability interfaces, the evidence schema) rather than through one vendor's private API, so that a component can be replaced without rewriting its neighbours. **Conformance** is how a replacement proves it fits: a suite of behavioural tests that any harness, sandbox provider, or model gateway must pass to be admitted behind the contract, which is the same swappability-by-test rule [Chapter 2](../01-understand/02-the-factory-in-one-view.md) applies to the stack.
 
 <!-- infographic: commodity-vs-differentiated -->
-> **Infographic — Commodity and differentiated layers, and the platform boundary between them.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Commodity and differentiated layers, and the platform boundary between them.**
 
 | | Commodity layer | Differentiated layer |
 | --- | --- | --- |
@@ -183,8 +180,7 @@ No enterprise starts from zero. By the time a platform team forms, product teams
 The better posture is a **gravity well**: make the platform the easiest place to be, one capability at a time, so that existing agents drift toward it because each step is worth taking on its own. The order matters, because each step has to pay for itself before the next is offered.
 
 <!-- infographic: gravity-well -->
-> **Infographic — Incremental adoption for existing agents.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Incremental adoption for existing agents.**
 
 ```mermaid
 flowchart LR
@@ -203,8 +199,7 @@ The model gateway comes first because it is the cheapest step for the adopting t
 Once teams are on the platform, the question becomes who builds what. The answer that scales is a split along one line: the central platform team owns the contracts and the paved road; product organizations contribute domain intelligence inside those contracts.
 
 <!-- infographic: contribution-model -->
-> **Infographic — Centralize and federate.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — Centralize and federate.**
 
 | Centralized (platform team owns) | Federated (product organizations contribute) |
 | --- | --- |
@@ -228,7 +223,7 @@ It has one failure mode, and it is common enough to plan against: the forward-de
 The function has a working method, and it is a loop rather than an engagement. **Embedded engineering** puts a platform engineer inside a product team for a bounded period, working from that team's backlog, on that team's repositories, with that team's builders. What the engineer does there is **co-building**: not building the integration *for* the team, and not advising the team on how to build it, but building it *with* them, so that the team ends up able to do the next one alone and the platform ends up knowing what the abstraction was missing. That transfer is **builder enablement**, and it is the deliverable; a working integration that only the embedded engineer understands is a failure dressed as a success.
 
 <!-- infographic: fde-loop -->
-> **Infographic — The forward-deployed loop: Embed → Observe → Co-build → Productise → Contribute → Reuse → Scale.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+> **Infographic — The forward-deployed loop: Embed → Observe → Co-build → Productise → Contribute → Reuse → Scale.**
 
 ```mermaid
 flowchart LR
@@ -263,8 +258,7 @@ The data row is the one most often built wrong: filtering a model's *output* for
 A platform that ships everything on one release train is either too slow for its models or too fast for its contracts. Three clocks run at once.
 
 <!-- infographic: release-clocks -->
-> **Infographic — Three release clocks.** *(Jay's graphic goes here.)* Until then, the table below
-> carries the same concept.
+> **Infographic — Three release clocks.**
 
 | Clock | What moves on it | Cadence and control |
 | --- | --- | --- |
@@ -279,8 +273,7 @@ The fast clock exists because model quality and price change monthly and the fac
 Where the factory runs is a distinct decision from who built it. Five topologies cover the enterprise conversation.
 
 <!-- infographic: deployment-topologies -->
-> **Infographic — Deployment topologies.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Deployment topologies.**
 
 ```mermaid
 flowchart TB
@@ -356,7 +349,7 @@ The same glossary places these technologies in a five-part enterprise compositio
 A second cut of the same landscape is by layer rather than by category, because that is how vendors position themselves and how a platform team ends up organising its evaluation. Read from the outside in: the outer layer is where trust is manufactured, the inner layer is where a person meets the system. Every capability named here has a chapter that owns it; the products are a September 2026 snapshot of who sells or open-sources it, not a recommendation, and none of them is where authority lives.
 
 <!-- infographic: tech-stack-five-layers -->
-> **Infographic — The five-layer enterprise agentic AI tech stack.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — The five-layer enterprise agentic AI tech stack.**
 
 | Layer | Capabilities the factory needs | Representative products (2026) | Owned by |
 | --- | --- | --- | --- |
@@ -401,8 +394,7 @@ The sentence that holds the five together: *do not just scale agents; scale the 
 The five lessons describe what an organisation learns. One large engineering organisation has published where that learning leads once agents are in every engineer's hands, and it is the clearest public statement of the strategic shift this chapter's maturity model implies. Its framing organises agent usage into four layers, from the most general to the most specialised. At the bottom is the interactive developer session: an engineer at a terminal, steering a coding harness turn by turn, with the harness's defaults and the engineer's habits deciding what each task costs. At the top is the **managed agent**: a specialised, headless agent with one job, its own benchmark, its own model, and its own spend tier, started by the platform or by an event rather than by a person. The intermediate layers are the progressively more constrained forms in between, such as reusable skills invoked inside sessions and sessions that agents start on an engineer's behalf. The rule that orders them: *the higher the layer, the more control the organisation has over cost, quality, and model selection.*
 
 <!-- infographic: usage-layers -->
-> **Infographic — Four layers of agent usage.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Four layers of agent usage.**
 
 ```mermaid
 flowchart BT

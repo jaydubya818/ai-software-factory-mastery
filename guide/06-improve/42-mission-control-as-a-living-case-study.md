@@ -122,8 +122,7 @@ authority to approve their own work.
 ### Three layers
 
 <!-- infographic: three-layers -->
-> **Infographic — Harness, factory, control plane.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Harness, factory, control plane.**
 
 ```mermaid
 flowchart TB
@@ -249,8 +248,7 @@ remote sandbox. **GitHub** is the V1 git provider, reached only through a
 least-privilege GitHub App with signed, deduplicated webhooks.
 
 <!-- infographic: mission-control-architecture -->
-> **Infographic — Mission Control architecture.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Mission Control architecture.**
 
 ```mermaid
 flowchart TB
@@ -346,8 +344,7 @@ allowed to write the next link's conclusion.
 ### The master chain
 
 <!-- infographic: master-architecture-chain -->
-> **Infographic — The master architecture chain.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — The master architecture chain.**
 
 ```mermaid
 flowchart TB
@@ -755,8 +752,7 @@ repository of what a control plane keeps and what it hands over. The engine
 is unnamed here; the contract is what matters.
 
 <!-- infographic: pluggable-execution-engine -->
-> **Infographic — Composing an execution engine as a harness adapter.** *(Jay's graphic goes here.)* Until then, the diagram below
-> carries the same concept.
+> **Infographic — Composing an execution engine as a harness adapter.**
 
 ```mermaid
 flowchart LR
