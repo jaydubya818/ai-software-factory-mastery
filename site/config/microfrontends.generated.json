@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "ai-software-factory-mastery": {
+      "development": {
+        "fallback": "https://ai-software-factory-mastery.vercel.app"
+      },
+      "packageName": "ai-software-factory-mastery-site",
+      "routing": [
+        {
+          "group": "guide",
+          "paths": [
+            "/guide",
+            "/guide/:path*"
+          ]
+        },
+        {
+          "group": "guide-legacy",
+          "paths": [
+            "/docs/:path*",
+            "/visuals",
+            "/topics",
+            "/coverage",
+            "/search",
+            "/glossary",
+            "/atlas"
+          ]
+        }
+      ]
+    },
+    "fdlc": {
+      "development": {
+        "fallback": "https://www.fdlc.ai"
+      },
+      "packageName": "fdlc-site"
+    }
+  },
+  "version": "1"
+}

@@ -21,7 +21,11 @@ test("returns 404 for slugs that match no canonical document", async () => {
 
   for (const route of unknownRoutes) {
     const response = await render(route);
+    const html = await response.text();
+
     assert.equal(response.status, 404, `${route} should not resolve to a document`);
+    assert.match(html, /<h1>That page is not in the guide\.<\/h1>/, `${route} should render the custom 404`);
+    assert.match(html, /href="\/guide\/search"/, `${route} should offer a recovery path`);
   }
 });
 
