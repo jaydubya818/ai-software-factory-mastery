@@ -14,6 +14,24 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-03 — Technical-vision integration
+
+### Added
+
+- Added the execution trajectory to the trusted delivery artifact while
+  preserving the distinction between forensic telemetry and criterion-bound
+  evidence.
+- Added a falsifiable architecture-bet ledger with disconfirming signals and
+  predefined design responses.
+
+### Changed
+
+- Sharpened the opening thesis around abundant code generation and scarce
+  trusted delivery.
+- Integrated one technical-vision artifact into existing canonical owners
+  instead of adding another top-level model, and recorded its provenance and
+  evidence limitations in the research canon and editorial intake.
+
 ## 2026-09-03 — Structural reading and navigation pass
 
 ### Added

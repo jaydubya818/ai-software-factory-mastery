@@ -125,6 +125,26 @@ Receipts are immutable. A later result supersedes an earlier one; it never rewri
 
 Highly structured receipts improve automation and auditability but can lose narrative — the sentence a human verifier wanted to add about why a result was borderline. The resolution is not to loosen the structure but to link the raw artifacts and allow a concise human interpretation alongside the envelope. Manual validation, where it remains necessary for product and business judgments, should produce the same attributable receipt rather than living as an undocumented conversation.
 
+### The trusted delivery artifact includes the trajectory
+
+The candidate under review is more than a diff, binary, or test report. A
+**trusted delivery artifact** binds an immutable candidate to its provenance,
+the exact configuration and context references used to produce it, the
+execution trajectory, tool and command receipts, independent verification,
+policy and approval decisions, and release and production-outcome links. This
+package makes the work reproducible enough to inspect, recover, and learn from
+without asking a reviewer to reconstruct the run from a transcript.
+
+Trajectory is useful forensic material, but it is not automatically evidence.
+Record observable actions, tool calls, inputs and outputs, state transitions,
+timestamps, execution identities, and version or content digests at the
+granularity policy requires. Apply redaction, access, and retention controls;
+do not capture hidden model reasoning or secrets as a substitute for useful
+telemetry. Only a verifier receipt tied to a criterion establishes evidence.
+The trajectory explains how the candidate came to exist and lets an operator
+replay or diagnose the path; the receipt establishes what was independently
+observed about the result.
+
 ### Evidence states mean exactly one thing each
 
 Six states cover every receipt, and the factory must keep them distinct.
@@ -369,7 +389,7 @@ Existing project documentation reports focused tests and local lifecycle evidenc
 
 - Confidence is not evidence: completion is a fact about execution, acceptance is a judgment about outcome, and a producer's "done" is never sufficient — evidence must come from the system performing the check, not the system being checked.
 - Correctness has three independent levels: execution (does it work?), outcome (did it accomplish the intent?), policy (was it authorized?). Passing one says nothing about the others.
-- Keep five records apart: criterion, artifact, receipt, gate, and acceptance decision. Collapsing any two into one is where most quality failures start.
+- Keep five records apart: criterion, artifact, receipt, gate, and acceptance decision. A trusted delivery artifact may bind code, provenance, trajectory, verification, and authority, but it does not collapse their meanings.
 - Pass, fail, unknown, stale, waived, and not applicable are six distinct states that never substitute for each other. Evidence goes stale the moment any assumption behind it changes, not just with time, so invalidate selectively and, when unsure, conservatively.
 - Independence comes from separate execution paths and identities, not a second model or a different job title. Validators are not voters — a conflict between valid receipts is evidence that raises governance, not something to average away.
 - A verification contract pairs every claim with the evidence that settles it. The more completely an outcome can be specified and independently verified, the more safely it can be delegated; verification completeness sets the ceiling on autonomy, not the model.
@@ -380,6 +400,6 @@ Existing project documentation reports focused tests and local lifecycle evidenc
 - Next in this part: [28. Testing strategy for agentic change](./28-testing-strategy-for-agentic-change.md), [29. Evaluation engineering](./29-evaluation-engineering.md), [31. Quality contracts, proof packages, and certificates](./31-quality-contracts-proof-packages-and-certificates.md), [32. CI/CD, progressive delivery, and production verification](./32-cicd-progressive-delivery-and-production-verification.md).
 - The records these receipts attach to: [5. Authoritative records](../02-design/05-authoritative-records.md). The metrics: [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md). The principles: [3. First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md).
 - Terms: [Glossary](../appendix/glossary.md).
-- Sources: Jay West, *AI Software Factory mission* ("Validation layer", "Your quality stack", "Success metrics"); Jay West, *Use the factory run to teach failure* (the completion-versus-acceptance scenario); public practitioner talks, 2026 — the verification contract, verifiable outcomes, verification completeness and its chain to autonomy, verification-driven autonomy, validate-the-validator, fresh-context verification, and the orchestrator → worker → validator pattern with milestone validation.
+- Sources: Jay West, *AI Software Factory mission* ("Validation layer", "Your quality stack", "Success metrics"); Jay West, *Use the factory run to teach failure* (the completion-versus-acceptance scenario); Jay West, *Beyond Coding Agents: The Architecture of the Autonomous Software Factory* (primary-author working paper, 2026-09-03 — trajectory as part of the trusted delivery artifact); public practitioner talks, 2026 — the verification contract, verifiable outcomes, verification completeness and its chain to autonomy, verification-driven autonomy, validate-the-validator, fresh-context verification, and the orchestrator → worker → validator pattern with milestone validation.
 - The Definition of Correct the contract is drawn from: [19. Data, knowledge, semantic, and context engineering](../03-build/19-data-knowledge-and-semantic-engineering.md). The meta-loop that keeps verifiers honest: [40. Governed learning and compounding engineering](../06-improve/40-governed-learning.md).
 - Mission Control at `8014d5af`: [North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Domain contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [Verification receipt evidence](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/verification-receipt.md), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [WorkOrder governance](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/workOrderGovernance.ts), [WorkOrder commands](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/workOrders.ts), [Mission governance](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/lib/missionGovernance.ts), [GitHub CI ingestion](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/factory/githubCi.ts), [Execution Run Inspector](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/controlPlane/ExecutionRunInspector.tsx).

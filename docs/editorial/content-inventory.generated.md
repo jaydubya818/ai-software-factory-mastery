@@ -43,7 +43,7 @@ Headings:
 ### 01-understand/01-why-software-engineering-is-changing.md
 
 - Type: chapter
-- Words: 4837
+- Words: 4867
 
 Headings:
 
@@ -823,7 +823,7 @@ Headings:
 ### 04-prove/27-quality-and-evidence-architecture.md
 
 - Type: chapter
-- Words: 7018
+- Words: 7227
 
 Headings:
 
@@ -835,6 +835,7 @@ Headings:
 - H3 — Three levels of correctness — `#three-levels-of-correctness`
 - H3 — Five records that must never collapse into one — `#five-records-that-must-never-collapse-into-one`
 - H3 — The evidence record — `#the-evidence-record`
+- H3 — The trusted delivery artifact includes the trajectory — `#the-trusted-delivery-artifact-includes-the-trajectory`
 - H3 — Evidence states mean exactly one thing each — `#evidence-states-mean-exactly-one-thing-each`
 - H3 — Evidence is fresh only while its assumptions hold — `#evidence-is-fresh-only-while-its-assumptions-hold`
 - H3 — Validation must be independent — `#validation-must-be-independent`
@@ -1405,7 +1406,7 @@ Headings:
 ### 06-improve/44-where-this-is-going.md
 
 - Type: chapter
-- Words: 3874
+- Words: 4240
 
 Headings:
 
@@ -1420,6 +1421,7 @@ Headings:
 - H3 — The research frontiers — `#the-research-frontiers`
 - H3 — The five-year shape — `#the-five-year-shape`
 - H3 — Open questions — `#open-questions`
+- H3 — Architecture hypotheses and falsifiers — `#architecture-hypotheses-and-falsifiers`
 - H2 — How to build it — `#how-to-build-it`
 - H2 — Failure modes — `#failure-modes`
 - H2 — In Mission Control — `#in-mission-control`
@@ -1499,11 +1501,14 @@ Headings:
 ### appendix/changelog.md
 
 - Type: appendix
-- Words: 932
+- Words: 1016
 
 Headings:
 
 - H1 — Guide Changelog — `#guide-changelog`
+- H2 — 2026-09-03 — Technical-vision integration — `#2026-09-03-technical-vision-integration`
+- H3 — Added — `#added`
+- H3 — Changed — `#changed`
 - H2 — 2026-09-03 — Structural reading and navigation pass — `#2026-09-03-structural-reading-and-navigation-pass`
 - H3 — Added — `#added`
 - H3 — Changed — `#changed`
@@ -1675,7 +1680,7 @@ Headings:
 ### appendix/research/initial-canon.md
 
 - Type: appendix
-- Words: 2435
+- Words: 2474
 
 Headings:
 

@@ -158,11 +158,15 @@ definition of an AI Software Factory.
 In addition to the versioned source paths cited inline, several chapters draw
 on Jay West's own unpublished working material: the *AI Software Factory
 Mission* statement, the *AI Software Factory Study Guide* (a chaptered
-internal curriculum), a set of factory-architecture notes, and the Mission
-Control repository's own glossary and lexicon (reviewed 2026-09-02). These
-are primary-author source material — the same status as private research notes —
-not independently published references, and are cited as such rather than
-implied to be external literature.
+internal curriculum), *Beyond Coding Agents: The Architecture of the
+Autonomous Software Factory* (a technical-vision working paper reviewed
+2026-09-03), a set of factory-architecture notes, and the Mission Control
+repository's own glossary and lexicon (reviewed 2026-09-02). The technical-
+vision paper supplied the abundant-generation versus trusted-delivery thesis,
+the execution-trajectory boundary, and the architecture-hypothesis ledger in
+Chapters 1, 27, and 44. These are primary-author source material — the same
+status as private research notes — not independently published references,
+and are cited as such rather than implied to be external literature.
 
 ## Canon maintenance
 

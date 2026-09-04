@@ -65,8 +65,8 @@ E's “External foundations” table.
   are unavailable.
 - Publication date: unknown.
 - Access date: 2026-09-03.
-- Proposed canonical owner: Chapter 32, supported by Chapters 16, 17, 20, 21,
-  23, 26, and 33.
+- Proposed canonical owner: Chapter 39, supported by Chapters 16, 17, 20–23,
+  26–29, and 33.
 - Reader problem solved: selecting and operating review capabilities across a
   heterogeneous repository estate without surrendering policy, evidence,
   security, or learning to a reviewer implementation.
@@ -107,6 +107,28 @@ E's “External foundations” table.
 - Decision: accept the implementation and edge-case gaps; reject duplicated
   scripts, hiring-process framing, product-specific language, scale claims, and
   the supplied graphic as public evidence.
+
+### Technical-vision and architecture-bet artifact
+
+- Source: user-supplied
+  `codex-clipboard-c1c1573a-de97-4ff0-8cdc-69b5043f86e5.png` and attachment
+  `d8a17f70-961a-4747-9d4c-b6121d43929f/pasted-text.txt`.
+- Source type: primary-author internal synthesis; no public URL.
+- Publication date: unpublished working paper; reviewed 2026-09-03.
+- Access date: 2026-09-03.
+- Proposed canonical owner: Chapters 1, 27, and 44.
+- Reader problem solved: distinguish abundant code generation from trusted
+  delivery, define the execution trajectory's place in the evidence package,
+  and state what evidence would change the architecture.
+- Current material replaced or corrected: the supplied fifteen-panel model was
+  not added as another canonical framework. Three missing ideas were integrated
+  into existing owners; organization-specific framing, hiring guidance,
+  unverified scale claims, and vendor examples were not imported.
+- Evidence strength and limitations: useful as a primary-author design thesis,
+  not proof of future economics or capability. The future-facing claims are
+  explicitly labeled as hypotheses with falsifiers and design responses.
+- Decision: accept the opening thesis, trajectory boundary, and falsifier
+  ledger; reject the duplicate framework and organization-specific material.
 
 ## Pending
 

@@ -328,6 +328,26 @@ rough order of how much depends on them:
    automatic autonomy promotion, and at what sample size?
 7. Will the harness war end in an open interface, and who opens it?
 
+### Architecture hypotheses and falsifiers
+
+A future architecture should be maintained as a set of hypotheses, not turned
+into requirements by repetition. For every consequential bet, predeclare the
+signal that would weaken it and the design response. That makes the roadmap
+adaptable without making it arbitrary.
+
+| Architecture hypothesis | Evidence that would weaken it | Design response |
+| --- | --- | --- |
+| General model capability will increasingly commoditize. | Task-class evaluations show a persistent, strategically important advantage from one model family. | Support a model-optimized path while preserving the common lifecycle and evidence contract. |
+| The harness remains a durable control boundary, although its intelligence may narrow. | Models reliably internalize planning, tool selection, and context management across production-like evaluations. | Remove duplicated harness intelligence; keep identity, authorization, policy, budgets, durable state, audit, recovery, and human authority outside the model. |
+| Cost-aware routing remains economically material. | Inference cost becomes negligible relative to human attention, CI, latency, and failure cost. | Stop micro-optimizing price; continue routing for quality, security, data policy, latency, and availability. |
+| Automated verification can absorb bounded classes of routine review. | It fails to beat a calibrated human baseline or produces critical misses. | Keep routine human review and restrict automation to advisory or lower-risk lanes. |
+| Intent interfaces broaden safe participation in software creation. | Non-engineer lanes produce persistently high rework, ambiguity, or policy-failure rates. | Narrow eligible corridors and improve intent translation and context before granting broader autonomy. |
+| Outcome-driven learning produces compounding improvement. | Attribution remains weak, or proposed changes fail controlled evaluations and canaries. | Keep learning advisory and improve telemetry and evaluations before permitting adaptation. |
+
+Build for a moving boundary. Give each hypothesis an owner, measurement
+window, reevaluation date, and rollback path. A prediction that cannot state
+what would change the design is a slogan, not an architecture decision.
+
 ## How to build it
 
 You cannot build the future, but you can avoid building against it.
@@ -423,7 +443,9 @@ repository's own labels, and this chapter does not promote them.
   and labeled claims.
 - Five years: prove the model, prove repeatability, prove enterprise scale,
   lead the category, become the operating standard.
-- Built, claimed, predicted. Keep the words apart.
+- Treat predictions as falsifiable architecture bets: name the evidence that
+  would weaken each bet, the response, owner, review date, and rollback path.
+  Built, claimed, and predicted still remain distinct.
 
 ## Go deeper
 
@@ -451,7 +473,10 @@ repository's own labels, and this chapter does not promote them.
   material list and recommended documentation sequence; Jay West, "Software
   Factory Research Lab" PRD and mission — research topics, freshness and
   source-quality policy, claim classification; Jay West, "AI Software Factory
-  Mission" — the five-year roadmap.
+  Mission" — the five-year roadmap; Jay West, *Beyond Coding Agents: The
+  Architecture of the Autonomous Software Factory* — the opening thesis and
+  falsifiable architecture bets (primary-author working paper, reviewed
+  2026-09-03).
 - Primary references for the interfaces named here: Agent Client Protocol;
   AG-UI documentation; Model Context Protocol specification 2026-07-28; Claude
   Code hooks reference (all listed in Appendix C).
