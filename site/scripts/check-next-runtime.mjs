@@ -165,6 +165,19 @@ async function verifyBrowserRuntime(origin) {
     await page.getByRole("button", { name: "Use dark theme" }).click();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
 
+    const linkedHeadingResponse = await page.goto(
+      `${origin}/guide/03-build/25-the-12-layer-production-ai-agent-stack`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(linkedHeadingResponse?.status(), 200);
+    assert.ok(
+      await page.locator("h3 > a:not(.heading-anchor)").count() >= 12,
+      "linked headings should retain their inline links without nested permalink anchors",
+    );
+    await page.reload({ waitUntil: "networkidle" });
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(consoleErrors, []);
+
     const mermaidResponse = await page.goto(
       `${origin}/guide/02-design/07-governance-policy-and-risk-proportional-approval`,
       { waitUntil: "networkidle" },

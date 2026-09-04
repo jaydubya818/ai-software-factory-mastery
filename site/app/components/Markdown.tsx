@@ -11,6 +11,13 @@ function textFromNode(node: ReactNode): string {
   return "";
 }
 
+function containsAnchor(node: unknown): boolean {
+  if (!node || typeof node !== "object") return false;
+  if ("tagName" in node && node.tagName === "a") return true;
+  if (!("children" in node) || !Array.isArray(node.children)) return false;
+  return node.children.some(containsAnchor);
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -46,13 +53,13 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
           key={`markdown-${index}`}
           remarkPlugins={[remarkGfm]}
           components={{
-            h2: ({ children }) => {
+            h2: ({ children, node }) => {
               const id = slugify(textFromNode(children));
-              return <h2 id={id}><a className="heading-anchor" href={`#${id}`}>{children}</a></h2>;
+              return <h2 id={id}>{containsAnchor(node) ? children : <a className="heading-anchor" href={`#${id}`}>{children}</a>}</h2>;
             },
-            h3: ({ children }) => {
+            h3: ({ children, node }) => {
               const id = slugify(textFromNode(children));
-              return <h3 id={id}><a className="heading-anchor" href={`#${id}`}>{children}</a></h3>;
+              return <h3 id={id}>{containsAnchor(node) ? children : <a className="heading-anchor" href={`#${id}`}>{children}</a>}</h3>;
             },
             a: ({ href, children }) => {
               const resolved = resolveDocumentHref(sourcePath, href);

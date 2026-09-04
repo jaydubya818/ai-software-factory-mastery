@@ -149,6 +149,21 @@ test("chapter 2 renders with one final title, canonical, TOC, and prev/next", as
   assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|Interview practice|\d+ min read|status-badge|document-status/i);
 });
 
+test("linked Markdown headings render valid, non-nested anchors", async () => {
+  const html = await htmlFor(`/guide/${chapterSlugs[25]}`);
+  const headingAnchors = [...html.matchAll(/<a class="heading-anchor"[^>]*>([\s\S]*?)<\/a>/g)];
+
+  assert.ok(headingAnchors.length > 0, "plain headings retain their permalink anchors");
+  for (const [, content] of headingAnchors) {
+    assert.doesNotMatch(content, /<a\b/i, "a heading permalink must not contain another anchor");
+  }
+  assert.match(
+    html,
+    /<h3 id="1-business-understanding-chapter-6">1\. Business Understanding — <a href="\/guide\/02-design\/06-intent-and-specification-engineering">Chapter 6<\/a><\/h3>/,
+    "linked headings retain their inline destination without an outer anchor",
+  );
+});
+
 test("reading sequence runs front matter → stages → chapters → appendices", async () => {
   const frontMatter = await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide");
   assert.match(frontMatter, /Front matter/);
