@@ -123,6 +123,39 @@ Use this memory line:
 > **Requirements → Scale → Contracts → Data flow → Trust boundaries → Failure
 > semantics → Operations → Economics → Tradeoffs → Rollout**
 
+### The vendor-neutral master architecture map
+
+This is a reasoning map, not a prescribed stack. Start at the user-visible
+outcome, trace the request and data paths, and then apply the cross-cutting
+controls. Add the agentic lane only when the workload requires probabilistic
+reasoning or tool use.
+
+```mermaid
+flowchart TB
+    Frame["1 · DESIGN FRAME<br/>Users · use cases · invariants · non-goals<br/>Scale · access patterns · SLOs · RTO · RPO"]
+    Entry["2 · ENTRY AND CONTRACTS<br/>Edge · load balancing · APIs · events<br/>Identity · authorization · quotas · policy"]
+    Application["3 · APPLICATION AND COORDINATION<br/>Domain services · business invariants<br/>Workflows · queues · streams · backpressure"]
+    Data["4 · DATA AND DERIVED VIEWS<br/>Authoritative records · cache · object storage<br/>Search · indexes · retention · lineage"]
+    Runtime["5 · RUNTIME AND DELIVERY<br/>Compute · isolation · dependencies<br/>CI/CD · migrations · rollout · rollback"]
+    Outcome["8 · VERIFIED OUTCOME<br/>Accepted user result · production signal<br/>Measured cost · feedback · next decision"]
+
+    Frame --> Entry --> Application --> Data --> Runtime --> Outcome
+
+    Agentic["6 · OPTIONAL AGENTIC EXECUTION<br/>Context · model routing · harness · tools<br/>Bounded workers · independent evaluation"]
+    Assurance["7 · CROSS-CUTTING ASSURANCE<br/>Security · privacy · tenancy · audit<br/>Reliability · observability · evidence · economics"]
+
+    Application -. "reasoning required" .-> Agentic
+    Agentic -. "accepted evidence" .-> Application
+    Assurance -. "constrains and observes" .-> Entry
+    Assurance -.-> Application
+    Assurance -.-> Data
+    Assurance -.-> Runtime
+```
+
+For every arrow, be able to name the contract, principal, timeout, retry or
+replay rule, data classification, observable signal, and owner. If one of those
+answers is missing, the boundary is not ready to ship.
+
 ### Translate layer diagrams into the canonical models
 
 Reference diagrams often use labels such as interface, planner, router,
@@ -669,3 +702,222 @@ prove that each architectural choice still follows from the requirements.
 Score the result from one to five on requirements, estimates, contracts, data,
 reliability, security, operations, tradeoffs, and communication. Any score
 below four becomes the next study drill.
+
+## 11. Worked example: secure transaction-document processing
+
+### The prompt
+
+Design a multi-tenant service where sellers upload confidential transaction
+documents, authorized buyers can search and review them, and every access or
+processing action is auditable. Files may require malware scanning, text
+extraction, classification, and optional assisted review before publication.
+
+The goal is not to name every possible component. The goal is to show how the
+study method produces a simple, trustworthy V1.
+
+### Clarify requirements and non-goals
+
+**Core workflows:**
+
+1. A seller creates a transaction workspace and grants access to named users.
+2. An authorized seller requests an upload and sends a file directly to object
+   storage through a short-lived scoped URL.
+3. The service validates, scans, extracts, classifies, and indexes the file.
+4. An authorized buyer lists, searches, previews, and downloads published
+   documents.
+5. A seller revokes access, replaces a document, or requests deletion.
+6. An operator investigates failed processing without gaining unnecessary
+   access to document contents.
+
+**Correctness and trust requirements:**
+
+- A user must never read a document without a current access grant.
+- An unscanned or quarantined file must never be published.
+- A document version becomes visible only after required processing succeeds.
+- Revocation must affect new reads immediately; search results may be briefly
+  stale but cannot grant access.
+- Upload, processing, publication, access, revocation, and deletion decisions
+  must be reconstructable from audit records.
+
+**V1 non-goals:** payment movement, anonymous public links, legal conclusions,
+guaranteed automated classification, and active–active writes across regions.
+Those concerns materially change the trust and compliance design and should not
+be smuggled into the first release.
+
+### State the scale assumptions
+
+Assume 5,000 tenant organizations, 20,000 uploads per day, a 10 MB average file,
+and a 25-upload-per-second peak. That is roughly 200 GB of new object data per
+day before versions and replicas. Metadata and audit traffic are much smaller
+than file traffic, while text extraction and previews dominate compute.
+
+Target p95 under 300 ms for metadata operations, p95 under five minutes from
+upload completion to a processed or actionable failed state, and 99.9%
+availability for metadata and authorized download initiation. Use a 15-minute
+metadata RPO and two-hour RTO for V1, then validate whether the business and
+regulatory requirements demand more. Keep capacity for a peak backlog without
+letting uploads exhaust interactive database or API capacity.
+
+### Define the authoritative records
+
+| Record | Purpose and invariant |
+| --- | --- |
+| Tenant | Security and billing boundary; every governed record belongs to exactly one tenant |
+| User and Membership | Principal and role inside a tenant or transaction workspace |
+| Transaction Workspace | Container for participants, documents, policy, and retention |
+| Access Grant | Current authority to list or read workspace content; checked on every read |
+| Document | Stable logical identity and seller-controlled metadata |
+| Document Version | Immutable object reference, checksum, state, and publication decision |
+| Processing Attempt | Versioned worker, step state, timestamps, errors, and retry lineage |
+| Audit Event | Append-only record of material requests and decisions |
+
+Use a relational database as the source of truth for identity, grants, document
+metadata, processing state, and publication. Store immutable file bytes and
+generated previews in object storage. Treat search as a rebuildable derived
+index. A search hit is never proof of authorization; the read path rechecks the
+current grant against the authoritative store before issuing a download URL.
+
+The document-version state machine is explicit:
+
+> **Initiated → Uploaded → Scanning → Processing → Ready for review → Published**
+
+Any processing state may move to **Failed** or **Quarantined**. Publication and
+deletion are policy-controlled transitions, not arbitrary field updates.
+
+### Define the external contracts
+
+- `POST /workspaces/{workspaceId}/documents/uploads` creates a document version
+  and returns a short-lived upload URL. A client idempotency key prevents
+  duplicate versions after a retry.
+- `POST /documents/{documentId}/versions/{versionId}/complete` verifies object
+  existence, size, checksum, and ownership, then records one durable
+  `DocumentUploaded` event.
+- `GET /documents/{documentId}` returns authorized metadata and current
+  processing state.
+- `POST /documents/{documentId}/download` reauthorizes the caller and returns a
+  short-lived, content-disposition-safe download URL only for a published
+  version.
+- `POST /workspaces/{workspaceId}/grants` and `DELETE .../grants/{grantId}` are
+  strongly consistent authority changes with audit events.
+
+Every request carries an authenticated principal, tenant context, request ID,
+deadline, and versioned contract. Errors distinguish invalid input, denied
+authority, conflict, rate limit, unavailable dependency, and internal failure
+without leaking the existence of unauthorized documents.
+
+### Draw the concrete architecture
+
+```mermaid
+flowchart TB
+    User["Seller or authorized buyer"] --> Edge["Edge protection and API"]
+    Edge --> Auth["Identity and authorization"]
+    Auth --> App["Modular transaction-document<br/>service"]
+    App --> Records["Authoritative records<br/>metadata · grants · audit · outbox"]
+    App -->|"scoped URL"| Blob["Encrypted<br/>object storage"]
+
+    Blob -->|"upload event"| Intake["Durable<br/>intake queue"]
+    Intake --> Scan["Type validation<br/>and malware scan"]
+    Scan --> Extract["Text and preview<br/>extraction"]
+    Extract --> Classify["Policy-bounded<br/>classification"]
+    Classify --> Records
+    Classify --> Derived["Derived views<br/>search · previews · notifications"]
+    Scan -. "unsafe or invalid" .-> Failure["Quarantine, bounded retry,<br/>or operator review"]
+    Extract -. "failed or uncertain" .-> Failure
+
+    App -->|"query candidate IDs"| Derived
+
+    Telemetry["Metrics · logs · traces<br/>security signals"] -.-> Edge
+    Telemetry -.-> App
+    Telemetry -.-> Scan
+    Telemetry -.-> Classify
+```
+
+Use a modular application service plus asynchronous workers for V1. This keeps
+authorization and document invariants inside one deployment and transaction
+boundary while isolating variable, expensive processing from interactive
+requests. Separate scanning, extraction, or search into independently owned
+services only when their scale, release cadence, security boundary, or team
+ownership justifies it.
+
+### Explain delivery and failure semantics
+
+The upload-complete transaction updates the version and writes an outbox record
+atomically. A publisher delivers that event to the queue at least once. Each
+processing step uses the tuple `(document version, step, processor version)` as
+its idempotency identity. Duplicate delivery may repeat safe computation but
+cannot publish twice or skip a required step.
+
+Workers use bounded leases and heartbeats. A lost worker releases its lease for
+another attempt. Transient dependency failures receive bounded retries with
+backoff and jitter. Invalid, encrypted, unsupported, or malicious files move to
+a terminal or human-review state with a specific reason. A dead-letter queue is
+an investigation surface, not permanent storage; a reconciler finds uploaded
+objects with missing or stalled workflow state.
+
+Backpressure is enforced at admission and processing:
+
+- per-tenant upload-rate and storage quotas;
+- bounded queue depth or age alarms;
+- separate worker pools for scanning and extraction;
+- reserved database and API capacity for interactive reads and revocation;
+- load shedding for optional previews or assisted classification before core
+  authorization and audit functions;
+- an operator-controlled pause that stops publication without losing uploads.
+
+### Protect data and tenant boundaries
+
+Authorize every metadata, search-result, preview, and download request against
+the current tenant and workspace grant. Do not encode lasting authority into a
+long-lived URL. Keep scoped URLs short-lived, bind them to one object and
+operation, and record issuance separately from actual object access where the
+storage platform permits it.
+
+Encrypt in transit and at rest, separate production duties, rotate workload
+credentials, redact document content from application logs, and restrict
+operator tooling by purpose. Validate declared and detected file type, sanitize
+filenames and response headers, quarantine suspicious objects, and scan before
+rendering or indexing. Define retention, legal hold, deletion, backup expiry,
+and search-index removal as one lifecycle rather than independent cleanup jobs.
+
+Avoid cross-tenant content deduplication in V1. It saves storage but can create
+existence leaks, key-management complexity, and deletion ambiguity. Reconsider
+only if measured storage cost justifies a design that preserves isolation.
+
+### Bound optional assisted processing
+
+Text classification or sensitive-content suggestions can use a model when
+deterministic rules are insufficient, but model output does not grant access,
+publish a file, or make a legal determination. Send only the minimum permitted
+content to an approved provider or isolated model, record the model and policy
+versions, retain confidence and evidence, and route uncertain or high-impact
+results to human review. Customer content is not reused for training without an
+explicit, separately governed decision.
+
+### Operate and evolve the service
+
+Monitor authorization denials, publication without complete evidence, queue
+age, processing duration by step, quarantine rate, retry rate, worker
+saturation, object-store failures, stale search lag, audit-write failures, and
+cost per processed document. Page on user-visible SLO or security-boundary
+violations; ticket slow trends that do not require immediate action.
+
+Use contract tests for every API and event, load tests for upload bursts, fault
+injection for scanner and object-store failure, tenant-isolation tests, malformed
+file corpora, and scheduled restore drills. Version workers and record the
+version on every attempt so documents can be selectively reprocessed after a
+bug. Evolve schemas with expand–migrate–contract and deploy API and worker
+changes progressively with a stop and rollback path.
+
+### Close with the tradeoff
+
+The V1 chooses a single-region modular service, managed relational storage,
+object storage, a durable queue, and a derived search index. It favors clear
+authority, operational simplicity, and recoverable asynchronous work over
+active–active availability or premature service decomposition.
+
+The dominant cost drivers are retained object bytes, preview and extraction
+compute, search indexing, model calls, and download egress. The likely first
+bottleneck is processing backlog rather than metadata storage. Split components
+or add regions only when measured load, recovery requirements, residency, or
+team ownership crosses the stated boundary. That is the architecture decision,
+not merely the diagram.
