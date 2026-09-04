@@ -2,7 +2,7 @@
 title: How to read this guide
 part: understand
 chapter: 0
-summary: What this guide is, who it is for, the three definitions and one-line factory it keeps returning to, the six-part journey, and the conventions used in every chapter.
+summary: What this guide is, who it is for, its eight-stage value stream and six-area architecture, the six-part journey, and the conventions used in every chapter.
 absorbs: []
 infographics: []
 ---
@@ -21,15 +21,15 @@ It draws on two sources: the experience of building **Mission Control**, a contr
 
 It is written for three readers with the same problem. Engineers who will build a factory and need the mechanisms. Architects who must draw its boundaries and defend them. Executives who must decide whether to fund one and how to hold it accountable. Every idea is explained in plain English first, then given its precise name, so all three can read the same page and mean the same thing by it.
 
-## The factory in one line
+## The two orientation models
 
-The whole book unfolds from one sentence:
+The whole book unfolds from one primary value stream:
 
 > **Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software**
 
 Read it as a value stream, not as eight boxes wired in series. *Intent* is what a builder wants and why. *Plan* is a versioned, approvable proposal for how to achieve and prove it. *Define Agent* means binding an approved, versioned agent configuration to the work, not inventing a new agent for every task. *Execute through Harness* is bounded execution inside a runtime that owns tools, state, permissions, budgets, and stop conditions. *Apply Skills* means the reusable methods selected and frozen before execution are used inside that loop. *Evaluate* is independent evidence about both the artifact and the path that produced it. *Improve* turns evaluation and production outcomes into governed candidates for future runs. *Deliver Software* covers the decision, the release, the production observation, and the measured outcome, not merely an opened pull request.
 
-The line sits inside a larger ring. [Chapter 2](../01-understand/02-the-factory-in-one-view.md#the-lifecycle-above-the-six-areas) places it as the FACTORY segment of a lifecycle that begins at a signal and ends at an observed outcome that feeds the next signal (SIGNAL → INTENT → FACTORY → OUTCOME → LEARNING), and then unfolds the FACTORY segment into the factory-native software development lifecycle, with an inner loop for autonomy, an outer loop for trust, and a meta loop for improvement. Read the one line for orientation; read that ring and that lifecycle to see where the line starts and stops.
+The supporting architecture has six areas: **Intent, Harness, Capability, Model, Trust, and Learning**, surrounded by adoption. Use the stages to ask, “What happens next?” Use the areas to ask, “Which subsystem and owner are responsible?” [Chapter 2](../01-understand/02-the-factory-in-one-view.md) teaches both and labels every other useful framework as a narrower lens or reference model.
 
 ## Three definitions to retain
 
@@ -67,11 +67,11 @@ A term appears in **bold** the first time it is defined, and the [glossary](../a
 
 The **"In Mission Control" rule** is an honesty rule. Everything the guide claims about what Mission Control actually does lives in that one section per chapter, pinned to a specific commit, and labelled implemented, partial, or future. A proposal, a demo, or an agent's own assertion that something works is never presented as proven capability. The same standard the factory applies to agents applies to the book's claims about the factory.
 
-**"Retain this"** at the end of each chapter is the handful of sentences worth being able to recite. If you remember nothing else from a chapter, remember those.
+**"Retain this"** at the end of each chapter is the five to seven principles worth being able to recite. If you remember nothing else from a chapter, remember those.
 
 ## The appendices
 
-The appendices are reference, not sequence. The glossary is the canonical vocabulary.  The Mission Control case studies hold the versioned, evidence-mapped assessments that the "In Mission Control" sections summarize. The research canon lists the primary sources and source transcripts the book draws on. Coverage, maturity, changelog, and reviewer guide track the state of the guide itself, and the architecture communication appendix collects the ways of explaining all of this to a board, a CEO, a CFO, a CTO, and a developer.
+The appendices are reference, not sequence. The glossary preserves the complete vocabulary; the consolidation work distinguishes the small core readers should retain from supporting reference terms. The Mission Control case studies hold the versioned, evidence-mapped assessments that the "In Mission Control" sections summarize. The research canon lists the primary sources and source transcripts the book draws on. Coverage, maturity, changelog, and reviewer guide track the state of the guide itself, and the architecture communication appendix collects ways to explain and defend the system.
 
 Read the chapters in order. Reach for the appendices when a chapter sends you there or when you already know what you are looking for.
 

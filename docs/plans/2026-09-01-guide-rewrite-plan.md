@@ -1,7 +1,8 @@
 ---
 date: 2026-09-01
 topic: guide-rewrite
-status: in-progress
+status: superseded
+superseded_by: 2026-09-02-refactor-guide-editorial-consolidation-plan.md
 ---
 
 # The AI Software Factory Guide — rewrite plan

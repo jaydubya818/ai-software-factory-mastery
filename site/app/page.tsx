@@ -42,7 +42,7 @@ export default function Home() {
             <Link href="/docs/01-understand/02-the-factory-in-one-view" className="home-entry-card">
               <span>10 minutes</span>
               <strong>Understand the model</strong>
-              <em>The whole factory on one page: five systems, the one line, and the thesis everything else follows from.</em>
+              <em>The whole factory on one page: the eight-stage value stream, six-area architecture, and the boundary between agents, evidence, and human authority.</em>
             </Link>
             <Link href="/search" className="home-entry-card">
               <span>Right now</span>
@@ -70,13 +70,13 @@ export default function Home() {
               <span className="section-kicker">The factory in one line</span>
               <h2 id="pipeline-title">From governed intent to confirmed outcome.</h2>
             </div>
-            <p>Eight stages, each with an explicit contract, durable records, and evidence returned to a named authority. Click a stage for the technical deep dive.</p>
+            <p>The primary reader model: eight stages with explicit inputs, outputs, decisions, and evidence. Click a stage for a concise brief and links to the canonical chapters.</p>
           </header>
           <Pipeline />
         </section>
 
 
-        <section className="definition-band" aria-label="Three definitions">
+        <section className="definition-band" aria-label="Vocabulary lens: three definitions">
           {definitions.map(([kicker, title, description, chapterNumber]) => {
             const chapter = getChapter(chapterNumber);
             return <Link href={chapter ? `/docs/${chapter.slug}` : "/guide"} key={title}><span>{kicker}</span><h2>{title}</h2><p>{description}</p></Link>;

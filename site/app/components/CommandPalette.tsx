@@ -55,7 +55,7 @@ export function CommandPalette() {
       text: [document.title, document.section, document.description, ...document.headings].join(" ").toLowerCase(),
       group: groupForDocument(document),
     }));
-    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `${stage.label} lifecycle`, meta: stage.canonical, href: `/visuals#phase-${stage.id}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
+    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `Stage: ${stage.label}`, meta: stage.canonical, href: `/docs/stages/${stage.slug}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
     return [...utilityItems, ...lifecycle, ...documents];
   }, []);
 

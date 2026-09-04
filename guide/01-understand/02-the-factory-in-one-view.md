@@ -2,532 +2,294 @@
 title: The factory in one view
 part: understand
 chapter: 2
-summary: The whole factory on one page — three definitions and the five systems around them, the one-line value stream, the master whiteboard with its cross-cutting controls, the six architectural areas and the layer-ownership table, the canonical layered stack from compute to control plane, the seven layers of Mission Control, the stage-by-stage lifecycle contract, the five platform commitments, and the capability model the rest of the book expands.
+summary: The guide's two orientation models — an eight-stage value stream from intent to delivered outcome and a six-area architecture that assigns system responsibility — with the records, decisions, evidence, and human authority that connect them.
 absorbs: [00-overview/01-ai-software-factory-and-mission-control.md, 00-overview/03-platform-blueprint-and-operating-playbook.md, 00-overview/04-intent-to-delivery-lifecycle.md, 00-overview/05-software-factory-stack-boundaries.md]
-infographics: [three-definitions, five-systems, factory-in-one-line, master-whiteboard, six-areas, lifecycle-above-the-areas, factory-native-sdlc, layered-stack, seven-layers, lifecycle]
+infographics: [factory-in-one-line, six-areas]
 ---
 
 # 2. The factory in one view
 
-Chapter 1 argued that the thing worth building is an operating model. This chapter draws it. You will see the factory three ways that must agree: as a layered stack of components with one responsibility each, as a lifecycle of records and decisions from intent to outcome, and as a set of capabilities the rest of the book fills in. Keep three ideas as you read: the agent is a worker, not the factory; execution never creates its own authority; and validated customer value, not generated code, is the outcome that matters.
+An AI software factory is a governed system that turns human intent into validated software outcomes through reusable capabilities and continuously operated loops. Humans define outcomes, standards, exceptions, and consequential decisions. Agents perform bounded work. Deterministic systems preserve state, enforce authority, and assemble evidence.
+
+This guide uses two models throughout:
+
+1. The **eight-stage value stream** explains how work moves from intent to an observed production outcome.
+2. The **six-area architecture** explains which part of the system owns each responsibility.
+
+The value stream is the primary reader model. The architecture supports it. Other diagrams in this chapter are explicitly labeled as detail views, implementation views, operating lenses, maturity models, or reference models. They should clarify one of the two models, not compete with them.
+
+Three principles hold across every view: the agent is a worker, not the factory; execution never creates its own authority; and generated code is an intermediate artifact, not the outcome.
 
 ## The problem
 
-The words in this field have collapsed into each other. Agent, harness, runtime, platform, orchestration, control plane, and software factory get used as if they name one thing. When responsibilities blur, a team cannot tell which component owns authority, which part may be replaced, where reliability controls belong, or what a vendor is actually selling. A coding agent can produce a patch without being a factory. A harness can run an agent without owning business intent. A remote sandbox can supply compute without deciding whether an Attempt is authorized. A control plane can govern work without implementing the model loop.
+The vocabulary of agentic software development has collapsed into itself. Agent, harness, runtime, orchestration, control plane, platform, and factory are often used as synonyms. They are not. A coding agent can produce a patch without governing the work. A harness can run an agent without owning business intent. A sandbox can provide compute without deciding whether an Attempt is authorized. A control plane can govern a workflow without implementing the model loop.
 
-The collapse has a history. The stack grew out of interactive coding tools rather than one shared architecture, and products expanded vertically: a model acquired tools, a CLI acquired session state, a cloud runner acquired orchestration, a web UI acquired scheduling. The products are useful, but their commercial boundaries do not match durable engineering boundaries, and **harness** alone can mean the model-tool loop, the wrapper that supervises it, or the entire execution platform.
+The language of progress is equally loose. “The agent is defined” may mean that somebody wrote a prompt, selected a versioned capability, or granted a credential. “Done” may mean that the model stopped, tests passed, a pull request opened, a human accepted the change, or production value was observed. Each claim needs a different owner and different evidence.
 
-The words for progress are just as loose. "The agent is defined" may mean a prompt was written, a versioned configuration selected, or a credential granted. "Done" may mean the model stopped, tests passed, a pull request opened, a human accepted the work, or production value was observed. Each claim has a different owner and evidence requirement, and the memorable one-line description of the factory turns misleading the moment someone reads it as eight serial services. This chapter gives every component one responsibility, every stage one contract, and every claim one owner.
+Without a shared model, teams make three predictable mistakes. They mistake product boundaries for authority boundaries, so a vendor component quietly becomes the source of policy. They treat a successful run as a correct result, so the producer certifies its own work. And they optimize code generation while leaving planning, evidence, delivery, and learning as informal human cleanup.
+
+The factory model fixes those errors by making the lifecycle, system ownership, and decision rights explicit.
 
 ## How it works
 
 ### Three definitions
 
-<!-- infographic: three-definitions -->
-> **Infographic — Agent Factory, AI Software Factory, Mission Control.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+This is a **vocabulary lens**, not another architecture.
 
-```mermaid
-flowchart LR
-    AF["Agent Factory<br/>creates, versions, evaluates,<br/>publishes, governs capabilities"]
-    SF["AI Software Factory<br/>composes people, policy, capabilities,<br/>execution, verification, delivery, feedback"]
-    MC["Mission Control<br/>living control-plane implementation<br/>and case study"]
-    AF -->|"agents, skills, tools,<br/>profiles, configs"| SF
-    MC -->|"one concrete control plane<br/>inside the factory"| SF
-    SF -->|"validated production value"| Out["Customer outcome"]
-```
+- The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities: Agent Definitions, skills, tools, model profiles, context packages, and configurations.
+- The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback to turn governed intent into validated value.
+- **Mission Control** is the living control-plane implementation and case study used by this guide. It governs missions, plans, work, evidence, and human decisions; it is not the definition of the entire factory.
 
-The **Agent Factory** creates, versions, evaluates, publishes, and governs reusable capabilities such as agents, skills, tools, model profiles, and configurations. The **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value. A second phrasing of the same definition is worth holding beside it because it names the parts and the people: a software factory is *a governed system of reusable skills and continuously operated loops that performs a meaningful portion of the software development lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory*. The first phrasing says what the factory composes; the second says what it is made of (skills and loops), what it does (a meaningful share of the lifecycle, not all of it), and where the humans went. **Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority; it is not the definition of the complete factory and should not absorb every execution or delivery responsibility into one service. The Agent Factory supplies parts; the software factory uses them to turn governed intent into value; Mission Control is one concrete control plane, studied with its gaps visible. Seen from Mission Control's side, the same three things stack as layers: a coding agent or harness performs bounded engineering work; the Software Factory is the production system around that work (workflow, execution environment, policies, budgets, verification, recovery, delivery contract) that repeatedly produces trusted change; and the control plane above coordinates missions and factories across projects, preserves durable state and authority, and routes scarce human attention. *The harness performs the work. The factory produces trusted change. The control plane governs authority and attention.* Harnesses stay replaceable execution backends; the governed delivery contract is what is not replaceable.
+The relationship is simple: the Agent Factory supplies approved capabilities; the software factory uses them; Mission Control demonstrates one way to govern their use. The harness performs bounded work. The factory produces trusted change. The control plane governs authority and attention.
 
-Chapter 1's table separated assistant, agent, platform, and factory: an assistant leaves the governed lifecycle and outcome ownership outside its boundary; a coding agent leaves portfolio control, durable governance, and complete delivery lineage outside; an agent platform may still need a delivery operating model designed around it; a factory governs the path from intent to validated value while humans keep accountability and material risk decisions. Multi-agent orchestration must be available, but a simple job should use the simplest executor that satisfies its contract.
+An assistant, an agent, and a factory can all be useful. The difference is the outcome boundary. An assistant helps a person. An agent performs delegated work. A factory owns a repeatable path from intent to independently evidenced and delivered outcome while keeping accountability with people and policy.
 
 ### Skills → loops → factory
 
-The second definition above is built from two smaller units, and it helps to see them before the five systems, because they are what the systems exist to run. A **skill** is a reusable, versioned definition of how a class of work is performed or what good looks like: workflow instructions, standards, policies, domain knowledge, review criteria, tools, hooks, expected outputs, and acceptance criteria. It is an executable unit of organisational knowledge, not a prompt with a name. A **loop** is a repeatedly executed agent workflow with observation, evaluation, and feedback that improves future runs: Trigger → Context → Execute → Observe → Verify → Evaluate → Learn → Improve → next run. Plain automation is Trigger → Execute → Output; a loop is automation that watches itself and gets better. Put many skills inside many loops, connect the loops, govern the whole, and you have the factory of the definition.
+This is a **maturity lens**. A skill packages a reusable way to perform a class of work or judge its quality. A loop repeatedly applies capabilities, observes results, verifies them, and feeds governed improvements into future versions. Connected, governed loops can perform a meaningful portion of the software lifecycle.
 
-That composition gives four modes of working, and most organisations are in more than one at once:
-
-| Mode | Who builds | What the humans do |
-| --- | --- | --- |
-| Traditional | Humans | Write the software |
-| Agent-assisted | Humans with agents | Write the software faster, with help |
-| Agentic | Agents, on delegated units | Delegate bounded units of work and review the results |
-| Factory | The system | Engineer and govern the system that produces the software |
-
-The modes are not a ladder you climb once. The factory is a **continuum**: AI assistance → skills → automation → loops → connected loops → factory, and the share of work done by loops rises over time while the share done by hand falls. Nothing in the definition requires the loops to do everything; "a meaningful portion of the lifecycle" is the honest boundary, and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) lays the continuum out as a maturity model, L0 through L5, beside the book's own.
+Teams usually operate across a continuum: assistance, reusable skills, deterministic automation, bounded agent loops, connected loops, and factory operation. This is not a universal ladder, and the goal is not to put a model in every step. As work becomes understood and stable, conventional automation should replace unnecessary reasoning. [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) owns the adoption and maturity treatment.
 
 ### Five systems, five verbs
 
-Zoom out one step further and the three definitions sit inside five systems that any enterprise ends up running, whatever it calls them. Keeping them apart is the single most useful thing you can do before an architecture review, because each has a different owner, a different release clock, and a different failure signature.
+This legacy heading now contains a **responsibility lens**. In practice, six responsibilities must stay distinguishable even when one product implements several of them.
 
-<!-- infographic: five-systems -->
-> **Infographic — Creates, executes, grounds, delivers, governs.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
-
-| System | One-word job | What it owns | Typical shape |
+| Responsibility | Verb | Owns | Does not authorize |
 | --- | --- | --- | --- |
-| Agent runtime (execution platform) | Executes | Worker fleet and sandboxes, scheduling and capacity, leases and admission, durable state outside the model, workflow engine for explicit-state or branching work, recovery, tracing and evaluation hooks | Runtime plus one or more harnesses; sandboxed workers; a workflow engine where the path is uncertain |
-| Harness (inside the runtime) | Controls | Model invocation, context assembly, the execution loop, tool discovery and execution behind the gateway, permissions and approval gates, budgets and timeouts, checkpoints, the immutable per-turn trace, human intervention — everything that decides what the model's reasoning can actually do | The runtime control plane around the model: inner harness (the vendor loop) wrapped by the outer harness the factory owns ([Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md)) |
-| Enterprise knowledge layer | Grounds | Ingestion and ETL with orchestration, normalise and chunk, hybrid lexical and vector retrieval, reranking, permission filtering, citations and provenance, freshness, retrieval evaluation, tracing | A retrieval service with its own pipeline, evals, and access control |
-| Agent Factory | Creates | Agent definitions, skills, tools and their registry, model configurations, context requirements, versioning, ownership, capability registry, publishing and discovery, deprecation, evaluation suites, policy, feedback | A catalogue with a lifecycle, not a folder of prompts |
-| Software Factory | Delivers | Builder intent → plan → task graph → capability routing → runtime → models, skills, tools → knowledge → generated change → verification and evaluation → evidence → human review → Git → CI/CD → production → observe → learn | The value stream this chapter draws |
-| Control plane (Mission Control) | Governs | Missions, Plans, WorkOrders, execution authority, verification, evidence, acceptance, delivery, and the routing of scarce human attention | The durable authority layer above harnesses and factories |
+| Agent Factory | Creates | Versioned agents, skills, tools, profiles, configurations, and their lifecycle | A particular Attempt |
+| Runtime | Executes | Workers, capacity, environments, scheduling mechanics, and recovery | Business intent or acceptance |
+| Harness | Controls | Model loop, context assembly, tools, budgets, checkpoints, and execution trace | Its own permissions or correctness |
+| Knowledge layer | Grounds | Ingestion, retrieval, permissions, provenance, freshness, and retrieval evaluation | Actions based on retrieved content |
+| Software Factory | Delivers | The governed value stream from intent through production outcome | Human accountability |
+| Control plane | Governs | Durable state, policy, admission, evidence, decisions, and attention | Capability behavior it has not verified |
 
-*The Agent Factory creates. The runtime executes. The harness controls. Knowledge grounds. The Software Factory delivers. The control plane governs.* The harness is listed on its own line because it is owned, versioned, and fails differently from the runtime that hosts it: the runtime decides whether an Attempt runs at all; the harness decides what the model may do once it is running. The Agent Factory can plug into the control plane as a capability source; the control plane never becomes the place where agents are authored, and the runtime never becomes the place where authority is decided. Two design rules follow. Use the lightest orchestration model that satisfies the workflow: a single-agent loop for most bounded work, an explicit-state workflow engine only where branching, waiting, and parallelism make state a first-class problem. And choose implementation language per subsystem, not by ideology: the retrieval pipeline, the runtime, and the control plane have different ecosystems, and a factory that forces one language on all five systems pays for the purity in every one of them.
+The names may vary by organization. The ownership must not. Keeping the responsibilities explicit makes components replaceable and failures diagnosable.
 
 ### The factory in one line
+
+This is the **primary reader model**:
 
 <!-- infographic: factory-in-one-line -->
 > **Infographic — Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
 
 ```mermaid
 flowchart LR
-    Intent["1. Intent"] --> Plan["2. Governed Plan"]
-    Plan --> Bind["3. Bind Agent Definition,<br/>Skills, and Authority"]
-    Bind --> Execute["4. Execute through Harness"]
-    Skills["Versioned Skills"] --> Execute
-    Execute --> Evaluate["5. Independent Evaluation"]
-    Evaluate -->|corrective work| Plan
-    Evaluate --> Decision["6. Delivery Decision"]
-    Decision --> Deliver["7. Deliver Software"]
-    Deliver --> Outcomes["8. Observe Outcomes"]
-    Outcomes --> Improve["Governed Improvement Loop"]
-    Improve -->|approved new versions| Bind
-    Improve -->|new criteria or controls| Plan
+    I["1. Intent"] --> P["2. Plan"]
+    P --> A["3. Define Agent"]
+    A --> X["4. Execute through Harness"]
+    X --> S["5. Apply Skills"]
+    S --> E["6. Evaluate"]
+    E --> M["7. Improve"]
+    M --> D["8. Deliver Software"]
+    D -. "production outcomes" .-> I
 ```
 
-The line is a value-stream mnemonic, not a call graph. Skills are selected and frozen before execution, then applied inside the harnessed loop. Improvement consumes evaluation and production evidence to create governed candidates for future runs; it cannot self-promote or mutate the active Attempt. *Define Agent* means binding an approved, versioned Agent Definition to the work, not inventing an agent per task. *Deliver Software* begins with an authorized delivery decision and ends with observed technical and customer outcomes. A slogan hides feedback and concurrency; a full state machine is too complex as an entry point; so use the mnemonic for orientation and the lifecycle contract below for design and operations. The factory is not an AI coding assistant. It is the platform and control system that makes agentic software engineering repeatable, governed, measurable, and scalable across thousands of engineers.
+Read the line as a value stream, not as eight serial services. Skills are selected and frozen before execution, then applied inside the harnessed loop. Evaluation can send corrective work back to planning. Improvement changes future capability versions through governed promotion; it cannot mutate the active Attempt. Delivery includes merge, deployment, activation, and production verification. Production outcomes become new signals and intent.
 
-Each stage has its own page with the full contract, records, and failure modes. Click a stage: [1. Builder intent](../stages/01-builder-intent.md) · [2. Plan](../stages/02-plan.md) · [3. Define agent](../stages/03-define-agent.md) · [4. Execute through harness](../stages/04-execute-through-harness.md) · [5. Apply skills](../stages/05-apply-skills.md) · [6. Evaluate](../stages/06-evaluate.md) · [7. Improve](../stages/07-improve.md) · [8. Deliver software](../stages/08-deliver-software.md).
+The stages are deliberately verbs because each must transform an input into an output:
 
-Two shorter hooks carry the same stream when you need it from memory. The seven-verb form is **Intent → Plan → Route → Execute → Verify → Deliver → Learn**, which adds the routing decision the eight-stage line folds into *Define Agent*. The ten-verb form, **Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale**, is organised by capability rather than by sequence: understand intent, plan it, execute through a harness, equip the agent with skills and tools, ground it in governed context, route to the right model, verify with evidence, learn from outcomes, protect the whole thing with security and reliability, and scale it across builders. The whole factory in one sentence: it understands intent, creates a governed plan, executes it through a durable harness using the right models, skills, tools, and context, verifies the outcome with evidence, delivers it according to risk, and learns from production, while keeping authority outside the model.
+1. **Intent** turns a request into an explicit, governed outcome with constraints, criteria, scope, and risk.
+2. **Plan** turns that outcome into an approved execution and quality contract.
+3. **Define Agent** binds approved capability versions, tools, context policy, budgets, and authority to the work.
+4. **Execute through Harness** performs bounded work while deterministic controls own state, permissions, cost, and recovery.
+5. **Apply Skills** uses versioned organizational methods without widening the Attempt’s authority.
+6. **Evaluate** produces independent, criterion-linked evidence against the exact artifact.
+7. **Improve** converts attributed outcomes into evaluated candidates for future factory versions.
+8. **Deliver Software** applies the authorized review, merge, rollout, and production-verification path.
 
-The same stream reads differently depending on who is looking at it, and it helps to keep both readings. From the builder's chair it is the **Builder loop**: Intent → Plan → Configure agents, harnesses, skills, and tools → Execute → Verify and evaluate → Deliver → Observe → Improve. From the control plane it is the **governed delivery lifecycle**: Mission → approved Plan → WorkOrder → Task → Attempt → candidate → independent evidence → pull request → human decision → release → observed outcome → governed learning. The first is what a person experiences; the second is what the records enforce, and every arrow in either form is a gate, not an optimistic handoff. [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) lays the lifecycle out stage by stage with what each stage does not authorize.
+The stages separate facts that teams often collapse. Plan approval is not execution dispatch. Execution completion is not verification. Verification is not acceptance. Acceptance is not merge. Merge is not a production outcome. Preserving those distinctions is what makes speed governable.
+
+The eight stage pages are concise orientation briefs. The main chapters own the full mechanisms and tradeoffs: [Intent](../stages/01-builder-intent.md), [Plan](../stages/02-plan.md), [Define Agent](../stages/03-define-agent.md), [Execute through Harness](../stages/04-execute-through-harness.md), [Apply Skills](../stages/05-apply-skills.md), [Evaluate](../stages/06-evaluate.md), [Improve](../stages/07-improve.md), and [Deliver Software](../stages/08-deliver-software.md).
 
 ### The master whiteboard
 
-Before the layered stack, here is the version you would draw top to bottom on a whiteboard if someone asked what the factory actually does to a piece of work. It is longer than the one-line mnemonic because it shows where risk, evidence, and delivery sit, and it puts the controls where they belong: alongside everything, not in a box at the end.
-
-<!-- infographic: master-whiteboard -->
-> **Infographic — The master whiteboard.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+This is a **detail view** of the eight-stage stream. Use it in a design review when the one-line model is too compact.
 
 ```mermaid
 flowchart TB
-    subgraph Top["Understand and structure the work"]
-        B["Builders<br/>developer · PM · QA · designer · agent"] --> BI["Builder intent"]
-        BI --> OC["Objective + constraints"]
-        OC --> PA["Plan + acceptance criteria"]
-        PA --> TG["Task / dependency graph"]
-        TG --> RT["Capability, agent, and model routing"]
-    end
-    subgraph Middle["Intelligence and execution"]
-        RT --> H["Agent harness<br/>durable execution and state"]
-        H --> MTS["Models · tools and MCP · skills"]
-        MTS --> CK["Context and knowledge (RAG)"]
-        CK --> CAND["Candidate: generated change or action"]
-    end
-    subgraph Bottom["Trust and delivery"]
-        CAND --> RC["Risk classification"]
-        RC --> QS["Quality-signal aggregation"]
-        QS --> EV["Evaluation and independent verification"]
-        EV --> AP["Evidence + review / approval"]
-        AP --> SCM["SCM · CI/CD · artifacts"]
-        SCM --> PD["Progressive delivery"]
-        PD --> PE["Production evals + drift monitoring"]
-    end
-    PE --> OUT["Outcomes + feedback"]
-    OUT --> LI["Learning / improvement"]
-    LI -.->|"governed promotion"| RT
-    LI -.->|"new criteria, controls"| PA
-    X["Cross-cutting: identity · authorization · policy · security · cost · reliability · observability · evidence"]
-    X -. constrains every box .-> Top
-    X -. constrains every box .-> Middle
-    X -. constrains every box .-> Bottom
+    H["Human intent and constraints"] --> GP["Governed Plan and Quality Contract"]
+    GP --> B["Versioned capability binding"]
+    B --> EX["Harnessed execution in a bounded environment"]
+    EX --> C["Immutable Candidate"]
+    C --> V["Independent verification and evidence"]
+    V --> HD["Human or policy decision"]
+    HD --> R["Merge, release, activation, production verification"]
+    R --> O["Observed technical and customer outcomes"]
+    O --> IC["Governed Improvement Candidate"]
+    IC -. "approved future versions" .-> B
 ```
 
-Read it in four bands. The top understands and structures the work: a builder's intent becomes an explicit objective with constraints, then a plan with acceptance criteria, then a task graph, then a routing decision about which capability should do each piece. The middle provides intelligence and execution: a harness that owns durable state runs models, tools, and skills against governed context and produces a candidate. The bottom establishes trust and delivers: the candidate is risk-classified, its quality signals are aggregated, it is independently verified, the evidence goes to review or approval, and only then does it flow into the ordinary supply chain of source control, CI/CD, artifacts, and progressive delivery, followed by production evaluation and drift monitoring. The loop at the end improves the next run. Identity, authorization, policy, security, economics, reliability, observability, and evidence are cross-cutting controls; a whiteboard that draws them as the last box has already lost the argument, because a control applied only at the end cannot stop an unauthorised tool call in the middle.
-
-The compact version fits on one line and is worth being able to reproduce: builder intent → specification and plan → agent harness → context, memory, and state → model routing → agents, skills, and tools → isolated execution → verification and evaluation → evidence → human and policy gates → delivery → outcome signals → feedback and improvement, and around again. Two principles fall out of the picture. *The model is a component; the factory is the system.* And *the model does not own the workflow; the platform does.* Models change constantly, and the strategic value is never any one of them; the durable asset is the system around them: harness, context, skills, tools, evaluation, security, observability, execution, and learning. That is also the compounding argument for building a factory at all: when one team discovers a better skill, context strategy, evaluation method, or execution pattern, the factory turns it into a reusable capability for every builder, so the whole engineering organisation gets better with every cycle.
+Identity, authorization, security, policy, cost, reliability, observability, and lineage constrain every box. They are not a final review step. A control that appears only after generation cannot prevent an unauthorized action during execution.
 
 ### Six architectural areas and who owns each layer
 
-The whiteboard is a flow. The same system cut by responsibility gives six architectural areas, which is the cut to use when assigning teams, because each area has a distinct kind of expertise and a distinct failure signature.
+This is the **supporting architecture model**. It answers a different question from the value stream: where does each responsibility live?
 
 <!-- infographic: six-areas -->
-> **Infographic — The six architectural areas.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
+> **Infographic — Intent, Harness, Capability, Model, Trust, and Learning, surrounded by adoption.** *(Jay's graphic goes here.)* Until then, the table below carries the same concept.
 
-| Area | What it covers | Fails as |
-| --- | --- | --- |
-| Intent layer | Goal understanding; requirements through spec-driven and test-driven development; acceptance criteria; planning; task decomposition | An agent efficiently solving the wrong problem |
-| Harness | Execution loop, agent lifecycle, tool orchestration, state, checkpointing, recovery | Work that lives only in model context and cannot resume |
-| Capability layer | Agent definitions, skills, tools, MCP, context services | Prompts without contracts; tools without governance |
-| Model layer | Model abstraction, capability matching, routing, cost, latency, and quality tradeoffs | Vendor names in the architecture; no re-evaluation on switch |
-| Trust layer | Evaluation, verification, policy, security, observability, human oversight | Agents certifying their own work; review that cannot scale |
-| Learning layer | Outcome signals, failure taxonomy, experimentation, baseline comparison, controlled improvement | Learning that silently promotes itself |
+| Area | Core question | Owns | Canonical chapters |
+| --- | --- | --- | --- |
+| **Intent** | What outcome is authorized, and how will success be recognized? | Mission, specification, Plan, risk, scope, acceptance criteria, task graph | [Chapters 5–8](../02-design/05-authoritative-records.md) |
+| **Harness** | How does bounded work run reliably? | Attempts, orchestration, context assembly, tools, environments, budgets, retries, recovery | [Chapters 11–16](../03-build/11-control-plane-orchestrator-and-execution-plane.md) |
+| **Capability** | Which reusable behavior performs the work? | Agent Definitions, skills, tool contracts, registries, versions, evaluation status | [Chapter 10](../03-build/10-the-agent-factory.md), [15](../03-build/15-agent-architecture.md), and [18](../03-build/18-agent-and-loop-engineering.md) |
+| **Model** | Which reasoning capability is eligible and economical? | Model profiles, adapters, routing, fallback, token and latency policy | [Chapter 17](../03-build/17-models-routing-and-capability-selection.md) |
+| **Trust** | What proves the result, bounds authority, and protects the system? | Identity, policy, independent verification, evidence, security, review, supply-chain controls | [Chapters 21–26](../04-prove/21-quality-and-evidence-architecture.md) |
+| **Learning** | How does evidence improve future performance safely? | Outcome signals, datasets, experiments, candidate changes, promotion, rollback, drift | [Chapters 32–33](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md) |
 
-The thesis under all six is *trust the system, not the model*. The durable value is the harness, context, tools, skills, execution, state, identity, permissions, evaluation, verification, observability, recovery, feedback, and governance; a stronger model improves every one of those without replacing any of them. Zoom in once more and the areas resolve into fourteen layers, each with an owner:
+The value stream cuts across the areas. Intent dominates stages 1 and 2. Capability and model are bound in stage 3. Harness dominates stages 4 and 5. Trust dominates stages 6 and 8. Learning dominates stage 7 and consumes production outcomes from stage 8. The areas overlap by design; the table assigns primary responsibility so overlap does not become ambiguity.
 
-| Layer | Owns |
-| --- | --- |
-| Experience | CLI, IDE, APIs, developer workflows; every surface converges on one execution contract |
-| Intent | Goals, specifications, acceptance criteria |
-| Harness | Execution loop, state, orchestration |
-| Agents | Definitions, roles, capabilities |
-| Context | Retrieval, memory, state, provenance |
-| Models | Abstraction and routing |
-| Tools | MCP, APIs, Git, engineering systems |
-| Skills | Reusable, bounded capabilities |
-| Execution | Sandboxing, isolation, checkpoints |
-| Governance | Identity, permissions, policies |
-| Evaluation | Evals, graders, regression |
-| Observability | Traces, telemetry, costs |
-| Recovery | Retry, resume, rollback |
-| Improvement | Outcome-driven feedback loops |
-
-The ownership rule for the whole table is the one that keeps a platform team from drowning: domain teams own their business workflows, and the platform centralises the expensive, risky, undifferentiated capabilities every team would otherwise rebuild. Identity, the model gateway, the harness, tool governance, the skills framework, evaluation infrastructure, observability, cost attribution, and evidence interfaces are central; domain skills, product knowledge, specialised agents, product-specific acceptance criteria, and differentiated workflows are federated. [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) turns that rule into an operating model.
+Human authority runs through all six areas. Humans own the desired outcome, material ambiguity, risk acceptance, policy, capability publication, consequential exceptions, promotion, and delivery decisions. Agents can research, draft, propose, execute, and evaluate within delegated boundaries. Deterministic systems enforce the boundary and preserve a record of what occurred.
 
 ### Six areas, one surrounding concern
 
-Read in order, the six areas are also the mental model of the whole book, and it is worth being able to say it in one breath. **Intent → Harness → Capability → Model → Trust → Learning**: a builder's intent is turned into governed work; a harness executes it durably; capabilities (agents, skills, tools, context) equip the run; a model, chosen by routing rather than by name, does the reasoning; trust (evaluation, verification, policy, security, observability, human authority) decides what may proceed; and learning turns what happened into the next version. Around all six sits a seventh concern that is not an area but a condition of the other six existing at all: **Adoption and transformation**, meaning forward-deployed engineering, migration, builder journeys, co-building, reusable artifacts, platform adoption, and the workforce change that comes with them ([Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)). A factory nobody adopts has six excellent areas and no throughput.
+This is an **operating lens** on the supporting architecture. Adoption surrounds all six areas because a technically complete platform that builders do not trust or use produces no value. The paved road must be easier than the unsafe workaround. Teams should start with one valuable, repeatable, reversible corridor; establish evidence and recovery; then widen the workflow and user population.
 
-```mermaid
-flowchart LR
-    subgraph Adoption["Adoption and transformation (surrounding concern)"]
-        direction LR
-        I["Intent"] --> H["Harness"] --> C["Capability"] --> M["Model"] --> T["Trust"] --> L["Learning"]
-        L -.->|"next version"| I
-    end
-    Adoption --> TT["Optimised for trusted throughput"]
-```
-
-The quantity the whole arrangement is tuned for is **trusted throughput**: accepted, verified outcomes per unit of time and cost, never generated lines, prompts, or tokens. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) makes it the factory's throughput measure; every area above either raises it or protects it, and any change that raises raw output while lowering the accepted, verified share is a step backwards however impressive the demo. The forty concepts that populate the six areas and the surrounding concern are listed, with their chapters, in [Appendix F](../appendix/principles.md#the-forty-concepts-to-have-cold).
+Adoption is measured in trusted throughput, time to first successful workflow, repeat use, review burden, reliability, and cost per accepted outcome—not in agents created or tokens consumed. [Chapter 27](../05-operate/27-the-factory-as-a-platform.md) owns the platform operating model, and [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) owns enterprise adoption.
 
 ### The lifecycle above the six areas
 
-The six areas describe what the factory is made of. One level up is what the factory is *for*, and that lifecycle starts earlier and ends later than most architecture diagrams admit. The factory does not begin at a ticket and end at a merge. It begins at a **signal**, an observable event indicating a potential need for change (customer feedback, a support case, a bug, telemetry, an incident, an issue, an analytics shift, a security finding, a performance regression, an engineering discussion), and it ends at an observed outcome that produces the next signal. Its boundary is signal-to-outcome, not ticket-to-code.
+This is a **boundary lens**: signal → intent → factory → outcome → learning → new signal. It prevents the organization from defining the factory as ticket-to-code. A customer need, incident, policy change, or production observation becomes governed intent. The factory produces and delivers change. The organization observes whether the intended result occurred. Learning changes a future version only after evidence and approval.
 
-<!-- infographic: lifecycle-above-the-areas -->
-> **Infographic — Signal → Intent → Factory → Outcome → Learning, with the six areas inside.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
-
-```mermaid
-flowchart LR
-    subgraph F["FACTORY: produce and verify"]
-        direction LR
-        I["Intent"] --> H["Harness"] --> C["Capability"] --> M["Model"] --> T["Trust"] --> L["Learning"]
-    end
-    S["SIGNAL<br/>observe what needs to change"] --> IN["INTENT<br/>decide the outcome"]
-    IN --> F
-    F --> O["OUTCOME<br/>observe what happened"]
-    O --> LE["LEARNING<br/>improve the factory"]
-    LE -.->|next cycle| S
-    DM["Factory data model · control plane<br/>signal, intent, plan, task, attempt, artifact, evidence, verification, decision, deployment, outcome"]
-    DM -. beneath everything .-> F
-```
-
-Read the outer ring first. SIGNAL observes what needs to change. INTENT decides the outcome, which is the human judgment the rest of the ring serves. FACTORY produces and verifies, and inside it the six areas run in their familiar order: Intent → Harness → Capability → Model → Trust → Learning. OUTCOME observes what actually happened in production. LEARNING improves the factory before the ring turns again. Beneath all of it sit the factory data model and the control plane, because none of the ring's transitions is real until it is a record ([Chapter 5](../02-design/05-authoritative-records.md) defines the object chain).
-
-Three concerns cut across every position on the ring, and they are the ones an organisation ends up staffing whatever else it builds. The **control plane** governs: inventory, identity, permissions, policy, budgets, deployment, scheduling, observability ([Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md)). The **context plane** knows: institutional knowledge, skills, standards, repository intelligence, history, retrieval, and the lifecycle that keeps all of it current ([Chapter 16](../03-build/16-data-knowledge-semantic-and-context-engineering.md)). **Factory engineering** builds, measures, maintains, and improves the loops themselves ([Chapter 18](../03-build/18-agent-and-loop-engineering.md), [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)). The first two are planes because they have state; the third is a discipline because it has practitioners, and [Chapter 4](../02-design/04-the-human-agent-operating-model.md) names the roles.
-
-Zoom into the FACTORY segment and the six areas unfold into a **factory-native software development lifecycle**, the sequence a single piece of work follows and the shape every later chapter assumes.
-
-<!-- infographic: factory-native-sdlc -->
-> **Infographic — The factory-native SDLC with its three loops.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
-
-```mermaid
-flowchart LR
-    I["Intent"] --> SW["Shape work"]
-    SW --> RT["Route context,<br/>skills, capability"]
-    RT --> AX["Agent execution"]
-    AX <-->|"inner loop:<br/>self-correct"| IL["Deterministic<br/>feedback"]
-    AX --> IV["Independent<br/>verification"]
-    IV <-->|"outer loop:<br/>establish trust"| OL["Verifiers,<br/>reviewers"]
-    IV --> RC["Risk<br/>classification"]
-    RC --> AP["Approval<br/>human or automated"]
-    AP --> D["Deploy"]
-    D --> OB["Observe<br/>outcomes"]
-    OB --> ML["Meta loop"]
-    ML -->|"improve context, skills,<br/>tests, tools, routing, harness"| RT
-```
-
-The lifecycle has three loops at three speeds, and keeping them apart is the single most useful habit this diagram teaches. The **inner loop** runs during execution: fast, cheap, deterministic feedback (tests, types, compiler, linters, architecture rules, policy checks) that lets the agent detect and correct its own mistakes before handoff; its objective is autonomy. The **outer loop** runs around the work: deeper, independent verification (review agents, security review, integration and end-to-end tests, browser verification, acceptance validation, risk assessment) that answers whether anyone should trust what the agent produced; its objective is automation, because only trusted work can move without a human. The **meta loop** runs across many executions: it observes failures, corrections, reviews, and outcomes and proposes changes to context, skills, tests, tools, routing, and the harness so that the next agent does not need the intervention the last one did; its objective is learning. [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) treats the three loops as the core of harness engineering; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) owns verification; [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) owns the meta loop.
-
-With the lifecycle in view, the six-area table earlier in this chapter can be filled in with what each area actually holds. The names are the same; the contents are the concepts the rest of the book defines.
-
-| Area | Holds | Chapters |
-| --- | --- | --- |
-| Intent | Signal intelligence, work shaping, Definition of Correct, product taste, the human judgment boundary, acceptance criteria, verification contracts | [4](../02-design/04-the-human-agent-operating-model.md), [6](../02-design/06-intent-and-specification-engineering.md), [7](../02-design/07-governance-policy-and-risk-proportional-approval.md) |
-| Harness | Inner, outer, and meta loops; the deterministic feedback surface; harness profiles per model family; agent affordances; harness debt and pruning; the universal meta-harness | [11](../03-build/11-control-plane-orchestrator-and-execution-plane.md), [13](../03-build/13-coding-harnesses-and-agent-protocols.md), [18](../03-build/18-agent-and-loop-engineering.md) |
-| Capability | Skills as executable organisational knowledge; the skill registry and inventory; skill drift; context as code; context inventory, drift, deduplication, and pruning; institutional versus compensatory context; memory taxonomy | [10](../03-build/10-the-agent-factory.md), [16](../03-build/16-data-knowledge-semantic-and-context-engineering.md) |
-| Model | Workload-distribution routing, Pareto-optimal routing, dynamic intelligence escalation and downgrading, cache-aware routing, cost prediction, execution budgets, intelligence budgets, model-agnostic but not model-uniform | [17](../03-build/17-models-routing-and-capability-selection.md) |
-| Trust | Verifiers and the skill–verifier pair; verification completeness; validating the validator; context firewalls and fresh-context verification; risk-based autonomy; agent readiness; architecture linting | [21](../04-prove/21-quality-and-evidence-architecture.md), [22](../04-prove/22-testing-strategy-for-agentic-change.md), [26](../04-prove/26-security.md) |
-| Learning | Scorers and self-improvement agents; eval-driven factory engineering; micro-evals and the test–eval continuum; eval drift and the eval registry; automation discovery; the factory flywheel; self-improvement levels from observe to promote | [23](../04-prove/23-evaluation-engineering.md), [33](../06-improve/33-governed-learning-and-compounding-engineering.md) |
-
-Two lines close the picture and they are worth keeping as a pair.
-
-> *The agent is not the factory. The factory is the system around the agent: context says what good looks like, the harness gives a controlled place to work, skills and tools give capabilities, the inner loop self-corrects, the outer loop establishes trust, the control plane governs, and the meta loop learns.*
-
-And the one-sentence synthesis that the lifecycle ring expresses: a software factory is a signal-to-outcome system in which durable intent becomes work, a harness coordinates models and capabilities, deterministic feedback helps agents self-correct, independent verification establishes trust, routing controls economics, humans keep the highest-value judgment boundaries, and production outcomes continuously improve the system. Every clause of that sentence is a chapter.
+The inner execution loop may run in seconds or hours. The outer trust loop verifies and decides over hours or days. The improvement loop compares outcomes across runs and releases over days or weeks. Those different clocks are useful design facts, not additional reader models.
 
 ### The system map
 
-This is the canonical architecture diagram of the book. Everything later is a zoom into one of its boxes.
+This is an **implementation view** of authority and evidence. Commands flow downward as progressively narrower grants: Mission → approved Plan → WorkOrder → Task → Attempt → scoped tool call. Observations flow upward as immutable facts: tool receipt → Attempt event → Candidate → verification evidence → acceptance decision → release outcome.
 
-<!-- infographic: layered-stack -->
-> **Infographic — The layered stack: control path and execution stack.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+The downward path delegates capability; it does not transfer accountability. The upward path reports facts; it does not let a producer certify itself. Stable identifiers connect the two paths, so an operator can answer who requested the work, which version was approved, what ran, what it touched, what evidence exists, and who authorized progression.
 
-```mermaid
-flowchart TB
-    Human["Human intent, policy, and decisions"] --> CP["Control plane and orchestrator<br/>intent · policy · authority · durable state · approvals · evidence rules"]
-    Factory["Agent Factory<br/>agents · skills · tools · model profiles · evals"] --> CP
-    CP --> Contract["Frozen execution contract<br/>(execution manifest)"]
-    Contract --> Outer["Outer harness<br/>lifecycle events · skills · budgets · retries · completion contract"]
-    Outer --> Inner["Inner coding harness<br/>model–tool–observation loop, one session"]
-    Inner --> Dev["Development environment<br/>checkout · toolchains · services · identity · previews"]
-    Dev --> Compute["Compute infrastructure<br/>machines · containers · VMs · storage · network"]
-    Inner --> Events["Structured events, artifacts, receipts"]
-    Events --> CP
-    CP --> Verify["Independent verification and evidence"]
-    Verify --> Decide["Human or policy decision"]
-    Decide --> Delivery["Delivery: PR · merge · CI/CD · deploy · production verification"]
-    Delivery --> Learn["Governed feedback and improvement"]
-    Learn --> Factory
-    Policy["Policy, identity, risk, budget"] -. constrains .-> CP
-    Policy -. constrains .-> Outer
-    Policy -. constrains .-> Decide
-```
-
-Read it both ways. The downward path delegates bounded capability: a human decision becomes a governed record in the control plane, which compiles a frozen contract, which the outer harness turns into a supervised session, which the inner harness runs against a development environment on some compute. The upward path reports observations: structured events, artifacts, and receipts flow back to the control plane, which routes them to independent verification and then to a human or policy decision. Neither path lets an executor mint authority or certify its own material work.
-
-Two planes sit inside the picture. The **control plane** decides whether work is allowed, records authoritative state, and evaluates the evidence required for progression; it hands bounded authority down, receives artifacts and receipts back, sends frozen criteria and artifacts to independent validation, and puts the resulting evidence in front of a human who approves, rejects, revises, or escalates. The **execution plane** performs work through agents and tools. An external system such as GitHub Actions or Argo CD may execute deployment, but the factory governs the decision, policy, evidence, and approval. Think of air-traffic control: the tower never flies the aircraft, but nothing takes off, changes altitude, or lands without a clearance, and every clearance is recorded.
-
-Each layer is named by the responsibility it owns and by what it does not prove.
-
-| Layer | Owns | Does not prove or own |
-| --- | --- | --- |
-| AI coding agent | Pursues a bounded repository outcome through reasoning and tools | Business authority, acceptance, merge, or release |
-| Inner harness | Runs the model-tool-observation loop and manages one coding session | Durable cross-run workflow state or organizational approval |
-| Outer harness | Adapts, supervises, and operationalizes an inner harness through lifecycle events, skills, budgets, retries, and completion contracts | Mission authority or acceptance of its own output |
-| Development environment | Supplies checkout, toolchains, dependencies, services, identity bindings, and previews needed to build and test | Permission to widen scope or publish |
-| Compute infrastructure | Supplies machines, containers, VMs, storage, network, and capacity | A trustworthy environment or authorized execution |
-| Orchestrator | Sequences authorized work, dispatches Attempts, reacts to events, reconciles state | Approval of its own plan or evidence |
-| Control plane | Owns intent, policy, authority, durable state, approvals, evidence requirements, governance decisions | The implementation work performed by executors |
-| Agent platform | Reusable runtime services: tools, context, identity, routing, memory, telemetry | End-to-end software-delivery governance |
-| Agent Factory | Creates, packages, versions, evaluates, publishes, discovers, admits, deprecates, and revokes reusable capabilities | Delivery of a particular business outcome |
-| AI Software Factory | Composes people, policies, capabilities, execution, assurance, delivery, and learning from intent to validated value | A single agent, model, harness, or control-plane product |
-
-The inner/outer split is a conceptual boundary, not a requirement for two deployable services; a small system may implement both in one process with separate contracts, and calling every wrapper an outer harness is abstraction for its own sake. Introduce the boundary when it clarifies replacement, authority, testing, or operations. [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md) and [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) go deep.
+[Chapter 5](../02-design/05-authoritative-records.md) owns the record spine. [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md) owns the control-plane and execution-plane boundary.
 
 ### Build, buy, or bring your own
 
-Practitioners who have built factories in the open describe the same five layers from the bottom: **compute**, **development environment**, **inner harness**, **outer harness**, and **control plane and orchestration**. Every one can be bought or built. Compute is a mature market: your own EC2 or Kubernetes, a rack of spare laptops, a managed sandbox API that provisions into your cloud, or execution sent entirely to a vendor; how much cloud you bring depends on the layers above.
+This is a **sourcing decision**, not an architecture. Keep the authority model and contracts independent of the product choices. Build differentiating policy, workflow, evidence, and integration logic. Buy commodity compute, model access, and mature infrastructure when it satisfies the contract. Bring an existing harness or developer tool when its behavior can be qualified and governed.
 
-The development environment is the controversial layer and the one teams most often end up owning. It is more than an image with the right runtime: it is the toolchains that compile and test your software, a way to see what the agent built (a preview URL), the shared internal services a real product needs at development time (a team may run four layers locally while the application depends on fifty shared services), and **identity**, the credentials and bindings that let a session reach internal systems. That is why it is its own layer rather than part of the harness or the infrastructure. Once execution moves into a vendor's cloud, "use this base image" is easy, but opening your network to a session in someone else's compute, and debugging a toolchain on an emulated kernel, is friction. The largest companies solved this long ago with on-demand cloud workstations, no local checkouts, and shareable internal URLs pointed at the right services; the industry is rebuilding that golden stack. For small applications a vertical cloud agent may suffice; for real products, expect to own this layer.
-
-The harness splits into an inner harness you buy or build on an open one, and an outer harness of your own skills, loops, hooks, and completion rules; a thin inner harness with a rich outer one, or a batteries-included inner harness with a thin outer layer, are both legitimate. The outer harness is where teams put hard-coded loops such as "fix review-bot findings until mergeable, at most three iterations, then hand to a human," and an **agentic merge queue** that keeps an approved branch current with main until it lands.
-
-The control plane and orchestration layer is, by the same accounts, the most underserved: dispatching work, session traces, the plans and architecture documents being produced, scheduled and webhook-triggered runs, code review that need not live on the hosting provider's page, permissions and audit over who can talk to what, spend and budgets, and **compounding engineering**, the memory that captures what every engineer keeps telling the agent and folds it into the outer harness. No dominant open-source control plane exists yet, partly because every company defines an "issue" differently and would rather write the integration than configure someone else's, the seed of the extensible-software argument in [Chapter 36](../06-improve/36-where-this-is-going.md).
-
-The principle is **composition over inheritance**. Most teams buy the whole stack or build the whole stack, and vertically integrated products (as of mid-2026: cloud coding agents from the major model vendors with their own sandboxes and scheduled automations, and agent companies that bring harness and tooling into compute you run) make buying everything attractive because the first experience is good. The cost is that policy, telemetry, execution, and environment assumptions concentrate in one provider; a composed stack preserves choice but moves compatibility testing and failure ownership to you. So build-versus-buy is not one decision: buy an inner harness, build the control plane, bring your own development environment, use managed compute. Judge each layer on differentiation, security, integration depth, operability, portability, cost, and exit difficulty.
-
-Composition works only when interfaces are products with versioned contracts:
-
-- **Control plane to outer harness:** Attempt identity, manifest, scope, budgets, cancellation, completion schema, event contract.
-- **Outer to inner harness:** session lifecycle, instructions, tools, approvals, environment, structured output, stop behavior.
-- **Harness to development environment:** filesystem, command, process, preview, service, secret, network.
-- **Development environment to compute:** provision, start, suspend, snapshot, measure, terminate, reconcile.
-- **Agent Factory to consumers:** capability identity, version, provenance, compatibility, evaluation, policy, ownership, lifecycle status.
-
-A lowest-common-denominator adapter that drops hooks, cancellation, provenance, or tool events buys apparent portability and real operational blindness. Today's candidate protocols between control plane and harness are narrow and carry no lifecycle hooks because every inner harness exposes different ones ([Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) covers ACP, AG-UI, MCP, and hooks). Swappability is proven by behavioral compatibility tests, never by a matching product name.
+Evaluate each boundary for replaceability, security, behavioral fidelity, data residency, observability, reliability, cost, and operator burden. An abstraction is useful only if it preserves consequential backend behavior such as cancellation, tool events, provenance, and recovery. [Chapter 31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md) owns the full sourcing treatment.
 
 ### Seven layers of Mission Control
 
-Where the stack describes components, Mission Control's own architecture is seven functional layers of a control plane, a different cut of the same system.
+This is an **implementation view** of the Mission Control case study: intent, planning, execution, validation, governance, human decision, and learning. It maps to the eight stages but is not a third factory model. Mission Control groups responsibilities according to its control-plane implementation; the guide separates stages according to the reader’s value stream.
 
-<!-- infographic: seven-layers -->
-> **Infographic — The seven layers of Mission Control.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
-
-```mermaid
-flowchart TB
-    L1["1. Intent<br/>objectives, bugs, incidents, findings → Missions, WorkOrders, criteria, risk, evidence, ownership"]
-    L2["2. Planning<br/>current state, changes, dependencies, risks, tests, rollback, cost, open questions"]
-    L3["3. Execution<br/>specialized agents: coding, refactoring, tests, migration, docs, config, infra, security"]
-    L4["4. Validation<br/>unit · integration · contract · e2e · security · performance · accessibility · policy · telemetry"]
-    L5["5. Governance<br/>identity, roles, tool and repo authorization, data classification, budgets, escalation, audit"]
-    L6["6. Human decision<br/>involvement by risk, not habit"]
-    L7["7. Learning<br/>planned, changed, failed, corrected, detected, shipped, what should change"]
-    L1 --> L2 --> L3 --> L4 --> L6 --> L7
-    L5 -. governs .-> L2
-    L5 -. governs .-> L3
-    L5 -. governs .-> L4
-    L5 -. governs .-> L6
-    L7 -->|proposals| L1
-```
-
-The **intent layer** turns product objectives, customer problems, bugs, feature requests, incidents, security findings, reliability targets, and technical-debt priorities into Missions, WorkOrders, acceptance criteria, constraints, risk classification, required evidence, and ownership. The **planning layer** has agents investigate and propose current-state understanding, relevant code and architecture, proposed changes, dependencies, risks, test strategy, rollback strategy, estimated cost and complexity, and questions needing human judgment; a human approves when risk warrants. The **execution layer** uses specialized agents rather than one giant general-purpose agent. The **validation layer** requires every material change to produce evidence: no agent merely claims success, it proves it. The **governance layer** controls identity, role-based permissions, tool authorization, repository and environment access, data classification, approval policies, spending and execution limits, escalation rules, and audit trails. The **human decision layer** involves people by risk: a low-risk documentation change is autonomous, a moderate-risk application change needs human pull-request approval, a high-risk production or security change needs architecture and release approval, a critical change touching customer data needs multi-party approval. The **learning layer** captures what plan was proposed, what changed, what failed, what humans modified, which tests caught problems, what reached production, what customer outcome followed, and what should change; it turns the factory from automation into an improving system.
-
-On a whiteboard, use five horizontal bands instead: human intent (product goals, issues, incidents, security findings); Mission Control (missions, work orders, orchestration, policy, approvals); specialized agents (investigation, planning, coding, testing, review, operations); engineering systems (GitHub, Jira, CI/CD, cloud, observability, documentation); and evidence and learning (tests, audit logs, telemetry, cost, outcomes, feedback). Put humans beside it at five decision points: intent, plan, code, release, exceptions. The closing line is the whole argument: separating intent, execution, governance, and evidence is what lets an organization increase autonomy without losing control.
+Use the implementation view when inspecting Mission Control records and interfaces. Use the eight stages when explaining how factory work progresses. [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md) and the [Mission Control appendices](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) own the version-pinned evidence.
 
 ### The lifecycle, stage by stage
 
-<!-- infographic: lifecycle -->
-> **Infographic — The intent-to-delivery lifecycle and its record spine.** *(Jay's graphic goes here.)* Until then, the diagram below carries the same concept.
+The contract below is the detailed form of the primary model.
 
-```mermaid
-flowchart LR
-    M["Mission"] --> PV["PlanVersion"] --> WO["WorkOrder"] --> T["Task"] --> AB["AgentBinding"] --> EM["ExecutionManifest"] --> AT["Attempt"] --> CR["CompletionReport"] --> ER["EvaluationRun"] --> EV["Evidence"] --> AD["AcceptanceDecision"] --> PR["PullRequest"] --> R["Release"] --> PO["ProductionOutcome"] --> IP["ImprovementProposal"]
-    IP -.->|governed promotion| AB
-```
+| Stage | Enters | Leaves | Governing decision | Required evidence |
+| --- | --- | --- | --- | --- |
+| **1. Intent** | Request, standing constraints, repository facts | Immutable Mission Spec or clarification | Human confirms outcome and material ambiguity | Requirement IDs, criteria, scope, risk, spec-quality result |
+| **2. Plan** | Approved intent and capability catalog | Approved Plan, Quality Contract, governed work graph | Human approves one exact Plan revision | Traceability, dependencies, budget, verification strategy |
+| **3. Define Agent** | Released work and eligible capabilities | Frozen execution manifest under a Factory Version | Policy admits an eligible binding; humans approve material exceptions | Exact versions, grants, context policy, route rationale, digest |
+| **4. Execute through Harness** | Manifest, task, environment, credentials | Immutable Candidate and truthful completion state | Harness permits each action and controls continuation | Attempt events, tool receipts, cost, checkpoints, artifact digest |
+| **5. Apply Skills** | Eligible skill bindings | Applied method and skill usage record | Registry and policy permit exact versions | Skill version, owner, evaluation status, use trace |
+| **6. Evaluate** | Candidate, frozen criteria, lineage | Quality Gate decision and evidence bundle | Independent checks determine eligibility, not acceptance | Criterion-linked, current, digest-bound evidence |
+| **7. Improve** | Evaluation, human edits, production and cost signals | Improvement Candidate and promotion decision | Humans or explicit policy promote only after comparison and gates | Baseline, experiment, segmentation, security result, rollback path |
+| **8. Deliver Software** | Eligible Candidate and current evidence | Authorized release and observed outcome | Human or explicit policy authorizes progression by risk | Decision record, exact-current gate, rollout and production receipts |
 
-Every stage of the one-line factory has a contract: what it consumes, what it produces, and what it may never imply.
-
-| Stage | Primary question | Required input | Authoritative output and exit condition |
-| --- | --- | --- | --- |
-| Intent | What outcome does the builder need, and why? | Builder request, product context, constraints, accountable owner | Governed objective with scope, risk, success measures, unresolved questions |
-| Plan | How can the outcome be achieved and proven? | Approved intent, repository/system facts | Versioned Plan with tasks, dependencies, acceptance criteria, verification, recovery, estimates |
-| Define Agent | Which governed executor configuration may perform each task? | Approved Plan, Factory Configuration, policy, capability catalog | Frozen agent/skill/model/tool/context bindings and escalation contract |
-| Execute through Harness | How is authorized work performed safely and durably? | Execution manifest, preflight approval | Artifacts, events, checkpoints, tool receipts, completion report, unresolved findings |
-| Apply Skills | Which reusable method should shape execution? | Task type, approved skill catalog, agent definition | Versioned skill bindings whose instructions and tools are in the manifest |
-| Evaluate | Did the exact artifact satisfy intent and criteria through an acceptable trajectory? | Frozen criteria, exact artifact, execution lineage | Independent evidence, failures, uncertainty, eligibility recommendation |
-| Improve | What should change for future runs? | Evaluation, human feedback, incidents, cost, production outcomes | Versioned proposal, experiment, promotion or rejection, rollback record |
-| Deliver Software | May this artifact advance, and did it create the intended outcome? | Accepted change, evidence, approvals, provenance, release policy | Review, merge, deployment, observation, rollback readiness, validated outcome |
-
-"Primary" is not exclusive: a product owner may refine intent with an agent, a deterministic planner may handle a known workflow, a human may execute. The contract matters more than the actor.
-
-**Intent** captures the outcome, not the prompt: problem and desired outcome; accountable owner and affected personas; repository, service, environment, and tenant scope; functional and non-functional constraints; risk, reversibility, deadline, budget; success measures and observation window; assumptions, ambiguity, and questions needing human judgment. It exits only when the factory can say what success means and which uncertainty is acceptable; when consequential ambiguity remains, the right result is clarification, not confident decomposition. **Plan** turns intent into tasks, dependencies, ordering, parallelism, expected artifacts, acceptance criteria, validation methods, rollout, rollback, and recovery. Planning is not authority to execute; material revisions create a new version, invalidate downstream bindings, and need impact analysis; dynamic replanning is legitimate only within granted bounds and cannot widen scope, weaken criteria, or add authority. Prefer deterministic workflows for stable, well-specified work; agentic complexity is justified by uncertainty, not novelty.
-
-**Define Agent** binds an **Agent Definition**, a versioned configuration rather than a model name, declaring at minimum role, objective, instructions, capabilities, eligible models, tools, skills, context policy, permissions, budgets, stop conditions, escalation, success criteria, and evaluation policy, and compiles an immutable **execution manifest** naming exact versions of agent, instructions, skills, model-routing policy, tool grants, MCP servers, context package, memory snapshot, policy, budget, and sandbox profile. Keep four things apart: Agent Definition (configured behavior), agent identity (which versioned behavior produced an action), runtime principal (which authenticated process is calling), and credential or authority (which scoped action it may perform). A definition must never become a reusable bearer of broad credentials, and where deterministic automation serves better, the correct binding is no model-driven agent at all.
-
-**Execute through Harness** turns the manifest into bounded work. The harness owns preflight policy, readiness, and capability checks; model routing and fallback within eligibility; sandbox lifecycle, filesystem and network boundaries, secret brokering; context assembly, compaction, refresh; atomic tool execution and schema validation; durable Tasks, Attempts, leases, heartbeats, checkpoints; time, token, cost, concurrency, retry, and action budgets; pause, cancel, quarantine, kill switch, human escalation; structured events, traces, artifacts, audit receipts; and reconciliation after partial or ambiguous external effects. The inner loop stays simple, **Understand → Plan → Act → Observe → Evaluate → Adjust**, and ends through an explicit completion contract: a report stating `succeeded`, `partial`, `blocked`, `failed`, or `cancelled`, summarizing the work, identifying exact artifacts, mapping results to criteria, recording unresolved findings, and naming any required human action. Runtime completion still does not accept the WorkOrder. Tools are narrow, composable primitives; the model chooses how to use them, deterministic code enforces identity, policy, validation, state transitions, and irreversible boundaries.
-
-**Apply Skills** uses a **skill**, a reusable versioned method for a class of tasks packaging instructions, decision criteria, examples, required context, and tool-use patterns; it is not a tool, credential, policy exception, or proof of quality. Its lifecycle: discover eligible skills from task intent and Agent Definition; filter by owner, version, scope, security classification, and evaluation; bind exact versions into the manifest; load only relevant content; observe usage and outcomes; evaluate before promotion or retirement. A skill may teach an agent how to deploy; the deployment tool and policy gate still own the authority, and skill text and tool or MCP output are untrusted inputs unless provenance says otherwise.
-
-**Evaluate** asks two questions: **artifact evaluation** (is the exact change correct, secure, useful, maintainable, aligned with criteria?) and **trajectory evaluation** (did the run use permitted context, tools, authority, budgets, and recovery behavior without hiding material failure?). Use deterministic checks wherever possible (compilation, tests, linters, scanners, policy engines, schema validation, provenance verification, reproducible environments) and calibrated model-based evaluators where judgment is needed. Evidence binds verifier and method to exact criteria, artifact digest, environment, time, and result; missing, stale, contradictory, or failed evidence stays visible; the agent that produced the work cannot accept it.
-
-**Improve** is a separate change-management loop for the factory: **Observe → Curate Dataset → Cluster Failure → Propose Candidate → Compare with Baseline → Review → Canary → Promote or Roll Back**. Observation, clustering, proposal, and experimentation can be automated; promotion stays governed and the previous version stays recoverable; improvement need not block delivery of the current artifact unless evaluation found a defect or control gap. **Deliver Software** keeps its states apart: **Review-ready → Approved → Merged → Release eligible → Deployed → Technically verified → Outcome observed → Accepted or Corrective Work**. The factory may delegate build and deployment mechanics to existing CI/CD while retaining policy, evidence, approval, lineage, and reconciliation; progressive rollout, feature flags, canaries, health gates, kill switches, rollback, and post-deployment observation are part of the contract. A pull request is a review artifact and a deployment a technical event; neither proves the customer outcome.
-
-Mission Control's own lifecycle uses twelve states, intake, clarification, investigation, planning, plan approval, execution, automated validation, human review, deployment, production verification, observation, and learning and closure, each with entry criteria, exit criteria, owner, required evidence, allowed tools, approval conditions, and failure and escalation paths. That is quality engineering applied to agents: reliable delivery comes from controlled transitions, not from capability alone.
-
-Eight invariants hold across stages: every Task and artifact traces to approved intent and criteria; every Attempt freezes its agent, skill, model-routing, context, tool, policy, budget, and environment versions; authority is explicit, least-privilege, time-bounded, revocable; agent, runtime principal, credential, and accountable human stay distinct; runtime completion, independent evidence, acceptance, and delivery are separate transitions; retries create attributable Attempts and idempotency plus reconciliation prevent duplicate external effects; consequential actions produce evidence under risk-proportional human authority; and factory improvements follow the same specification, evaluation, promotion, versioning, and rollback discipline as customer software.
-
-The record spine in the diagram is the minimum. The full hierarchy is `Company → Workspace → Repository → Factory Configuration → Mission → Approved Plan → WorkOrder → Task → Attempt → Evidence → Pull Request → Release`; the delivery chain is `Mission → WorkOrder → Task → Attempt → Evidence → Pull Request → Release`. A Mission states the governed outcome; a Plan is a versioned execution contract whose approval authorizes exact work but neither dispatches an agent nor approves a merge; a WorkOrder is a bounded unit of authority and acceptance; Tasks organize execution; Attempts preserve each immutable try; Evidence supports or refutes criteria; pull requests and releases stay distinct governed outcomes. This prevents **optimistic state propagation**: a successful Attempt does not accept a Task, a completed Task does not accept a WorkOrder, a merged pull request does not prove production value. Names may vary; the invariant is that authority, work, evidence, decisions, delivery, outcomes, and learning are never reconstructed from chat transcripts or telemetry. [Chapter 5](../02-design/05-authoritative-records.md) defines every record.
-
-| Stage | Leading measures | Failure signal |
-| --- | --- | --- |
-| Intent | clarification rate, criterion completeness, time to accepted intent | downstream rework from misunderstood goals |
-| Plan | plan-assurance pass rate, dependency accuracy, estimate calibration | material replan after execution begins |
-| Define Agent | eligible-binding rate, policy denials, configuration drift | execution with stale or unauthorized components |
-| Execute | retry-free completion, blocked/partial rate, recovery time, cost | duplicate effects, runaway loops, silent stalls |
-| Apply Skills | selection precision, outcome lift, version adoption | skill adds cost or failure without quality gain |
-| Evaluate | criterion coverage, escape rate, validator disagreement, freshness | accepted artifact later contradicted by known evidence |
-| Improve | experiment cycle time, promotion quality, rollback frequency | candidate regression or unauthorized self-promotion |
-| Deliver | PR acceptance, lead time, change failure, rollback, outcome attainment | technically healthy release with failed customer outcome |
-
-Optimize the whole stream; cutting token cost while raising human correction or change failure is not progress.
+Each row has one boundary. Lower-level completion cannot imply higher-level success. If the evidence for a transition is missing, stale, or attached to a different artifact, the transition does not occur.
 
 ### Five platform commitments
 
-Five commitments tie stack and lifecycle to a product. **Builder intent becomes the interface**: start with the outcome a builder wants, not the agent topology; developers first, then product managers, quality engineers, designers, security engineers, and other builders, each expressing intent, constraints, criteria, and risk through a surface suited to their work without understanding the model, agent, tool, or orchestration underneath. **Models become interchangeable execution resources**: they sit behind a governed gateway, routing is model-independent and based on required capability, measured quality, cost, latency, context window, security and data policy, availability, historical task performance, and fallback behavior; a provider name is never the architecture. **The harness, not the model, creates production reliability**: models reason and propose; the harness owns tools, state, permissions, recovery, stop conditions, sandboxing, execution control, observability, time, and budget. **Agents do not certify their own work**: completion requires independent verification, deterministic checks, trajectory evaluation, and baseline comparison, with human authority for consequential actions, and both artifact and path are evaluated. **Learning is automated; promotion is governed**: production signals may build datasets, cluster failures, and propose changes to prompts, skills, tools, routes, or policies, but a candidate becomes the default only after evaluation, baseline comparison, risk-appropriate approval, controlled rollout, and retained rollback.
+These are **design principles** that keep both canonical models honest:
 
-| Persona | Intent they express | Evidence they need back |
-| --- | --- | --- |
-| Developer | Implement, debug, refactor, test, or review a bounded change | Diff, tests, diagnostics, decisions, unresolved risk, review-ready PR |
-| Product manager | Deliver an outcome within scope, policy, and time | Criteria coverage, product behavior, tradeoffs, release state, outcome measures |
-| Quality engineer | Prove behavior, failure handling, regression safety | Independent test results, risk and criteria coverage, reproducible evidence |
-| Designer | Change an experience within system and accessibility constraints | Visual and interaction evidence, state coverage, accessibility checks, fidelity |
-| Security or platform engineer | Enforce a control, integration, or paved path | Policy decisions, identity and provenance, denial evidence, adoption, reliability |
-
-Every builder surface shows lifecycle state, approvals, failures, recovery actions, costs, and evidence, and hides internal agent complexity unless it helps the builder decide.
+1. Builder intent is the interface; builders should not need to understand the underlying model or harness.
+2. Models are replaceable capabilities, not workflow architecture.
+3. The harness creates reliability around probabilistic reasoning.
+4. Producers do not certify their own work; trust comes from independent evidence.
+5. Learning may be automated, but promotion is governed and reversible.
 
 ### The capability model
 
-The capability taxonomy groups what a factory must do into seven areas, and the book's parts map onto them. **Intent and planning** (intent recognition and goal interpretation, task decomposition and definition, planning and dependency mapping, acceptance criteria, constraint identification, agent routing, dynamic replanning) is [Chapter 6](../02-design/06-intent-and-specification-engineering.md). **Agent definitions** (role, instructions, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, success criteria; configuration and provenance, never a credential) is [Chapter 10](../03-build/10-the-agent-factory.md). The **agent harness** (runtime, execution loop, model abstraction and routing, context and context-window management, tools and MCP, state, memory, sandboxes, guardrails, human-in-the-loop, observability, error recovery, orchestration) spans [Chapters 11–18](../03-build/11-control-plane-orchestrator-and-execution-plane.md). The **skills framework** (coding, testing, debugging, deployment, security, repository, organization-specific, and workflow skills; tool composition, versioning, discovery, evaluation, staged rollout, retirement) is in [Chapters 10](../03-build/10-the-agent-factory.md) and [18](../03-build/18-agent-and-loop-engineering.md). **Evaluation** (task completion, intent alignment, correctness, code quality, functional behavior, security, policy compliance, regression, LLM-as-judge, deterministic evals, quality metrics, evaluation datasets, production evals) is Part IV. **Feedback and self-improvement** (failure and root-cause analysis, feedback loop, strategy, skill, context, prompt, and tool optimization, eval-driven development, learning from success, regression detection, experimentation and A/B testing, continuous improvement) is Part VI. **Software delivery** (repository, branching, pull requests, code review, CI/CD, unit, integration, and end-to-end testing, static analysis, build verification, verification gates, artifact management, deployment, rollback, release management, production validation, observability) is [Chapter 25](../04-prove/25-cicd-progressive-delivery-and-production-verification.md). A passing agent run is not a release decision.
+This is a **reference model** for implementation depth. The detailed stack—compute, environments, inner and outer harnesses, orchestration, tools, context, models, evidence, security, control plane, delivery, and learning—belongs in the owning chapters and [Chapter 19](../03-build/19-the-12-layer-production-ai-agent-stack.md). Use it to inventory components after the orientation models are understood, not to teach a third top-level architecture.
 
 ### What the rest of the book expands
 
-The reference architecture behind the system map has eighteen components, each with an owned responsibility and a critical evidence or control: builder surfaces, intent and planning, agent definitions, model gateway and router, context and memory, tools and MCP, skills, harness and runtime, execution sandbox, state and recovery, evaluation, feedback and learning, policy engine, observability (which explains behavior without becoming authority), human approvals, deployment, multi-tenancy, and adoption and versioning. Each later chapter opens with its component's evidence contract; together they are the table of contents for Parts III–V.
+The six-part journey follows the work of making the two models real: **Understand** establishes trust and roles; **Design** defines records, intent, governance, and economics; **Build** implements capabilities and execution; **Prove** establishes independent evidence and security; **Operate** makes the factory reliable and adoptable; **Improve** closes the governed learning loop.
 
-Five previews so the shape is visible now. The **model router** removes candidates that violate capability, security, availability, or quality requirements, then ranks the rest by measured task performance, latency, and total cost; fallback may relax cost or latency but never capability, security, or policy; the routing unit is the complete agent configuration, not the model ([Chapter 17](../03-build/17-models-routing-and-capability-selection.md)). **Harness reliability controls** (classified and capped retries, durable checkpoints, idempotency keys and leases, permission and tenant boundaries, budgets across time, tokens, tools, compute, concurrency, and money, stop conditions and runaway-loop detection, kill switches from provider scope to global, risk-based approval gates, separate execution and publication identities, reconciliation, immutable evidence) must cover production-agent failure, security incidents, reliability regression, model degradation, tool misuse, cost explosion, prompt injection, unauthorized access, failed deployments, evaluation regression, and provider outages ([Chapters 11–12](../03-build/12-durable-execution.md)). The **incident playbook** is one sequence for every incident class, **Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure**, rehearsed for prompt injection, malicious repository content, secret exfiltration, tool poisoning, privilege escalation, unauthorized file changes, sandbox escape, approval bypass, supply-chain compromise, cross-tenant leakage, and runaway spend, under one security thesis: an agent receives the minimum context, tools, permissions, time, and budget the task requires, and every consequential action produces evidence ([Chapters 26](../04-prove/26-security.md) and [29](../05-operate/29-resilience-incidents-and-the-control-tower.md)). The **learning system** is an evidence pipeline with a governed release process whose records are `ExecutionOutcome`, `DatasetVersion`, `FailureCluster`, `ImprovementProposal`, `EvaluationRun`, `PromotionDecision`, and `RollbackRecord`; promotion needs a representative sample, no critical security or policy regression, quality floors, acceptable human correction, bounded cost and latency, an approved rollback, and proportional authority; reward- or preference-learning specialists receive governed dataset versions and experiment manifests, never raw traces ([Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md)). The **adoption model** starts with developers and one valuable, repeatable, reversible workflow, expands to other builders once intent, evidence, and authority contracts are stable, and runs on design partners, forward-deployed engineers, internal champions, weekly usage and reliability reviews, controlled release experiments, paved paths with migration support, versioned contracts with deprecation windows, internal go-to-market, and dashboards segmented by organization, persona, workflow, risk tier, and version; its **platform metrics** (time to first successful workflow, task and criterion success, PR acceptance, human correction and override rate, routing quality and fallback, cost per accepted outcome, reliability and SLOs, repeat usage, time to onboard a team, bespoke capabilities retired, builder satisfaction and review burden, adoption across organizations) sit beside Chapter 1's three outcome measures, always segmented by workflow, risk, repository, version, and cohort ([Chapters 8](../02-design/08-economics-metrics-and-human-attention.md), [27](../05-operate/27-the-factory-as-a-platform.md), [31](../05-operate/31-enterprise-adoption-and-the-infrastructure-landscape.md)). Building it needs coordinated ownership across harness and Agent Definitions, skills and tools, context and memory, evaluation and learning, infrastructure and observability, deployment and operations, model independence and token economics, security and human oversight, principal machine-learning engineering, forward-deployed engineering, and leadership for build-versus-buy and progressive autonomy. The objective is never the number of agents or components; it is a simple, trustworthy builder experience backed by explicit execution control, independent evidence, and governed improvement.
+### One change through both models
+
+Consider a production authorization defect: some users can view records outside their organization. A developer reports the defect and asks for a fix. The example is deliberately ordinary. A factory proves its value through disciplined handling of consequential work, not through theatrical autonomy.
+
+At **Intent**, the builder states the affected behavior, tenant-isolation requirement, known scope, non-goals, and expected outcome. Security policy sets a high-risk floor. An agent may investigate affected endpoints and propose criteria, but a human confirms the scope and the unacceptable behaviors. The resulting Mission Spec identifies the exact isolation properties the fix must preserve.
+
+At **Plan**, an agent traces authorization checks, data access paths, caches, tests, and deployment dependencies. It proposes bounded WorkOrders for the code change, regression coverage, security review, and rollout. The Quality Contract requires both positive and negative tenant-isolation tests, policy checks, and production monitoring. A security owner approves one exact Plan revision; that approval releases work but does not start a worker.
+
+At **Define Agent**, policy filters the capability catalog. Any route that cannot handle the data classification, required tools, repository scope, or independent security checks is ineligible. The system resolves exact Agent Definition, model, skill, context, sandbox, and verifier versions, then freezes the manifest. A cheaper model is irrelevant if it cannot satisfy the contract.
+
+At **Execute through Harness**, the admitted worker operates in an isolated worktree with scoped credentials and path permissions. The model may reason about the defect and propose edits; the harness controls tool calls, budget, state, retry, and stopping. If a test environment fails, the Attempt records a blocked or failed state. It does not claim success because the diff looks plausible.
+
+At **Apply Skills**, the Attempt loads the approved tenant-isolation and secure-review methods. Those skills supply organization-specific checks and examples but cannot grant access to production data or widen the code scope. Their exact versions become part of the Candidate’s lineage.
+
+At **Evaluate**, an independent verifier checks build and tests, the intended cross-tenant denial behavior, unaffected authorized access, policy compliance, and the exact Candidate digest. A producer-authored summary may help a reviewer navigate the change, but it is not proof. Missing negative tests or stale evidence block eligibility.
+
+At **Improve**, the factory records what this defect revealed. Perhaps a recurring authorization pattern should become a static rule, a missing negative test should enter the golden set, or the security skill needs a candidate revision. Those proposals are evaluated separately and can affect future Factory Versions only after promotion. They do not alter the active fix.
+
+At **Deliver Software**, the security owner receives a decision packet with the requested outcome, diff, risk, evidence, gaps, rollout, and rollback. The exact-current gate closes if the pull-request head changes. After approval, the existing delivery system performs a limited rollout and production verification. Only observed tenant isolation and healthy authorized traffic establish the outcome.
+
+The six areas explain who made this possible. **Intent** owned the isolation contract and Plan. **Capability** and **Model** supplied eligible, versioned behavior. **Harness** bounded execution and preserved its history. **Trust** enforced security policy and independent proof. **Learning** turned the incident into a safer future version. Adoption surrounded the work: the developer used one paved flow instead of assembling these controls manually.
+
+This is how the two models should be used together. Walk the stages to explain what happens next. Use the areas to find the responsible subsystem, owner, and canonical chapter. If a design discussion introduces a third top-level picture, ask which of these two questions it answers and label it as a narrower lens.
 
 ## How to build it
 
-Draw your own system map before choosing any product, with every canonical layer assigned to a component you build, buy, or bring and every interface named with its contract. Then run the design review that applies to the platform and to its learning system:
+Start with one corridor, not a platform catalog. Choose a workflow whose outcome matters, repeats often, has clear acceptance criteria, and can be reversed safely. Then draw the eight stages and write one accountable owner, durable record, governing decision, and required evidence for every transition.
 
-1. **Requirements:** which builder outcome, risk boundary, success condition, and non-goal does the design serve?
-2. **Scale:** how many builders, teams, tenants, repositories, runs, tools, events, artifacts, providers?
-3. **APIs:** which commands request work, which events report facts, which service owns each authoritative mutation?
-4. **Data model:** identities, versions, scopes, state machines, lineage, retention, idempotency keys.
-5. **Reliability:** how it retries, resumes, reconciles, degrades, stops, and recovers without duplicate or unauthorized effects.
-6. **Security:** identity, least privilege, secrets, untrusted context, tenant isolation, provenance, audit, human authority.
-7. **Tradeoffs:** complexity, latency, cost, lock-in, operator burden.
-8. **Build, adopt, or partner:** which capability is differentiating control logic, which is commodity, which needs a specialist.
-9. **Rollout:** narrow first corridor, baseline, shadow period, canary, promotion gate, migration path, rollback.
-10. **Metrics:** which outcome, quality, reliability, adoption, and economics measures prove it works.
+Next, map each required capability into the six areas. Assign an authoritative source of truth and an explicit interface. Mark what is implemented now, what is partial, and what is future. Identify where human authority enters, where policy is enforced, where untrusted content enters, where side effects occur, and how a failed or cancelled Attempt recovers without duplicating them.
 
-Run the product review beside it: customer discovery and builder personas; complete flows with loading, empty, error, success, approval, and recovery states; a roadmap that picks the smallest capability closing the highest-value or highest-risk gap; adoption and internal go-to-market; a path from builder feedback and production outcomes to traceable proposals; and success measures with baseline, target, cohort, window, quality floor, economics threshold, and rollback trigger. Retire bespoke capabilities only after the paved path meets the use case with a supported migration.
+For an initial production corridor:
 
-Then prove one corridor. The golden path Mission Control was designed around:
+1. Record the outcome, reason, constraints, scope, risk, and measurable criteria.
+2. Investigate the actual repository and expose material uncertainty.
+3. Produce a versioned Plan with bounded WorkOrders and a verification strategy.
+4. Have a human approve that exact Plan revision.
+5. Resolve eligible, evaluated capability versions and freeze the manifest.
+6. Execute in an isolated environment with scoped credentials, durable state, budgets, and reasoned retry.
+7. Verify the exact Candidate independently against every required criterion.
+8. Present the decision owner with the change, risks, missing evidence, lineage, and rollback path.
+9. Deliver through the existing source-control and CI/CD systems.
+10. Observe the production outcome and turn findings into governed improvement proposals.
 
-1. A human records the outcome, business reason, constraints, risk, and measurable acceptance criteria.
-2. An agent researches the selected repository and identifies uncertainty.
-3. The factory creates a versioned Plan with WorkOrder boundaries and validation assertions.
-4. A human approves the exact Plan version.
-5. The control plane performs policy and capability preflight.
-6. Authorized Tasks execute through immutable Attempts in isolated worktrees.
-7. Failures are classified; retries require a new hypothesis and stay bounded.
-8. Independent validators evaluate the frozen criteria against exact artifacts.
-9. The control plane assembles changes, decisions, risks, evidence, and lineage.
-10. A human approves, rejects, or requests revision. Merge remains a separate decision.
+Review the corridor in three passes. The product pass asks whether the builder can understand status, recover from failure, and make the required decision without learning platform internals. The architecture pass asks whether ownership, state, authorization, idempotency, currentness, and failure behavior are explicit. The operating pass asks whether alerts, evidence, cost, rollback, and human attention scale when volume rises.
 
-Make the first demonstration small; Mission Control's was adding a required Business Justification field to Mission creation, chosen to exercise the system rather than showcase a feature. Expand toward deployment and outcome-based improvement only after the corridor is reliable, observable, secure, and accepted by builders.
+Do not expand until the corridor is reliable, observable, secure, and used. More agents, models, or orchestration cannot compensate for an unclear contract.
 
 ## Failure modes
 
-**Product boundaries mistaken for authority boundaries.** A team buys a vertical stack and assumes its permission model is the factory's governance. Detect it when nobody can say which component decides an Attempt is authorized. Fix it by assigning every canonical layer an owner and keeping authority in the control plane regardless of what executes.
+**A mnemonic mistaken for a call graph.** A team implements each stage as a service and passes optimistic status between them. Keep the stages as outcome boundaries. Choose component boundaries from ownership, failure isolation, scale, and security.
 
-**The mnemonic read as a call graph.** Skills become a service, improvement mutates the running agent, "deliver" means "open a pull request." Detect it as records that cannot say which stage they belong to. Fix it with the stage contracts and record spine.
+**Product boundaries mistaken for authority boundaries.** A purchased runtime or harness becomes the policy source because it happens to expose permissions. Keep authority in the governed control plane and broker only scoped grants to execution.
 
-**Optimistic state propagation.** A successful Attempt is shown as an accepted Task, a merged PR as delivered value. Detect it as dashboards with fewer states than the lifecycle. Fix it by giving each transition its own record, evidence, and owner.
+**Optimistic state propagation.** A successful Attempt appears as accepted work, or a merged pull request appears as delivered value. Preserve separate records for execution, verification, acceptance, merge, release, and production outcome.
 
-**Lowest-common-denominator adapters.** An abstraction across harnesses that drops hooks, cancellation, provenance, or tool events. Detect it as an operator who cannot see why a session stopped. Fix it by treating each interface as a versioned product proven by behavioral tests.
+**Lowest-common-denominator integration.** A shared adapter drops cancellation, provenance, tool events, or recovery semantics. Qualify each backend behaviorally and expose consequential differences to policy and operators.
 
-**Owning nothing, or everything.** Buying the whole stack concentrates assumptions in one vendor; building it all rebuilds commodity compute and harnesses. Detect it as an inability to replace a failing layer, or a platform team drowning in undifferentiated work. Fix it with per-layer decisions and composition over inheritance.
+**Multi-agent by default.** Every task receives a crew, increasing cost and coordination without increasing accepted outcomes. Start with the simplest executor that satisfies the contract; add another agent only at a real permission, context, capability, parallelism, or independence boundary.
 
-**Specialization by taste.** Atomic tools raise composability but multiply policy decisions; domain tools cut cost for mature workflows but can hide authority or fuse implementation, approval, and certification; long-running loops add adaptability at the price of latency, cost, and failure surface. Add specialization only after repeated evidence shows the primitive path too costly or inconsistent, and use conventional software for known deterministic transformations.
-
-**Multi-agent by default.** Every WorkOrder gets a crew. Detect it as cost per accepted outcome rising faster than acceptance. A simple job should use the simplest executor that satisfies its contract.
-
-**Six areas, no adoption.** The platform is architecturally complete and used by the team that built it. Detect it as trusted throughput that does not rise when capability does. Treat adoption and transformation as the surrounding concern from the first design review, not as a rollout phase after the build.
+**Architecture without adoption.** The six areas are technically complete, but the workflow is slower or less trustworthy than existing practice. Measure trusted throughput and review burden, design every state, and make the paved road the easiest path.
 
 ## In Mission Control
 
-At commit [`8014d5a`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c) Mission Control's V1 promise was deliberately narrow: a human defines an outcome, approves a plan, permits governed execution, and receives a validated, review-ready pull request. Its layers were a React, TypeScript, and Vite operator interface (intent capture, approvals, exceptions, evidence, review); Convex as the authoritative control plane (durable domain state, queries, mutations, actions, authorization, audit); a Hono on Node.js orchestration service (long-running coordination, runtime integration, external control boundaries); a workflow executor with adapters as the execution runtime (bounded Tasks, Attempts, tools, worktrees, receipts); and Git worktrees with GitHub integration as the repository boundary (isolated changes, commits, pull requests, lineage). Doctrine: Convex is the single source of truth, the Hono service must not create a competing state store, and the React UI is an operator surface rather than the authority boundary, so server-owned commands enforce policy regardless of caller. Contracts covered Missions, versioned plans, WorkOrders, workflow runs, approval decisions, verification receipts, immutable lifecycle history, explicit acceptance rules, and separate worker and validator roles; missing, failed, stale, or unknown evidence blocks acceptance. None of that proves the V1 promise; the strongest proof remains a browser-operated golden path against a real repository with failure, recovery, independent validation, exact GitHub lineage, and a complete review package. Autonomy was scoped: factory, Mission, WorkOrder, policy, and trust assessment may each impose a ceiling, effective authority is the lowest, a more capable model cannot raise it, promotion needs sustained evidence and an explicit human decision, demotion may be automatic, Level 2 Delegated Execution comes before Level 3 Governed Autonomy, and the Trust Score is an eligibility signal shown in bands, never an authorization grant; policy always wins ([Chapter 3](./03-first-principles-trust-evidence-and-authority.md)).
+Mission Control is evidence for a control-plane boundary, not proof that the whole factory is complete. At commit [`8014d5a`](https://github.com/jaydubya818/MissionControl/tree/8014d5af427b43ff5c5a63cfdf82ec92742c208c), the V1 promise was intentionally narrow: a human defines an outcome, approves a Plan, permits governed execution, and receives a validated, review-ready pull request. React provides the operator surface, Convex owns authoritative domain state and policy-enforced commands, a Hono service coordinates long-running work, execution adapters invoke bounded workers, and Git worktrees plus GitHub preserve repository isolation and lineage.
 
-At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6) the control-plane and execution-plane doctrine is clear, provider-neutral harness lifecycle contracts describe execution through capability manifests and structured results, and the implementation carries versioned agent records, skill discovery and linting, model routes, context packages, sandbox profiles, evaluation mechanisms, and exact model-route, harness, sandbox, worker, and Factory Version admission. Those resemble parts of an Agent Factory, but no canonical Agent Factory boundary with unified publication, admission, compatibility, deprecation, and revocation exists yet, and exact skill-version binding in the manifest remained incomplete. The production execution path was blocked by operator configuration, so architecture and local qualification support the boundary model without proving a live, fleet-scale composed stack. The stated direction (consuming Agent Factory capabilities through versioned manifests, admitting complete stack combinations proven by contract tests, showing operators why a stack was selected, which layer failed, which substitutions remain eligible, and whether a fallback changes security, quality, cost, or evidence, and gating production on live canaries for cancellation, restart, tool events, environment identity, teardown, publication separation, and independent verification) is direction, not current capability.
+The important doctrine is implemented in the design: the UI is not the authority boundary; execution, verification, acceptance, publication, and merge are distinct; missing or stale evidence blocks progression; and effective autonomy is the lowest ceiling imposed by factory, Mission, WorkOrder, policy, and trust assessment. A more capable model cannot raise its own authority.
+
+At study commit [`d902fae`](https://github.com/jaydubya818/MissionControl/tree/d902fae7032c0696b531c44ae88829c652516fc6), Mission Control also contains versioned agent records, model routes, context packages, harness manifests, sandbox profiles, evaluation mechanisms, and admission checks for exact stack bindings. Those are substantial pieces of the six-area architecture.
+
+The boundary remains explicit. A unified Agent Factory lifecycle across every capability type is incomplete. Exact skill-version binding is partial. The studied production execution path was blocked by operator configuration, and fleet-scale operation was not demonstrated. The proven golden path ends at a review-ready pull request; complete deployment reconciliation and customer-outcome confirmation remain partial or future. The [implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md) is the canonical evidence source.
 
 ## Retain this
 
-- Three definitions: the Agent Factory supplies reusable capabilities; the AI Software Factory turns governed intent into validated value using them; Mission Control is one control plane and a case study, not the definition.
-- The one-line factory is a value stream, not a call graph: skills are frozen before and applied during execution; improvement changes future versions only through governed promotion; delivery ends at observed outcome.
-- The system map has a downward path that delegates bounded capability and an upward path that reports observations; neither lets an executor mint authority or certify its own work.
-- Name each layer by what it owns and what it does not prove; a product boundary is a commercial choice, an authority boundary is a safety choice.
-- The stack is compute, development environment, inner harness, outer harness, control plane; decide build, buy, or bring per layer, prefer composition over inheritance, and treat every interface as a versioned product proven by behavioral tests.
-- Mission Control's seven layers are intent, planning, execution, validation, governance, human decision, and learning; the whiteboard version is five bands with humans at five decision points.
-- Every stage has a contract, every transition has a record, and lower-level completion never accepts a higher-level outcome.
-- The five commitments: builder intent is the interface; models are interchangeable; the harness makes reliability; agents do not certify their own work; learning is automated and promotion is governed.
-- Five systems, five verbs — plus the harness inside the runtime: the Agent Factory creates, the runtime executes, the harness controls, knowledge grounds, the Software Factory delivers, the control plane governs. Use the lightest orchestration that satisfies the workflow; choose language per subsystem.
-- The master whiteboard has four bands (understand and structure; intelligence and execution; trust and delivery; learn) and its controls are cross-cutting, never a final box.
-- The model is a component; the factory is the system. The model does not own the workflow; the platform does. Trust the system, not the model.
-- Six architectural areas (intent, harness, capability, model, trust, learning) and fourteen owned layers; the platform centralises undifferentiated, risky capability and domain teams federate their workflows.
-- Memory hooks: Intent → Plan → Route → Execute → Verify → Deliver → Learn; Understand → Plan → Execute → Equip → Ground → Route → Verify → Learn → Protect → Scale.
-- The mental model in one breath: Intent → Harness → Capability → Model → Trust → Learning, surrounded by adoption and transformation, optimised for trusted throughput (accepted, verified outcomes per unit of time and cost).
-- The second definition: a governed system of reusable skills and continuously operated loops that performs a meaningful portion of the lifecycle while humans focus on intent, standards, exceptions, verification, and improving the factory. A skill is executable organisational knowledge; a loop is automation that watches itself.
-- Four modes (traditional, agent-assisted, agentic, factory) on one continuum: AI assistance → skills → automation → loops → connected loops → factory. The share done by loops rises; it never has to reach everything.
-- The lifecycle above the areas is SIGNAL → INTENT → FACTORY → OUTCOME → LEARNING, and around again; the factory's boundary is signal-to-outcome, not ticket-to-code, and the data model and control plane sit beneath every transition.
-- Three cross-cutting concerns: the control plane governs, the context plane knows, factory engineering builds and improves the loops.
-- The factory-native SDLC runs three loops at three speeds: inner for autonomy, outer for trust, meta for improvement.
-- The agent is not the factory; the factory is the system around the agent.
+- Use two orientation models: the eight-stage value stream explains how work progresses; the six-area architecture explains where responsibility lives.
+- The stages are outcome boundaries, not eight serial services: intent, plan, define agent, execute through harness, apply skills, evaluate, improve, deliver software.
+- The six areas are Intent, Harness, Capability, Model, Trust, and Learning, surrounded by adoption. Human authority and deterministic controls cross all six.
+- Execution never proves correctness or grants acceptance. Candidate, evidence, decision, release, and observed outcome remain separate, linked records.
+- The Agent Factory creates reusable capabilities; the software factory uses them; Mission Control is one control-plane implementation and case study.
+- The agent is a worker, not the factory. Optimize for trusted outcomes and human attention, not generated code, agent count, or token volume.
 
 ## Go deeper
 
-- [Chapter 3](./03-first-principles-trust-evidence-and-authority.md) for autonomy levels and trust; [Chapter 5](../02-design/05-authoritative-records.md) for the record spine in full; [Chapter 10](../03-build/10-the-agent-factory.md), [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md), [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md), and [Chapter 14](../03-build/14-development-environments-sandboxes-and-compute.md) for each layer of the stack; [Chapter 19](../03-build/19-the-12-layer-production-ai-agent-stack.md) for the AI-engineering cut of the same system.
-- [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), [implementation maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), and [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md); [Appendix F](../appendix/architecture-communication.md) for executive versions of this chapter's diagrams; the [glossary](../appendix/glossary.md) for the canonical terms (AI Software Factory, Agentic Builders Experience, model-independent, Agent Harness, Agent Definition, Execution Loop, Tool Integration, Context Management, Control Mechanism, Execution Environment, Evaluation System, Feedback System, Self-improvement, Skills Framework, Autonomous Agent, Builder Intent, Task Decomposition, Build vs. Buy, Agentic Standards).
-- Sources: Jay West, *AI Software Factory Mission* (seven layers, twelve-state lifecycle); *AI Software Factory Study Guide*, chapter 24 (five-layer whiteboard); Jay West, "Key terms and definitions" and "Factory in one line" notes (five commitments, capability taxonomy, canonical terms); Jay West, factory architecture notes (master whiteboard, six architectural areas, layer-ownership table, five-system distinction, memory hooks, the six-areas-plus-adoption mental model optimised for trusted throughput); HumanLayer × BAML livestream, "Software factory design patterns" (five-layer stack, build versus buy, composition over inheritance, the dev-environment argument, the underserved control plane); public practitioner talks, 2026 (skills, loops, and the four modes; the lifecycle above the six areas; the factory-native SDLC and its three loops; the three cross-cutting planes; signal-to-outcome as the factory boundary).
-- Primary references carried from v1: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [V1 product strategy](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-v1-product-strategy.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [domain contracts](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/domain-contracts.md), [orchestration architecture decision](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/decisions/001-orchestration-architecture.md), [React entry point](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/mission-control-ui/src/main.tsx), [Convex schema](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/convex/schema.ts), [Hono orchestration service](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/apps/orchestration-server/src/index.ts); [Anthropic, Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic, Trustworthy Agents in Practice](https://www.anthropic.com/research/trustworthy-agents); [OpenAI, A Practical Guide to Building Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/); [OpenAI, Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/); [OpenAI, Harness Engineering](https://openai.com/index/harness-engineering/); [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28); [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework); [NIST SSDF](https://csrc.nist.gov/projects/ssdf/); [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/initiatives/agentic-security-initiative/); [SLSA Provenance 1.2](https://slsa.dev/spec/v1.2/provenance).
+- [Chapter 5](../02-design/05-authoritative-records.md) owns the record spine; [Chapter 10](../03-build/10-the-agent-factory.md) owns capability lifecycle; [Chapter 11](../03-build/11-control-plane-orchestrator-and-execution-plane.md) owns control versus execution; [Chapter 13](../03-build/13-coding-harnesses-and-agent-protocols.md) owns harness behavior; [Chapter 17](../03-build/17-models-routing-and-capability-selection.md) owns model routing; [Chapter 21](../04-prove/21-quality-and-evidence-architecture.md) owns evidence; and [Chapter 33](../06-improve/33-governed-learning-and-compounding-engineering.md) owns promotion.
+- [Chapter 34](../06-improve/34-mission-control-as-a-living-case-study.md), the [Mission Control maturity map](../appendix/mission-control/01-implementation-maturity-and-evidence-map.md), and the [verification-first case study](../appendix/mission-control/02-verification-first-software-factory.md) provide version-pinned implementation evidence.
+- Primary references: [Mission Control North Star](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/product/mission-control-north-star.md), [Governed Missions contract](https://github.com/jaydubya818/MissionControl/blob/8014d5af427b43ff5c5a63cfdf82ec92742c208c/docs/software-factory/governed-missions-contract.md), [Anthropic, Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents), [OpenAI, Harness Engineering](https://openai.com/index/harness-engineering/), [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework), and [NIST SSDF](https://csrc.nist.gov/projects/ssdf/).

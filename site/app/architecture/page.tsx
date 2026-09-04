@@ -8,10 +8,10 @@ import { SiteHeader } from "../components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Architecture · The AI Software Factory Guide",
-  description: "Explore the autonomous software factory across lifecycle, planes, components, governance, inventory, patterns, monitoring, data flow, and evidence.",
+  description: "Explore implementation views of the guide's eight-stage value stream and six-area architecture across responsibility, authority, runtime, risk, failure, recovery, and evidence.",
 };
 
-const trace = ["Intent", "Plan", "Select", "Execute", "Verify", "Decide", "Deliver", "Observe", "Learn"];
+const trace = ["Intent", "Plan", "Define Agent", "Execute through Harness", "Apply Skills", "Evaluate", "Improve", "Deliver Software"];
 
 export default function ArchitecturePage() {
   return (
@@ -25,18 +25,19 @@ export default function ArchitecturePage() {
           </div>
           <div className="architecture-hero-copy">
             <p>
-              Nine synchronized views connect responsibility, authority, runtime,
-              risk, failure, recovery, and proof without turning the model into the system.
+              Supporting implementation views connect the six architectural areas
+              across authority, runtime, risk, failure, recovery, and proof. They
+              remain lenses on the canonical eight-stage value stream, not competing models.
             </p>
             <div>
-              <Link className="button button-primary" href="/docs/01-understand/02-the-factory-in-one-view">Read the reference architecture</Link>
+              <Link className="button button-primary" href="/docs/01-understand/02-the-factory-in-one-view">Read the two-model orientation</Link>
               <Link className="button button-secondary" href="/docs/appendix/coverage-and-maturity">Open the coverage matrix</Link>
             </div>
           </div>
         </header>
 
-        <section className="architecture-trace" aria-label="Intent-to-learning lifecycle text view">
-          <span>Governed trace</span>
+        <section className="architecture-trace" aria-label="Eight-stage value stream text view">
+          <span>Primary value stream</span>
           <ol>
             {trace.map((stage, index) => (
               <li key={stage}><small>{String(index + 1).padStart(2, "0")}</small>{stage}</li>

@@ -7,11 +7,17 @@ validate, and recover — and independent evidence decides what advances.
 > **Intent → Plan → Define Agent → Execute through Harness → Apply Skills →
 > Evaluate → Improve → Deliver Software**
 
-Read it front to back, or enter at the part that matches your question.
+This eight-stage value stream is the primary reader model. The supporting
+architecture has six areas: **Intent, Harness, Capability, Model, Trust, and
+Learning**, surrounded by adoption. [Chapter 2](./01-understand/02-the-factory-in-one-view.md)
+teaches how the two fit together.
+
+Read the guide front to back, or enter at the part that matches your question.
 
 ## The factory in one line, stage by stage
 
-Click a stage for the technical deep dive on how it works.
+Click a stage for a concise contract brief, then follow its links to the
+canonical chapters for technical depth.
 
 1. [Stage 1 · Builder Intent](./stages/01-builder-intent.md)
 2. [Stage 2 · Plan](./stages/02-plan.md)
