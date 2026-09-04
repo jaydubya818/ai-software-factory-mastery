@@ -169,6 +169,20 @@ The trust level of an input should decide the isolation level of what runs on it
 
 Tools are privilege boundaries. Use typed schemas, allowlists, resource scoping, short-lived credentials, network policy, filesystem isolation, output validation, side-effect classification, confirmation for material actions, and independent event capture. A tool that can do anything is a credential that can do anything, whatever the prompt says.
 
+Keep four checks distinct at every mutation boundary. **Content safety** asks
+whether text is harmful or adversarial. **Schema validation** asks whether the
+proposed call is well formed. **Authorization** asks whether this principal may
+perform the scoped action. **Transactional correctness** asks whether the
+action preserves the domain's current invariants. Passing the first three does
+not prove the fourth: a harmless, valid, authorized payload can still corrupt
+state. Immediately before an effect, deterministic code should re-read the
+authoritative state and enforce expected versions, balances, transition rules,
+uniqueness, limits, and idempotency. Use database constraints and transactions
+inside one trust boundary; use idempotency keys, preconditions,
+reconciliation, and explicit compensation across external systems.
+Observability can explain a bad mutation afterward. It cannot substitute for
+preventing the mutation.
+
 Around the model's decisions, add defense in depth: content provenance, trust labeling, context segmentation, instruction precedence, least privilege, sandboxing, policy checks, budgets, anomaly detection, independent verification, and human authority. A model-based guardrail may add signal; it is never the sole enforcement boundary.
 
 MCP servers, and SaaS-vendor MCP servers in particular, should never be reached directly from a run: route all of them, internal and external, through one **MCP gateway** that performs authentication and applies policy centrally, so that a vendor's server is a governed capability with a credential the platform issued rather than a connection the agent negotiated; [Chapter 18](../03-build/18-agent-architecture.md) covers the gateway and the shell-and-code-mode access pattern that sits on top of it.
@@ -445,7 +459,7 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - Identity is not authority. Authority is a short-lived, attempt-scoped credential minted after policy; content — repository text, tool output, web pages, memory — is data, never authority, and cannot grant permission or alter policy.
 - Every control that matters lives outside the model: probabilistic reasoning should never imply probabilistic authorization, and the model proposes while policy authorizes. Security can't be an approval meeting at the end; it's part of the execution contract.
 - The execution environment is a frozen security boundary — revision, tools, credentials, filesystem, network, dependencies, limits, timeouts, data classification — fixed before the worker starts. Autonomy means narrower boundaries, not broader ambient access.
-- The trust level of an input decides the isolation level of what runs on it. Tools are privilege boundaries, and memory can persist an attack beyond the run that introduced it.
+- The trust level of an input decides the isolation level of what runs on it. Tools are privilege boundaries; content safety, schema validity, authorization, and transactional correctness are four different checks. Memory can persist an attack beyond the run that introduced it.
 - Tags locate; digests identify. Provenance, attestation, signature, and transparency are different claims, and none is a quality verdict — verify at the consumption boundary against an expected signer and lineage.
 - Seven security layers — identity, policy and access, runtime control plane, detection, response and containment, infrastructure foundation, visibility — crossed by five flows prove who acted inside what policy. Only independent verification proves the change is safe; a trust score can demote but never promote.
 
@@ -455,6 +469,6 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 
 **Primary sources.** Jay's reliability-and-security preparation notes (threat list, security thesis, incident framework); HumanLayer and BAML, "Software factory design patterns" livestream (trusted versus untrusted execution of feedback and repros); OWASP Agentic Security Initiative; OWASP LLM01 Prompt Injection and LLM06 Excessive Agency; NIST AI Risk Management Framework; NIST SP 800-218 SSDF 1.1, especially provenance practice PS.3.2; NIST Privacy Framework; SLSA specification 1.2 and provenance v1; in-toto Attestation Framework, Statement v1, and DSSE; Sigstore Cosign verification guidance; SPDX 3.0; CycloneDX 1.7; SPIFFE overview and Workload API.
 
-**Public sources.** Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026), for routing every internal and SaaS MCP server through one gateway with central authentication and policy; *Six layers of a working agentic system* (public post, 2026), for private model instances per tenant and identity, secrets, and audit as runtime obligations rather than afterthoughts; Tessl documentation (docs.tessl.io), 2026, for skill security severity scoring, install policy levels and rule types, the warn/block install flow, and install auditing.
+**Public sources.** Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026), for routing every internal and SaaS MCP server through one gateway with central authentication and policy; *Six layers of a working agentic system* (public post, 2026), for private model instances per tenant and identity, secrets, and audit as runtime obligations rather than afterthoughts; Sivasankar Natarajan's public agent-architecture post and its systems-engineering discussion (accessed 2026-09-04), for separating semantic guardrails from pre-effect transactional invariants; Tessl documentation (docs.tessl.io), 2026, for skill security severity scoring, install policy levels and rule types, the warn/block install flow, and install auditing.
 
 **Mission Control sources at `b31e275`.** `docs/security/clerk-company-authorization.md`, `docs/security/human-service-authorization-matrix.md`, `docs/security/service-command-authentication.md`, `docs/security/github-app-connection.md`, `convex/lib/companyAccess.ts`, `apps/orchestration-server/src/auth.ts`, `convex/lib/githubAppAuth.ts`, `convex/factory/githubCi.ts`, `convex/schema.ts`; staged candidates `convex/factory/attempts.ts` and `apps/orchestration-server/src/githubAppRuntime.ts`.

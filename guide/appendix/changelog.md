@@ -2,7 +2,7 @@
 title: Guide Changelog
 status: active
 audience: [all]
-last_verified: 2026-09-03
+last_verified: 2026-09-04
 lifecycle: [learn]
 risk: variable
 topics: [changelog, releases, review]
@@ -13,6 +13,28 @@ topics: [changelog, releases, review]
 Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
+
+## 2026-09-04 — Practitioner-source review
+
+### Added
+
+- Added an intent-consistency check immediately before external effects, so a
+  valid action against a drifted goal cannot pass as successful execution.
+- Separated content safety, schema validity, authorization, and transactional
+  correctness at the tool boundary, with deterministic invariant enforcement
+  before mutation.
+- Extended the existing mastery scorecard with five observable coding-agent
+  operating skills: workflow direction, autonomy calibration, review,
+  environment stewardship, and agent foundations.
+
+### Changed
+
+- Resolved seven supplied redirect links to their canonical public posts,
+  reviewed eight unique sources, updated one previously incomplete source
+  record, and documented accepted, corroborating, and rejected material in the
+  editorial intake.
+- Kept the eight-stage value stream and six-area architecture canonical; no
+  additional agent taxonomy, stack, or lifecycle was introduced.
 
 ## 2026-09-03 — Technical-vision integration
 

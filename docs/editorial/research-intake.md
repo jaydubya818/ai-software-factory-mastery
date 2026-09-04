@@ -1,7 +1,7 @@
 ---
 title: Editorial Research Intake
 status: active
-date: 2026-09-03
+date: 2026-09-04
 ---
 
 # Editorial Research Intake
@@ -129,6 +129,42 @@ E's “External foundations” table.
   explicitly labeled as hypotheses with falsifiers and design responses.
 - Decision: accept the opening thesis, trajectory boundary, and falsifier
   ledger; reject the duplicate framework and organization-specific material.
+
+### LinkedIn agent-engineering source set
+
+- Source: seven user-supplied `lnkd.in` redirect links and Andrew Ng's
+  *AI Engineering Skills Map: Using coding agents* article. The redirects were
+  resolved to their canonical LinkedIn posts on 2026-09-04.
+- Source type: public named-author practitioner material. These sources provide
+  design prompts and corroboration, not independent production evidence.
+- Publication date: Andrew Ng's article is dated 2026-09-04. The accessible
+  pages for the seven posts expose only relative ages; exact publication dates
+  are unavailable.
+- Access date: 2026-09-04.
+- Proposed canonical owners: Chapters 6, 15–16, 23–24, 29–30, 33, and 43.
+- Reader problem solved: distinguish skill from tool familiarity, stop goal
+  drift before real-world effects, and keep semantic safety separate from
+  transactional correctness without importing more stack diagrams.
+- Evidence strength and limitations: LinkedIn posts compress and sometimes
+  overstate architecture. Product lists, performance targets, capability
+  claims, and comments are hypotheses or practitioner opinion unless supported
+  by the guide's primary canon. The original recording behind the embedded
+  Maria Vechtomova transcript was not independently identified.
+
+| Source | Editorial decision |
+| --- | --- |
+| [Andrew Ng, *AI Engineering Skills Map: Using coding agents*](https://www.linkedin.com/pulse/ai-engineering-skills-map-using-coding-agents-andrew-ng-h8yxc/) | Accept the five observable operating skills into Chapter 43's existing scorecard; do not add a new lifecycle. |
+| [Arunkumar Palanisamy, ten agent-system building blocks](https://www.linkedin.com/posts/arunrps_aiagents-agenticai-aiengineering-share-7501525631336103936-9Hhk/) | Accept the narrow pre-effect intent-consistency check into Chapter 6; the ten-block taxonomy otherwise repeats existing owners. |
+| [Kapil Y., *The 4 Layers of an Agent System Explained*](https://www.linkedin.com/posts/kapily_%F0%9D%97%A7%F0%9D%97%B5%F0%9D%97%B2-%F0%9D%9F%B0-%F0%9D%97%9F%F0%9D%97%AE%F0%9D%98%86%F0%9D%97%B2%F0%9D%97%BF%F0%9D%98%80-%F0%9D%97%BC%F0%9D%97%B3-%F0%9D%97%AE%F0%9D%97%BB-%F0%9D%97%94%F0%9D%97%B4%F0%9D%97%B2%F0%9D%97%BB-share-7500142379526414336-sW7D/) | Corroborates Chapters 15–16 and 23–24. Update the existing provenance row with the exact author and URL; add no fifth top-level model. |
+| [Ali Azzam, production-agent evaluation post with embedded Maria Vechtomova transcript](https://www.linkedin.com/posts/syedaliazzam_if-youre-building-ai-agents-this-is-a-must-watch-ugcPost-7500226264142680065-fRGW/) | Corroborates configuration lineage, eval drift, offline/inline/production evaluation, and governed promotion already owned by Chapters 29–30. No duplicate pipeline added. |
+| [Sivasankar Natarajan, *Agentic AI Architecture Explained*, and discussion](https://www.linkedin.com/posts/sivasankar-natarajan_agenticai-aiarchitecture-enterpriseai-share-7500172453978173440-rTKP/) | Accept the narrow distinction among content safety, schema validity, authorization, and transactional correctness into Chapter 33; do not import the product map. |
+| [Siddharth Kharche, customer-support agent architecture](https://www.linkedin.com/posts/sid-k09_ai-generativeai-conversationalai-share-7500084489478668288-k0yf/) | Reject as new guide material. The architecture repeats existing layers, confidence is not an authority model, and the performance claims have no supporting evidence. |
+| [Quantumatix Technologies, agent-type taxonomy](https://www.linkedin.com/posts/aiagents-generativeai-agenticai-share-7493997941880401921-y5il/) | Reject as a new taxonomy. Reactive, deliberative, tool-using, retrieval-grounded, and multi-agent behavior already fit the guide's workflow and topology owners. |
+| [Claude Central, modern AI stack map](https://www.linkedin.com/posts/ai-artificialintelligence-aiagents-share-7500125010901221376-4VCk/) | Reject as architecture. It is a useful capability and vendor inventory, but it mixes patterns, techniques, infrastructure, and cross-cutting controls; Chapter 25 already supplies the labeled reference view. |
+
+- Decision: accept three narrow additions and one provenance correction;
+  retain one source as corroboration; reject the remaining taxonomies,
+  unverified claims, and duplicate layer models.
 
 ## Pending
 

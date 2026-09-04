@@ -780,20 +780,31 @@ case, the executive narrative, and the sales foundation at once.
 Score yourself one to five on each; the program is working when every line is
 at least four, and the lines under four are next week's Monday agenda.
 
+The leadership scorecard also needs an operating layer. A capable practitioner
+can direct an iterative workflow and know when to return to research or
+planning; calibrate autonomy to risk, reversibility, evaluated coverage, and
+available human attention; review behavior, evidence, and outcomes rather than
+trusting a completion claim; maintain and prune the agent's tools, skills,
+standing context, and environment; and explain how the loop, harness, context,
+tools, and model fail independently. These are observable skills, not tool
+familiarity, and they evolve as models and harnesses change.
+
 | Area | Can I… |
 | --- | --- |
 | Vision | define the AI Software Factory in one sentence? |
 | Problem | explain why current engineering models are inefficient? |
 | Differentiation | distinguish a coding assistant from a software factory? |
-| Architecture | explain Mission Control's layers and planes? |
-| Governance | explain permissions, approvals, and progressive autonomy? |
-| Quality | explain why validation enables speed? |
+| Architecture | explain how model, harness, loop, tools, context, state, and verification interact and fail? |
+| Governance | explain permissions and approvals, and calibrate autonomy by workflow and action class? |
+| Quality | review behavior, evidence, failure paths, and outcomes rather than trust a completion claim? |
 | Metrics | define measurable success? |
 | Business value | explain the model to a CEO and a CFO? |
 | Developer value | explain how engineers benefit? |
 | Transformation | describe how roles and teams change? |
 | Personal credibility | connect the vision to my own experience? |
 | Delivery | answer clearly without rambling? |
+| Operating workflow | move deliberately among research, planning, execution, verification, deployment, monitoring, and revision? |
+| Factory stewardship | maintain and prune tools, skills, standing context, integrations, and accumulated agent-generated debt? |
 
 Add the questions from Appendix E that a reviewer would put to you: why now,
 and what evidence would slow adoption; how the factory changes economics and
@@ -915,7 +926,9 @@ governable.
   build first, the contribution model, forward-deployed engineering,
   platform metrics, the three release clocks, the CI/CD analogy, the five
   lessons from enterprise scale, the six themes, and the fifteen platform
-  principles.
+  principles; Andrew Ng, *AI Engineering Skills Map: Using coding agents*
+  (2026-09-04) — workflow direction, autonomy calibration, review, agent and
+  environment customization, and coding-agent foundations.
 - [Chapter 34 — The factory as a platform](../05-operate/34-the-factory-as-a-platform.md)
   for the adoption operating model the contribution model and forward
   deployment sit inside.

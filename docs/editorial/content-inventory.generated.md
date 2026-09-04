@@ -203,7 +203,7 @@ Headings:
 ### 02-design/06-intent-and-specification-engineering.md
 
 - Type: chapter
-- Words: 6427
+- Words: 6553
 
 Headings:
 
@@ -1011,7 +1011,7 @@ Headings:
 ### 04-prove/33-security.md
 
 - Type: chapter
-- Words: 8367
+- Words: 8519
 
 Headings:
 
@@ -1364,7 +1364,7 @@ Headings:
 ### 06-improve/43-mastering-the-factory.md
 
 - Type: chapter
-- Words: 6906
+- Words: 7068
 
 Headings:
 
@@ -1449,7 +1449,7 @@ Headings:
 ### appendix/architecture-communication.md
 
 - Type: appendix
-- Words: 5110
+- Words: 6889
 
 Headings:
 
@@ -1462,6 +1462,7 @@ Headings:
 - H3 — Distinguish adjacent systems — `#distinguish-adjacent-systems`
 - H3 — Answer objections through architecture — `#answer-objections-through-architecture`
 - H3 — Structure architecture answers — `#structure-architecture-answers`
+- H3 — The vendor-neutral master architecture map — `#the-vendor-neutral-master-architecture-map`
 - H3 — Translate layer diagrams into the canonical models — `#translate-layer-diagrams-into-the-canonical-models`
 - H3 — Open with questions that change the design — `#open-with-questions-that-change-the-design`
 - H3 — Quantify scale before selecting technology — `#quantify-scale-before-selecting-technology`
@@ -1497,15 +1498,30 @@ Headings:
 - H3 — Agentic systems — `#agentic-systems`
 - H3 — Adversarial — `#adversarial`
 - H2 — 10. Whiteboard exercise — `#10-whiteboard-exercise`
+- H2 — 11. Worked example: secure transaction-document processing — `#11-worked-example-secure-transaction-document-processing`
+- H3 — The prompt — `#the-prompt`
+- H3 — Clarify requirements and non-goals — `#clarify-requirements-and-non-goals`
+- H3 — State the scale assumptions — `#state-the-scale-assumptions`
+- H3 — Define the authoritative records — `#define-the-authoritative-records`
+- H3 — Define the external contracts — `#define-the-external-contracts`
+- H3 — Draw the concrete architecture — `#draw-the-concrete-architecture`
+- H3 — Explain delivery and failure semantics — `#explain-delivery-and-failure-semantics`
+- H3 — Protect data and tenant boundaries — `#protect-data-and-tenant-boundaries`
+- H3 — Bound optional assisted processing — `#bound-optional-assisted-processing`
+- H3 — Operate and evolve the service — `#operate-and-evolve-the-service`
+- H3 — Close with the tradeoff — `#close-with-the-tradeoff`
 
 ### appendix/changelog.md
 
 - Type: appendix
-- Words: 1016
+- Words: 1140
 
 Headings:
 
 - H1 — Guide Changelog — `#guide-changelog`
+- H2 — 2026-09-04 — Practitioner-source review — `#2026-09-04-practitioner-source-review`
+- H3 — Added — `#added`
+- H3 — Changed — `#changed`
 - H2 — 2026-09-03 — Technical-vision integration — `#2026-09-03-technical-vision-integration`
 - H3 — Added — `#added`
 - H3 — Changed — `#changed`
@@ -1680,7 +1696,7 @@ Headings:
 ### appendix/research/initial-canon.md
 
 - Type: appendix
-- Words: 2474
+- Words: 2629
 
 Headings:
 
