@@ -19,7 +19,7 @@ cannot explain. After reading it you should have a program — fluency levels,
 audiences, objections, a build plan, and a weekly rhythm — that you can run
 on yourself for a year.
 
-[Appendix E, Architecture communication](../appendix/architecture-communication.md),
+[Appendix E, Software architecture and system design study guide](../appendix/architecture-communication.md),
 keeps the reference form of the timed explanations, defense questions, and the
 twenty-minute whiteboard. This chapter absorbs it into a program.
 
@@ -928,7 +928,7 @@ governable.
   for the maturity model behind progressive proof.
 - [Chapter 34 — Mission Control as a living case study](./34-mission-control-as-a-living-case-study.md)
   for the evidence you cite.
-- [Appendix E — Architecture communication](../appendix/architecture-communication.md)
+- [Appendix E — Software architecture and system design study guide](../appendix/architecture-communication.md)
   for the full timed explanations, defense questions, twenty-minute
   whiteboard.
 - [Glossary](../appendix/glossary.md).

@@ -62,7 +62,7 @@ test("renders the book landing page", async () => {
 test("renders every primary surface", async () => {
   const routes = [
     ["/guide", /Table of contents/],
-    ["/visuals", /Ten original, readable system maps/],
+    ["/visuals", /These ten maps are narrower/],
     ["/architecture", /Trace the factory from intent to evidence\./],
     ["/topics", /The reference shelf\./],
     ["/coverage", /Coverage is not proof\./],

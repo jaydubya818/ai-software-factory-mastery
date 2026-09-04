@@ -1316,7 +1316,7 @@ Headings:
 ### appendix/architecture-communication.md
 
 - Type: appendix
-- Words: 3544
+- Words: 4713
 
 Headings:
 
@@ -1329,6 +1329,7 @@ Headings:
 - H3 — Distinguish adjacent systems — `#distinguish-adjacent-systems`
 - H3 — Answer objections through architecture — `#answer-objections-through-architecture`
 - H3 — Structure architecture answers — `#structure-architecture-answers`
+- H3 — Translate layer diagrams into the canonical models — `#translate-layer-diagrams-into-the-canonical-models`
 - H3 — Open with questions that change the design — `#open-with-questions-that-change-the-design`
 - H3 — Quantify scale before selecting technology — `#quantify-scale-before-selecting-technology`
 - H3 — Define contracts and data ownership — `#define-contracts-and-data-ownership`
@@ -1338,15 +1339,20 @@ Headings:
 - H3 — Design failure, overload, and recovery together — `#design-failure-overload-and-recovery-together`
 - H3 — Treat security, privacy, and tenancy as architecture — `#treat-security-privacy-and-tenancy-as-architecture`
 - H3 — Make the system operable — `#make-the-system-operable`
+- H3 — Close requirements with a production-quality checklist — `#close-requirements-with-a-production-quality-checklist`
 - H3 — Design for safe evolution — `#design-for-safe-evolution`
 - H3 — Prove the architecture, not only the code — `#prove-the-architecture-not-only-the-code`
 - H3 — Add the agentic layer only after the base system is sound — `#add-the-agentic-layer-only-after-the-base-system-is-sound`
+- H3 — Design code review as a layered service — `#design-code-review-as-a-layered-service`
+- H3 — Practice implementation, not only explanation — `#practice-implementation-not-only-explanation`
 - H3 — Handle reliability and security incidents consistently — `#handle-reliability-and-security-incidents-consistently`
 - H3 — Lead adoption through progressive proof — `#lead-adoption-through-progressive-proof`
+- H3 — Make the technical thesis falsifiable — `#make-the-technical-thesis-falsifiable`
 - H2 — 4. Tradeoffs and alternatives — `#4-tradeoffs-and-alternatives`
 - H2 — 5. Current Mission Control Implementation — `#5-current-mission-control-implementation`
 - H2 — 6. Ongoing practice — `#6-ongoing-practice`
 - H2 — 7. Versioned references — `#7-versioned-references`
+- H3 — External foundations — `#external-foundations`
 - H2 — 8. Notes and lessons learned — `#8-notes-and-lessons-learned`
 - H2 — 9. Architecture and system-design questions — `#9-architecture-and-system-design-questions`
 - H3 — Executive — `#executive`

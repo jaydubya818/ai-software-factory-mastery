@@ -30,7 +30,7 @@ const shelf: ShelfRow[] = [
       { slug: "appendix/reviewer-guide", title: "Reviewer guide", note: "How to review the book and what a useful finding looks like" },
     ],
   },
-  { letter: "E", slug: "appendix/architecture-communication", title: "Architecture communication", description: "How to explain and defend the factory to a board, a CEO, a CFO, a CTO, and a developer — timed explanations, defense questions, the whiteboard.", use: "Before you have to present or defend the design." },
+  { letter: "E", slug: "appendix/architecture-communication", title: "Software architecture and system design", description: "How to scope, estimate, design, operate, explain, and defend a production architecture — from core distributed systems through governed agent execution.", use: "Before you have to design or defend a system." },
   { letter: "F", slug: "appendix/principles", title: "Principles to have cold", description: "The book's one-line principles, grouped by concern, each with a plain-English gloss and the chapter that earns it.", use: "When you want the whole book in fifty lines." },
 ];
 

@@ -93,7 +93,7 @@ canonical chapters for technical depth.
 - [B. Mission Control case studies](./appendix/mission-control/01-implementation-maturity-and-evidence-map.md)
 - [C. Research canon](./appendix/research/initial-canon.md)
 - [D. Coverage and maturity](./appendix/coverage-and-maturity.md) · [Changelog](./appendix/changelog.md) · [Reviewer guide](./appendix/reviewer-guide.md)
-- [E. Architecture communication](./appendix/architecture-communication.md)
+- [E. Software architecture and system design study guide](./appendix/architecture-communication.md)
 - [F. Principles to have cold](./appendix/principles.md)
 
 The v1 curriculum chapters are preserved unchanged in
