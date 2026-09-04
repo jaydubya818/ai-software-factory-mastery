@@ -68,10 +68,21 @@ so preview traffic stays within the paired preview. Composed builds remove the
 transitional root discovery files because the parent FDLC application owns
 shared-domain root discovery.
 
-The `@vercel/microfrontends` dependency is installed but intentionally inert.
-Activating its Next.js wrapper, adding the shared routing configuration, and
-adding a persistent legacy-host redirect are cutover approval gates. A future
-cross-origin legacy-host redirect must deliberately omit query strings so
-tokens or other sensitive parameters are not forwarded to another origin;
-the same-origin route redirects in this repository preserve query strings,
-and client-side retired-fragment remaps preserve both query and fragment.
+The Next.js configuration activates `@vercel/microfrontends` only when the
+default application's routing configuration is available from
+`VC_MICROFRONTENDS_CONFIG`, a local `microfrontends.json`, or a Vercel-pulled
+file under `.vercel`. The Guide does not own a child `microfrontends.json`, and
+an unconfigured standalone build remains valid.
+
+Cross-origin retirement redirects are server-only and opt-in. Leave
+`GUIDE_LEGACY_REDIRECTS_ENABLED` unset in compatibility deployments so the old
+Guide hostname continues serving its pages. Set it to the exact value `true`
+only in a deployment where retiring that hostname has been explicitly
+approved.
+
+When enabled, GET and HEAD requests on the retired Guide hostname for published
+routes and explicit legacy aliases permanently redirect to their allowlisted
+`https://www.fdlc.ai/guide/...` destination. Those cross-origin redirects drop
+the entire query string; unknown paths and non-navigation methods are not
+forwarded. Same-origin route redirects still preserve queries, and client-side
+retired-fragment remaps preserve both query and fragment.
