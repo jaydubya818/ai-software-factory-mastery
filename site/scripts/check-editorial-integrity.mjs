@@ -11,6 +11,10 @@ const writeInventory = process.argv.includes("--write-inventory");
 const checkOrientation = process.argv.includes("--check-orientation");
 const checkRelease = process.argv.includes("--check-release");
 const excludedPublishedTerms = [
+  [65, 100, 111, 98, 101],
+  [87, 111, 114, 107, 100, 97, 121],
+  [72, 111, 112, 112, 101, 114],
+  [87, 111, 114, 107, 98, 101, 110, 99, 104],
   [77, 101, 116, 97, 32, 70, 97, 99, 116, 111, 114, 121],
   [73, 110, 116, 101, 114, 118, 105, 101, 119],
 ].map((codes) => String.fromCharCode(...codes));

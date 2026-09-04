@@ -184,6 +184,7 @@ test("keeps requested exclusions out of public routes", async () => {
   const documents = await generatedDocuments();
   const routes = ["/", "/guide", "/visuals", "/architecture", "/topics", ...documents.map((document) => `/docs/${document.slug}`)];
   const terms = [
+    [65, 100, 111, 98, 101],
     [87, 111, 114, 107, 100, 97, 121],
     [72, 111, 112, 112, 101, 114],
     [87, 111, 114, 107, 98, 101, 110, 99, 104],

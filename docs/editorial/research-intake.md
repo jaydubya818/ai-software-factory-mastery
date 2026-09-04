@@ -82,6 +82,32 @@ E's “External foundations” table.
   lifecycle, product-specific terminology, and the supplied graphic as public
   evidence.
 
+### Agentic implementation study artifacts
+
+- Source: user-supplied `codex-clipboard-1c4aa057-a962-4a4f-bfa2-39943c4c45d9.png`
+  and attachments `0a091675-c62d-4906-affa-2cfed694db50/pasted-text.txt`,
+  `24b1a15d-3d12-489b-a12e-6135ff73303a/pasted-text.txt`, and
+  `f78edaa3-d4df-4894-a425-a3c1ad218835/pasted-text.txt`.
+- Source type: internal synthesis; original author, publication date, and URL
+  are unavailable.
+- Publication date: unknown.
+- Access date: 2026-09-03.
+- Proposed canonical owner: Appendix E, with Chapters 12, 15, 17, 18, 23, and
+  32 retaining the detailed mechanisms.
+- Reader problem solved: translating factory architecture into small,
+  testable implementation slices without confusing a working example with a
+  production-ready subsystem.
+- Current material replaced or corrected: three substantially overlapping
+  scripts and one generated graphic were reduced to one implementation
+  contract, eight component slices, and a boundary-test matrix. Small-first was
+  clarified to preserve mandatory safety boundaries from the initial slice.
+- Evidence strength and limitations: suitable as exercise prompts only. The
+  generated code snippets were not treated as verified reference
+  implementations, and organization-specific statements were not imported.
+- Decision: accept the implementation and edge-case gaps; reject duplicated
+  scripts, hiring-process framing, product-specific language, scale claims, and
+  the supplied graphic as public evidence.
+
 ## Pending
 
 No pending items.

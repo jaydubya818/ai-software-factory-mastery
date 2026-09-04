@@ -34,6 +34,10 @@ their useful prompts while sending technical depth back to canonical chapters.
 - Keep Chapter 32 as the canonical owner for automated code review. Add only
   the missing capability-selection, build/adopt, repository-content security,
   and operating-metrics decisions, while compressing its retained summary.
+- Expand the existing implementation drills with one shared contract and a
+  boundary-test matrix. “Small first” may defer scale, but not required
+  authorization, external stop control, deterministic validation, or explicit
+  failure reporting.
 
 ## Open Questions
 

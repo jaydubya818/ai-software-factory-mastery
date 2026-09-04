@@ -395,21 +395,42 @@ owns the review system and merge queue.
 Use a consistent build sequence: clarify inputs, outputs, constraints, and edge
 cases; state the design; implement the smallest working path; add tests; explain
 tradeoffs and the next improvement; then revise from feedback. Practice with
-small components whose boundaries are visible:
+small components whose boundaries are visible. Small-first is a sequencing
+rule, not permission to postpone safety. The first slice may omit horizontal
+scale, adaptive routing, and durable recovery. It may not omit a required
+authorization check, an externally enforced stop condition, deterministic
+input and output validation, or an explicit failure result when the component
+can spend money or cause an effect.
 
-- a governed tool registry and dispatcher with schemas and explicit grants;
-- a deterministic model router with fallback, latency, and budget policy;
-- a bounded agent loop with stop conditions, retry and backoff, cancellation,
-  checkpoints, and an externally enforced budget;
-- a task-dependency graph with durable state and idempotent transitions; and
-- an evaluation runner that compares a baseline and candidate on versioned
-  cases and emits structured evidence.
+Give every implementation the same compact contract: typed input and output,
+state owner, allowed side effects, authority check, resource budget, externally
+observable completion condition, failure classes, and evidence emitted. Then
+use this matrix to decide whether the small implementation is credible:
 
-These are drills, not production platforms. Keep each solution small enough to
-test and explain, then use failures to justify the next control. The owning
-chapters are [15](../03-build/15-agent-architecture.md), [17](../03-build/17-models-routing-and-capability-selection.md),
-[18](../03-build/18-agent-and-loop-engineering.md), [12](../03-build/12-durable-execution.md),
-and [23](../04-prove/23-evaluation-engineering.md).
+| Component | Smallest credible behavior | Boundary tests that earn the next step |
+| --- | --- | --- |
+| Model router | Filters to eligible, policy-compliant profiles, then selects the lowest-cost route that meets the quality and latency bar | Missing requirements, sensitive workload, oversized context, preferred route unavailable, and no eligible route |
+| Tool registry and gateway | Registers a versioned schema; resolves the requested tool; authorizes the exact action; validates arguments and result; records a receipt | Unknown tool, malformed arguments, denied scope, timeout, unsafe result, and duplicate side-effect request |
+| Bounded agent loop | Accepts a goal, proposes and authorizes one action at a time, observes structured results, measures progress, and stops outside the model | Success, max iterations, repeated failure, no progress, malformed output, cancellation, exhausted budget, and escalation |
+| Task-graph scheduler | Validates an acyclic graph, releases only dependency-ready work, and enforces a concurrency limit | Cycle, missing dependency, failed predecessor, duplicate completion, partial branch failure, restart, and conflicting writers |
+| Retry and circuit boundary | Retries only classified transient failures with backoff and jitter; opens after the threshold; preserves the final error | Permanent error, authorization denial, lost response after a side effect, exhausted retry budget, half-open probe, and recovery |
+| Execution budget | Reserves estimated capacity before work, records actual model, tool, compute, and retry cost, and prevents overspend | Estimate exceeds remainder, concurrent reservations, actual cost exceeds estimate, cancellation, and optional-work shedding |
+| Evaluation runner | Runs the same versioned cases against baseline and candidate, separates subject from evaluator, and emits replayable results | Subject failure, evaluator failure, malformed result, missing evidence, non-determinism, and a severe regression hidden by a better average |
+| Code-review pipeline | Runs deterministic checks first, applies semantic review to the smallest sufficient context, normalizes findings, and preserves human authority | Stale head, duplicate and suppressed finding, hostile repository instruction, unsupported severity, unavailable reviewer, and required human gate |
+
+Cover six failure families across the set: invalid or oversized input; unavailable
+or malformed dependencies; time, token, compute, and concurrency exhaustion;
+duplicate, out-of-order, partial, or crash-recovered state; unauthorized tools,
+data, or instructions; and concurrent mutation of shared state. Add complexity
+only when a failing test or measured production risk justifies it.
+
+These are implementation slices, not miniature production platforms. The
+owning chapters are [12](../03-build/12-durable-execution.md),
+[15](../03-build/15-agent-architecture.md),
+[17](../03-build/17-models-routing-and-capability-selection.md),
+[18](../03-build/18-agent-and-loop-engineering.md),
+[23](../04-prove/23-evaluation-engineering.md), and
+[32](../06-improve/32-production-feedback-review-and-the-agentic-merge-queue.md).
 
 ### Handle reliability and security incidents consistently
 

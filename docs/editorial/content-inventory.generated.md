@@ -1319,7 +1319,7 @@ Headings:
 ### appendix/architecture-communication.md
 
 - Type: appendix
-- Words: 4713
+- Words: 5109
 
 Headings:
 
