@@ -158,7 +158,7 @@ More detail means more transparency and more cognitive load; the resolution is p
 
 ### One execution contract, many interfaces
 
-Operators are not the only people who reach the factory, and the screen is not the only door. A developer arrives through the CLI or an IDE plugin; a product manager through a web form; a platform team through an SDK; a scheduled job through the API; another agent through an agent-to-agent call. The temptation is to build each door as its own small product with its own notion of a run. The rule that prevents that is: be opinionated about the contract and flexible about the interface. Every door, whatever it looks like, produces the same durable concepts, and the control plane recognises nothing else:
+Operators are not the only people who reach the factory, and the screen is not the only door. A developer arrives through the CLI or an IDE plugin; a product manager through a web form; a collaborator through chat, email, voice, an intranet, or a service portal; a platform team through an SDK; a scheduled job through the API; another agent through an agent-to-agent call. The temptation is to build each door as its own small product with its own notion of a run. The rule that prevents that is: be opinionated about the contract and flexible about the interface. Every door, whatever it looks like, produces the same durable concepts, and the control plane recognises nothing else:
 
 - an **identity** (who or what is asking, and on whose behalf);
 - an **intent** (the Mission or Spec being pursued);
@@ -176,6 +176,9 @@ flowchart LR
   CLI["CLI"] --> XC
   IDE["IDE plugin"] --> XC
   UI["Web UI"] --> XC
+  Chat["Chat / email"] --> XC
+  Voice["Voice"] --> XC
+  Portal["Intranet / portal"] --> XC
   SDK["SDK"] --> XC
   API["API / cron / webhook"] --> XC
   A2A["Agent-to-agent"] --> XC
@@ -183,6 +186,14 @@ flowchart LR
 ```
 
 *Multiple experiences should converge on one execution contract.* The practical test is that a run started from the CLI and a run started from the UI are indistinguishable in the control plane's records, and that a policy written once governs both. When that holds, adding a new interface is a week's work; when it does not, every interface is a new place for authority to leak.
+
+#### Channel adapters preserve identity and provenance
+
+A **channel adapter** translates one touchpoint into the common intake contract and translates progress or decisions back to that touchpoint. It is a protocol and presentation boundary, not an orchestrator and not an authority source. Chat membership, an email sender field, a caller ID, a forwarded message, or a bot mention is never sufficient proof that the person may start or approve work.
+
+Every normalized `IntakeRequest` preserves the authenticated channel principal and any represented principal; tenant; channel, conversation, and message identifiers; original content and attachment digests; modality; transcription service and confidence when voice is involved; sent and received times; locale; reply destination; correlation and idempotency keys; and the adapter version. Attachments, quoted messages, links, and transcripts remain untrusted content. The adapter may extract candidate intent, but admission resolves identity, scope, risk, applicable policy, and budget before a WorkOrder exists.
+
+Voice and forwarded content need an extra rule because transformation can change meaning. A low-confidence transcript, ambiguous identity, or consequential request must be confirmed against the normalized intent before planning or action. An outbound response carries the same correlation identity and reports the authoritative state—received, awaiting clarification, awaiting approval, executing, blocked, completed, or rejected—rather than inventing a channel-specific status. Adding a channel is complete only when the same request, denial, approval, progress, accessibility, and recovery semantics work through it and appear in the shared control-plane record.
 
 ### Underneath the surface: triggers are intake, not authority
 
@@ -286,7 +297,7 @@ A single database simplifies transactions and becomes a scaling and retention bo
 **Event and workflow contracts**
 
 1. Adopt one event envelope (CloudEvents is a reasonable base) and keep it in a schema registry with advertised version ranges.
-2. Make every intake path (cron, webhook, message, API, repository event) authenticated and idempotent; make admission the only path to execution.
+2. Make every intake path (cron, webhook, chat, email, voice, portal, API, repository event, agent-to-agent call) authenticated and idempotent; normalize it through a versioned channel adapter that preserves principal, tenant, source-message identity, content digests, modality and transformation provenance, timestamps, correlation, and reply destination; make admission the only path to execution.
 3. Write workflow definitions as typed, versioned contracts declaring nodes, inputs, outputs, dependencies, triggers, timeouts, retries, budgets, cancellation, compensation, human gates, completion states, and required evidence.
 4. Bind running WorkOrders to their approved version; migrate only through an explicit, authorised, replay-safe transition.
 5. Run schema evolution as monitored states (backfill, dual-read/dual-write, validate, cut over, contract) with side-by-side compatibility tests.
@@ -317,6 +328,8 @@ A single database simplifies transactions and becomes a scaling and retention bo
 
 **Chat that rewrites the plan.** An operator "just asks" the agent to also handle the adjacent module, and scope grows without a new Plan version. Diff what was executed against the approved Plan; make material replanning create a new version from any input channel.
 
+**Channel privilege laundering.** A forwarded email, copied chat message, voice transcript, or agent-to-agent request is treated as though the original author directly authenticated and approved it. Compare represented identity with the authenticated principal, preserve the source chain, and require admission or confirmation appropriate to the requested effect; content never carries authority.
+
 **Silent schema drops and webhooks as authority.** A consumer discards an event version it does not understand, so a verification failure never reaches the gate; or a forged or replayed "checks passed" webhook advances a WorkOrder. A dead-letter count that should be zero catches the first; producer identity and integrity checks on every envelope, plus admission before any transition, catch the second.
 
 **Migration under running work.** A workflow definition is edited in place and active runs pick up steps nobody approved. Bind runs to a version id, alert when the definition's hash changes, and migrate only through explicit decisions.
@@ -344,7 +357,7 @@ Future: a canonical event envelope, workflow migration protocol, compensation mo
 - The home screen is an exception-first Command Center: blocked, failed verification, over budget, changed from the approved Plan, stale evidence, ready for acceptance, consequential decision needed. The scarce resource is not agents; it is human attention. Manage exceptions and authority, not activity.
 - Metrics can inform authority; they should not quietly become authority. A dashboard score never accepts a WorkOrder.
 - Interrupt humans with a decision packet: decision, deadline, risk, recommendation, evidence with counterevidence, alternatives, links. A reviewer gets the Plan, diff, risk class, tests, evaluations, and policy decisions, not an approve button. A Slack ping carries the same packet. The human never compensates for missing automation.
-- Triggers are intake, not authority; admission decides. Events carry a typed envelope, bind to an approved workflow version, and are deduplicated and failed visibly on unknown versions. Delivery is not acceptance.
+- Channels and triggers are intake, not authority; versioned adapters preserve identity, source-message and transformation provenance, and correlation before admission decides. Events carry a typed envelope, bind to an approved workflow version, and are deduplicated and failed visibly on unknown versions. Delivery is not acceptance.
 - Every store has a truth boundary. Authority lives in the transactional store; artifacts are referenced by digest; projections are rebuildable; similarity is not evidence.
 
 ## Go deeper
@@ -352,5 +365,5 @@ Future: a canonical event envelope, workflow migration protocol, compensation mo
 - Related chapters: [4. The human–agent operating model](../02-design/04-the-human-agent-operating-model.md) · [7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) · [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) · [13. Control plane, orchestrator, and execution plane](../03-build/13-control-plane-orchestrator-and-execution-plane.md) · [14. Durable execution](../03-build/14-durable-execution.md) · [26. Autonomous engineering workflows](../03-build/26-autonomous-engineering-workflows.md) · [31. Quality contracts, proof packages, and certificates](../04-prove/31-quality-contracts-proof-packages-and-certificates.md) · [35. Observability, telemetry, and forensics](./35-observability-telemetry-and-forensics.md) · [36. Resilience, incidents, and the control tower](./36-resilience-incidents-and-the-control-tower.md) · [40. Governed learning and compounding engineering](../06-improve/40-governed-learning.md)
 - Glossary: [Agent–User Interaction Protocol, decision packet, event envelope, saga, truth boundary](../appendix/glossary.md)
 - Case study: [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`
-- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on the control plane as the underserved layer and the Slack shepherd packet; Jay West, "Use the factory run to teach failure" (Factory Run Explorer product notes); Jay West, factory architecture notes and Mission Control walkthrough, on the exception-first Command Center, reviewer packets, metrics versus authority, and the single execution contract across interfaces
+- Sources: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav), on the control plane as the underserved layer and the Slack shepherd packet; Sivasankar Natarajan, *Agentic AI Architecture* (user-supplied visual, reviewed 2026-09-04), used for the cross-channel touchpoint prompt and reconciled with the guide's identity, intake, and authority model; Jay West, "Use the factory run to teach failure" (Factory Run Explorer product notes); Jay West, factory architecture notes and Mission Control walkthrough, on the exception-first Command Center, reviewer packets, metrics versus authority, and the single execution contract across interfaces
 - Primary references: [CloudEvents specification](https://cloudevents.io/) · [OpenAI Agents SDK human-in-the-loop guide](https://openai.github.io/openai-agents-python/human_in_the_loop/) · [Web Content Accessibility Guidelines 2.2](https://www.w3.org/TR/WCAG22/)

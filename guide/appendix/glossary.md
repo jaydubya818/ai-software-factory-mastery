@@ -513,6 +513,12 @@ connecting an agent backend to a user-facing application through lifecycle,
 message, tool, state, and interaction events. It does not make UI state the
 authoritative factory state.
 
+**Channel adapter** — A versioned boundary that normalizes chat, email, voice,
+portal, API, or agent-to-agent input into the factory's common intake contract
+while preserving authenticated and represented identity, source-message and
+transformation provenance, correlation, and reply destination. It translates
+protocol and presentation; it does not grant authority or bypass admission.
+
 **Agent2Agent Protocol (A2A)** — An interoperability protocol through which
 independent agent applications can discover capabilities, exchange messages,
 delegate work, and manage remote tasks. Delegation through A2A cannot widen a
@@ -549,6 +555,11 @@ control and need not become a full ontology.
 **Ontology** — A formal model of domain concepts, relationships, and constraints.
 It is useful when explicit semantic reasoning and integration justify its
 modeling and maintenance cost.
+
+**Ontology maturity level** — An evidence-based rating for one domain and
+workload: L1 Foundation, L2 Owned Domains, L3 Executable Contracts, L4 Governed
+Operations, or L5 Governed Adaptation. The level is the highest one whose full
+exit evidence exists; graph size, formalism, and agent count do not raise it.
 
 **Entity resolution** — The process of determining when source-specific names
 or identifiers refer to the same canonical entity while preserving provenance,
@@ -2630,4 +2641,3 @@ or failure.
 **Factory ROI** — Value created relative to the full cost of operating and improving the factory: engineering hours avoided, cycle time, defects prevented, debt eliminated, throughput, review burden, reliability, incident remediation, expanded contribution, less context switching (Chapter 9).
 
 **Core factory metrics** — PR throughput, average cost per PR, automation percent (human touchpoints per PR), savings over human work, and acceleration of shipped product — inner-loop measures more granular than DORA, available only from a closed-loop factory (Chapter 8).
-

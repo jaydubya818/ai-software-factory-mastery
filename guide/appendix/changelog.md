@@ -14,6 +14,48 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-04 — Six-infographic architecture cross-check
+
+### Added
+
+- Added a concise independent-axis configuration rule in Chapter 23 and the
+  full lens in the architecture communication appendix, so trigger, control
+  behavior, capability, knowledge mode, topology, authority, and autonomy are
+  specified rather than hidden behind an "agent type" label.
+- Added a channel-adapter contract in Chapter 37 for chat, email, voice,
+  portals, APIs, and agent-to-agent intake, including identity, source and
+  transformation provenance, idempotency, confirmation, and shared status.
+
+### Changed
+
+- Reviewed all six supplied visuals against their canonical chapter owners.
+  Recorded overlapping material as corroboration, rejected the volatile
+  product catalog and mixed-axis taxonomy as architectures, and imported only
+  the two missing contracts above.
+- Preserved the eight-stage value stream and six-area architecture; no new
+  stack, lifecycle, vendor map, or agent taxonomy was introduced.
+
+## 2026-09-04 — Ontology engineering and maturity
+
+### Added
+
+- Expanded Chapter 19 with an ontology boundary model, implementation contract,
+  task-scoped semantic slices, governance workflow, operating metrics, and
+  agent-specific failure modes.
+- Added a five-level, domain-and-workload-scoped ontology maturity model:
+  Foundation, Owned Domains, Executable Contracts, Governed Operations, and
+  Governed Adaptation.
+- Added W3C OWL 2 and SHACL to the research canon alongside SKOS and PROV-O.
+
+### Changed
+
+- Reframed the supplied visual's final level so automated detection and
+  proposal do not imply autonomous promotion. Semantic changes remain subject
+  to validation, impact analysis, authorization, measured rollout, and
+  rollback.
+- Kept ontology inside the existing semantic-engineering owner instead of
+  introducing another top-level architecture or standalone chapter.
+
 ## 2026-09-04 — Practitioner-source review
 
 ### Added

@@ -68,6 +68,8 @@ tests, and direct operation supply different forms of evidence.
 | [Robertson and Zaragoza: The Probabilistic Relevance Framework](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf) | Study BM25 and the assumptions behind lexical relevance scoring. |
 | [Cormack, Clarke, and Buettcher: Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114) | Study a simple method for combining ranked retrieval results without treating fusion as proof of relevance. |
 | [W3C SKOS Reference](https://www.w3.org/TR/skos-reference/) | Study standards for controlled vocabularies, taxonomies, thesauri, labels, mappings, and concept schemes. |
+| [W3C OWL 2 Overview](https://www.w3.org/TR/owl2-overview/) | Study formally defined ontology classes, properties, individuals, relationships, inference, and exchange. |
+| [W3C Shapes Constraint Language (SHACL)](https://www.w3.org/TR/shacl/) | Study executable validation of RDF graph structure and semantic constraints. |
 | [W3C PROV-O](https://www.w3.org/TR/prov-o/) | Study a standard model for representing entity, activity, and agent provenance across transformed knowledge. |
 
 ## Evaluation, quality, reliability, and systems

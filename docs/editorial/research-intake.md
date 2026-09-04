@@ -166,6 +166,52 @@ E's “External foundations” table.
   retain one source as corroboration; reject the remaining taxonomies,
   unverified claims, and duplicate layer models.
 
+### Ontology-maturity infographic and standards review
+
+- Source: user-supplied infographic titled *The 5 Levels of Ontology
+  Maturity*. No author, publisher, publication date, URL, or access record was
+  visible in the supplied image.
+- Source type: unattributed practitioner visual, reviewed as a design prompt;
+  not treated as evidence for capability, safety, or implementation maturity.
+- Access date: 2026-09-04.
+- Canonical owner: Chapter 19, Data, knowledge, and semantic engineering.
+- Reader problem solved: distinguish ontology from a glossary, taxonomy, data
+  contract, knowledge graph, and semantic layer; provide an evidence-gated
+  path from a minimal vocabulary to governed semantic adaptation.
+- Primary corroboration: W3C SKOS, OWL 2, SHACL, and PROV-O recommendations.
+- Decision: accept the five-stage progression but rewrite it as Foundation,
+  Owned Domains, Executable Contracts, Governed Operations, and Governed
+  Adaptation. Reject graph size and autonomous mutation as maturity signals.
+  Detection and proposal may be autonomous at L5; promotion remains governed.
+
+### Six-infographic agent-architecture cross-check
+
+- Sources: six user-supplied infographics covering an enterprise agent
+  architecture, foundational agent concepts, a product ecosystem map, the
+  loop/graph/harness/meta-harness model, five purported agent types, and ten
+  agent building blocks.
+- Source type: practitioner explainers and product catalogs. Four match named
+  public sources already recorded in the LinkedIn source set; two have no
+  visible publication date, and the foundational-concepts visual has no
+  visible author.
+- Access date: 2026-09-04.
+- Canonical owners: Chapters 6, 18, 23, 25, 33, 37, and 38.
+- Reader problem solved: prevent mixed-axis agent labels from becoming
+  architecture, and preserve identity and provenance when work enters through
+  chat, email, voice, portals, APIs, or another agent.
+
+| Attachment | Editorial decision |
+| --- | --- |
+| Sivasankar Natarajan, *Agentic AI Architecture* | Accept the cross-channel touchpoint prompt into Chapter 37 as a governed channel-adapter contract. Guardrails, access, orchestration, knowledge, and observability already have canonical owners. |
+| *Must-Know Agentic AI Concepts*, author not visible | Corroboration only. Loop, planning, tools, memory, context, state, recovery, evaluation, observability, safety, routing, and multi-agent coordination are already covered. |
+| Ratnakumar Udayakumar, *The Modern AI Ecosystem — Tools* | Reject as guide architecture and do not copy the product inventory. Chapter 38 already maintains a dated, non-endorsing capability landscape behind replaceable contracts. |
+| Kapil Y. / Databricks, *The 4 Layers of an Agent System Explained* | Corroboration only. Chapters 15–16, 18, and 23 already contain the loop, graph, harness, and meta-harness responsibilities and source provenance. |
+| Quantumatix Technologies, *Types of AI Agents* | Accept only the teaching correction that the five labels mix control behavior, capability, knowledge mode, and topology. Chapter 23 now records independent configuration axes; the five-type taxonomy remains rejected. |
+| Arunkumar Palanisamy, *10 Building Blocks Behind Modern AI Agents* | Corroboration only beyond the pre-effect intent-consistency check already accepted into Chapter 6. The remaining blocks map to existing canonical owners. |
+
+- Decision: add two narrow contracts and no new stack, lifecycle, vendor map,
+  agent taxonomy, or top-level architecture.
+
 ## Pending
 
 No pending items.

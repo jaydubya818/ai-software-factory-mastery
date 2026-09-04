@@ -125,6 +125,10 @@ Luke's team calls the skill of placing models "droid whispering": planning benef
 
 **Conditional routing** selects a permitted next node from observable state: task type, risk, complexity, repository, and required capability; confidence or ambiguity calibrated on representative cases; tool, provider, environment, and capacity availability; cost, latency, retry, and attention budgets; prior failures and changed hypotheses; and required independence or human authority. Deterministic routing handles known rules. A model may propose a route for ambiguous input, but the orchestrator filters the proposal through eligibility and records the alternatives, reason, uncertainty, and fallback. The best router usually filters with deterministic policy first and only then asks a model to rank the eligible choices.
 
+### Classify the configuration, not the agent
+
+*Reactive*, *deliberative*, *tool-using*, *retrieval-based*, and *multi-agent* are not mutually exclusive agent types. They describe different things: control behavior, capability, knowledge mode, and topology. Start from the workload, specify each axis independently in the Agent Definition, and never infer authority or maturity from a label. One configuration can be event-triggered, deliberative, retrieval-grounded, tool-using, and part of a creator–verifier pair. The detailed classification lens and examples are in the [architecture communication guide](../appendix/architecture-communication.md#classify-agent-configurations-on-independent-axes).
+
 ### One agent, until a boundary demands a second
 
 The default is one agent. Keep it until specialization creates value you can measure. Every additional agent adds coordination cost, latency, tokens, shared-state problems, new failure modes, and debugging difficulty, and it adds them whether or not the second agent contributes anything. So the question is never "would another agent be nice here?" It is "what architectural boundary am I crossing that one agent cannot straddle?" There are five honest answers.
@@ -276,7 +280,7 @@ What the studied evidence does not establish: a canonical library of orchestrati
 
 ## Retain this
 
-- Use the least agentic mechanism that reliably solves the task; complexity must earn its place through evaluation.
+- Use the least agentic mechanism that reliably solves the task; specify trigger, control behavior, capability, knowledge mode, topology, authority, and autonomy independently, and make complexity earn its place through evaluation.
 - Draw work as a graph: nodes perform one job, edges carry typed state and enforce routing and verification.
 - Add another agent only for measurable parallelism, isolation, verification, or expertise.
 - Every delegation declares inputs, outputs, authority, budget, completion, and ownership.

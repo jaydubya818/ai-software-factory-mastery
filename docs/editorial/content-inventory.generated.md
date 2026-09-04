@@ -618,7 +618,7 @@ Headings:
 ### 03-build/19-data-knowledge-and-semantic-engineering.md
 
 - Type: chapter
-- Words: 4849
+- Words: 6347
 
 Headings:
 
@@ -631,6 +631,7 @@ Headings:
 - H3 — Knowledge engineering: a governed lifecycle — `#knowledge-engineering-a-governed-lifecycle`
 - H3 — The enterprise retrieval pipeline, end to end — `#the-enterprise-retrieval-pipeline-end-to-end`
 - H3 — Semantic engineering: executable meaning — `#semantic-engineering-executable-meaning`
+- H3 — Ontology engineering: a contract for meaning — `#ontology-engineering-a-contract-for-meaning`
 - H3 — Ground first: the context graph — `#ground-first-the-context-graph`
 - H2 — How to build it — `#how-to-build-it`
 - H3 — The records — `#the-records`
@@ -721,7 +722,7 @@ Headings:
 ### 03-build/23-agent-and-loop-engineering.md
 
 - Type: chapter
-- Words: 6340
+- Words: 6430
 
 Headings:
 
@@ -732,6 +733,7 @@ Headings:
 - H3 — The shape of the work is a graph — `#the-shape-of-the-work-is-a-graph`
 - H3 — Decomposition produces a task graph, not a pile of prompts — `#decomposition-produces-a-task-graph-not-a-pile-of-prompts`
 - H3 — Task-specific agent profiles and conditional routing — `#task-specific-agent-profiles-and-conditional-routing`
+- H3 — Classify the configuration, not the agent — `#classify-the-configuration-not-the-agent`
 - H3 — One agent, until a boundary demands a second — `#one-agent-until-a-boundary-demands-a-second`
 - H3 — Topologies: when several agents earn their cost — `#topologies-when-several-agents-earn-their-cost`
 - H3 — Collaboration contracts — `#collaboration-contracts`
@@ -1139,7 +1141,7 @@ Headings:
 ### 05-operate/37-control-surfaces-event-contracts-and-storage.md
 
 - Type: chapter
-- Words: 6420
+- Words: 6795
 
 Headings:
 
@@ -1449,7 +1451,7 @@ Headings:
 ### appendix/architecture-communication.md
 
 - Type: appendix
-- Words: 6889
+- Words: 7250
 
 Headings:
 
@@ -1464,6 +1466,7 @@ Headings:
 - H3 — Structure architecture answers — `#structure-architecture-answers`
 - H3 — The vendor-neutral master architecture map — `#the-vendor-neutral-master-architecture-map`
 - H3 — Translate layer diagrams into the canonical models — `#translate-layer-diagrams-into-the-canonical-models`
+- H3 — Classify agent configurations on independent axes — `#classify-agent-configurations-on-independent-axes`
 - H3 — Open with questions that change the design — `#open-with-questions-that-change-the-design`
 - H3 — Quantify scale before selecting technology — `#quantify-scale-before-selecting-technology`
 - H3 — Define contracts and data ownership — `#define-contracts-and-data-ownership`
@@ -1514,11 +1517,17 @@ Headings:
 ### appendix/changelog.md
 
 - Type: appendix
-- Words: 1140
+- Words: 1386
 
 Headings:
 
 - H1 — Guide Changelog — `#guide-changelog`
+- H2 — 2026-09-04 — Six-infographic architecture cross-check — `#2026-09-04-six-infographic-architecture-cross-check`
+- H3 — Added — `#added`
+- H3 — Changed — `#changed`
+- H2 — 2026-09-04 — Ontology engineering and maturity — `#2026-09-04-ontology-engineering-and-maturity`
+- H3 — Added — `#added`
+- H3 — Changed — `#changed`
 - H2 — 2026-09-04 — Practitioner-source review — `#2026-09-04-practitioner-source-review`
 - H3 — Added — `#added`
 - H3 — Changed — `#changed`
@@ -1543,7 +1552,7 @@ Headings:
 ### appendix/coverage-and-maturity.md
 
 - Type: appendix
-- Words: 776
+- Words: 788
 
 Headings:
 
@@ -1557,7 +1566,7 @@ Headings:
 ### appendix/glossary.md
 
 - Type: appendix
-- Words: 23125
+- Words: 23222
 
 Headings:
 
@@ -1696,7 +1705,7 @@ Headings:
 ### appendix/research/initial-canon.md
 
 - Type: appendix
-- Words: 2629
+- Words: 2665
 
 Headings:
 
@@ -1996,6 +2005,7 @@ Headings:
 - MCP Task
 - Agent Client Protocol (ACP)
 - Agent–User Interaction Protocol (AG-UI)
+- Channel adapter
 - Agent2Agent Protocol (A2A)
 - Data Understanding
 - Data Contract
@@ -2004,6 +2014,7 @@ Headings:
 - Semantic Contract
 - Controlled vocabulary
 - Ontology
+- Ontology maturity level
 - Entity resolution
 - Retrieval-Augmented Generation (RAG)
 - Hybrid retrieval

@@ -177,6 +177,43 @@ reader to memorize another lifecycle. If a box cannot be assigned an owner and
 a stage, the diagram is hiding a responsibility or inventing an ungoverned
 side path.
 
+### Classify agent configurations on independent axes
+
+Reference diagrams also present *reactive agent*, *deliberative agent*,
+*tool-using agent*, *retrieval-based agent*, and *multi-agent system* as five
+agent types. That framing mixes independent axes. Reactive versus deliberative
+describes control behavior; tool use describes a capability; retrieval
+describes a knowledge path; and multi-agent describes a topology. A production
+configuration can occupy all four descriptions at once.
+
+Use the labels as a detail lens for an Agent Definition, not as another
+architecture or maturity ladder:
+
+| Axis | Question | Examples |
+|---|---|---|
+| Trigger | What starts a turn? | Human request, repository event, schedule, webhook, another agent |
+| Control behavior | How much judgment and planning occurs before action? | Deterministic reaction, bounded loop, explicit multi-step plan |
+| Capability profile | What can the configuration observe and do? | Retrieve, analyze, generate, call tools, modify state |
+| Knowledge mode | Where does decision context come from? | Frozen inputs, live APIs, governed retrieval, semantic or graph traversal |
+| Topology | How is work divided? | Single agent, router, delegation, creator–verifier, parallel specialists |
+| Authority and autonomy | Which actions may proceed, for how long, under which gates? | Read-only, propose-only, reversible mutation, consequential action; per-step or exception-based review |
+
+Start from the workload and select one value on each axis. A low-latency
+notification may use deterministic reaction with no model at all. A repository
+migration may use a deliberative loop with tools and retrieval, followed by a
+fresh-context verifier. Multi-agent is not the destination at the right edge of
+a maturity chart, and retrieval is not a species of worker. Treating traits as
+types creates duplicate runtimes, bundles broad permissions with broad labels,
+and makes evaluation impossible to attribute. One governed runtime with
+task-specific profiles is usually the simpler system.
+
+This correction was prompted by two user-supplied visuals reviewed on
+2026-09-04: Quantumatix Technologies' *Types of AI Agents* and the unattributed
+*Must-Know Agentic AI Concepts*. The former supplied the mixed labels; the
+latter corroborated the guide's existing loop, memory, context, state, quality,
+control, safety, routing, and coordination coverage. Neither visual is treated
+as implementation evidence or a new canonical model.
+
 ### Open with questions that change the design
 
 Do not begin by drawing boxes. Establish the decision frame first:

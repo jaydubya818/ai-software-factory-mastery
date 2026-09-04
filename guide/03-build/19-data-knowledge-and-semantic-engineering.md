@@ -2,7 +2,7 @@
 title: "Data, knowledge, and semantic engineering"
 part: build
 chapter: 19
-summary: "How data understanding, governed knowledge preparation, semantic contracts, and context graphs make trustworthy retrieval possible."
+summary: "How data understanding, governed knowledge preparation, semantic contracts, ontology maturity, and context graphs make trustworthy retrieval possible."
 absorbs: [06-ai-engineering/03-data-knowledge-context-and-semantic-engineering.md, 06-ai-engineering/08-knowledge-context-and-retrieval-pipeline-specification.md]
 infographics: [knowledge-pipeline, semantic-layer, context-graph]
 ---
@@ -127,6 +127,59 @@ This is not the cryptographic canonicalization that the evidence chapters use to
 
 A **Semantic Contract** defines canonical concepts, identifiers, allowed relationships, disambiguation rules, source mappings, owner, version, and compatibility policy. Keep the layer as small as possible and as explicit as necessary. An ontology earns its cost when several sources repeatedly disagree about meaning; it is premature when a small controlled vocabulary and stable identifiers solve the actual problem. Semantic engineering removes measured ambiguity; it does not build a speculative enterprise model of everything.
 
+### Ontology engineering: a contract for meaning
+
+An ontology makes a domain's meaning machine-operable. It names concepts with stable identifiers, defines their properties and allowed relationships, records mappings from source-specific terms, and states constraints that software can validate. In a software factory, that lets an agent understand that a `service` owns a `repository`, a `deployment` releases a `change`, an `incident` affects a `service`, and those statements may carry different authority, freshness, and permission requirements. The ontology is therefore part of trusted context, not a replacement for source facts or workflow policy.
+
+The neighboring artifacts are related but not interchangeable:
+
+| Artifact | What it answers | Boundary |
+|---|---|---|
+| Business glossary | What does this term mean to people? | Definitions alone do not make relationships or constraints executable. |
+| Taxonomy | Where does this concept sit in a hierarchy? | `is-a` and broader/narrower structure do not describe every domain relationship. |
+| Data contract | What fields, quality, freshness, and compatibility does one interface promise? | It governs an interface; it does not reconcile meaning across all interfaces. |
+| Ontology | Which concepts exist, how are they related, and which statements are valid? | It defines meaning; it does not prove that a particular fact is current or authorized. |
+| Knowledge graph | Which instances and relationships are currently asserted? | It instantiates an ontology or schema; a graph database by itself has no trustworthy semantics. |
+| Semantic layer | How do consumers resolve and use consistent meaning? | It is the operational access layer and may use a glossary, taxonomy, ontology, mappings, and contracts together. |
+
+A useful ontology release contains only what a real workflow needs: canonical concept and relationship identifiers; human definitions and examples; source mappings and aliases; domain, range, cardinality, and integrity constraints; owner and steward; authority and provenance rules; version and compatibility policy; access classification; lifecycle state; and tests. Formal standards are implementation choices, not maturity badges. [SKOS](https://www.w3.org/TR/skos-reference/) is a lightweight fit for controlled vocabularies and taxonomies; [OWL 2](https://www.w3.org/TR/owl2-overview/) adds formally defined classes, properties, and inference; [SHACL](https://www.w3.org/TR/shacl/) validates RDF graph shapes; and [PROV-O](https://www.w3.org/TR/prov-o/) can represent provenance. A relational schema, typed API, or property graph can implement the same contract when it preserves the required semantics and evidence.
+
+At runtime, do not paste the enterprise ontology into every prompt. Resolve the request against the published ontology version, then inject a **task-scoped semantic slice**: the canonical identifiers, definitions, relationships, constraints, source mappings, provenance, and unresolved ambiguities needed for this decision. The human-facing interface and the agent should resolve the same terms to the same identifiers. A long-running attempt must be able to refresh facts, but a semantic version change requires an explicit rebind or restart because it can change what the task means.
+
+Ontology validation also does not grant authority. A relationship can be well-formed and still be stale, false, or invisible to the requester. Read paths apply identity, tenant, purpose, and node- and edge-level permissions before returning a semantic slice. Write paths validate the proposal against constraints, source authority, change policy, and optimistic-concurrency or version preconditions before publishing. Consequential business invariants remain deterministic checks against authoritative state.
+
+#### The five ontology maturity levels
+
+Ontology maturity is an evidence claim about one domain and workload, not an enterprise-wide score and not a count of nodes, edges, tools, or agents. Record it as, for example, `software-delivery/change-impact: L3`, with the evidence date and ontology release. A large formal model with no owner is less mature than a small vocabulary that is versioned, tested, and used reliably.
+
+| Level | Operational state | Exit evidence | Agent boundary |
+|---|---|---|---|
+| **L1 — Foundation** | Priority sources and terms are inventoried; canonical identifiers and a minimal vocabulary exist; the registry is queryable. | A representative workflow resolves its core entities without silent string matching, and every mapping points to its source. | Agents may read published terms and return unresolved ambiguity; they do not invent mappings. |
+| **L2 — Owned domains** | Each concept, relationship, mapping, and domain extension has an accountable owner or steward; decision rights and change intake are explicit. | Ownership coverage, stewardship response targets, and an adjudicated ambiguity log are demonstrated for the scope. | Agents may suggest candidate aliases or relationships; a named steward decides meaning. |
+| **L3 — Executable contracts** | Semantic contracts, data-contract bindings, constraints, mappings, compatibility rules, and conformance tests are published as versioned artifacts. | Consumer contract tests pass; invalid relationships are rejected; semantic resolution accuracy meets a defined baseline. | Agents may resolve and traverse within the published contract; unknown or conflicting meaning blocks consequential action. |
+| **L4 — Governed operations** | Versioning, least-privilege access, provenance, semantic diffs, impact analysis, approval, release, deprecation, rollback, health SLOs, and consumer observability operate together. | A traced change shows affected consumers, approval, migration, production measures, and successful rollback or retirement rehearsal. | Agents may use the ontology in production workflows and draft change sets; policy remains outside the model. |
+| **L5 — Governed adaptation** | Production outcomes detect drift, gaps, duplicates, and useful new relationships; candidate changes are evaluated against baselines and promoted through the governed learning loop. | Repeated proposals show measured resolution or outcome improvement without security, compatibility, or quality regression; rollback remains tested. | Detection and proposal may be autonomous. Validation, consequential promotion, and rollback policy remain governed. |
+
+The level is the highest row for which **all** exit evidence exists; do not average incomplete controls into a higher score. Assess each domain-workload pair independently, publish current and target levels, and name the blocker. L5 is not "the model edits the ontology." It is a closed improvement system in which automation shortens discovery and proposal while humans and policy retain the decision rights appropriate to semantic blast radius.
+
+The promotion path mirrors every other governed factory asset:
+
+```mermaid
+flowchart LR
+    O["Observe usage, drift, and failures"] --> P["Propose ontology change set"]
+    P --> V["Validate syntax, constraints, and provenance"]
+    V --> I["Analyze consumer and policy impact"]
+    I --> E["Evaluate candidate vs. baseline"]
+    E --> A{"Authorized approval"}
+    A -->|Reject| R["Record reason and retain current release"]
+    A -->|Approve| Pub["Publish immutable ontology release"]
+    Pub --> C["Canary consumers and measure outcomes"]
+    C -->|Regression| B["Rollback and diagnose"]
+    C -->|Healthy| O
+```
+
+Measure usefulness, not ontology volume. The operating scorecard should include canonical-identifier coverage for the target workflows; unresolved and incorrectly resolved term rates; constraint-conformance rate; stale and orphaned concept rate; semantic-change lead time; consumers and contracts affected before versus after release; permission-leakage tests; rollback time; precision of agent-proposed changes; and the downstream change in retrieval quality, task acceptance, defects, cost, or human corrections. More concepts and relationships are costs unless those outcomes improve.
+
 ### Ground first: the context graph
 
 Everything above is about whether the agent's context is *right*. There is an economic argument for grounding that is just as strong, and it is easy to miss because the failure it describes does not look like a failure. *An ungrounded agent fails slowly rather than cheaply.* Given a question it cannot answer from what it has been handed, an agent does not stop; it searches one more place, re-sending its whole expanding context on every turn, spawns a helper, hits an error, and reasons its way to a confident wrong conclusion. Every one of those turns is billed. Richer information up front is the single most powerful lever on the "requests per turn" term of the cost equation in [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md), and grounding is therefore a cost control as much as a quality control.
@@ -168,7 +221,7 @@ A context graph is the knowledge graph of the retrieval section, built at organi
 
 ### The records
 
-Four reference schemas anchor the pipeline. Two are shown as documents; two as required-field lists.
+Ten reference schemas anchor the pipeline. Three are shown as documents; seven as required-field lists.
 
 ```yaml
 # SourceRegistration
@@ -202,12 +255,32 @@ lineage: [extract:90, sanitize:22, segment:15]
 state: indexed
 ```
 
+```yaml
+# OntologyRelease
+id: ontology:software-delivery@3.1.0
+scope: domain:software-delivery
+owners: [role:domain-steward]
+concepts: [concept:service, concept:repository, concept:deployment]
+relationships: [relationship:owns, relationship:releases]
+constraints_version: shapes:software-delivery@3.1.0
+source_mappings: mappings:software-delivery@12
+compatibility: backward-compatible
+classification: internal
+provenance: change-set:ontology-184
+approved_by: decision:ontology-184
+rollback_to: ontology:software-delivery@3.0.2
+state: active
+```
+
 | Record | Required fields |
 |---|---|
 | `RetrievalRequest` | Requester and workload identity, tenant, purpose, query, task type, repositories, required authority classes, time boundary, classification ceiling, token budget, retrieval policy version |
 | `RetrievalCandidate` | Artifact and source versions, candidate method, raw and normalized scores, permission decision, freshness, authority, contradiction group, exclusion reason, lineage |
 | `ContextSelection` | Request, selected and excluded candidates, reranker version, diversity and contradiction decisions, token allocation, selection rationale, evaluator signals |
 | `ContextPackage` | Immutable digest, attempt and manifest, instruction hierarchy, exact excerpts, citations, source and policy versions, classification, expiry, cache key, unresolved missing or conflicting facts |
+| `SemanticResolution` | Input term and source context, canonical identifier, ontology release, mapping or inference path, confidence or ambiguity state, permissions applied, provenance, resolver version |
+| `OntologyChangeSet` | Base release, proposed concept, relationship, constraint, or mapping changes; rationale; provenance; affected domains and consumers; compatibility class; evaluations; approvals; rollout and rollback plan |
+| `OntologyMaturityAssessment` | Domain and workload scope, ontology release, evidence date, current level, evidence for every satisfied gate, target level, blockers, accountable owner, next review date |
 
 ## Failure modes
 
@@ -222,6 +295,11 @@ state: indexed
 | Index unavailable | Health or circuit state | Approved fallback or explicit unavailable state | Index restored and missed-change reconciliation |
 | Missing authoritative data | Data-quality gate | Explicit blocked state, never a confident default | Owner supplies data; gate passes |
 | Silent alias mapping | Semantic evaluation | Term stays ambiguous; escalate | Contract updated and versioned |
+| False equivalence | Resolution evaluation or steward correction | Quarantine the mapping and block dependent consequential actions | Corrected mapping published; affected decisions replayed against the new release |
+| Ontology shadows the source of truth | Ontology contains operational values with no source authority or freshness | Treat the ontology as meaning, not current fact; resolve the fact from its authoritative system | Trace shows the source fact, observation time, and ontology version separately |
+| Unauthorized graph inference | A permitted node reveals a restricted node or relationship through traversal | Apply permission to every node and edge before traversal and inference | Negative path tests prove no restricted relationship is inferable |
+| Ungoverned semantic mutation | Agent or administrator edits active meaning in place | Reject mutable releases; accept only reviewed change sets that publish a new version | Semantic diff, approval, immutable release, and rollback rehearsal are present |
+| Maturity by graph size | Team reports nodes, edges, or model expressiveness as progress | Score the exact domain-workload pair only against the five exit-evidence gates | Published score names release, scope, evidence date, current level, target, and blocker |
 | Obsolete document ranks first | Authority tier and lifecycle filter | Excluded before compilation | Retrieval evaluation case added |
 | Whole-window stuffing | Context size flat regardless of change size; token cost per accepted outcome high | Retrieve from the change upward: changed symbols, dependency context, review history, then only the levels the scope requires | Context evals show packages are minimal and sufficient |
 | Local convention overrides a global standard | Precedence check in compilation | Global material allocated first and never compressed below governing clauses | Standard present in the package; evaluation case added |
@@ -256,7 +334,7 @@ The repository glossary and lexicon reviewed 2026-09-02 name the rest of this ch
 ## Retain this
 
 - Data understanding asks whether a source is usable for this decision; it does not clean or authorize it.
-- Knowledge engineering governs the corpus; semantic engineering makes entities, terms, and relationships mean one thing.
+- Knowledge engineering governs the corpus; semantic engineering makes entities, terms, and relationships mean one thing, and ontology maturity measures whether that meaning is owned, executable, governed, and safely improved.
 - The context graph grounds retrieval in versioned entities, relationships, provenance, and permissions.
 - A correct model cannot repair missing authority, stale facts, or contradictory semantics upstream.
 - Evaluate each layer separately so a context failure is not misdiagnosed as a model failure.
@@ -264,9 +342,10 @@ The repository glossary and lexicon reviewed 2026-09-02 name the rest of this ch
 ## Go deeper
 
 - Related chapters: [18. Agent architecture](./18-agent-architecture.md) for the compiler and the five trust categories; [25. The 12-layer stack](./25-the-12-layer-production-ai-agent-stack.md); [29. Evaluation engineering](../04-prove/29-evaluation-engineering.md); [33. Security](../04-prove/33-security.md) for poisoning and injection; [35. Observability](../05-operate/35-observability-telemetry-and-forensics.md) for lineage; [5. Authoritative records](../02-design/05-authoritative-records.md) for the systems of record this pipeline must not shadow.
-- Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
+- Primary sources: [Lewis et al., Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401); [Robertson and Zaragoza, The Probabilistic Relevance Framework (BM25)](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf); [Cormack, Clarke, and Buettcher, Reciprocal Rank Fusion](https://dl.acm.org/doi/10.1145/1571941.1572114); W3C [SKOS](https://www.w3.org/TR/skos-reference/), [OWL 2](https://www.w3.org/TR/owl2-overview/), [SHACL](https://www.w3.org/TR/shacl/), and [PROV-O](https://www.w3.org/TR/prov-o/) recommendations; [NIST AI Risk Management Framework](https://airc.nist.gov/airmf-resources/airmf/) and [AI RMF 1.0](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10); [OWASP Agentic AI Threats and Mitigations](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/); Mission Control [capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) at `d902fae`.
 - Transcript source: the 12-layer production AI agent stack and its coverage audit (Data Understanding, Knowledge Engineering, Semantic Engineering term lists); the agent platform technology glossary (RAG, BM25, hybrid retrieval, reranking, permission-aware retrieval, provenance, freshness); Jay West, factory architecture notes (the enterprise retrieval pipeline, the five properties of enterprise context, the four-level context hierarchy, changed-symbol retrieval, dependency context, and historical review patterns).
 - Public sources: Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the context graph, its published scale, and the grounded-versus-ungrounded comparison; *Six layers of a working agentic system* (public post, 2026) for the trusted-context layer and the "80 percent of the agent's success" line.
 - Public practitioner talks, 2026: the context-centric factory, the Definition of Correct, context as code and the context lifecycle, the context inventory and its detections, context drift and deduplication, context utility and pruning, compensatory versus institutional context, the company brain, structured external state and the six-kind memory taxonomy, context routing, context shift-left, and the context firewall.
+- User-supplied infographic, *The 5 Levels of Ontology Maturity*, author and publication date not visible, reviewed 2026-09-04: used as a design prompt for the five-stage progression only. Capability claims were reconciled with the guide's governance model and W3C standards; the visual is not treated as proof of implementation or autonomous safety.
 - Mission Control repository glossary and lexicon, reviewed 2026-09-02: context packages, the Context CDL, the Frozen Context Package and CBOM, Factory Memory's untrusted-text rule, knowledge-graph edge kinds and hard caps, hybrid retrieval score components, agentic retrieval and the sufficiency loop, and the context CLI.
 - [Glossary](../appendix/glossary.md).

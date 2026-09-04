@@ -2,7 +2,7 @@
 title: Capability Coverage and Maturity
 status: canonical-navigation
 audience: [all]
-last_verified: 2026-09-03
+last_verified: 2026-09-04
 lifecycle: [intent, plan, execute, verify, deliver, learn]
 risk: variable
 topics: [coverage, maturity, review-status]
@@ -42,7 +42,7 @@ repository class, risk level, environment, version, and observation window.
 | Agent architecture, tools, context, and memory | Review ready core chapter | Versioned case evidence with bounded gaps |
 | Agent Factory and capability supply chain | Review ready architecture | Unified registry and lifecycle not proven |
 | Tool, skill, and integration contracts | Review ready | Existing callable capabilities are not asserted to meet every contract field |
-| Knowledge, retrieval, poisoning, and revocation | Review ready | Production registry, benchmark, deletion, and poisoning controls are unproven |
+| Knowledge, retrieval, ontology, poisoning, and revocation | Review ready, including a domain-scoped five-level ontology maturity model | Production semantic registry, ontology release workflow, benchmark, deletion, and poisoning controls are unproven |
 | Multi-agent topologies and autonomy selection | Review ready | Each workflow must still prove benefit and verifier independence |
 | Repository onboarding and intelligence | Review ready architecture | End-to-end onboarding path not proven |
 | Autonomous workflow portfolio | Review ready architecture | First bounded workflow only; wider catalog unproven |
