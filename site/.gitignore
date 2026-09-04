@@ -51,3 +51,7 @@ public/infographics/
 /public/search-index.json
 /public/sitemap.xml
 /public/robots.txt
+/public/guide/infographics/
+/public/guide/search-index.json
+/public/guide/sitemap.xml
+/public/guide/robots.txt

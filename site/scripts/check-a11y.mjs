@@ -7,7 +7,13 @@ import AxeBuilder from "@axe-core/playwright";
 
 const baseUrl = process.argv.find((arg) => arg.startsWith("http")) ?? "http://localhost:3000";
 const strict = process.argv.includes("--strict");
-const routes = ["/", "/visuals", "/topics", "/docs/01-understand/02-the-factory-in-one-view", "/docs/appendix/glossary"];
+const routes = [
+  "/guide",
+  "/guide/atlas",
+  "/guide/topics",
+  "/guide/01-understand/02-the-factory-in-one-view",
+  "/guide/glossary",
+];
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 let total = 0;
 for (const theme of ["light", "dark"]) {

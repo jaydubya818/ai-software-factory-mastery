@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { stages } from "../../lib/content";
+import { GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
 
 /** The eight stages of the factory's one line, with what each one owns. */
 const stageMeta: Record<number, { verb: string; detail: string; concepts: string[] }> = {
@@ -20,7 +21,7 @@ export function ValueStream({ compact = false }: { compact?: boolean }) {
       <ol className="atlas-lifecycle value-stream-eight">
         {ordered.map(({ n, doc, meta }) => (
           <li id={`stage-${n}`} key={n}>
-            <Link href={doc ? `/docs/${doc.slug}` : "/guide#stages"} className="value-stream-phase">
+            <Link href={doc ? guideDocumentPath(doc.slug) : `${GUIDE_ROUTES.home}#stages`} className="value-stream-phase">
               <span>{String(n).padStart(2, "0")}</span>
               <small className="value-stream-canonical">Stage {n}</small>
               <h3>{meta.verb}</h3>

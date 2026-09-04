@@ -1,10 +1,11 @@
 import path from "node:path";
 import { documents } from "./content.generated";
 import { guideParts } from "./guide";
+import { GUIDE_CANONICAL_ORIGIN, guideContentPath } from "./paths";
 
 export type DocumentRecord = (typeof documents)[number];
 
-/** The book map (guide/README.md). Served at /docs/guide but kept out of the reading sequence. */
+/** The book map (guide/README.md). Merged into /guide and kept out of the reading sequence. */
 export const bookMap = documents.find((document) => document.contentType === "overview");
 
 /** Front matter and the 44 numbered chapters, in reading order. */
@@ -79,7 +80,7 @@ function normalizeAnchor(value: string) {
 }
 
 export const REPO_BLOB_URL = "https://github.com/jaydubya818/ai-software-factory-mastery/blob/main";
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ai-software-factory-mastery.vercel.app";
+export const SITE_URL = GUIDE_CANONICAL_ORIGIN;
 
 export function resolveDocumentHref(sourcePath: string, href?: string) {
   if (!href || href.startsWith("#") || /^(https?:|mailto:)/.test(href)) return href;
@@ -89,7 +90,10 @@ export function resolveDocumentHref(sourcePath: string, href?: string) {
 
   const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(sourcePath), pathname));
   const target = documents.find((document) => document.sourcePath === resolved);
-  if (target) return `/docs/${target.slug}${hash ? `#${normalizeAnchor(hash)}` : ""}`;
+  if (target) {
+    const route = guideContentPath(target.slug);
+    return `${route}${hash ? `#${normalizeAnchor(hash)}` : ""}`;
+  }
   // A repository file that is not published as a page (evidence bundles, the v1 archive): link to it on GitHub.
   const repoPath = path.posix.normalize(path.posix.join("guide", resolved));
   if (repoPath.startsWith("..")) return href;

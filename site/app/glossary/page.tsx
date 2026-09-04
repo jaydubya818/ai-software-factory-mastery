@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
+import { GUIDE_ROUTES, type GuideSearchParams, withSearchParams } from "../../lib/paths";
 
-export default function GlossaryAliasPage() {
-  redirect("/docs/appendix/glossary");
+export default async function LegacyGlossaryPage({ searchParams }: { searchParams: Promise<GuideSearchParams> }) {
+  permanentRedirect(withSearchParams(GUIDE_ROUTES.glossary, await searchParams));
 }

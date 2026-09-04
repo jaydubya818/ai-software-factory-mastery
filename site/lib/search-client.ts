@@ -1,5 +1,7 @@
 "use client";
 
+import { guideAssetPath, guideContentPath } from "./paths";
+
 export type SearchSection = { id: string; heading: string; text: string };
 export type SearchDocument = {
   slug: string;
@@ -25,7 +27,7 @@ let cache: Promise<SearchDocument[]> | null = null;
 /** The full-text index is ~1.2 MB, so it is fetched only when a search surface mounts. */
 export function loadSearchIndex(): Promise<SearchDocument[]> {
   if (!cache) {
-    cache = fetch("/search-index.json").then((response) => {
+    cache = fetch(guideAssetPath("search-index.json")).then((response) => {
       if (!response.ok) throw new Error(`search index ${response.status}`);
       return response.json() as Promise<SearchDocument[]>;
     });
@@ -55,7 +57,7 @@ export function searchDocuments(index: SearchDocument[], query: string, limit = 
     const titleScore = terms.reduce((total, term) => total + (title.includes(term) ? 12 : 0) + (description.includes(term) ? 3 : 0), 0);
     // Whole-document hit when the title matches every term.
     if (terms.every((term) => title.includes(term))) {
-      hits.push({ document, section: null, excerpt: document.description, href: `/docs/${document.slug}`, relevance: titleScore + 20 });
+      hits.push({ document, section: null, excerpt: document.description, href: guideContentPath(document.slug), relevance: titleScore + 20 });
     }
     for (const section of document.sections) {
       const heading = section.heading.toLowerCase();
@@ -63,7 +65,7 @@ export function searchDocuments(index: SearchDocument[], query: string, limit = 
       if (!terms.every((term) => heading.includes(term) || text.includes(term))) continue;
       const phraseBonus = terms.length > 1 && (text.includes(terms.join(" ")) || text.includes(terms.join("-"))) ? 10 : 0;
       const relevance = terms.reduce((total, term) => total + (heading.includes(term) ? 9 : 0) + Math.min(4, text.split(term).length - 1), 0) + titleScore + phraseBonus;
-      hits.push({ document, section, excerpt: excerptFor(section.text, terms), href: `/docs/${document.slug}#${section.id}`, relevance });
+      hits.push({ document, section, excerpt: excerptFor(section.text, terms), href: `${guideContentPath(document.slug)}#${section.id}`, relevance });
     }
   }
   return hits.sort((a, b) => b.relevance - a.relevance).slice(0, limit);

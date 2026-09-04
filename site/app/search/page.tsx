@@ -1,25 +1,6 @@
-import type { Metadata } from "next";
-import { SearchExperience } from "../components/SearchExperience";
-import { SiteFooter } from "../components/SiteFooter";
-import { SiteHeader } from "../components/SiteHeader";
+import { permanentRedirect } from "next/navigation";
+import { GUIDE_ROUTES, type GuideSearchParams, withSearchParams } from "../../lib/paths";
 
-export const metadata: Metadata = {
-  title: "Search · The AI Software Factory Guide",
-  description: "Search the complete AI Software Factory guide.",
-};
-
-export default function SearchPage() {
-  return (
-    <>
-      <SiteHeader />
-      <main className="interior-page search-page">
-        <header className="page-intro compact-intro">
-          <span className="eyebrow">Guide search</span>
-          <h1>Search the whole system.</h1>
-        </header>
-        <SearchExperience />
-      </main>
-      <SiteFooter />
-    </>
-  );
+export default async function LegacySearchPage({ searchParams }: { searchParams: Promise<GuideSearchParams> }) {
+  permanentRedirect(withSearchParams(GUIDE_ROUTES.search, await searchParams));
 }

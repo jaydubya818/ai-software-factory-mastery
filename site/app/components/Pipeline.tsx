@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { stages } from "../../lib/content";
+import { GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
 
 const stageMeta: Record<number, { name: string; owns: string; who: string }> = {
   1: { name: "Builder Intent", owns: "A builder states the outcome. The factory turns it into objective, constraints, acceptance criteria, and risk — an immutable Mission Spec.", who: "Human states intent" },
@@ -20,7 +21,7 @@ function Row({ numbers, label }: { numbers: number[]; label: string }) {
         const meta = stageMeta[n];
         return (
           <li className="pipeline-item" key={n}>
-            <Link href={doc ? `/docs/${doc.slug}` : "/guide#stages"}>
+            <Link href={doc ? guideDocumentPath(doc.slug) : `${GUIDE_ROUTES.home}#stages`}>
               <span className="pipeline-node" aria-hidden="true">{n}</span>
               <span className="pipeline-stage">{meta.who}</span>
               <h3>{meta.name}</h3>

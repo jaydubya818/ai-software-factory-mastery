@@ -4,7 +4,7 @@ import { htmlFor } from "./helpers/render.mjs";
 
 // resolveDocumentHref in lib/content.ts rewrites the relative *.md links the
 // Markdown sources use into site routes. These tests pin that rewrite so a
-// change to the slug scheme or the anchor normalizer cannot silently turn
+// change to the canonical Guide slug scheme or the anchor normalizer cannot silently turn
 // every cross-reference in the book into a dead link.
 
 function articleBody(html) {
@@ -19,29 +19,29 @@ function hrefs(html) {
 
 test("rewrites sibling and cross-part .md links to site routes", async () => {
   // ./01-what-this-guide-covers.md, relative to guide/00-front-matter/00-how-to-read-this-guide.md
-  const frontMatter = hrefs(await htmlFor("/docs/00-front-matter/00-how-to-read-this-guide"));
+  const frontMatter = hrefs(await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide"));
   assert.ok(
-    frontMatter.includes("/docs/00-front-matter/01-what-this-guide-covers"),
+    frontMatter.includes("/guide/00-front-matter/01-what-this-guide-covers"),
     "a sibling .md link should resolve to the sibling document route",
   );
   // ../appendix/glossary.md, resolved across directories
-  assert.ok(frontMatter.includes("/docs/appendix/glossary"), "a ../ link into the appendix should resolve");
+  assert.ok(frontMatter.includes("/guide/glossary"), "the glossary link should resolve to its canonical surface");
 
   // ../03-build/15-coding-harnesses-and-agent-protocols.md from a stage page
-  const stage = hrefs(await htmlFor("/docs/stages/04-execute-through-harness"));
+  const stage = hrefs(await htmlFor("/guide/stages/04-execute-through-harness"));
   assert.ok(
-    stage.some((href) => href.startsWith("/docs/03-build/15-coding-harnesses-and-agent-protocols")),
+    stage.some((href) => href.startsWith("/guide/03-build/15-coding-harnesses-and-agent-protocols")),
     "a ../ link into another part should resolve to that chapter route",
   );
 });
 
 test("normalizes link fragments onto the ids headings actually render with", async () => {
-  const links = hrefs(await htmlFor("/docs/02-design/06-intent-and-specification-engineering"));
-  const deepLinks = links.filter((href) => href.startsWith("/docs/04-prove/27-quality-and-evidence-architecture#"));
+  const links = hrefs(await htmlFor("/guide/02-design/06-intent-and-specification-engineering"));
+  const deepLinks = links.filter((href) => href.startsWith("/guide/04-prove/27-quality-and-evidence-architecture#"));
   assert.ok(deepLinks.length >= 1, "the specification chapter should deep link into chapter 27");
 
   // Every fragment those links use must exist as a heading on the target page.
-  const target = await htmlFor("/docs/04-prove/27-quality-and-evidence-architecture");
+  const target = await htmlFor("/guide/04-prove/27-quality-and-evidence-architecture");
   const headingIds = new Set([...target.matchAll(/<h[23] id="([^"]+)"/g)].map((match) => match[1]));
 
   for (const href of deepLinks) {
@@ -51,7 +51,7 @@ test("normalizes link fragments onto the ids headings actually render with", asy
 });
 
 test("leaves external links intact and opens them safely", async () => {
-  const html = await htmlFor("/docs/01-understand/02-the-factory-in-one-view");
+  const html = await htmlFor("/guide/01-understand/02-the-factory-in-one-view");
   const links = hrefs(html);
   const external = links.filter((href) => href.startsWith("https://"));
 
@@ -62,4 +62,10 @@ test("leaves external links intact and opens them safely", async () => {
     assert.match(attributes, /target="_blank"/, "external links should open in a new tab");
     assert.match(attributes, /rel="noreferrer"/, "external links must not leak the referrer");
   }
+});
+
+test("keeps Guide-owned absolute-path links on the active deployment", async () => {
+  const links = hrefs(await htmlFor("/guide/appendix/coverage-and-maturity"));
+  assert.ok(links.includes("/guide/coverage"));
+  assert.ok(!links.some((href) => href.includes("ai-software-factory-mastery.vercel.app")));
 });

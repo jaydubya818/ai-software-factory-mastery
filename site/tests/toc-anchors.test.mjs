@@ -30,7 +30,8 @@ function renderedHeadingIds(html) {
 function documentSlugs(html) {
   return [
     ...new Set(
-      [...html.matchAll(/href="\/docs\/([^"#]+)"/g)].map((match) => match[1]),
+      [...html.matchAll(/href="\/guide\/((?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve)|appendix)\/[^"#]+)"/g)]
+        .map((match) => match[1]),
     ),
   ];
 }
@@ -38,14 +39,14 @@ function documentSlugs(html) {
 test("every table-of-contents entry targets a heading that exists", async () => {
   // The book map lists every document, so the corpus is discovered rather
   // than hard-coded and newly added chapters are covered automatically.
-  const slugs = documentSlugs(await htmlFor("/docs/guide"));
+  const slugs = documentSlugs(await htmlFor("/guide"));
   assert.ok(slugs.length > 40, `expected the full book, found ${slugs.length}`);
 
   const broken = [];
   let checkedAnchors = 0;
 
   for (const slug of slugs) {
-    const html = await htmlFor(`/docs/${slug}`);
+    const html = await htmlFor(`/guide/${slug}`);
     const headingIds = renderedHeadingIds(html);
 
     for (const anchor of tableOfContentsIds(html)) {

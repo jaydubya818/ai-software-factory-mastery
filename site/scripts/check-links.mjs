@@ -1,10 +1,12 @@
 import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { GUIDE_ROUTES } from "../lib/paths.ts";
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(siteRoot, "..");
 const guideRoot = path.join(repositoryRoot, "guide");
+const namedGuideRoutes = new Set(Object.values(GUIDE_ROUTES));
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -41,6 +43,7 @@ for (const sourceFile of files) {
   for (const target of localTargets(markdown)) {
     const pathname = decodeURIComponent(target.split("#", 1)[0]);
     if (!pathname) continue;
+    if (namedGuideRoutes.has(pathname)) continue;
 
     const resolved = pathname.startsWith("/")
       ? path.join(repositoryRoot, pathname)

@@ -4,18 +4,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
 import { lifecycleStages } from "../../lib/lifecycle";
+import { GUIDE_ROUTES, guideContentPath, guideDocumentPath } from "../../lib/paths";
 
 type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Mission Control" | "Glossary" | "Chapters";
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
 
 const utilityItems: PaletteItem[] = [
-  { id: "guide", label: "Table of contents", meta: "The guide", href: "/guide", text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
-  { id: "visuals", label: "Open the atlas", meta: "System maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
-  { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map", group: "Architecture" },
-  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: "/topics", text: "reference appendix glossary case studies research", group: "Concepts" },
-  { id: "search", label: "Search the whole guide", meta: "Full text", href: "/search", text: "search full text find", group: "Guide" },
-  { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence", group: "Architecture" },
-  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/appendix/reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
+  { id: "guide", label: "Table of contents", meta: "The guide", href: GUIDE_ROUTES.home, text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
+  { id: "visuals", label: "Open the atlas", meta: "System maps", href: GUIDE_ROUTES.atlas, text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
+  { id: "architecture", label: "Explore architecture", meta: "System map", href: GUIDE_ROUTES.architecture, text: "architecture layers boundaries system map", group: "Architecture" },
+  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: GUIDE_ROUTES.topics, text: "reference appendix glossary case studies research", group: "Concepts" },
+  { id: "search", label: "Search the whole guide", meta: "Full text", href: GUIDE_ROUTES.search, text: "search full text find", group: "Guide" },
+  { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: GUIDE_ROUTES.coverage, text: "coverage maturity evidence", group: "Architecture" },
+  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: guideDocumentPath("appendix/reviewer-guide"), text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
 ];
 
 const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Mission Control", "Glossary", "Chapters"];
@@ -51,11 +52,11 @@ export function CommandPalette() {
       id: document.slug,
       label: document.chapter ? `${document.chapter}. ${document.title}` : document.title,
       meta: document.chapter !== null ? document.section : `${document.section} · ${(document.group as string | null) ?? document.contentType}`,
-      href: `/docs/${document.slug}`,
+      href: guideContentPath(document.slug),
       text: [document.title, document.section, document.description, ...document.headings].join(" ").toLowerCase(),
       group: groupForDocument(document),
     }));
-    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `Stage: ${stage.label}`, meta: stage.canonical, href: `/docs/stages/${stage.slug}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
+    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `Stage: ${stage.label}`, meta: stage.canonical, href: guideDocumentPath(`stages/${stage.slug}`), text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
     return [...utilityItems, ...lifecycle, ...documents];
   }, []);
 
