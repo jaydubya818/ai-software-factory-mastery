@@ -442,7 +442,7 @@ try {
     const chapterAlias = await compatibilityRuntime.request(`${chapterPath}?q=a%2Fb&q=evidence`, method);
     assert.equal(chapterAlias.status, compatibleBuild ? 307 : 200);
     if (compatibleBuild) {
-      assert.equal(chapterAlias.headers.get("location"), `${compatibilityRuntime.origin}${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
+      assert.equal(new URL(chapterAlias.headers.get("location"), compatibilityRuntime.origin).href, `${compatibilityRuntime.origin}${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
       assert.match(chapterAlias.headers.get("cache-control"), /private/);
       assert.match(chapterAlias.headers.get("cache-control"), /no-store/);
       assert.equal((await compatibilityRuntime.request(publicPagePath(chapterPath), method)).status, 200, "rollback-stable chapter route renders repaired Guide");
@@ -463,7 +463,7 @@ try {
     const architectureAlias = await compatibilityRuntime.requestAsLegacyHost("/guide/architecture?q=evidence&q=a%2Fb", method);
     assert.equal(architectureAlias.status, compatibleBuild ? 307 : 200);
     if (compatibleBuild) {
-      const location = new URL(architectureAlias.headers.get("location"));
+      const location = new URL(architectureAlias.headers.get("location"), "https://ai-software-factory-mastery.vercel.app");
       assert.equal(location.pathname, "/architecture");
       assert.equal(location.search, "?q=evidence&q=a%2Fb");
       assert.match(architectureAlias.headers.get("cache-control"), /private/);
