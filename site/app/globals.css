@@ -655,6 +655,7 @@ h1 {
 .markdown-body blockquote { margin: 34px 0; padding: 2px 0 2px 24px; border-left: 3px solid var(--amber); color: #44514b; font-size: 21px; line-height: 1.55; }
 .markdown-body blockquote p { margin: 0; }
 .markdown-body code { padding: 2px 5px; border: 1px solid #d9ded9; border-radius: 4px; background: #eef0ec; color: #344a40; font-family: var(--font-geist-mono), monospace; font-size: 0.8em; }
+.markdown-body :not(pre) > code { overflow-wrap: anywhere; }
 .markdown-body pre { max-width: 100%; overflow-x: auto; margin: 30px 0; padding: 20px; border-radius: 9px; background: #18231f; color: #e8eee9; font-size: 13px; line-height: 1.6; }
 .markdown-body pre code { padding: 0; border: 0; background: transparent; color: inherit; }
 .table-scroll { max-width: 100%; overflow-x: auto; margin: 30px 0; border: 1px solid var(--line); border-radius: 8px; }

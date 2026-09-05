@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile, mkdir, copyFile, rm } from "node:fs/promi
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+import { markdownHeadings } from "../lib/markdown-headings.ts";
 import {
   GUIDE_CANONICAL_ORIGIN,
   GUIDE_ROUTES,
@@ -97,15 +98,6 @@ function extractDescription(markdown) {
   return plainText(first ?? "").slice(0, 240);
 }
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 /**
  * Readers should not see editorial production notes for slots that have no asset yet.
  * The `<!-- infographic: slot -->` marker stays so the renderer can drop the asset in
@@ -133,35 +125,22 @@ function stripUnfilledInfographicCallouts(markdown, assets) {
 
 /** Split a document into heading-level sections for search. */
 function sectionsFor(markdown) {
-  const withoutCode = markdown.replace(/```[\s\S]*?```/g, "");
-  const sections = [];
-  let current = { id: "", heading: "", lines: [] };
-  for (const line of withoutCode.split("\n")) {
-    const match = line.match(/^(#{2,3})\s+(.+)$/);
-    if (match) {
-      if (current.lines.length) sections.push(current);
-      current = { id: slugify(match[2]), heading: match[2].replace(/[*_`]/g, ""), lines: [] };
-      continue;
-    }
-    current.lines.push(line);
-  }
-  if (current.lines.length) sections.push(current);
+  const headings = markdownHeadings(markdown);
+  const sections = [
+    { id: "", heading: "", text: markdown.slice(0, headings[0]?.position.start.offset ?? markdown.length) },
+    ...headings.map((heading, index) => ({
+      id: heading.id,
+      heading: heading.text,
+      text: markdown.slice(heading.position.end.offset, headings[index + 1]?.position.start.offset ?? markdown.length),
+    })),
+  ];
   return sections
-    .map((section) => ({ id: section.id, heading: section.heading, text: plainText(section.lines.join("\n")).slice(0, 6000) }))
+    .map((section) => ({ ...section, text: plainText(section.text).slice(0, 6000) }))
     .filter((section) => section.text.length > 40);
 }
 
 function extractHeadings(markdown) {
-  return markdown
-    .replace(/```[\s\S]*?```/g, "")
-    .split("\n")
-    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
-    .filter(Boolean)
-    .map((match) => ({
-      depth: match[1].length,
-      text: match[2].replace(/[*_`]/g, ""),
-      id: slugify(match[2]),
-    }));
+  return markdownHeadings(markdown).map(({ depth, text, id }) => ({ depth, text, id }));
 }
 
 function sectionKeyFor(sourcePath) {

@@ -191,6 +191,71 @@ async function verifyBrowserRuntime(origin) {
     assert.deepEqual(consoleErrors, []);
     assert.deepEqual(failedManagedAssets, []);
 
+    const changelog = await page.goto(`${origin}/guide/appendix/changelog`, { waitUntil: "networkidle" });
+    assert.equal(changelog?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      const ids = await page.locator("[id]").evaluateAll((elements) => elements.map((element) => element.id));
+      assert.equal(new Set(ids).size, ids.length, `changelog IDs are unique after ${navigation}`);
+      for (const label of ["added", "changed"]) {
+        for (let occurrence = 0; occurrence < 8; occurrence += 1) {
+          const id = occurrence ? `${label}-${occurrence}` : label;
+          assert.equal(await page.locator(`h3[id="${id}"]`).count(), 1, id);
+          assert.equal(await page.locator(`h3[id="${id}"] a[href="#${id}"]`).count(), 1, `permalink ${id}`);
+        }
+      }
+      const tocIds = await page.locator('.table-of-contents a[href^="#"]')
+        .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute("href").slice(1)));
+      for (const id of tocIds) assert.equal(await page.locator(`h2[id="${id}"]`).count(), 1, `TOC ${id}`);
+    }
+    await page.locator('#added-7 a[href="#added-7"]').click();
+    assert.equal(new URL(page.url()).hash, "#added-7");
+    assert.ok(await page.locator("#added-7").evaluate((heading) => Math.abs(heading.getBoundingClientRect().top) < innerHeight));
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await page.goto(
+      `${origin}/guide/02-design/06-intent-and-specification-engineering`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(mobile?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      await page.waitForFunction(() => {
+        const diagrams = [...document.querySelectorAll(".mermaid-diagram")];
+        return diagrams.length > 0 && diagrams.every((diagram) => diagram.querySelector("svg"));
+      });
+      const layout = await page.evaluate(() => {
+        const pre = document.querySelector(".markdown-body pre code");
+        const diagram = document.querySelector(".mermaid-diagram");
+        diagram.scrollLeft = 32;
+        const ids = [...document.querySelectorAll("[id]")].map((element) => element.id);
+        return {
+          width: document.documentElement.scrollWidth,
+          viewport: innerWidth,
+          duplicateIds: ids.filter((id, index) => ids.indexOf(id) !== index),
+          preWhiteSpace: pre && getComputedStyle(pre).whiteSpace,
+          preOverflowWrap: pre && getComputedStyle(pre).overflowWrap,
+          preContainerOverflow: pre && getComputedStyle(pre.parentElement).overflowX,
+          diagramOverflow: getComputedStyle(diagram).overflowX,
+          diagramScrollLeft: diagram.scrollLeft,
+          inlineWrap: [...document.querySelectorAll(".markdown-body :not(pre) > code")]
+            .every((code) => getComputedStyle(code).overflowWrap === "anywhere"),
+        };
+      });
+      assert.ok(layout.width <= layout.viewport + 1, `${navigation}: mobile width ${layout.width} exceeds ${layout.viewport}`);
+      assert.deepEqual(layout.duplicateIds, [], `mobile ${navigation}`);
+      assert.equal(layout.preWhiteSpace, "pre", "code blocks retain formatting");
+      assert.equal(layout.preOverflowWrap, "normal", "inline wrapping does not affect pre code");
+      assert.equal(layout.preContainerOverflow, "auto", "code blocks retain horizontal scrolling");
+      assert.equal(layout.diagramOverflow, "auto", "Mermaid retains horizontal scrolling");
+      assert.ok(layout.diagramScrollLeft > 0, "wide Mermaid content remains scrollable");
+      assert.equal(layout.inlineWrap, true);
+      assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
+    }
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(consoleErrors, []);
+    assert.deepEqual(failedManagedAssets, []);
+
     const response = await page.goto(`${origin}/guide/not-a-real-page`, { waitUntil: "networkidle" });
     assert.equal(response?.status(), 404);
     assert.equal(await page.locator("h1").textContent(), "That page is not in the guide.");
@@ -282,4 +347,4 @@ try {
   await retirementRuntime.stop();
 }
 
-console.log("Native Next runtime smoke passed (prefixed assets, hydration, search, Mermaid, compatibility serving, opt-in retirement, redirects, and 404s).");
+console.log("Native Next runtime smoke passed (prefixed assets, hydration, unique heading IDs, 390×844 inline-code wrapping, pre/Mermaid scrolling, search, compatibility serving, opt-in retirement, redirects, and 404s).");
