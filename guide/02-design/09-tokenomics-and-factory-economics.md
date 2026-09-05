@@ -62,7 +62,7 @@ The structural levers are the ones to reach for before renegotiating a contract.
 - Measure human rework as a cost line, because it is the largest one the model bill hides.
 - Attribute cost by team, workflow, model, and outcome, so that a number can be acted on.
 
-One lever is easy to forget because it does not look like a model decision: for some tasks *the best model is no model at all*. A deterministic service or a mature skill that performs a known transformation costs almost nothing per run, never hallucinates, and needs no evaluation of its trajectory. Routing to it is an economic and a quality decision at once ([Chapter 21](../03-build/21-models-and-capability-selection.md)).
+One lever is easy to forget because it does not look like a model decision: for some tasks *the best model is no model at all*. A qualified deterministic service may perform a known transformation without inference. It still consumes compute, can contain defects, and needs input/output, authority and integration checks. A skill may itself invoke a model and is not inherently deterministic. Compare measured outcome cost and reliability before selecting either ([Chapter 21](../03-build/21-models-and-capability-selection.md)).
 
 ### Tokenomics: the cost equation
 
@@ -167,7 +167,7 @@ Above those sit three ways of pricing what the factory produces, and they form a
 
 *Don't optimise cost per token; optimise cost per accepted outcome.* Cost per token falls when you downgrade the model; cost per task falls when you stop retrying; only cost per accepted outcome falls when the factory gets better, because it is the one denominator that a failed run cannot inflate. It is the same quantity the cost-per-validated-change diagram above computes, named from the routing side.
 
-Underneath it sits an engineering sub-metric that the factory can compute before the business one is knowable. **Cost per verified outcome** is everything spent to get a change through independent verification — generation, retrieval, tools, subagents, retries, verification runs, and the human effort along the way — divided by outcomes that passed. Cost per accepted outcome is the business metric: it adds the acceptance decision, the observation window, and whatever the outcome cost after it shipped, and it is only known weeks later. The two are read together. Cost per verified outcome is what an engineer can move this week by changing a route or a retry policy; cost per accepted outcome is what tells the organisation whether the change was worth making, and the gap between the two is the cost of the defects verification missed.
+Underneath it sits **cost per verified outcome**: cohort spend divided by outcomes that independently passed verification. **Cost per accepted outcome** uses verified outcomes that also received acceptance. Both include failed work and retries within their declared cost window; a later production observation window captures remediation and sustained value. Report both with counts, cutoff and cost coverage. Their difference is not automatically the cost of escaped defects: acceptance delays, rejected work and different cost windows also change it.
 
 The trade-off the measure governs is three-cornered: **cost, latency, and quality**. A stronger model raises quality and cost and often latency; deterministic preprocessing lowers cost and latency at fixed quality for the part of the work it can settle; a cheaper model lowers cost and may lower quality below the floor and then raise cost again through retries. The routing question in [Chapter 21](../03-build/21-models-and-capability-selection.md) is this triangle stated as a policy: the cheapest capability that reliably meets the quality, latency, security, and risk requirements. **Budget-aware escalation** is the same triangle applied at run time: step up to a costlier capability only when the cheaper one has failed the floor and the budget for this workload class allows it, and stop, with a human, when it does not.
 
@@ -183,6 +183,26 @@ flowchart LR
     TT --> ROI["ROI"]
     Fail["Failed, reworked, or reverted runs"] -. "inflate the first two, never the third" .-> Tasks
 ```
+
+### Make denominators and missing cost explicit
+
+Choose one admitted-work cohort and cutoff before comparing configurations. Publish the workload, risk, repository, Factory Version, model/tool/context versions, evaluator and sample size. Count retries, failed Attempts and abandoned work in the cohort's spend. Report verified, accepted, failed, cancelled and still-pending work separately so excluding unfinished work cannot manufacture an improvement.
+
+| Measure | Calculation within the declared cohort |
+| --- | --- |
+| Cost per verified outcome | Cohort cost through cutoff ÷ independently verified outcomes |
+| Cost per accepted outcome | Cohort cost through cutoff ÷ verified and accepted outcomes |
+| Work amplification | Downstream operation invocations ÷ admitted Missions |
+
+The first two ratios use declared cost boundaries and separate denominators; acceptance does not follow automatically from verification. A production observation window adds later remediation and outcome evidence. Differences between ratios may reflect acceptance delay, rejected work, coverage or cost boundaries as well as escaped defects, so report those causes instead of attributing the entire gap to quality.
+
+Label each component **ACTUAL**, **ESTIMATED**, or **UNKNOWN**. Actual requires an attributable usage/billing record; estimates require a dated rate and method; unknown remains missing, never zero. Human minutes can be measured while their monetary value remains estimated. A partial sum is a known-cost subtotal, not a complete actual total. If the outcome denominator is zero, report the ratio as undefined with spend and counts. If material components are missing, withhold a complete-cost comparison and show coverage.
+
+Define which downstream calls count before measuring work amplification, count transport retries explicitly, and separate model, tool, retrieval and verification invocations. Do not count each parent trace span as another operation. A synthetic Mission with 6 model calls, 12 tool calls and 2 verifier invocations has 20 counted operations; this is a worked example, not an observed benchmark.
+
+**Critical-path latency** follows the longest dependency path, including queueing, execution, retry delay, joins, verification and decision waits. Parallel tasks of 10, 20 and 8 seconds followed by a 5-second verifier have an ideal elapsed time of 25 seconds and 43 seconds of total task time. Scheduling and contention may increase elapsed time. Optimizing a short parallel task may save compute without changing the user's wait. Use the dependency graph and traces; [Chapter 34](../05-operate/34-the-factory-as-a-platform.md) owns admission, capacity and fairness.
+
+Compare quality, cost, latency, recovery and human intervention together under [FDLC's measurement contract](https://fdlc.ai/benchmarks). Fewer interventions count as progress only when required decisions remain enforced and quality and safety remain within their declared bounds.
 
 ### Factory economics and factory ROI
 
