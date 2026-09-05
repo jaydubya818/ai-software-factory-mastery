@@ -513,7 +513,7 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 
 **Partial.** Memory. `packages/memory` implements session, project, and global in-memory abstractions; Convex records run episodes and execution traces and can consolidate batches into knowledge-graph nodes. The GraphRAG proposal itself lists what is missing: provenance, contradiction handling, permission-aware retrieval, ingestion checkpoints, evaluation, and a correction lifecycle. The live audit described an empty operational graph, so the proposal is not a production memory system.
 
-**Future.** MCP is adjacent rather than a governed subsystem. Product documents and plugin guidance describe MCP integrations, but the commit does not show a first-class server registry, connection policy, capability lifecycle, or end-to-end execution through MCP. A per-Attempt manifest digest covering all eleven components is also still to be built.
+**Later current-status update.** At Mission Control `ed77c46`, one exact Context7 `query-docs` read is qualified through a versioned Tool Version, scoped Tool Grant, Execution Profile, canonical Attempt, broker, durable receipt, schema/currentness checks, and independent verification. Discovery remains separate from authority. The evidence does not qualify arbitrary servers or operations, writes, broad credentials, or harness-native MCP; those remain future. A per-Attempt manifest digest covering all eleven components is also still to be built.
 
 ## Retain this
 
