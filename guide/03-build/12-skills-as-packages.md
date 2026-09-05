@@ -236,3 +236,15 @@ Mission Control contains versioned capability, skill, context-package, installat
 - [11. The Agent Factory](./11-the-agent-factory.md) for the foundation this chapter builds on.
 - [Canonical glossary](../appendix/glossary.md) for the terms and boundaries used here.
 - Return to the [book map](../README.md) for the complete reading sequence.
+
+## Five operating practices, from context to evidence
+
+Read [Context and skills engineering: five operating practices](../appendix/context-skills-engineering.md) for the complete engineering treatment and worked local playbook.
+
+1. **Context & Skills Engineering:** design specifications, rules, references and procedures as reviewed, versioned behavior dependencies. Freeze what each run receives.
+2. **Agent Governance, Security & Trust:** distinguish lint and scanning from installation policy and runtime enforcement; audit authenticated decisions and bounded actions.
+3. **Standardization & Reuse at Scale:** share owned packages, pin versions, detect unmanaged copies and preserve run lineage through upgrades and rollback.
+4. **Continuous Evaluation & Optimization:** separate availability, loading and reported use from independently verified outcomes. Compare no-skill/current/candidate trials and retain negative results.
+5. **Tools-in-Action: Real-World Playbooks:** document exact inputs, commands, failures, recovery and evidence. Label local demonstrations and production observations honestly.
+
+These practices operate across the existing lifecycle. They do not create additional lifecycle stages or make package publication equivalent to execution authority.
