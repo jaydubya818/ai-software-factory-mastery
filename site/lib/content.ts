@@ -1,7 +1,7 @@
 import path from "node:path";
 import { documents } from "./content.generated";
 import { guideParts } from "./guide";
-import { GUIDE_CANONICAL_ORIGIN, guideContentPath } from "./paths";
+import { GUIDE_CANONICAL_ORIGIN, guideContentPath, guideNavigationHref } from "./paths";
 
 export type DocumentRecord = (typeof documents)[number];
 
@@ -86,13 +86,13 @@ export function resolveDocumentHref(sourcePath: string, href?: string) {
   if (!href || href.startsWith("#") || /^(https?:|mailto:)/.test(href)) return href;
 
   const [pathname, hash] = href.split("#", 2);
-  if (!pathname.endsWith(".md")) return href;
+  if (!pathname.endsWith(".md")) return guideNavigationHref(href);
 
   const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(sourcePath), pathname));
   const target = documents.find((document) => document.sourcePath === resolved);
   if (target) {
     const route = guideContentPath(target.slug);
-    return `${route}${hash ? `#${normalizeAnchor(hash)}` : ""}`;
+    return guideNavigationHref(`${route}${hash ? `#${normalizeAnchor(hash)}` : ""}`);
   }
   // A repository file that is not published as a page (evidence bundles, the v1 archive): link to it on GitHub.
   const repoPath = path.posix.normalize(path.posix.join("guide", resolved));

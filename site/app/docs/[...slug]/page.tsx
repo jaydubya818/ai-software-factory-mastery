@@ -1,8 +1,11 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import { getDocument } from "../../../lib/content";
+import { GuideDocument, guideDocumentMetadata } from "../../components/GuideDocument";
 import { legacyDocumentRedirects } from "../../../lib/legacy-routes";
 import {
   guideContentPath,
+  GUIDE_COMPATIBLE_MODE,
+  guideNavigationHref,
   type GuideSearchParams,
   withSearchParams,
 } from "../../../lib/paths";
@@ -12,6 +15,10 @@ type PageProps = {
   searchParams: Promise<GuideSearchParams>;
 };
 
+export async function generateMetadata({ params }: PageProps) {
+  return GUIDE_COMPATIBLE_MODE ? guideDocumentMetadata((await params).slug.join("/")) : {};
+}
+
 /** Compatibility surface for links to the Guide's former standalone route tree. */
 export default async function LegacyDocumentRoute({ params, searchParams }: PageProps) {
   const { slug } = await params;
@@ -20,5 +27,9 @@ export default async function LegacyDocumentRoute({ params, searchParams }: Page
   const canonicalSlug = legacyDocumentRedirects[requestedSlug] ?? requestedSlug;
   if (!getDocument(canonicalSlug)) notFound();
 
-  permanentRedirect(withSearchParams(guideContentPath(canonicalSlug), query));
+  if (GUIDE_COMPATIBLE_MODE && requestedSlug === canonicalSlug) {
+    return <GuideDocument requestedSlug={canonicalSlug} searchParams={query} />;
+  }
+
+  permanentRedirect(withSearchParams(guideNavigationHref(guideContentPath(canonicalSlug)), query));
 }

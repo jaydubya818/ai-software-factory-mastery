@@ -1,7 +1,7 @@
 "use client";
 
 import { guideDocumentPath } from "../../lib/paths";
-import Link from "next/link";
+import Link from "./GuideLink";
 import { useMemo, useState } from "react";
 
 type Lens = "all" | "authority" | "runtime" | "assurance" | "operations";

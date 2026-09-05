@@ -13,7 +13,8 @@ test("every internal link reachable from the canonical Guide landing resolves", 
     const html = await response.text();
     for (const match of html.matchAll(/href="(\/[^"#?]*)(?:[#?][^"]*)?"/g)) {
       const href = match[1].replace(/\/$/, "") || "/";
-      if (!href.startsWith("/guide")) continue;
+      if (!href.startsWith("/guide") && !href.startsWith("/docs/")
+        && !["/visuals", "/topics", "/coverage", "/search", "/glossary"].includes(href)) continue;
       if (href.startsWith("/_next/") || /\.(png|svg|jpg|jpeg|webp|xml|txt|json|ico|css|js)$/.test(href)) continue;
       if (!seen.has(href)) { seen.add(href); queue.push(href); }
     }
@@ -31,8 +32,9 @@ test("unpublished repository files link out to GitHub instead of a dead route", 
 test("Guide discovery, search, and public assets are published under /guide", async () => {
   const { readdir, readFile } = await import("node:fs/promises");
   const sitemap = await readFile(new URL("../public/guide/sitemap.xml", import.meta.url), "utf8");
-  assert.match(sitemap, /<loc>https:\/\/ai-software-factory-mastery\.vercel\.app\/guide\/glossary<\/loc>/);
-  assert.doesNotMatch(sitemap, /\/docs\//);
+  assert.match(sitemap, /<loc>https:\/\/ai-software-factory-mastery\.vercel\.app\/glossary<\/loc>/);
+  assert.match(sitemap, /\/docs\/01-understand\//);
+  assert.doesNotMatch(sitemap, /\/guide\/01-understand\//);
   const robots = await readFile(new URL("../public/guide/robots.txt", import.meta.url), "utf8");
   assert.match(robots, /Sitemap: https:\/\/ai-software-factory-mastery\.vercel\.app\/guide\/sitemap\.xml/);
   const rootRobots = await readFile(new URL("../public/robots.txt", import.meta.url), "utf8");

@@ -120,7 +120,7 @@ h1 {
 
 .button-primary { background: var(--accent-bg); color: var(--on-accent); }
 .button-primary:hover { background: var(--green); }
-.button-secondary { background: rgba(255, 253, 248, 0.65); }
+.button-secondary { background: color-mix(in srgb, var(--surface) 65%, transparent); }
 .button-secondary:hover { background: var(--surface); }
 
 .system-strip {
@@ -623,7 +623,7 @@ h1 {
 .document-nav-groups section h2 { margin: 0 0 9px; color: var(--ink); font-family: var(--font-geist-mono), monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
 .document-nav-groups ul { list-style: none; margin: 0; padding: 0; }
 .document-nav-groups li { margin: 0; }
-.document-nav-groups a { display: block; padding: 6px 0 6px 11px; border-left: 1px solid var(--line); color: #69766f; font-size: 13px; line-height: 1.4; }
+.document-nav-groups a { display: block; padding: 6px 0 6px 11px; border-left: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.4; }
 .document-nav-groups a:hover { color: var(--ink); border-color: #8fa297; }
 .document-nav-groups a[aria-current="page"] { color: var(--accent-text); border-color: var(--green); font-weight: 650; }
 .document-article { min-width: 0; }
@@ -637,7 +637,7 @@ h1 {
 .table-of-contents { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; }
 .table-of-contents > span { color: var(--ink); font-family: var(--font-geist-mono), monospace; font-size: 10px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; }
 .table-of-contents ol { list-style: none; margin: 14px 0 0; padding: 0; border-left: 1px solid var(--line); }
-.table-of-contents a { display: block; padding: 6px 0 6px 12px; color: #758079; font-size: 12px; line-height: 1.4; }
+.table-of-contents a { display: block; padding: 6px 0 6px 12px; color: var(--muted); font-size: 12px; line-height: 1.4; }
 .table-of-contents a:hover { color: var(--green); }
 
 .markdown-body { padding: 28px 0 0; color: #27332e; font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.78; }
@@ -670,7 +670,7 @@ h1 {
 @keyframes diagram-loading { to { background-position: -200% 0; } }
 .mermaid-fallback { white-space: pre-wrap; }
 .document-pagination { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 80px; padding-top: 28px; border-top: 1px solid var(--line); }
-.document-pagination a { min-height: 110px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,253,248,0.6); }
+.document-pagination a { min-height: 110px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: color-mix(in srgb, var(--surface) 60%, transparent); }
 .document-pagination a:hover { border-color: #9bafa4; }
 .document-pagination span { display: block; margin-bottom: 18px; color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 10px; text-transform: uppercase; }
 .document-pagination strong { display: block; font-size: 14px; line-height: 1.4; }
@@ -695,7 +695,7 @@ h1 {
   .section-group > header { position: static; }
   .docs-layout { grid-template-columns: minmax(0, 1fr); width: min(760px, calc(100% - 32px)); padding-top: 22px; }
   .document-sidebar, .table-of-contents { display: none; }
-  .document-nav-mobile { display: block; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 7px; background: rgba(255,253,248,0.75); }
+  .document-nav-mobile { display: block; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 7px; background: color-mix(in srgb, var(--surface) 75%, transparent); }
   .document-nav-mobile > summary { cursor: pointer; padding: 12px 14px; color: var(--green); font-size: 13px; font-weight: 650; }
   .document-nav-mobile .document-nav-groups { max-height: 55vh; overflow-y: auto; padding: 16px; border-top: 1px solid var(--line); }
   .coverage-summary, .maturity-ladder { grid-template-columns: 1fr; gap: 40px; }
@@ -1578,7 +1578,7 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .shelf-use small { display: block; margin-bottom: 4px; color: var(--amber-text); font-family: var(--font-geist-mono), monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
 .shelf-use span { color: var(--ink); font-size: 14px; line-height: 1.5; }
 .reference-count { margin: 28px 0 0; color: var(--muted); font-size: 14px; }
-.reference-count a { color: var(--green); }
+.reference-count a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 900px) { .shelf-row { grid-template-columns: 48px minmax(0, 1fr); } .shelf-letter { font-size: 32px; } .shelf-use { grid-column: 2; padding: 10px 14px; } .shelf-children span { text-align: left; } .shelf-children a { grid-template-columns: 1fr; gap: 2px; } }
 
 /* Atlas index (sticky map nav) */

@@ -1,7 +1,7 @@
 "use client";
 
 import { GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
-import Link from "next/link";
+import Link from "./GuideLink";
 import { useState } from "react";
 
 type Depth = "30-sec" | "2-min" | "deep-dive";

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "./GuideLink";
 import { fdlcUrl, GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
 
 export function SiteFooter() {

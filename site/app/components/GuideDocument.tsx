@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "./GuideLink";
 import { notFound, permanentRedirect } from "next/navigation";
 import {
   adjacentDocuments,
@@ -18,6 +18,7 @@ import {
   GUIDE_ROUTES,
   guideContentPath,
   guideDocumentPath,
+  guideNavigationHref,
   type GuideSearchParams,
   withSearchParams,
 } from "../../lib/paths";
@@ -79,10 +80,10 @@ export function GuideDocument({
   allowGlossaryAlias?: boolean;
 }) {
   if (requestedSlug === "guide") permanentRedirect(withSearchParams(GUIDE_ROUTES.home, searchParams));
-  if (requestedSlug === "appendix/glossary" && !allowGlossaryAlias) permanentRedirect(withSearchParams(GUIDE_ROUTES.glossary, searchParams));
+  if (requestedSlug === "appendix/glossary" && !allowGlossaryAlias) permanentRedirect(withSearchParams(guideNavigationHref(GUIDE_ROUTES.glossary), searchParams));
 
   const legacyTarget = legacyDocumentRedirects[requestedSlug] ?? retiredFdlcSummaryRedirects[requestedSlug];
-  if (legacyTarget) permanentRedirect(withSearchParams(guideDocumentPath(legacyTarget), searchParams));
+  if (legacyTarget) permanentRedirect(withSearchParams(guideNavigationHref(guideDocumentPath(legacyTarget)), searchParams));
 
   const document = getDocument(requestedSlug);
   if (!document) notFound();

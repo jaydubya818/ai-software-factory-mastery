@@ -122,7 +122,7 @@ test("does not redirect unknown paths, lookalike hosts, or non-navigation method
   }
 });
 
-test("the proxy serves the old host when the retirement flag is absent", () => {
+test("the compatible proxy uses the old architecture URL without retiring its host", () => {
   const previous = process.env.GUIDE_LEGACY_REDIRECTS_ENABLED;
   delete process.env.GUIDE_LEGACY_REDIRECTS_ENABLED;
 
@@ -130,9 +130,9 @@ test("the proxy serves the old host when the retirement flag is absent", () => {
     const request = new NextRequest(`https://${LEGACY_GUIDE_HOST}/guide/architecture?token=secret`);
     const response = proxy(request);
 
-    assert.equal(response.status, 200);
-    assert.equal(response.headers.get("x-middleware-next"), "1");
-    assert.equal(response.headers.get("location"), null);
+    assert.equal(response.status, 307);
+    assert.equal(response.headers.get("cache-control"), "private, no-store");
+    assert.equal(response.headers.get("location"), `https://${LEGACY_GUIDE_HOST}/architecture?token=secret`);
   } finally {
     if (previous === undefined) delete process.env.GUIDE_LEGACY_REDIRECTS_ENABLED;
     else process.env.GUIDE_LEGACY_REDIRECTS_ENABLED = previous;

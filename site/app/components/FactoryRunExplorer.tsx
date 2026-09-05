@@ -1,7 +1,7 @@
 "use client";
 
 import { guideDocumentPath } from "../../lib/paths";
-import Link from "next/link";
+import Link from "./GuideLink";
 import { useState } from "react";
 
 type RunState = "complete" | "active" | "queued" | "failed" | "blocked";

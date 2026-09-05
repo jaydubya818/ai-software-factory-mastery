@@ -9,7 +9,7 @@ test("serves front matter canonically and merges the old book-map route into /gu
 
   const howToRead = await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide");
   assert.match(howToRead, /<title>How to read this guide · The AI Software Factory Guide · FDLC<\/title>/i);
-  assert.match(howToRead, /rel="canonical" href="https:\/\/ai-software-factory-mastery\.vercel\.app\/guide\/00-front-matter\/00-how-to-read-this-guide"/);
+  assert.match(howToRead, /rel="canonical" href="https:\/\/ai-software-factory-mastery\.vercel\.app\/docs\/00-front-matter\/00-how-to-read-this-guide"/);
 });
 
 test("returns 404 for slugs that match no canonical document", async () => {
@@ -25,7 +25,7 @@ test("returns 404 for slugs that match no canonical document", async () => {
 
     assert.equal(response.status, 404, `${route} should not resolve to a document`);
     assert.match(html, /<h1>That page is not in the guide\.<\/h1>/, `${route} should render the custom 404`);
-    assert.match(html, /href="\/guide\/search"/, `${route} should offer a recovery path`);
+    assert.match(html, /href="\/search"/, `${route} should offer a recovery path`);
   }
 });
 
@@ -54,7 +54,9 @@ test("exposes adjacent-chapter navigation with canonical endpoints", async () =>
   assert.match(pagination, /Previous/);
   assert.match(pagination, /Next/);
 
-  for (const [, href] of pagination.matchAll(/href="(\/guide\/[^"]+)"/g)) {
+  const links = [...pagination.matchAll(/href="(\/docs\/[^"]+)"/g)];
+  assert.equal(links.length, 2, "both adjacent pages use rollback-compatible paths");
+  for (const [, href] of links) {
     const response = await render(href);
     assert.equal(response.status, 200, `${href} is linked as adjacent but does not resolve`);
   }
@@ -65,7 +67,7 @@ test("marks the open chapter as the current page in both sidebar copies", async 
   const html = await htmlFor(route);
   const current = [...html.matchAll(/<a aria-current="page" href="([^"]+)"/g)].map((match) => match[1]);
 
-  assert.deepEqual(current, [route, route]);
+  assert.deepEqual(current, [route.replace("/guide/", "/docs/"), route.replace("/guide/", "/docs/")]);
 });
 
 test("same-origin retired document routes preserve repeated and encoded query values", async () => {
@@ -73,16 +75,15 @@ test("same-origin retired document routes preserve repeated and encoded query va
   assert.equal(response.status, 308);
   assert.equal(
     response.headers.get("location"),
-    "/guide/03-build/11-the-agent-factory?role=buyer&role=seller&q=a%2Fb",
+    "/docs/03-build/11-the-agent-factory?role=buyer&role=seller&q=a%2Fb",
   );
 });
 
 test("book-map, glossary, summary, and static aliases preserve their queries", async () => {
   const matrix = [
     ["/guide/guide?from=map&tag=a&tag=b", "/guide?from=map&tag=a&tag=b"],
-    ["/guide/appendix/glossary?from=chapter", "/guide/glossary?from=chapter"],
-    ["/guide/understand?utm_source=old%2Fportal", "/guide/01-understand/01-why-software-engineering-is-changing?utm_source=old%2Fportal"],
-    ["/glossary?term=proof%20package", "/guide/glossary?term=proof+package"],
+    ["/guide/appendix/glossary?from=chapter", "/glossary?from=chapter"],
+    ["/guide/understand?utm_source=old%2Fportal", "/docs/01-understand/01-why-software-engineering-is-changing?utm_source=old%2Fportal"],
   ];
 
   for (const [source, target] of matrix) {
@@ -90,4 +91,11 @@ test("book-map, glossary, summary, and static aliases preserve their queries", a
     assert.equal(response.status, 308, source);
     assert.equal(response.headers.get("location"), target, source);
   }
+});
+
+test("compatible document and glossary paths render repaired content without a redirect", async () => {
+  const chapter = await htmlFor("/docs/01-understand/02-the-factory-in-one-view?role=buyer&role=seller");
+  assert.match(chapter, /<article class="document-article"/);
+  assert.match(chapter, /rel="canonical" href="https:\/\/ai-software-factory-mastery\.vercel\.app\/docs\/01-understand\/02-the-factory-in-one-view"/);
+  assert.match(await htmlFor("/glossary?term=proof%20package"), /Canonical Glossary/);
 });

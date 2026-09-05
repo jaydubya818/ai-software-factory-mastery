@@ -21,23 +21,23 @@ test("rewrites sibling and cross-part .md links to site routes", async () => {
   // ./01-what-this-guide-covers.md, relative to guide/00-front-matter/00-how-to-read-this-guide.md
   const frontMatter = hrefs(await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide"));
   assert.ok(
-    frontMatter.includes("/guide/00-front-matter/01-what-this-guide-covers"),
+    frontMatter.includes("/docs/00-front-matter/01-what-this-guide-covers"),
     "a sibling .md link should resolve to the sibling document route",
   );
   // ../appendix/glossary.md, resolved across directories
-  assert.ok(frontMatter.includes("/guide/glossary"), "the glossary link should resolve to its canonical surface");
+  assert.ok(frontMatter.includes("/glossary"), "the glossary link should resolve to its canonical surface");
 
   // ../03-build/15-coding-harnesses-and-agent-protocols.md from a stage page
   const stage = hrefs(await htmlFor("/guide/stages/04-execute-through-harness"));
   assert.ok(
-    stage.some((href) => href.startsWith("/guide/03-build/15-coding-harnesses-and-agent-protocols")),
+    stage.some((href) => href.startsWith("/docs/03-build/15-coding-harnesses-and-agent-protocols")),
     "a ../ link into another part should resolve to that chapter route",
   );
 });
 
 test("normalizes link fragments onto the ids headings actually render with", async () => {
   const links = hrefs(await htmlFor("/guide/02-design/06-intent-and-specification-engineering"));
-  const deepLinks = links.filter((href) => href.startsWith("/guide/04-prove/27-quality-and-evidence-architecture#"));
+  const deepLinks = links.filter((href) => href.startsWith("/docs/04-prove/27-quality-and-evidence-architecture#"));
   assert.ok(deepLinks.length >= 1, "the specification chapter should deep link into chapter 27");
 
   // Every fragment those links use must exist as a heading on the target page.
@@ -66,6 +66,6 @@ test("leaves external links intact and opens them safely", async () => {
 
 test("keeps Guide-owned absolute-path links on the active deployment", async () => {
   const links = hrefs(await htmlFor("/guide/appendix/coverage-and-maturity"));
-  assert.ok(links.includes("/guide/coverage"));
+  assert.ok(links.includes("/coverage"));
   assert.ok(!links.some((href) => href.includes("ai-software-factory-mastery.vercel.app")));
 });

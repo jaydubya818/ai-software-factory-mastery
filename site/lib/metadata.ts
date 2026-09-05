@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { guideAssetPath } from "./paths";
+import { guideAssetPath, absoluteGuideUrl } from "./paths";
 
 const socialImage = { url: guideAssetPath("og-v2.png"), width: 1729, height: 910 };
 
@@ -15,6 +15,7 @@ export function guidePageMetadata({
   canonical: string;
   noIndex?: boolean;
 }): Metadata {
+  canonical = absoluteGuideUrl(canonical);
   return {
     title,
     description,

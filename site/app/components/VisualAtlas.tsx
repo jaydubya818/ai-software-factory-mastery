@@ -1,5 +1,5 @@
 import { guideDocumentPath } from "../../lib/paths";
-import Link from "next/link";
+import Link from "./GuideLink";
 import { AtlasIndex } from "./AtlasIndex";
 import { ValueStream } from "./ValueStream";
 

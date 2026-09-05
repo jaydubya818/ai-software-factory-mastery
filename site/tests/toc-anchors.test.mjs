@@ -25,7 +25,7 @@ function renderedHeadingIds(html) {
 function documentSlugs(html) {
   return [
     ...new Set(
-      [...html.matchAll(/href="\/guide\/((?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve)|appendix)\/[^"#]+)"/g)]
+      [...html.matchAll(/href="\/docs\/((?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve)|appendix)\/[^"#]+)"/g)]
         .map((match) => match[1]),
     ),
   ];

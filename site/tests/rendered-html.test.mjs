@@ -11,7 +11,7 @@ async function generatedDocuments() {
 }
 
 function documentLinks(html) {
-  const pattern = /href="(\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve)|appendix)\/[^"#?]+)/g;
+  const pattern = /href="(\/docs\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve)|appendix)\/[^"#?]+)/g;
   return [...new Set([...html.matchAll(pattern)].map((match) => decodeURIComponent(match[1])))];
 }
 
@@ -54,9 +54,9 @@ test("renders the canonical FDLC Guide landing and preserves role entry paths", 
   assert.match(html, /How to read this guide/);
   assert.match(html, /Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software/);
   for (const role of ["executive", "architect", "builder", "operator"]) assert.match(html, new RegExp(role));
-  assert.match(html, new RegExp(`href="/guide/${chapterSlugs[1]}"`));
-  assert.match(html, /href="\/guide\/atlas"/);
-  assert.match(html, /href="\/guide\/topics"/);
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`));
+  assert.match(html, /href="\/visuals"/);
+  assert.match(html, /href="\/topics"/);
   assert.doesNotMatch(html, /learning path|reading time|Quick Read|course progress|min read|Choose your path|status-badge/i);
 });
 
@@ -65,13 +65,20 @@ test("each primary-navigation copy identifies exactly one current Guide surface"
     ["/guide", "/guide"],
     [`/guide/${chapterSlugs[2]}`, "/guide"],
     ["/guide/stages/04-execute-through-harness", "/guide"],
-    ["/guide/atlas", "/guide/atlas"],
-    ["/guide/architecture", "/guide/atlas"],
-    ["/guide/topics", "/guide/topics"],
-    ["/guide/coverage", "/guide/topics"],
-    ["/guide/appendix/principles", "/guide/topics"],
-    ["/guide/glossary", "/guide/glossary"],
-    ["/guide/search", "/guide/search"],
+    ["/guide/atlas", "/visuals"],
+    ["/guide/architecture", "/visuals"],
+    ["/guide/topics", "/topics"],
+    ["/guide/coverage", "/topics"],
+    ["/guide/appendix/principles", "/topics"],
+    ["/guide/glossary", "/glossary"],
+    ["/guide/search", "/search"],
+    ["/visuals", "/visuals"],
+    ["/architecture", "/visuals"],
+    ["/topics", "/topics"],
+    ["/coverage", "/topics"],
+    ["/glossary", "/glossary"],
+    ["/search", "/search"],
+    [`/docs/${chapterSlugs[2]}`, "/guide"],
   ];
 
   for (const [route, expectedHref] of matrix) {
@@ -86,19 +93,19 @@ test("each primary-navigation copy identifies exactly one current Guide surface"
 
 test("renders every canonical primary surface with an explicit canonical", async () => {
   const routes = [
-    ["/guide", /Table of contents/],
-    ["/guide/atlas", /These ten maps are narrower detail/],
-    ["/guide/architecture", /Trace the factory from intent to evidence\./],
-    ["/guide/topics", /The reference shelf\./],
-    ["/guide/coverage", /Coverage is not proof\./],
-    ["/guide/search", /Search the whole system\./],
-    ["/guide/glossary", /Canonical Glossary/],
+    ["/guide", /Table of contents/, "/guide"],
+    ["/guide/atlas", /These ten maps are narrower detail/, "/visuals"],
+    ["/guide/architecture", /Trace the factory from intent to evidence\./, "/architecture"],
+    ["/guide/topics", /The reference shelf\./, "/topics"],
+    ["/guide/coverage", /Coverage is not proof\./, "/coverage"],
+    ["/guide/search", /Search the whole system\./, "/search"],
+    ["/guide/glossary", /Canonical Glossary/, "/glossary"],
   ];
 
-  for (const [route, expected] of routes) {
+  for (const [route, expected, canonicalPath] of routes) {
     const html = await htmlFor(route);
     assert.match(html, expected);
-    const absoluteRoute = `https://ai-software-factory-mastery\\.vercel\\.app${route.replaceAll("/", "\\/")}`;
+    const absoluteRoute = `https://ai-software-factory-mastery\\.vercel\\.app${canonicalPath.replaceAll("/", "\\/")}`;
     assert.match(html, new RegExp(`rel="canonical" href="${absoluteRoute}"`));
     assert.match(html, new RegExp(`property="og:url" content="${absoluteRoute}"`));
     assert.match(html, /property="og:image" content="https:\/\/ai-software-factory-mastery\.vercel\.app\/guide\/og-v2\.png"/);
@@ -111,7 +118,7 @@ test("guide table of contents lists front matter and all 44 chapters with summar
   const chapters = documents.filter((document) => document.chapter !== null);
 
   for (const chapter of chapters) {
-    assert.match(html, new RegExp(`href="/guide/${chapter.slug}"`), `TOC links ${chapter.slug}`);
+    assert.match(html, new RegExp(`href="/docs/${chapter.slug}"`), `TOC links ${chapter.slug}`);
   }
   assert.match(html, /How to read this guide/);
   assert.match(html, /Why software engineering is changing/);
@@ -119,8 +126,8 @@ test("guide table of contents lists front matter and all 44 chapters with summar
   assert.match(html, /Part I — Understand/);
   assert.match(html, /Part VI — Improve/);
   assert.match(html, /Appendices/);
-  assert.match(html, /href="\/guide\/glossary"/);
-  assert.equal(documentLinks(html).filter((link) => /^\/guide\/0[1-6]-/.test(link)).length, 44);
+  assert.match(html, /href="\/glossary"/);
+  assert.equal(documentLinks(html).filter((link) => /^\/docs\/0[1-6]-/.test(link)).length, 44);
   assert.doesNotMatch(html, /reading time|mark complete|selected path|interview mode|learning path/i);
 });
 
@@ -128,8 +135,8 @@ test("chapter 2 renders with one final title, canonical, TOC, and prev/next", as
   const html = await htmlFor(`/guide/${chapterSlugs[2]}`);
 
   assert.match(html, /<title>The factory in one view · The AI Software Factory Guide · FDLC<\/title>/i);
-  assert.match(html, new RegExp(`rel="canonical" href="https://ai-software-factory-mastery\\.vercel\\.app/guide/${chapterSlugs[2]}"`));
-  assert.match(html, new RegExp(`property="og:url" content="https://ai-software-factory-mastery\\.vercel\\.app/guide/${chapterSlugs[2]}"`));
+  assert.match(html, new RegExp(`rel="canonical" href="https://ai-software-factory-mastery\\.vercel\\.app/docs/${chapterSlugs[2]}"`));
+  assert.match(html, new RegExp(`property="og:url" content="https://ai-software-factory-mastery\\.vercel\\.app/docs/${chapterSlugs[2]}"`));
   assert.match(
     html,
     /"isPartOf":\{"@type":"Book","name":"The AI Software Factory Guide","url":"https:\/\/ai-software-factory-mastery\.vercel\.app\/guide"\}/,
@@ -144,8 +151,8 @@ test("chapter 2 renders with one final title, canonical, TOC, and prev/next", as
   assert.match(html, /On this page/);
   assert.doesNotMatch(html, /Infographic placeholder|graphic goes here/, "unfilled infographic callouts are hidden from readers");
   assert.match(html, /\/guide\/infographics\/|class="mermaid|language-mermaid/, "the visual fallback still renders");
-  assert.match(html, new RegExp(`href="/guide/${chapterSlugs[1]}"`), "previous links to chapter 1");
-  assert.match(html, new RegExp(`href="/guide/${chapterSlugs[3]}"`), "next links to chapter 3");
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "previous links to chapter 1");
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[3]}"`), "next links to chapter 3");
   assert.doesNotMatch(html, /At a glance|mode-switcher|Mark chapter complete|Interview practice|\d+ min read|status-badge|document-status/i);
 });
 
@@ -159,7 +166,7 @@ test("linked Markdown headings render valid, non-nested anchors", async () => {
   }
   assert.match(
     html,
-    /<h3 id="1-business-understanding-chapter-6">1\. Business Understanding — <a href="\/guide\/02-design\/06-intent-and-specification-engineering">Chapter 6<\/a><\/h3>/,
+    /<h3 id="1-business-understanding-chapter-6">1\. Business Understanding — <a href="\/docs\/02-design\/06-intent-and-specification-engineering">Chapter 6<\/a><\/h3>/,
     "linked headings retain their inline destination without an outer anchor",
   );
 });
@@ -167,39 +174,38 @@ test("linked Markdown headings render valid, non-nested anchors", async () => {
 test("reading sequence runs front matter → stages → chapters → appendices", async () => {
   const frontMatter = await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide");
   assert.match(frontMatter, /Front matter/);
-  assert.match(frontMatter, new RegExp(`href="/guide/${chapterSlugs[1]}"`), "front matter links forward to chapter 1");
+  assert.match(frontMatter, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "front matter links forward to chapter 1");
 
   const stageOne = await htmlFor("/guide/stages/01-builder-intent");
   assert.match(stageOne, /Stage 1/);
-  assert.match(stageOne, /href="\/guide\/stages\/02-plan"/, "stage 1 links forward to stage 2");
+  assert.match(stageOne, /href="\/docs\/stages\/02-plan"/, "stage 1 links forward to stage 2");
   const stageEight = await htmlFor("/guide/stages/08-deliver-software");
-  assert.match(stageEight, new RegExp(`href="/guide/${chapterSlugs[1]}"`), "stage 8 links forward to chapter 1");
+  assert.match(stageEight, new RegExp(`href="/docs/${chapterSlugs[1]}"`), "stage 8 links forward to chapter 1");
 
   const last = await htmlFor(`/guide/${chapterSlugs[44]}`);
   assert.match(last, /Chapter 44/);
-  assert.match(last, /href="\/guide\/appendix\//, "chapter 44 links forward into the appendix");
+  assert.match(last, /href="\/docs\/appendix\//, "chapter 44 links forward into the appendix");
 
   const glossary = await htmlFor("/guide/glossary");
   assert.match(glossary, /Canonical Glossary/);
 });
 
-test("legacy static routes redirect directly to canonical Guide surfaces", async () => {
+test("compatible static aliases resolve directly and old public tool paths render", async () => {
   const matrix = [
     ["/", "/guide"],
-    ["/visuals", "/guide/atlas"],
-    ["/atlas", "/guide/atlas"],
-    ["/architecture", "/guide/architecture"],
-    ["/topics", "/guide/topics"],
-    ["/coverage", "/guide/coverage"],
-    ["/search", "/guide/search"],
-    ["/glossary", "/guide/glossary"],
-    ["/docs/appendix/glossary", "/guide/glossary"],
+    ["/atlas", "/visuals"],
+    ["/docs/appendix/glossary", "/glossary"],
+    ["/docs/guide", "/guide"],
   ];
 
   for (const [source, target] of matrix) {
     const response = await render(source);
     assert.equal(response.status, 308, source);
     assert.equal(response.headers.get("location"), target, source);
+  }
+
+  for (const route of ["/visuals", "/architecture", "/topics", "/coverage", "/search", "/glossary"]) {
+    assert.equal((await render(route)).status, 200, route);
   }
 
   assert.equal((await render("/docs/00-overview/02-canonical-glossary")).status, 404);
@@ -209,9 +215,9 @@ test("reference shelf lists the appendices with a plain search box", async () =>
   const html = await htmlFor("/guide/topics");
   assert.match(html, /Search the guide/);
   for (const slug of ["appendix/coverage-and-maturity", "appendix/changelog", "appendix/reviewer-guide", "appendix/architecture-communication", "appendix/operator-surfaces", "appendix/research/initial-canon", "appendix/mission-control/02-verification-first-software-factory"]) {
-    assert.match(html, new RegExp(`href="/guide/${slug}"`), `lists ${slug}`);
+    assert.match(html, new RegExp(`href="/docs/${slug}"`), `lists ${slug}`);
   }
-  assert.match(html, /href="\/guide\/glossary"/);
+  assert.match(html, /href="\/glossary"/);
   assert.match(html, /Mission Control case studies/);
   assert.doesNotMatch(html, /topic-more-filters-toggle|All personas|All statuses|All risk levels|All guide areas/i);
 });
@@ -222,8 +228,8 @@ test("atlas links resolve to existing chapters", async () => {
   const slugs = new Set(documents.map((document) => document.slug));
   const links = documentLinks(html);
   assert.ok(links.length >= 10, "atlas has at least ten chapter links");
-  for (const link of links) assert.ok(slugs.has(link.replace(/^\/guide\//, "")), `${link} resolves`);
-  assert.match(html, new RegExp(`href="/guide/${chapterSlugs[25]}"`), "12-layer stack links to chapter 25");
+  for (const link of links) assert.ok(slugs.has(link.replace(/^\/docs\//, "")), `${link} resolves`);
+  assert.match(html, new RegExp(`href="/docs/${chapterSlugs[25]}"`), "12-layer stack links to chapter 25");
 });
 
 test("every canonical document link on primary surfaces resolves to generated content", async () => {
@@ -233,7 +239,7 @@ test("every canonical document link on primary surfaces resolves to generated co
   const broken = [];
   for (const route of routes) {
     for (const link of documentLinks(await htmlFor(route))) {
-      if (!slugs.has(link.replace(/^\/guide\//, ""))) broken.push(`${route} -> ${link}`);
+      if (!slugs.has(link.replace(/^\/docs\//, ""))) broken.push(`${route} -> ${link}`);
     }
   }
   assert.deepEqual(broken, []);
@@ -287,7 +293,7 @@ test("generated documents contain no infographic production notes", async () => 
 test("landing and TOC expose the eight clickable stages", async () => {
   const home = await htmlFor("/guide");
   for (const slug of ["01-builder-intent", "02-plan", "03-define-agent", "04-execute-through-harness", "05-apply-skills", "06-evaluate", "07-improve", "08-deliver-software"]) {
-    assert.match(home, new RegExp(`href="/guide/stages/${slug}"`), `landing links to stage ${slug}`);
+    assert.match(home, new RegExp(`href="/docs/stages/${slug}"`), `landing links to stage ${slug}`);
   }
   assert.match(home, /8 stages/);
 });

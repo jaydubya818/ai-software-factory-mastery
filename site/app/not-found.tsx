@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "./components/GuideLink";
 import { fdlcUrl, GUIDE_ROUTES } from "../lib/paths";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";

@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import Link from "./GuideLink";
 import { usePathname } from "next/navigation";
-import { fdlcUrl, GUIDE_ROUTES } from "../../lib/paths";
+import { fdlcUrl, GUIDE_ROUTES, canonicalGuidePagePath } from "../../lib/paths";
 
 const links = [
   [GUIDE_ROUTES.home, "Guide", (p: string) => p === GUIDE_ROUTES.home || /^\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve))\//.test(p)],
@@ -13,7 +13,7 @@ const links = [
 ] as const;
 
 export function PrimaryNav({ mobile = false }: { mobile?: boolean }) {
-  const pathname = usePathname() ?? "";
+  const pathname = canonicalGuidePagePath(usePathname() ?? "");
   return (
     <>
       {links.map(([href, label, isActive]) => (

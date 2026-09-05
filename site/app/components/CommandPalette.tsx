@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
 import { lifecycleStages } from "../../lib/lifecycle";
-import { GUIDE_ROUTES, guideContentPath, guideDocumentPath } from "../../lib/paths";
+import { GUIDE_ROUTES, guideContentPath, guideDocumentPath, guideNavigationHref } from "../../lib/paths";
 
 type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Mission Control" | "Glossary" | "Chapters";
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
@@ -118,7 +118,7 @@ export function CommandPalette() {
     const item = orderedResults[index];
     if (!item) return;
     closePalette({ restoreFocus: false });
-    router.push(item.href);
+    router.push(guideNavigationHref(item.href));
   }
 
   return (

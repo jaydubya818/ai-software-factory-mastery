@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "../../components/GuideLink";
 import { appendices } from "../../../lib/content";
 import { guidePageMetadata } from "../../../lib/metadata";
 import { GUIDE_ROUTES, guideContentPath } from "../../../lib/paths";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "../components/GuideLink";
 import { appendixGroups, chapters, chaptersForPart, getChapter, stages } from "../../lib/content";
 import { guideParts } from "../../lib/guide";
 import { guidePageMetadata } from "../../lib/metadata";

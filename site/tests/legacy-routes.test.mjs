@@ -10,14 +10,14 @@ import {
 } from "../lib/legacy-routes.ts";
 import { render } from "./helpers/render.mjs";
 
-test("every renumbered chapter redirects directly to its canonical /guide route", async () => {
+test("every renumbered chapter redirects directly to its compatible /docs route", async () => {
   assert.equal(Object.keys(legacyDocumentRedirects).length, 28);
 
   for (const [legacySlug, canonicalSlug] of Object.entries(legacyDocumentRedirects)) {
     for (const prefix of ["/docs", "/guide"]) {
       const response = await render(`${prefix}/${legacySlug}`);
       assert.equal(response.status, 308, `${prefix}/${legacySlug} redirects permanently`);
-      assert.equal(response.headers.get("location"), `/guide/${canonicalSlug}`);
+      assert.equal(response.headers.get("location"), `/docs/${canonicalSlug}`);
     }
   }
 });
@@ -28,7 +28,7 @@ test("all six retired FDLC Guide summaries redirect directly to canonical chapte
   for (const [summary, canonicalSlug] of Object.entries(retiredFdlcSummaryRedirects)) {
     const response = await render(`/guide/${summary}`);
     assert.equal(response.status, 308);
-    assert.equal(response.headers.get("location"), `/guide/${canonicalSlug}`);
+    assert.equal(response.headers.get("location"), `/docs/${canonicalSlug}`);
   }
 });
 

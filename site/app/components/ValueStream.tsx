@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "./GuideLink";
 import { stages } from "../../lib/content";
 import { GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
 

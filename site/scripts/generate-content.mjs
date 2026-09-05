@@ -5,6 +5,7 @@ import matter from "gray-matter";
 import { markdownHeadings } from "../lib/markdown-headings.ts";
 import {
   GUIDE_CANONICAL_ORIGIN,
+  absoluteGuideUrl,
   GUIDE_ROUTES,
   guideAssetPath,
   guideContentPath,
@@ -286,8 +287,8 @@ const documentRoutes = documents
   .map((document) => guideContentPath(document.slug));
 const publishedGuideDocuments = documents.map((document) => [document.slug, guideContentPath(document.slug)]);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[
-  ...staticRoutes.map((route) => `  <url><loc>${siteUrl}${route}</loc></url>`),
-  ...documentRoutes.map((route) => `  <url><loc>${siteUrl}${route}</loc></url>`),
+  ...staticRoutes.map((route) => `  <url><loc>${absoluteGuideUrl(route)}</loc></url>`),
+  ...documentRoutes.map((route) => `  <url><loc>${absoluteGuideUrl(route)}</loc></url>`),
 ].join("\n")}\n</urlset>\n`;
 
 const paletteIndex = documents.map((document) => ({

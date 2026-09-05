@@ -15,6 +15,14 @@ const root = new URL("..", import.meta.url);
 const expectedSiteOrigin = process.env.GUIDE_RUNTIME_EXPECTED_SITE_URL
   ?? "https://ai-software-factory-mastery.vercel.app";
 const expectedGuideCanonical = new URL("/guide", expectedSiteOrigin).href;
+assert.ok(["https://ai-software-factory-mastery.vercel.app", "https://www.fdlc.ai"].includes(expectedSiteOrigin), "Runtime checks require an explicit reviewed canonical authority");
+const compatibleBuild = expectedSiteOrigin === "https://ai-software-factory-mastery.vercel.app";
+const chapterPath = "/guide/01-understand/02-the-factory-in-one-view";
+function publicPagePath(pathname) {
+  if (!compatibleBuild) return pathname;
+  const tools = { "/guide/topics": "/topics", "/guide/search": "/search", "/guide/architecture": "/architecture" };
+  return tools[pathname] ?? (pathname.startsWith("/guide/") ? `/docs/${pathname.slice(7)}` : pathname);
+}
 
 async function availablePort() {
   const server = createServer();
@@ -58,18 +66,18 @@ async function startNext({ legacyRedirectsEnabled = false } = {}) {
   next.stdout.on("data", (chunk) => { output += chunk; });
   next.stderr.on("data", (chunk) => { output += chunk; });
 
-  async function request(pathname) {
-    return fetch(`${origin}${pathname}`, { redirect: "manual" });
+  async function request(pathname, method = "GET") {
+    return fetch(`${origin}${pathname}`, { redirect: "manual", method });
   }
 
-  async function requestAsLegacyHost(pathname, method = "GET") {
+  async function requestAsHost(pathname, requestHost, method = "GET") {
     return new Promise((resolve, reject) => {
       const outgoing = httpRequest({
         hostname: host,
         port,
         path: pathname,
         method,
-        headers: { host: "AI-SOFTWARE-FACTORY-MASTERY.VERCEL.APP:443" },
+        headers: { host: requestHost },
       }, (response) => {
         response.resume();
         response.once("end", () => resolve({
@@ -104,7 +112,8 @@ async function startNext({ legacyRedirectsEnabled = false } = {}) {
   return {
     origin,
     request,
-    requestAsLegacyHost,
+    requestAsLegacyHost: (pathname, method = "GET") => requestAsHost(pathname, "AI-SOFTWARE-FACTORY-MASTERY.VERCEL.APP:443", method),
+    requestAsFdlcHost: (pathname, method = "GET") => requestAsHost(pathname, `localhost:${port}`, method),
     async stop() {
       next.kill("SIGTERM");
       if (next.exitCode === null) {
@@ -207,7 +216,7 @@ async function verifyCommandPaletteMouse(page, origin) {
     await trigger.click();
     await dialog.getByRole("combobox").fill(query);
     await dialog.getByRole("option", { name }).click();
-    await page.waitForURL(`${origin}${destination}`);
+    await page.waitForURL(`${origin}${publicPagePath(destination)}`);
     await page.waitForLoadState("networkidle");
     assert.equal(await dialog.count(), 0, "mouse result selection closes the dialog and navigates");
     assert.equal(await page.locator("main").count(), 1);
@@ -270,8 +279,22 @@ async function verifyBrowserRuntime(origin) {
       }
     });
 
+    await page.goto(`${origin}/guide`, { waitUntil: "networkidle" });
+    const chapterLink = page.locator(`a[href="${publicPagePath(chapterPath)}"]`).first();
+    assert.equal(await chapterLink.count(), 1, "Guide landing publishes the reviewed chapter path");
+    const documentTimeOrigin = await page.evaluate(() => performance.timeOrigin);
+    await chapterLink.click();
+    await page.waitForURL(`${origin}${publicPagePath(chapterPath)}`);
+    await page.waitForLoadState("networkidle");
+    assert.equal(await page.locator("main").count(), 1);
+    assert.equal(await page.evaluate(() => performance.timeOrigin), documentTimeOrigin, "chapter link performs genuine client navigation in the Guide candidate");
+    assert.equal(await page.locator('link[rel="canonical"]').getAttribute("href"), new URL(publicPagePath(chapterPath), expectedSiteOrigin).href);
+    await page.reload({ waitUntil: "networkidle" });
+    assert.equal(page.url(), `${origin}${publicPagePath(chapterPath)}`, "reloaded chapter keeps its published URL");
+
     const searchResponse = await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
     assert.equal(searchResponse?.status(), 200);
+    assert.equal(page.url(), `${origin}${publicPagePath("/guide/search")}`, "standalone search URL remains valid across rollback");
     const input = page.getByPlaceholder("Search agents, harnesses, evidence, environments…");
     await input.fill("evidence architecture");
     await page.waitForFunction(() => {
@@ -415,21 +438,39 @@ try {
     assert.equal((await compatibilityRuntime.request(asset)).status, 200, asset);
   }
 
-  assert.equal((await compatibilityRuntime.request("/guide/01-understand/02-the-factory-in-one-view")).status, 200);
+  for (const method of ["GET", "HEAD"]) {
+    const chapterAlias = await compatibilityRuntime.request(`${chapterPath}?q=a%2Fb&q=evidence`, method);
+    assert.equal(chapterAlias.status, compatibleBuild ? 307 : 200);
+    if (compatibleBuild) {
+      assert.equal(chapterAlias.headers.get("location"), `${compatibilityRuntime.origin}${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
+      assert.match(chapterAlias.headers.get("cache-control"), /private/);
+      assert.match(chapterAlias.headers.get("cache-control"), /no-store/);
+      assert.equal((await compatibilityRuntime.request(publicPagePath(chapterPath), method)).status, 200, "rollback-stable chapter route renders repaired Guide");
+    }
+    assert.equal((await compatibilityRuntime.requestAsFdlcHost(chapterPath, method)).status, 200, "FDLC-host namespace renders directly without a standalone redirect loop");
+  }
 
   const redirect = await compatibilityRuntime.request("/docs/03-build/10-the-agent-factory?role=buyer&role=seller&q=a%2Fb");
   assert.equal(redirect.status, 308);
   assert.equal(
     redirect.headers.get("location"),
-    "/guide/03-build/11-the-agent-factory?role=buyer&role=seller&q=a%2Fb",
+    `${publicPagePath("/guide/03-build/11-the-agent-factory")}?role=buyer&role=seller&q=a%2Fb`,
   );
 
   assert.equal((await compatibilityRuntime.request("/guide/not-a-real-page")).status, 404);
   await verifyBrowserRuntime(compatibilityRuntime.origin);
-  assert.equal(
-    (await compatibilityRuntime.requestAsLegacyHost("/guide/architecture?token=secret")).status,
-    200,
-  );
+  for (const method of ["GET", "HEAD"]) {
+    const architectureAlias = await compatibilityRuntime.requestAsLegacyHost("/guide/architecture?q=evidence&q=a%2Fb", method);
+    assert.equal(architectureAlias.status, compatibleBuild ? 307 : 200);
+    if (compatibleBuild) {
+      const location = new URL(architectureAlias.headers.get("location"));
+      assert.equal(location.pathname, "/architecture");
+      assert.equal(location.search, "?q=evidence&q=a%2Fb");
+      assert.match(architectureAlias.headers.get("cache-control"), /private/);
+      assert.match(architectureAlias.headers.get("cache-control"), /no-store/);
+    }
+    assert.equal((await compatibilityRuntime.requestAsFdlcHost("/guide/architecture", method)).status, 200, "FDLC-owned architecture namespace never loops to the standalone root");
+  }
   assert.equal(
     (await compatibilityRuntime.requestAsLegacyHost("/guide/not-a-real-page?token=secret")).status,
     404,

@@ -1,6 +1,6 @@
 "use client";
 
-import { GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
+import { GUIDE_ROUTES, guideDocumentPath, guideNavigationHref } from "../../lib/paths";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadSearchIndex, searchDocuments, type SearchDocument, type SearchHit } from "../../lib/search-client";
@@ -80,7 +80,7 @@ export function SearchExperience() {
       </div>
       <div className="search-results" id="search-results" role="listbox">
         {showingStarters && starters.map((starter) => (
-          <a className="search-result" href={starter.href} key={starter.href} role="option" aria-selected={false}>
+          <a className="search-result" href={guideNavigationHref(starter.href)} key={starter.href} role="option" aria-selected={false}>
             <div className="search-result-meta"><span>Start here</span><span>{starter.meta}</span></div>
             <h2>{starter.title}</h2>
             <p>{starter.description}</p>
