@@ -135,7 +135,7 @@ Institutional context has a natural home, and it is larger than any one reposito
 
 Two ideas govern how that knowledge is shaped for an agent. The first is that **institutional knowledge representation** for a human is not the representation for an agent. A four-minute architecture overview is right for a new engineer; the same knowledge for an agent is a structured repository graph with typed nodes, explicit interfaces, and ownership edges. Writing agent context by pasting the human document is the most common way to produce large, low-utility packages. The second is the **canonical knowledge structure**: an opinionated representation designed around the recurring questions of a domain rather than around the documents that happen to exist. For software the recurring questions are architecture, components, interfaces, dependencies, ownership, history, decisions, and conventions, which is why the repository profile and the context graph have the shapes they have; another domain has different questions and needs a different structure.
 
-The last piece is what the industry calls memory, and the better name is **structured external state**: preferences, skills, policies, plans, repository profiles, decision records, outcomes, style guides, and the factory's own state, each held in a typed store with an owner rather than in a bag of remembered text. [Chapter 18](./18-agent-architecture.md) gives four kinds of memory (working, episodic, semantic, procedural) with temporal memory cutting across them. Two more belong in the taxonomy once the factory is running, and they reconcile with this chapter's Factory Memory as follows.
+Keep retained memory and **structured external state** distinct. Preferences and prior outcomes may be retrieved as advisory memory; policies, Plans, decisions and workflow state remain governed records in their own typed stores. [Chapter 18](./18-agent-architecture.md) gives four kinds of memory (working, episodic, semantic, procedural) with temporal memory cutting across them. The table adds preferences and contrasts these with durable factory state, which is not another memory type.
 
 | Kind | What it holds | Where this guide governs it |
 |---|---|---|
@@ -147,6 +147,25 @@ The last piece is what the industry calls memory, and the better name is **struc
 | Durable factory state | Plans, checkpoints, attempts, approvals, artifacts | Not memory at all: the authoritative records of [Chapter 5](../02-design/05-authoritative-records.md), which memory may cite and may not alter |
 
 The last row is the reconciliation. When someone says the agent "remembers" that a plan was approved, the fact lives in the Approval record and memory holds at most a pointer to it. Treating durable factory state as memory is how a retrieved summary of an old plan ends up standing in for the plan.
+
+### Resolve source conflicts by responsibility
+
+**Context** is what the model can use for the current decision. **Workflow state** is the durable record of execution and decisions. **Memory** preserves information for possible reuse. **Knowledge** is source material whose authority, ownership and currentness must be established. Copying any of these into context does not transfer its authority to the model.
+
+Avoid one universal ranking such as "repository beats policy" or "newest document wins." Sources answer different questions:
+
+| Question or conflict | Governing source | Required behavior |
+| --- | --- | --- |
+| May this action run? | Current policy, delegated grant and scope | Enforce outside the model before retrieval or execution; a document cannot widen access |
+| What exists now? | Repository revision and observed runtime/provider state | Preserve exact provenance; current code may itself violate policy or intended design |
+| What should be built? | Approved intent, Specification and Plan | Surface divergence from current code; do not silently change the requirement |
+| Was work approved or completed? | Current authoritative workflow and decision records | Re-read the record; a remembered approval or compacted transcript is insufficient |
+| Historical memory conflicts with a current source | Current source within its responsibility | Mark memory stale or superseded and retain the conflict for diagnosis |
+| Two current governing sources disagree | Their accountable owners and existing decision process | Block the affected decision until an attributable resolution exists |
+
+Apply authorization before ranking and again before consumption when access can change. Retain source versions, digests, permission decisions, freshness bounds and conflict outcomes in the Context Package. Cache keys must include scope and source identity; TTL alone does not establish permission or validity. Compaction preserves pointers to approved requirements, decisions, unresolved conflicts and evidence, while recovery reads the original durable records.
+
+Evaluate retrieval and use separately: required evidence recalled, relevant evidence ranked, stale sources rejected, cross-scope access denied, and the chosen evidence applied correctly. Include a case where the right source is retrieved but ignored. Minimum sufficient context means enough current, permitted evidence to make the decision; missing evidence should trigger bounded retrieval or escalation. [Chapter 29](../04-prove/29-evaluation-engineering.md) owns the combined evaluation, and [FDLC Trust](https://fdlc.ai/architecture#trust) owns the authority boundary.
 
 ### Context routing, shift-left, and the context firewall
 

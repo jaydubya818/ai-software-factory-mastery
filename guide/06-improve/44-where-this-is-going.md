@@ -418,12 +418,16 @@ research path exist with atomic artifact, observation, cursor, and
 verification-receipt lineage, and scheduled research still fails closed while
 `continuousSchedulingEnabled` is `false`.
 
-None of the predictions here is implemented. There is no code-mode extension
+Most predictions here remain unimplemented. There is no code-mode extension
 API, no sandboxed user- or agent-written extension boundary, no live-reloaded
 extensions, no open harness lifecycle protocol beyond Mission Control's own
-contract, no governed MCP gateway, no dark-factory mode, and exact skill
-binding into the execution manifest was not observed. Those are future by the
-repository's own labels, and this chapter does not promote them.
+contract, no dark-factory mode, and exact skill binding into the execution
+manifest was not observed. A later Phase 4 at `ed77c46` qualified one exact
+Context7 `query-docs` read through versioned authority, brokered execution,
+durable receipts, schema/currentness checks, and independent verification. It
+does not establish a general or write-capable MCP platform. The remaining
+items are future by the repository's own labels, and this chapter does not
+promote them.
 
 ## Retain this
 

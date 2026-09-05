@@ -176,7 +176,7 @@ present-tense claims.
 | Agent definitions | Versioned agent records and exact agent hashes are frozen into execution | Exact skills, credentials, and all policy fields are not consolidated into one definition |
 | Model gateway and routing | Model catalog, exact route identity, evidence qualification, advisory routing, guarded-auto gates, and immutable decision snapshots exist | Production catalog had zero qualified routes; Guarded Auto remained disabled |
 | Context and memory | Provenance-backed retrieval, graph relationships, planning, Attempt-bound Context Packages, context evals, and configuration drift scans exist | Factory Memory is advisory and gated by phase; it cannot satisfy acceptance |
-| Tools and MCP | Harness manifests freeze native tool support and permitted capabilities | The studied Codex and DeepSeek manifests declare MCP unsupported; no first-class production MCP gateway was verified |
+| Tools and MCP | At `ed77c46`, one exact Context7 `query-docs` read is qualified through a Tool Version, Tool Grant, canonical Attempt, broker, durable receipt, schema/currentness checks, and independent verification | The Codex and DeepSeek manifests still declare native MCP unsupported; arbitrary servers/operations, writes, broad credentials, and a general MCP platform are not qualified |
 | Skills | `SKILL.md` parsing, linting, registry import, eval scenarios, and local repository scanning exist | No exact skill digest/version was observed in `factory-execution-manifest/v1` |
 | Harness and sandbox | Generic lifecycle, normalized results, capability manifests, Sandbox Profiles, credential and teardown contracts, and local/remote backends exist | Hardened remote production use requires operator promotion and live canary proof |
 | State and recovery | Tasks, immutable Attempts, leases, heartbeats, retry budgets, events, artifacts, pause/drain/kill controls, and compatibility projections exist | Ambiguous external effects still require reconciliation; old runs remain historical, not current evidence |
@@ -306,9 +306,9 @@ the same bar as its existing governed path:
 - a repository-wide builder-action-to-agent-capability map with CI drift checks;
 - exact skill IDs, versions, digests, dependencies, and evaluation status in
   every relevant execution manifest;
-- a governed MCP gateway with explicit client/server identity, capability
-  discovery, per-tool authorization, consent, rate limits, audit, and result
-  provenance;
+- expansion beyond the single qualified Context7 read only through explicit
+  client/server identity, discovery separated from per-tool authority, consent,
+  rate limits, durable receipts, audit, and result provenance;
 - a legitimate production configuration and bounded local/remote canary;
 - outcome-normalized routing evidence before enabling Guarded Auto;
 - one browser-originated Mission-to-reviewed-PR path without direct data
@@ -391,4 +391,3 @@ chain as a precondition to Attempt claim. For every transition, name the actor,
 authoritative record, digest or version, hard policy check, emitted evidence,
 failure state, recovery path, and human-only authority. Circle every place
 where telemetry could be mistaken for evidence or registration for promotion.
-

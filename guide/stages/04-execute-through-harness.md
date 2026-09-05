@@ -64,6 +64,12 @@ At `main` evidence commit [`b31e275`](https://github.com/jaydubya818/MissionCont
 
 Fenced production leases are **partial** across the studied commits. The `main` invariant preventing two active Attempts relies on state inspection, while later study work adds heartbeat, fencing, stale recovery, and stronger admission. Complete per-Attempt manifests, production-grade recovery, and MCP as a first-class governed subsystem remain **future or partial**. The evidence supports progressive hardening, not a claim of fleet-scale durable execution.
 
+Current-status update at `ed77c46`: Mission Control later qualified one exact
+Context7 `query-docs` read through the canonical Attempt path, versioned
+authority, a broker, durable receipt, schema/currentness checks, and independent
+verification. That proof does not qualify write-capable, arbitrary-server, or
+harness-native MCP; the broader subsystem remains partial.
+
 ## Retain this
 
 - The model reasons; the harness controls execution, state, tools, budgets, and stopping.

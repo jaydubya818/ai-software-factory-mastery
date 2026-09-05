@@ -210,6 +210,29 @@ Outcome measures themselves come in an order of increasing honesty, and the orde
 
 *Production outcome is the final grader.* Every measure above it is a proxy chosen because production is slow to speak and expensive to consult. A configuration can score well on task success and builder acceptance and still be a net loss, because the defects it introduces escape quietly and the corrections it forces are absorbed by reviewers who never file them. That is why the loop from production back into the regression set, described under "Who evaluates the evaluator", is not an optional refinement: it is how the proxies are periodically re-anchored to the only measure that cannot be gamed. When two proxies disagree, ask which one production has recently confirmed. When a proxy and production disagree, production wins and the proxy is recalibrated, not the other way round.
 
+### Diagnose the layer with a negative control
+
+Keep the existing Eval Task, dataset, run and grader records. Add a failure-layer label and evidence links for diagnosis, allowing multiple contributing causes and an explicit unknown cause. The label does not create workflow state or decide acceptance.
+
+| Layer | Negative case | Evidence and expected response |
+| --- | --- | --- |
+| Intent and planning | Every planned check passes but the requested behavior is missing | Compare the original approved criterion to the Plan and artifact; correct the contract before promotion |
+| Capability/model routing | Primary provider fails; the cheaper fallback lacks a required capability | Routing decision and rejected candidates; block or use a separately qualified route |
+| Context and memory | Relevant historical guidance conflicts with current policy | Source versions and permission/currentness findings; stale memory cannot override authority |
+| Tool result | Transport succeeds but the required result field is null | Schema, semantic and policy findings; withhold unusable output and retain the failure |
+| Reasoning and artifact | Correct evidence is retrieved but the produced change contradicts it | Context-to-criterion lineage and independent artifact verification; repair through a bounded Attempt |
+| Authority and recovery | External effect succeeds, response is lost, and the lease expires | Operation identity, provider reconciliation and late-event record; no blind retry or stale completion |
+| Verification | Producer and model judge agree but a required test fails | Criterion-level findings; the hard failure remains blocking |
+| Economics and operation | Quality improves while retry fan-out exceeds the budget | Full cohort spend, downstream calls, critical path and intervention evidence; do not promote on quality alone |
+
+Use the least subjective evaluator that can validate each assertion. A deterministic tool still needs contract and integration checks; a different model name alone does not establish verifier independence. Protect evaluator inputs and criterion ownership from the producer, calibrate judgment against labeled examples, and keep disagreement visible. A correct result with an unauthorized path fails the authority gate; a safe path with an incorrect result fails the outcome requirement.
+
+An important production failure becomes a regression case by retaining a scoped, redacted trace; reproducing the behavior; recording the expected evidence and forbidden effect; assigning an owner; and adding it to the versioned suite. Re-run baseline and candidate before a reviewed rollout. Do not copy credentials or unrestricted customer content into an evaluation corpus. [Chapter 40](../06-improve/40-governed-learning.md) owns candidate promotion.
+
+**Current implementation note, 2026-09-05.** Mission Control's [Phase 3 record at main revision 0d1a090](https://github.com/jaydubya818/MissionControl/blob/0d1a090/docs/testing/evidence/governed-mcp-phase3/completion-record.md) adds a local read-only qualification fixture with exact Tool Version/Grant checks, malformed-result denials and late-result withholding. It supports that bounded experimental path; it does not prove a general tool runtime or a complete production trajectory program. The study-revision assessment below remains historical.
+
+**Subsequent evidence, main revision aa8c12b.** The [Phase 4 recovery record](https://github.com/jaydubya818/MissionControl/blob/aa8c12b1d4907589b71cef3cb421ef2a2c380676/docs/testing/evidence/governed-mcp-phase4-recovery/README.md) qualifies one fixed public React query through Context7 `query-docs`. A canonical browser-dispatched Attempt produced durable broker receipts and separate verification; its earlier direct transport remains diagnostic. Verified local Git evidence does not grant acceptance without trusted publication currentness. The operation remains experimental, with no write or generalized connector authority. This updates the current implementation boundary without rewriting the earlier fixture or study evidence.
+
 ## How to build it
 
 1. **Define the subject digest.** Hash the full configuration — agent definition, model route, prompt, tools, skills, context policy, harness, environment, workflow, verifier — and stamp it on every trial.
