@@ -1464,8 +1464,13 @@ chapter does not claim a live run through it.
 **Partial.** Spec-driven intake: merged, qualified, default off. Factory
 Memory: implemented, default off by phase. Skills: discoverable and linted,
 but no exact skill digest was observed in `factory-execution-manifest/v1`, so
-not provably bound. MCP: the studied harness manifests declare it unsupported
-and no governed gateway was verified. Routing: exact-route identity and
+not provably bound. MCP at the studied commit: the harness manifests declared
+it unsupported and no governed gateway was verified. At later commit
+`ed77c46`, Phase 4 qualified one exact Context7 `query-docs` read through an
+exact Tool Version and Tool Grant, canonical Attempt, broker, durable receipt,
+schema/currentness checks, and independent verification. Writes, arbitrary
+servers and operations, broad credentials, and harness-native MCP remain
+unsupported. Routing: exact-route identity and
 guarded-auto gates exist, Guarded Auto is disabled, and the remote tuple has
 three verified samples against a frozen five-sample threshold. Release,
 deployment, activation, rollback, and production-outcome records exist and
@@ -1479,7 +1484,7 @@ use, not general certification, and its workloads were disposable fixtures
 with no external repository published or merged. The production admission
 packet at `d902fae` was blocked by operator configuration. Still future: a
 repository-wide action-parity manifest with CI drift checks, exact skill
-binding, a governed MCP gateway, a browser-originated Mission-to-reviewed-PR
+binding, broader governed MCP beyond the single qualified read, a browser-originated Mission-to-reviewed-PR
 run with no direct mutation, retained post-merge production-outcome evidence,
 Trust Score and automatic autonomy calibration, first-class Risk Review,
 DeepSeek beyond experimental, admission of the experimental execution-engine
