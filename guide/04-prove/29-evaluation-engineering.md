@@ -231,6 +231,8 @@ An important production failure becomes a regression case by retaining a scoped,
 
 **Current implementation note, 2026-09-05.** Mission Control's [Phase 3 record at main revision 0d1a090](https://github.com/jaydubya818/MissionControl/blob/0d1a090/docs/testing/evidence/governed-mcp-phase3/completion-record.md) adds a local read-only qualification fixture with exact Tool Version/Grant checks, malformed-result denials and late-result withholding. It supports that bounded experimental path; it does not prove a general tool runtime or a complete production trajectory program. The study-revision assessment below remains historical.
 
+**Subsequent evidence, main revision aa8c12b.** The [Phase 4 recovery record](https://github.com/jaydubya818/MissionControl/blob/aa8c12b1d4907589b71cef3cb421ef2a2c380676/docs/testing/evidence/governed-mcp-phase4-recovery/README.md) qualifies one fixed public React query through Context7 `query-docs`. A canonical browser-dispatched Attempt produced durable broker receipts and separate verification; its earlier direct transport remains diagnostic. Verified local Git evidence does not grant acceptance without trusted publication currentness. The operation remains experimental, with no write or generalized connector authority. This updates the current implementation boundary without rewriting the earlier fixture or study evidence.
+
 ## How to build it
 
 1. **Define the subject digest.** Hash the full configuration — agent definition, model route, prompt, tools, skills, context policy, harness, environment, workflow, verifier — and stamp it on every trial.
