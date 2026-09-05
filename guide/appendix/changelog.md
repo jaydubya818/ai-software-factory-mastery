@@ -14,6 +14,15 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-05 — Software Factory operating contracts
+
+- Refined Chapter 9's verified/accepted denominators, cohort accounting, missing-cost semantics, work amplification and critical-path example. Corrected the implication that deterministic execution needs no evaluation.
+- Added Chapter 14's unknown-outcome reconciliation decision table without introducing new delivery states.
+- Clarified Chapter 20's context/state/memory/knowledge boundaries and source-conflict resolution. Current code establishes facts; it cannot override policy or approved requirements.
+- Added Chapter 29's cross-layer negative controls and a dated, revision-pinned note for Mission Control's experimental local tool fixture. Historical assessments remain intact.
+- Reconciled Chapter 29 with subsequently landed Mission Control `aa8c12b`: one fixed read-only Context7 query is qualified through a canonical Attempt and independent verification. The fixture history and broader maturity limits remain intact.
+- Updated the glossary and linked the existing FDLC architecture and measurement contracts. No new chapter, architecture area or production-capability claim was added.
+
 ## 2026-09-04 — Six-infographic architecture cross-check
 
 ### Added

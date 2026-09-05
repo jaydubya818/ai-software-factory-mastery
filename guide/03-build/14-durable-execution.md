@@ -129,6 +129,24 @@ Who mints the key matters as much as what it contains. The orchestration layer o
 
 That second line is why the key is `create-pr:{attemptId}:{headSha}` only when the Attempt is the unit that owns the operation. Where a logical operation may span a retry into a new Attempt, the key must be built from the Task and the content, so that Attempt N+1 finding Attempt N's PR is a match rather than a collision.
 
+### A timeout leaves the external outcome unknown
+
+A transport timeout describes the response the caller received. It does not establish whether an external effect occurred. Keep the transport result, the observed external effect, and the workflow state separate. **Unknown external outcome** is an evidence condition on the logical operation, not a new Mission or Task status and not permission to retry.
+
+Persist the operation identity, tenant/repository scope, requested-effect digest, current Attempt and lease, authority reference, deadline, and reconciliation method before dispatch. Record the transport result and any provider identity afterward. A replacement Attempt must reuse the logical operation identity while proving its own current authority; the old worker's authority does not transfer with the key.
+
+| Observation after a lost response | Required evidence | Permitted next action |
+| --- | --- | --- |
+| Exact effect exists | Provider record matches operation, scope and requested-effect digest | Record the existing effect; continue through verification without repeating it |
+| Effect is authoritatively absent | Provider reconciliation is conclusive under its consistency contract | Retry only with current authority, the same logical key, and remaining budget |
+| Effect is still uncertain | Missing, delayed, contradictory or incomplete provider observations | Hold further effects; reconcile within a bounded deadline or escalate |
+| A conflicting effect exists | Provider record differs in subject, target, scope or digest | Stop and investigate; do not overwrite or adopt it as success |
+| Lease expired or work was cancelled | Current control-plane state | Retain late results for audit, reconcile possible effects, and deny further execution |
+
+A search that returns no match from an eventually consistent index is not conclusive absence. A receipt in the factory database alone cannot guarantee exactly-once effects in another system. Compensation is a new authorized action with its own result and recovery path, not a claim that the original effect never happened.
+
+For a PR creation whose response is lost, match repository, branch/head and operation identity before creating anything again. If the provider cannot support safe deduplication or reconciliation, stop for a decision. Test a lost response after success, delayed visibility, conflicting identity, cancellation during the call, and a stale worker delivering late success. [Chapter 29](../04-prove/29-evaluation-engineering.md) connects these failures to the regression suite; [FDLC Harness](https://fdlc.ai/architecture#harness) defines their architectural owner.
+
 ### Recovery requires classification and a changed hypothesis
 
 Retry is appropriate only when the failure is transient or when a concrete input, environment, plan, or implementation has changed. Repeating the same action without new evidence wastes budget and can compound damage: a worker that failed validation because it misunderstood the spec will misunderstand it again. Policy, not the worker, controls retry by failure class.

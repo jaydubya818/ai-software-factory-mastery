@@ -578,6 +578,12 @@ must be measured against the target query distribution.
 specific query or task. Reranking cannot recover a required item that candidate
 retrieval omitted.
 
+**Context** — Information available to the model for the current decision. It may include references to state, memory and knowledge; inclusion does not grant authority (Chapter 20).
+
+**Workflow state** — The durable, authoritative record of execution progress and decisions, read from the control plane rather than reconstructed from memory or conversation (Chapters 5, 14, 20).
+
+**Knowledge** — Source material available for retrieval whose ownership, authority, permissions and currentness must be established before use (Chapters 19, 20).
+
 **Context engineering** — The design and operation of selecting, filtering,
 ordering, budgeting, refreshing, and attributing the information available to
 an agent for one task. More context is not automatically better context.
@@ -736,7 +742,7 @@ model adapter changes how it is called.
 
 **Structured external state** — Persistent information outside model weights and transient context — preferences, skills, policies, plans, repository profiles, decisions, outcomes, factory state — named by kind rather than lumped as memory (Chapter 20).
 
-**Memory taxonomy** — Working (current execution), episodic (past executions and outcomes), semantic (facts and organisational knowledge), procedural (skills and workflows), preference (user and team choices), and durable factory state (plans, checkpoints, attempts, approvals, artifacts) (Chapter 20).
+**Memory taxonomy** — Working (current reasoning context), episodic (past executions and outcomes), semantic (facts and organisational knowledge), procedural (skills and workflows), and preference (user and team choices). Durable factory state is an authoritative record category, not a memory type (Chapter 20).
 
 **Institutional knowledge representation** — A maintained representation of architecture, history, decisions, and conventions optimised for its reader. The human representation and the agent representation are different artifacts (Chapter 19).
 
@@ -2634,7 +2640,13 @@ or failure.
 
 **Human leverage ratio** — Accepted, verified outcome per unit of human attention — verified outcomes per human hour, or accepted change volume per touchpoint. The factory should raise human leverage, not token consumption (Chapter 8).
 
-**Cost per verified outcome** — Total factory cost — generation, retrieval, tools, subagents, retries, verification, human effort — to produce an outcome that has independently satisfied its verification contract. The engineering sub-metric beneath cost per accepted outcome (Chapter 9).
+**Cost per verified outcome** — Total declared cohort cost, including failed work and retries, divided by independently verified outcomes in that cohort through the stated cutoff. Publish cost coverage; unknown cost is not zero and a zero denominator is undefined. Acceptance has its own denominator (Chapter 9).
+
+**Work amplification** — Downstream operation invocations per admitted Mission in a declared cohort. Define included operation classes, count retries, and avoid counting parent trace spans as additional work (Chapter 9).
+
+**Critical-path latency** — Elapsed time along the longest dependency path, including queueing, execution, retry delay, joins, verification and decision waits. It differs from total compute consumed by parallel work (Chapter 9).
+
+**Unknown external outcome** — An evidence condition in which an operation may have taken effect despite a missing or failed response. Reconcile the exact logical operation before retrying; it is not a new delivery status or an authority grant (Chapter 14).
 
 **Factory economics** — The full cost of the factory — inference, compute, tooling, sandboxes, storage, verification, retries, human review, failure remediation, opportunity cost — against its full return: velocity, quality, human leverage, backlog elimination, risk reduction, broader participation (Chapter 9).
 
