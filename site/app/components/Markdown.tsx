@@ -81,6 +81,7 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
                 </aside>
               );
             },
+            pre: ({ children }) => <pre role="region" aria-label="Scrollable code example" tabIndex={0}>{children}</pre>,
             table: ({ children }) => (
               <div className="table-scroll" role="region" aria-label="Scrollable table" tabIndex={0}>
                 <table>{children}</table>
