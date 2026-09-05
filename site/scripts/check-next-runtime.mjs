@@ -111,6 +111,8 @@ async function startNext({ legacyRedirectsEnabled = false } = {}) {
         await Promise.race([once(next, "exit"), new Promise((resolve) => setTimeout(resolve, 5_000))]);
       }
       if (next.exitCode === null) next.kill("SIGKILL");
+      console.log(`Native ${legacyRedirectsEnabled ? "retirement" : "compatibility"} runtime log:\n${output.trim()}`);
+      assert.doesNotMatch(output, /\b(?:Error|Exception):|Minified React error|\b(?:unhandledRejection|uncaughtException)\b/i, "native runtime logs must contain no errors");
     },
   };
 }
@@ -129,7 +131,7 @@ async function verifyCommandPaletteKeyboard(page) {
   const input = dialog.getByRole("combobox");
   await trigger.focus();
   await page.keyboard.press("Enter");
-  await page.waitForFunction(() => document.activeElement?.getAttribute("role") === "combobox");
+  await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
 
   const options = dialog.getByRole("option");
   const optionCount = await options.count();
@@ -144,6 +146,12 @@ async function verifyCommandPaletteKeyboard(page) {
   }
   await page.keyboard.press("Tab");
   assert.ok(await input.evaluate((element) => element === document.activeElement));
+  for (let index = optionCount - 1; index >= 0; index -= 1) {
+    await page.keyboard.press("Shift+Tab");
+    assert.ok(await options.nth(index).evaluate((element) => element === document.activeElement), `Shift+Tab reaches result ${index + 1} in reverse order`);
+  }
+  await page.keyboard.press("Shift+Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement));
 
   await input.fill("no-matching-palette-result-qa");
   await page.waitForFunction(() => document.querySelectorAll('#command-palette [role="option"]').length === 0);
@@ -156,19 +164,75 @@ async function verifyCommandPaletteKeyboard(page) {
   assert.equal(await trigger.getAttribute("aria-expanded"), "false");
 
   for (const shortcut of ["Control+k", "Meta+k"]) {
+    await page.locator(".search-box input").focus();
     await page.keyboard.press(shortcut);
-    await page.waitForFunction(() => document.activeElement?.getAttribute("role") === "combobox");
+    await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
     const before = await input.getAttribute("aria-activedescendant");
     await page.keyboard.press("ArrowDown");
     assert.notEqual(await input.getAttribute("aria-activedescendant"), before, "result arrow-key navigation is preserved");
     await page.keyboard.press(shortcut);
-    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(".search-box input"));
+    await page.keyboard.press(shortcut);
+    await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(".search-box input"));
   }
   const themeToggle = page.getByRole("button", { name: /Use (dark|light) theme/ });
   await themeToggle.focus();
   await page.keyboard.press("Escape");
   await page.evaluate(() => new Promise((resolve) => window.setTimeout(resolve, 0)));
   assert.ok(await themeToggle.evaluate((element) => element === document.activeElement), "Escape outside a closed palette does not steal focus");
+}
+
+async function verifyCommandPaletteMouse(page, origin) {
+  const trigger = page.locator(".command-trigger");
+  const dialog = page.getByRole("dialog", { name: "Command palette" });
+  await trigger.click();
+  await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+  await dialog.getByRole("combobox").click();
+  assert.equal(await dialog.count(), 1, "clicking inside the modal keeps it open");
+  await page.locator(".command-backdrop").click({ position: { x: 2, y: 2 } });
+  await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+
+  for (const [query, name, destination] of [
+    ["reference shelf", /Open the reference shelf/, "/guide/topics"],
+    ["Search the whole guide", /Search the whole guide/, "/guide/search"],
+  ]) {
+    await trigger.click();
+    await dialog.getByRole("combobox").fill(query);
+    await dialog.getByRole("option", { name }).click();
+    await page.waitForURL(`${origin}${destination}`);
+    await page.waitForLoadState("networkidle");
+    assert.equal(await dialog.count(), 0, "mouse result selection closes the dialog and navigates");
+    assert.equal(await page.locator("main").count(), 1);
+  }
+}
+
+async function verifyCommandPaletteMatrix(page, origin) {
+  let cases = 0;
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const theme of ["light", "dark"]) {
+      await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
+      if (await page.locator("html").getAttribute("data-theme") !== theme) {
+        await page.getByRole("button", { name: `Use ${theme} theme` }).click();
+      }
+      for (let round = 1; round <= 2; round += 1) {
+        for (const navigation of ["direct", "reload"]) {
+          const response = navigation === "direct"
+            ? await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" })
+            : await page.reload({ waitUntil: "networkidle" });
+          assert.equal(response?.status(), 200);
+          assert.equal(await page.locator("html").getAttribute("data-theme"), theme, "theme persists through direct/reload focus qualification");
+          await verifyCommandPaletteKeyboard(page);
+          await verifyCommandPaletteMouse(page, origin);
+          cases += 1;
+          console.log(`Palette focus/mouse PASS: ${width}×844 ${theme} ${navigation} round ${round}`);
+        }
+      }
+    }
+  }
+  assert.equal(cases, 16);
 }
 
 async function verifyBrowserRuntime(origin) {
@@ -209,7 +273,6 @@ async function verifyBrowserRuntime(origin) {
       return /matching section/.test(summary);
     });
     assert.ok(await page.locator(".search-result").count() > 0, "hydrated search should render results");
-    await verifyCommandPaletteKeyboard(page);
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
     await page.getByRole("button", { name: "Use dark theme" }).click();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
@@ -267,7 +330,6 @@ async function verifyBrowserRuntime(origin) {
       { waitUntil: "networkidle" },
     );
     assert.equal(mobile?.status(), 200);
-    await verifyCommandPaletteKeyboard(page);
     for (const navigation of ["direct", "reload"]) {
       if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
       await page.waitForFunction(() => {
@@ -302,6 +364,7 @@ async function verifyBrowserRuntime(origin) {
       assert.equal(layout.inlineWrap, true);
       assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
     }
+    await verifyCommandPaletteMatrix(page, origin);
     assert.deepEqual(pageErrors, []);
     assert.deepEqual(consoleErrors, []);
     assert.deepEqual(failedManagedAssets, []);

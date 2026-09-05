@@ -35,9 +35,11 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const paletteRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
 
-  const openPalette = useCallback(() => {
+  const openPalette = useCallback((invoker = document.activeElement) => {
+    returnFocusRef.current = invoker instanceof HTMLElement && invoker !== document.body ? invoker : triggerRef.current;
     setQuery("");
     setActive(0);
     setOpen(true);
@@ -45,7 +47,10 @@ export function CommandPalette() {
 
   const closePalette = useCallback(({ restoreFocus = true } = {}) => {
     setOpen(false);
-    if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
+    const invoker = returnFocusRef.current;
+    if (restoreFocus) window.setTimeout(() => {
+      (invoker?.isConnected ? invoker : triggerRef.current)?.focus();
+    }, 0);
   }, []);
 
   const items = useMemo(() => {
@@ -118,7 +123,7 @@ export function CommandPalette() {
 
   return (
     <>
-      <button aria-controls="command-palette" aria-expanded={open} aria-haspopup="dialog" className="command-trigger" ref={triggerRef} type="button" onClick={openPalette}>
+      <button aria-controls="command-palette" aria-expanded={open} aria-haspopup="dialog" className="command-trigger" ref={triggerRef} type="button" onClick={() => openPalette(triggerRef.current)}>
         <span>Search</span><kbd>⌘K</kbd>
       </button>
       {open && (
