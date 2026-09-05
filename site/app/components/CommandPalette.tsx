@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
 import { lifecycleStages } from "../../lib/lifecycle";
@@ -34,18 +34,19 @@ export function CommandPalette() {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const paletteRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
-  function openPalette() {
+  const openPalette = useCallback(() => {
     setQuery("");
     setActive(0);
     setOpen(true);
-  }
+  }, []);
 
-  function closePalette({ restoreFocus = true } = {}) {
+  const closePalette = useCallback(({ restoreFocus = true } = {}) => {
     setOpen(false);
     if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
-  }
+  }, []);
 
   const items = useMemo(() => {
     const documents: PaletteItem[] = paletteIndex.map((document) => ({
@@ -77,23 +78,35 @@ export function CommandPalette() {
     function keydown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((current) => {
-          if (!current) {
-            setQuery("");
-            setActive(0);
-          }
-          return !current;
-        });
+        if (open) closePalette();
+        else openPalette();
       }
-      if (event.key === "Escape") closePalette();
+      if (event.key === "Escape" && open) closePalette();
     }
     window.addEventListener("keydown", keydown);
     return () => window.removeEventListener("keydown", keydown);
-  }, []);
+  }, [open, openPalette, closePalette]);
 
   useEffect(() => {
     if (!open) return;
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    const palette = paletteRef.current;
+    if (!palette) return;
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const controls = palette.querySelectorAll<HTMLElement>("input:not([disabled]), button:not([disabled])");
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (document.activeElement === (event.shiftKey ? first : last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+      }
+    };
+    palette.addEventListener("keydown", containFocus);
+    return () => {
+      window.clearTimeout(focusTimer);
+      palette.removeEventListener("keydown", containFocus);
+    };
   }, [open]);
 
   function choose(index: number) {
@@ -110,7 +123,7 @@ export function CommandPalette() {
       </button>
       {open && (
         <div className="command-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closePalette()}>
-          <section className="command-palette" id="command-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+          <section className="command-palette" id="command-palette" ref={paletteRef} role="dialog" aria-modal="true" aria-label="Command palette">
             <label className="command-input">
               <span className="sr-only">Search the guide and navigate</span>
               <input

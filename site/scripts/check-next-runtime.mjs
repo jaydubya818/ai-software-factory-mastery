@@ -123,6 +123,54 @@ function managedNextAssets(html) {
   )];
 }
 
+async function verifyCommandPaletteKeyboard(page) {
+  const trigger = page.locator(".command-trigger");
+  const dialog = page.getByRole("dialog", { name: "Command palette" });
+  const input = dialog.getByRole("combobox");
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.activeElement?.getAttribute("role") === "combobox");
+
+  const options = dialog.getByRole("option");
+  const optionCount = await options.count();
+  assert.ok(optionCount > 0, "opening the palette offers keyboard-selectable results");
+  await page.keyboard.press("Shift+Tab");
+  assert.ok(await options.last().evaluate((element) => element === document.activeElement), "backward Tab wraps inside the modal");
+  await page.keyboard.press("Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement), "forward Tab wraps from the last result to the input");
+  for (let index = 0; index < optionCount; index += 1) {
+    await page.keyboard.press("Tab");
+    assert.ok(await options.nth(index).evaluate((element) => element === document.activeElement), `Tab reaches result ${index + 1} in order`);
+  }
+  await page.keyboard.press("Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement));
+
+  await input.fill("no-matching-palette-result-qa");
+  await page.waitForFunction(() => document.querySelectorAll('#command-palette [role="option"]').length === 0);
+  for (const key of ["Tab", "Shift+Tab"]) {
+    await page.keyboard.press(key);
+    assert.ok(await input.evaluate((element) => element === document.activeElement), `${key} stays in the modal when there are no results`);
+  }
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+  assert.equal(await trigger.getAttribute("aria-expanded"), "false");
+
+  for (const shortcut of ["Control+k", "Meta+k"]) {
+    await page.keyboard.press(shortcut);
+    await page.waitForFunction(() => document.activeElement?.getAttribute("role") === "combobox");
+    const before = await input.getAttribute("aria-activedescendant");
+    await page.keyboard.press("ArrowDown");
+    assert.notEqual(await input.getAttribute("aria-activedescendant"), before, "result arrow-key navigation is preserved");
+    await page.keyboard.press(shortcut);
+    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+  }
+  const themeToggle = page.getByRole("button", { name: /Use (dark|light) theme/ });
+  await themeToggle.focus();
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => new Promise((resolve) => window.setTimeout(resolve, 0)));
+  assert.ok(await themeToggle.evaluate((element) => element === document.activeElement), "Escape outside a closed palette does not steal focus");
+}
+
 async function verifyBrowserRuntime(origin) {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 
@@ -161,6 +209,7 @@ async function verifyBrowserRuntime(origin) {
       return /matching section/.test(summary);
     });
     assert.ok(await page.locator(".search-result").count() > 0, "hydrated search should render results");
+    await verifyCommandPaletteKeyboard(page);
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
     await page.getByRole("button", { name: "Use dark theme" }).click();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
@@ -218,6 +267,7 @@ async function verifyBrowserRuntime(origin) {
       { waitUntil: "networkidle" },
     );
     assert.equal(mobile?.status(), 200);
+    await verifyCommandPaletteKeyboard(page);
     for (const navigation of ["direct", "reload"]) {
       if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
       await page.waitForFunction(() => {
@@ -347,4 +397,4 @@ try {
   await retirementRuntime.stop();
 }
 
-console.log("Native Next runtime smoke passed (prefixed assets, hydration, unique heading IDs, 390×844 inline-code wrapping, pre/Mermaid scrolling, search, compatibility serving, opt-in retirement, redirects, and 404s).");
+console.log("Native Next runtime smoke passed (prefixed assets, hydration, unique heading IDs, desktop/mobile palette focus containment, 390×844 inline-code wrapping, pre/Mermaid scrolling, search, compatibility serving, opt-in retirement, redirects, and 404s).");
