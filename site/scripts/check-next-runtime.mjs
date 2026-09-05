@@ -163,25 +163,31 @@ async function verifyCommandPaletteKeyboard(page) {
   await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
   assert.equal(await trigger.getAttribute("aria-expanded"), "false");
 
-  for (const shortcut of ["Control+k", "Meta+k"]) {
-    await page.locator(".search-box input").focus();
-    await page.keyboard.press(shortcut);
-    await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
-    const before = await input.getAttribute("aria-activedescendant");
-    await page.keyboard.press("ArrowDown");
-    assert.notEqual(await input.getAttribute("aria-activedescendant"), before, "result arrow-key navigation is preserved");
-    await page.keyboard.press(shortcut);
-    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(".search-box input"));
-    await page.keyboard.press(shortcut);
-    await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+  for (const invokerSelector of [".command-trigger", ".theme-toggle", ".search-box input"]) {
+    const invoker = page.locator(invokerSelector);
+    for (const shortcut of ["Control+k", "Meta+k"]) {
+      await invoker.focus();
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+      await page.keyboard.press("Shift+Tab");
+      assert.ok(await options.last().evaluate((element) => element === document.activeElement), `${shortcut} from ${invokerSelector} contains backward focus`);
+      await page.keyboard.press("Tab");
+      assert.ok(await input.evaluate((element) => element === document.activeElement), `${shortcut} from ${invokerSelector} contains forward focus`);
+      const before = await input.getAttribute("aria-activedescendant");
+      await page.keyboard.press("ArrowDown");
+      assert.notEqual(await input.getAttribute("aria-activedescendant"), before, "result arrow-key navigation is preserved");
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction((selector) => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(selector), invokerSelector);
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+      await page.keyboard.press("Escape");
+      await page.waitForFunction((selector) => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(selector), invokerSelector);
+    }
+    await invoker.focus();
     await page.keyboard.press("Escape");
-    await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(".search-box input"));
+    await page.evaluate(() => new Promise((resolve) => window.setTimeout(resolve, 0)));
+    assert.ok(await invoker.evaluate((element) => element === document.activeElement), `Escape outside a closed palette does not steal ${invokerSelector} focus`);
   }
-  const themeToggle = page.getByRole("button", { name: /Use (dark|light) theme/ });
-  await themeToggle.focus();
-  await page.keyboard.press("Escape");
-  await page.evaluate(() => new Promise((resolve) => window.setTimeout(resolve, 0)));
-  assert.ok(await themeToggle.evaluate((element) => element === document.activeElement), "Escape outside a closed palette does not steal focus");
 }
 
 async function verifyCommandPaletteMouse(page, origin) {
@@ -227,7 +233,7 @@ async function verifyCommandPaletteMatrix(page, origin) {
           await verifyCommandPaletteKeyboard(page);
           await verifyCommandPaletteMouse(page, origin);
           cases += 1;
-          console.log(`Palette focus/mouse PASS: ${width}×844 ${theme} ${navigation} round ${round}`);
+          console.log(`Palette focus/mouse PASS: ${width}×844 ${theme} ${navigation} round ${round}; Search/theme/page-input invokers, Ctrl/Cmd+K and Escape`);
         }
       }
     }
