@@ -2,6 +2,15 @@ import { readdir, readFile, writeFile, mkdir, copyFile, rm } from "node:fs/promi
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+import { markdownHeadings } from "../lib/markdown-headings.ts";
+import {
+  GUIDE_CANONICAL_ORIGIN,
+  absoluteGuideUrl,
+  GUIDE_ROUTES,
+  guideAssetPath,
+  guideContentPath,
+  standaloneDiscoveryFiles,
+} from "../lib/paths.ts";
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(siteRoot, "..");
@@ -90,15 +99,6 @@ function extractDescription(markdown) {
   return plainText(first ?? "").slice(0, 240);
 }
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 /**
  * Readers should not see editorial production notes for slots that have no asset yet.
  * The `<!-- infographic: slot -->` marker stays so the renderer can drop the asset in
@@ -126,35 +126,22 @@ function stripUnfilledInfographicCallouts(markdown, assets) {
 
 /** Split a document into heading-level sections for search. */
 function sectionsFor(markdown) {
-  const withoutCode = markdown.replace(/```[\s\S]*?```/g, "");
-  const sections = [];
-  let current = { id: "", heading: "", lines: [] };
-  for (const line of withoutCode.split("\n")) {
-    const match = line.match(/^(#{2,3})\s+(.+)$/);
-    if (match) {
-      if (current.lines.length) sections.push(current);
-      current = { id: slugify(match[2]), heading: match[2].replace(/[*_`]/g, ""), lines: [] };
-      continue;
-    }
-    current.lines.push(line);
-  }
-  if (current.lines.length) sections.push(current);
+  const headings = markdownHeadings(markdown);
+  const sections = [
+    { id: "", heading: "", text: markdown.slice(0, headings[0]?.position.start.offset ?? markdown.length) },
+    ...headings.map((heading, index) => ({
+      id: heading.id,
+      heading: heading.text,
+      text: markdown.slice(heading.position.end.offset, headings[index + 1]?.position.start.offset ?? markdown.length),
+    })),
+  ];
   return sections
-    .map((section) => ({ id: section.id, heading: section.heading, text: plainText(section.lines.join("\n")).slice(0, 6000) }))
+    .map((section) => ({ ...section, text: plainText(section.text).slice(0, 6000) }))
     .filter((section) => section.text.length > 40);
 }
 
 function extractHeadings(markdown) {
-  return markdown
-    .replace(/```[\s\S]*?```/g, "")
-    .split("\n")
-    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
-    .filter(Boolean)
-    .map((match) => ({
-      depth: match[1].length,
-      text: match[2].replace(/[*_`]/g, ""),
-      id: slugify(match[2]),
-    }));
+  return markdownHeadings(markdown).map(({ depth, text, id }) => ({ depth, text, id }));
 }
 
 function sectionKeyFor(sourcePath) {
@@ -210,9 +197,10 @@ function stringList(value) {
   return Array.isArray(value) ? value.map((entry) => String(entry)) : [];
 }
 
-// Infographic assets: guide/assets/infographics/<slot>.(png|svg|jpg|webp) -> /infographics/<slot>.<ext>
+// Infographic assets: guide/assets/infographics/<slot>.(png|svg|jpg|webp) -> /guide/infographics/<slot>.<ext>
 const assetRoot = path.join(guideRoot, "assets", "infographics");
-const publicAssetRoot = path.join(siteRoot, "public", "infographics");
+const publicAssetRoot = path.join(siteRoot, "public", "guide", "infographics");
+await rm(path.join(siteRoot, "public", "infographics"), { recursive: true, force: true });
 await rm(publicAssetRoot, { recursive: true, force: true });
 await mkdir(publicAssetRoot, { recursive: true });
 const infographicAssets = {};
@@ -220,7 +208,7 @@ for (const name of (await readdir(assetRoot).catch(() => [])).sort()) {
   const match = name.match(/^(.+)\.(png|svg|jpe?g|webp)$/i);
   if (!match) continue;
   await copyFile(path.join(assetRoot, name), path.join(publicAssetRoot, name));
-  infographicAssets[match[1]] = `/infographics/${name}`;
+  infographicAssets[match[1]] = guideAssetPath(`infographics/${name}`);
 }
 
 const files = (await walk(guideRoot)).sort();
@@ -292,11 +280,15 @@ const searchIndex = documents.map((document) => ({
   sections: sectionsFor(document.content),
 }));
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ai-software-factory-mastery.vercel.app";
-const staticRoutes = ["/", "/guide", "/visuals", "/architecture", "/topics", "/coverage", "/search", "/glossary"];
+const siteUrl = GUIDE_CANONICAL_ORIGIN;
+const staticRoutes = [GUIDE_ROUTES.home, GUIDE_ROUTES.atlas, GUIDE_ROUTES.architecture, GUIDE_ROUTES.topics, GUIDE_ROUTES.coverage, GUIDE_ROUTES.glossary];
+const documentRoutes = documents
+  .filter((document) => document.slug !== "guide" && document.slug !== "appendix/glossary")
+  .map((document) => guideContentPath(document.slug));
+const publishedGuideDocuments = documents.map((document) => [document.slug, guideContentPath(document.slug)]);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[
-  ...staticRoutes.map((route) => `  <url><loc>${siteUrl}${route}</loc></url>`),
-  ...documents.map((document) => `  <url><loc>${siteUrl}/docs/${document.slug}</loc></url>`),
+  ...staticRoutes.map((route) => `  <url><loc>${absoluteGuideUrl(route)}</loc></url>`),
+  ...documentRoutes.map((route) => `  <url><loc>${absoluteGuideUrl(route)}</loc></url>`),
 ].join("\n")}\n</urlset>\n`;
 
 const paletteIndex = documents.map((document) => ({
@@ -317,10 +309,22 @@ await writeFile(
   path.join(outputRoot, "content.generated.ts"),
   `/* Generated by scripts/generate-content.mjs. Do not edit directly. */\nexport const documents = ${JSON.stringify(documents, null, 2)} as const;\n`,
 );
-await mkdir(path.join(siteRoot, "public"), { recursive: true });
-await writeFile(path.join(siteRoot, "public", "search-index.json"), JSON.stringify(searchIndex));
-await writeFile(path.join(siteRoot, "public", "sitemap.xml"), sitemap);
-await writeFile(path.join(siteRoot, "public", "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`);
+await writeFile(
+  path.join(outputRoot, "routes.generated.ts"),
+  `/* Generated by scripts/generate-content.mjs. Do not edit directly. */\nexport const publishedGuideDocuments = ${JSON.stringify(publishedGuideDocuments, null, 2)} as const;\n`,
+);
+const publicGuideRoot = path.join(siteRoot, "public", "guide");
+await mkdir(publicGuideRoot, { recursive: true });
+await rm(path.join(siteRoot, "public", "search-index.json"), { force: true });
+await writeFile(path.join(publicGuideRoot, "search-index.json"), JSON.stringify(searchIndex));
+await writeFile(path.join(publicGuideRoot, "sitemap.xml"), sitemap);
+await writeFile(path.join(publicGuideRoot, "robots.txt"), `User-agent: *\nAllow: /guide/\nSitemap: ${siteUrl}${guideAssetPath("sitemap.xml")}\n`);
+const rootDiscovery = standaloneDiscoveryFiles();
+for (const filename of ["sitemap.xml", "robots.txt"]) {
+  const rootPath = path.join(siteRoot, "public", filename);
+  if (rootDiscovery) await writeFile(rootPath, rootDiscovery[filename === "sitemap.xml" ? "sitemap" : "robots"]);
+  else await rm(rootPath, { force: true });
+}
 await rm(path.join(outputRoot, "search.generated.ts"), { force: true });
 await writeFile(
   path.join(outputRoot, "palette.generated.ts"),

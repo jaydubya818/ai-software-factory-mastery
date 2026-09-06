@@ -1,0 +1,552 @@
+/**
+ * Smoke-test the native Next.js runtime after the native test build.
+ * This complements the fast Vinext render suite with real Next route,
+ * redirect, not-found, and public-asset semantics.
+ */
+import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { request as httpRequest } from "node:http";
+import { createServer } from "node:net";
+import { chromium } from "playwright";
+
+const host = "127.0.0.1";
+const root = new URL("..", import.meta.url);
+const expectedSiteOrigin = process.env.GUIDE_RUNTIME_EXPECTED_SITE_URL
+  ?? "https://ai-software-factory-mastery.vercel.app";
+const expectedGuideCanonical = new URL("/guide", expectedSiteOrigin).href;
+assert.ok(["https://ai-software-factory-mastery.vercel.app", "https://www.fdlc.ai"].includes(expectedSiteOrigin), "Runtime checks require an explicit reviewed canonical authority");
+const compatibleBuild = expectedSiteOrigin === "https://ai-software-factory-mastery.vercel.app";
+const chapterPath = "/guide/01-understand/02-the-factory-in-one-view";
+function publicPagePath(pathname) {
+  if (!compatibleBuild) return pathname;
+  const tools = { "/guide/topics": "/topics", "/guide/search": "/search", "/guide/architecture": "/architecture" };
+  return tools[pathname] ?? (pathname.startsWith("/guide/") ? `/docs/${pathname.slice(7)}` : pathname);
+}
+
+async function availablePort() {
+  const server = createServer();
+  server.listen(0, host);
+  await once(server, "listening");
+  const address = server.address();
+  assert.ok(address && typeof address === "object");
+  const { port } = address;
+  server.close();
+  await once(server, "close");
+  return port;
+}
+
+async function startNext({ legacyRedirectsEnabled = false } = {}) {
+  const port = await availablePort();
+  const origin = `http://${host}:${port}`;
+  const nextEnvironment = { ...process.env };
+  delete nextEnvironment.NEXT_PUBLIC_SITE_URL;
+  delete nextEnvironment.FDLC_MFE_SOURCE_COMMIT;
+  delete nextEnvironment.GUIDE_LEGACY_REDIRECTS_ENABLED;
+  delete nextEnvironment.GUIDE_MFE_PREVIEW_ENABLED;
+  delete nextEnvironment.GUIDE_MFE_PRODUCTION_ENABLED;
+  delete nextEnvironment.GUIDE_STANDALONE_VINEXT;
+  delete nextEnvironment.GUIDE_VERCEL_BUILD;
+  delete nextEnvironment.FDLC_MFE_CONFIG_SHA256;
+  delete nextEnvironment.VC_MICROFRONTENDS_CONFIG;
+  delete nextEnvironment.VC_MICROFRONTENDS_CONFIG_FILE_NAME;
+  delete nextEnvironment.VERCEL;
+  delete nextEnvironment.VERCEL_ENV;
+  delete nextEnvironment.VERCEL_PROJECT_NAME;
+  nextEnvironment.GUIDE_NATIVE_LOCAL = "1";
+  if (legacyRedirectsEnabled) nextEnvironment.GUIDE_LEGACY_REDIRECTS_ENABLED = "true";
+
+  const next = spawn(
+    process.execPath,
+    ["node_modules/next/dist/bin/next", "start", "--hostname", host, "--port", String(port)],
+    { cwd: root, env: nextEnvironment, stdio: ["ignore", "pipe", "pipe"] },
+  );
+
+  let output = "";
+  next.stdout.on("data", (chunk) => { output += chunk; });
+  next.stderr.on("data", (chunk) => { output += chunk; });
+
+  async function request(pathname, method = "GET") {
+    return fetch(`${origin}${pathname}`, { redirect: "manual", method });
+  }
+
+  async function requestAsHost(pathname, requestHost, method = "GET") {
+    return new Promise((resolve, reject) => {
+      const outgoing = httpRequest({
+        hostname: host,
+        port,
+        path: pathname,
+        method,
+        headers: { host: requestHost },
+      }, (response) => {
+        response.resume();
+        response.once("end", () => resolve({
+          status: response.statusCode ?? 0,
+          headers: {
+            get(name) {
+              const value = response.headers[name.toLowerCase()];
+              return Array.isArray(value) ? value.join(", ") : value ?? null;
+            },
+          },
+        }));
+      });
+      outgoing.once("error", reject);
+      outgoing.end();
+    });
+  }
+
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    if (next.exitCode !== null) throw new Error(`Next exited before becoming ready.\n${output}`);
+    try {
+      const response = await request("/guide");
+      if (response.status === 200) break;
+    } catch {
+      // The server socket is not ready yet.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  if (Date.now() >= deadline) throw new Error(`Timed out waiting for Next.\n${output}`);
+
+  return {
+    origin,
+    request,
+    requestAsLegacyHost: (pathname, method = "GET") => requestAsHost(pathname, "AI-SOFTWARE-FACTORY-MASTERY.VERCEL.APP:443", method),
+    requestAsFdlcHost: (pathname, method = "GET") => requestAsHost(pathname, `localhost:${port}`, method),
+    async stop() {
+      next.kill("SIGTERM");
+      if (next.exitCode === null) {
+        await Promise.race([once(next, "exit"), new Promise((resolve) => setTimeout(resolve, 5_000))]);
+      }
+      if (next.exitCode === null) next.kill("SIGKILL");
+      console.log(`Native ${legacyRedirectsEnabled ? "retirement" : "compatibility"} runtime log:\n${output.trim()}`);
+      assert.doesNotMatch(output, /\b(?:Error|Exception):|Minified React error|\b(?:unhandledRejection|uncaughtException)\b/i, "native runtime logs must contain no errors");
+    },
+  };
+}
+
+function managedNextAssets(html) {
+  return [...new Set(
+    [...html.matchAll(/\b(?:href|src)="([^"]+)"/g)]
+      .map((match) => match[1])
+      .filter((asset) => asset.includes("/_next/") && /\.(?:css|js)(?:\?|$)/.test(asset)),
+  )];
+}
+
+async function verifyCommandPaletteKeyboard(page) {
+  const trigger = page.locator(".command-trigger");
+  const dialog = page.getByRole("dialog", { name: "Command palette" });
+  const input = dialog.getByRole("combobox");
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+
+  const options = dialog.getByRole("option");
+  const optionCount = await options.count();
+  assert.ok(optionCount > 0, "opening the palette offers keyboard-selectable results");
+  await page.keyboard.press("Shift+Tab");
+  assert.ok(await options.last().evaluate((element) => element === document.activeElement), "backward Tab wraps inside the modal");
+  await page.keyboard.press("Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement), "forward Tab wraps from the last result to the input");
+  for (let index = 0; index < optionCount; index += 1) {
+    await page.keyboard.press("Tab");
+    assert.ok(await options.nth(index).evaluate((element) => element === document.activeElement), `Tab reaches result ${index + 1} in order`);
+  }
+  await page.keyboard.press("Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement));
+  for (let index = optionCount - 1; index >= 0; index -= 1) {
+    await page.keyboard.press("Shift+Tab");
+    assert.ok(await options.nth(index).evaluate((element) => element === document.activeElement), `Shift+Tab reaches result ${index + 1} in reverse order`);
+  }
+  await page.keyboard.press("Shift+Tab");
+  assert.ok(await input.evaluate((element) => element === document.activeElement));
+
+  await input.fill("no-matching-palette-result-qa");
+  await page.waitForFunction(() => document.querySelectorAll('#command-palette [role="option"]').length === 0);
+  for (const key of ["Tab", "Shift+Tab"]) {
+    await page.keyboard.press(key);
+    assert.ok(await input.evaluate((element) => element === document.activeElement), `${key} stays in the modal when there are no results`);
+  }
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+  assert.equal(await trigger.getAttribute("aria-expanded"), "false");
+
+  for (const invokerSelector of [".command-trigger", ".theme-toggle", ".search-box input"]) {
+    const invoker = page.locator(invokerSelector);
+    for (const shortcut of ["Control+k", "Meta+k"]) {
+      await invoker.focus();
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+      await page.keyboard.press("Shift+Tab");
+      assert.ok(await options.last().evaluate((element) => element === document.activeElement), `${shortcut} from ${invokerSelector} contains backward focus`);
+      await page.keyboard.press("Tab");
+      assert.ok(await input.evaluate((element) => element === document.activeElement), `${shortcut} from ${invokerSelector} contains forward focus`);
+      const before = await input.getAttribute("aria-activedescendant");
+      await page.keyboard.press("ArrowDown");
+      assert.notEqual(await input.getAttribute("aria-activedescendant"), before, "result arrow-key navigation is preserved");
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction((selector) => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(selector), invokerSelector);
+      await page.keyboard.press(shortcut);
+      await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+      await page.keyboard.press("Escape");
+      await page.waitForFunction((selector) => !document.querySelector('[role="dialog"]') && document.activeElement === document.querySelector(selector), invokerSelector);
+    }
+    await invoker.focus();
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => new Promise((resolve) => window.setTimeout(resolve, 0)));
+    assert.ok(await invoker.evaluate((element) => element === document.activeElement), `Escape outside a closed palette does not steal ${invokerSelector} focus`);
+  }
+}
+
+async function verifyCommandPaletteMouse(page, origin) {
+  const trigger = page.locator(".command-trigger");
+  const dialog = page.getByRole("dialog", { name: "Command palette" });
+  await trigger.click();
+  await page.waitForFunction(() => document.activeElement === document.querySelector("#command-palette input"));
+  await dialog.getByRole("combobox").click();
+  assert.equal(await dialog.count(), 1, "clicking inside the modal keeps it open");
+  await page.locator(".command-backdrop").click({ position: { x: 2, y: 2 } });
+  await page.waitForFunction(() => !document.querySelector('[role="dialog"]') && document.activeElement?.classList.contains("command-trigger"));
+
+  for (const [query, name, destination] of [
+    ["reference shelf", /Open the reference shelf/, "/guide/topics"],
+    ["Search the whole guide", /Search the whole guide/, "/guide/search"],
+  ]) {
+    await trigger.click();
+    await dialog.getByRole("combobox").fill(query);
+    await dialog.getByRole("option", { name }).click();
+    await page.waitForURL(`${origin}${publicPagePath(destination)}`);
+    await page.waitForLoadState("networkidle");
+    assert.equal(await dialog.count(), 0, "mouse result selection closes the dialog and navigates");
+    assert.equal(await page.locator("main").count(), 1);
+  }
+}
+
+async function verifyCommandPaletteMatrix(page, origin) {
+  let cases = 0;
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const theme of ["light", "dark"]) {
+      await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
+      if (await page.locator("html").getAttribute("data-theme") !== theme) {
+        await page.getByRole("button", { name: `Use ${theme} theme` }).click();
+      }
+      for (let round = 1; round <= 2; round += 1) {
+        for (const navigation of ["direct", "reload"]) {
+          const response = navigation === "direct"
+            ? await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" })
+            : await page.reload({ waitUntil: "networkidle" });
+          assert.equal(response?.status(), 200);
+          assert.equal(await page.locator("html").getAttribute("data-theme"), theme, "theme persists through direct/reload focus qualification");
+          await verifyCommandPaletteKeyboard(page);
+          await verifyCommandPaletteMouse(page, origin);
+          cases += 1;
+          console.log(`Palette focus/mouse PASS: ${width}×844 ${theme} ${navigation} round ${round}; Search/theme/page-input invokers, Ctrl/Cmd+K and Escape`);
+        }
+      }
+    }
+  }
+  assert.equal(cases, 16);
+}
+
+async function verifyBrowserRuntime(origin) {
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+
+  try {
+    const page = await browser.newPage();
+    const pageErrors = [];
+    const consoleErrors = [];
+    const failedManagedAssets = [];
+    const loadedManagedAssets = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
+    page.on("response", (response) => {
+      const resourceType = response.request().resourceType();
+      if (!["script", "stylesheet"].includes(resourceType) || !response.url().includes("/_next/")) return;
+      const pathname = new URL(response.url()).pathname;
+      loadedManagedAssets.push({ pathname, resourceType, status: response.status() });
+      if (!pathname.startsWith("/vc-ap-dd2962/_next/") || response.status() < 200 || response.status() >= 300) {
+        failedManagedAssets.push(`${response.status()} ${pathname}`);
+      }
+    });
+    page.on("requestfailed", (request) => {
+      const resourceType = request.resourceType();
+      if (["script", "stylesheet"].includes(resourceType)) {
+        failedManagedAssets.push(`${request.failure()?.errorText ?? "request failed"} ${request.url()}`);
+      }
+    });
+
+    await page.goto(`${origin}/guide`, { waitUntil: "networkidle" });
+    const chapterLink = page.locator(`a[href="${publicPagePath(chapterPath)}"]`).first();
+    assert.equal(await chapterLink.count(), 1, "Guide landing publishes the reviewed chapter path");
+    const documentTimeOrigin = await page.evaluate(() => performance.timeOrigin);
+    await chapterLink.click();
+    await page.waitForURL(`${origin}${publicPagePath(chapterPath)}`);
+    await page.waitForLoadState("networkidle");
+    assert.equal(await page.locator("main").count(), 1);
+    assert.equal(await page.evaluate(() => performance.timeOrigin), documentTimeOrigin, "chapter link performs genuine client navigation in the Guide candidate");
+    assert.equal(await page.locator('link[rel="canonical"]').getAttribute("href"), new URL(publicPagePath(chapterPath), expectedSiteOrigin).href);
+    await page.reload({ waitUntil: "networkidle" });
+    assert.equal(page.url(), `${origin}${publicPagePath(chapterPath)}`, "reloaded chapter keeps its published URL");
+
+    const searchResponse = await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
+    assert.equal(searchResponse?.status(), 200);
+    assert.equal(page.url(), `${origin}${publicPagePath("/guide/search")}`, "standalone search URL remains valid across rollback");
+    const input = page.getByPlaceholder("Search agents, harnesses, evidence, environments…");
+    await input.fill("evidence architecture");
+    await page.waitForFunction(() => {
+      const summary = document.querySelector(".search-summary")?.textContent ?? "";
+      return /matching section/.test(summary);
+    });
+    assert.ok(await page.locator(".search-result").count() > 0, "hydrated search should render results");
+    assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
+    await page.getByRole("button", { name: "Use dark theme" }).click();
+    assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
+
+    const linkedHeadingResponse = await page.goto(
+      `${origin}/guide/03-build/25-the-12-layer-production-ai-agent-stack`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(linkedHeadingResponse?.status(), 200);
+    assert.ok(
+      await page.locator("h3 > a:not(.heading-anchor)").count() >= 12,
+      "linked headings should retain their inline links without nested permalink anchors",
+    );
+    await page.reload({ waitUntil: "networkidle" });
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(consoleErrors, []);
+
+    const mermaidResponse = await page.goto(
+      `${origin}/guide/02-design/07-governance-policy-and-risk-proportional-approval`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(mermaidResponse?.status(), 200);
+    await page.locator(".mermaid-diagram svg").first().waitFor({ timeout: 15_000 });
+    assert.equal(await page.locator(".mermaid-fallback").count(), 0);
+    assert.ok(loadedManagedAssets.some((asset) => asset.resourceType === "script"));
+    assert.ok(loadedManagedAssets.some((asset) => asset.resourceType === "stylesheet"));
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(consoleErrors, []);
+    assert.deepEqual(failedManagedAssets, []);
+
+    const changelog = await page.goto(`${origin}/guide/appendix/changelog`, { waitUntil: "networkidle" });
+    assert.equal(changelog?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      const ids = await page.locator("[id]").evaluateAll((elements) => elements.map((element) => element.id));
+      assert.equal(new Set(ids).size, ids.length, `changelog IDs are unique after ${navigation}`);
+      for (const label of ["added", "changed"]) {
+        for (let occurrence = 0; occurrence < 8; occurrence += 1) {
+          const id = occurrence ? `${label}-${occurrence}` : label;
+          assert.equal(await page.locator(`h3[id="${id}"]`).count(), 1, id);
+          assert.equal(await page.locator(`h3[id="${id}"] a[href="#${id}"]`).count(), 1, `permalink ${id}`);
+        }
+      }
+      const tocIds = await page.locator('.table-of-contents a[href^="#"]')
+        .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute("href").slice(1)));
+      for (const id of tocIds) assert.equal(await page.locator(`h2[id="${id}"]`).count(), 1, `TOC ${id}`);
+    }
+    await page.locator('#added-7 a[href="#added-7"]').click();
+    assert.equal(new URL(page.url()).hash, "#added-7");
+    assert.ok(await page.locator("#added-7").evaluate((heading) => Math.abs(heading.getBoundingClientRect().top) < innerHeight));
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await page.goto(
+      `${origin}/guide/02-design/06-intent-and-specification-engineering`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(mobile?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      await page.waitForFunction(() => {
+        const diagrams = [...document.querySelectorAll(".mermaid-diagram")];
+        return diagrams.length > 0 && diagrams.every((diagram) => diagram.querySelector("svg"));
+      });
+      const layout = await page.evaluate(() => {
+        const pre = document.querySelector(".markdown-body pre code");
+        const diagram = document.querySelector(".mermaid-diagram");
+        diagram.scrollLeft = 32;
+        const ids = [...document.querySelectorAll("[id]")].map((element) => element.id);
+        return {
+          width: document.documentElement.scrollWidth,
+          viewport: innerWidth,
+          duplicateIds: ids.filter((id, index) => ids.indexOf(id) !== index),
+          preWhiteSpace: pre && getComputedStyle(pre).whiteSpace,
+          preOverflowWrap: pre && getComputedStyle(pre).overflowWrap,
+          preContainerOverflow: pre && getComputedStyle(pre.parentElement).overflowX,
+          diagramOverflow: getComputedStyle(diagram).overflowX,
+          diagramScrollLeft: diagram.scrollLeft,
+          inlineWrap: [...document.querySelectorAll(".markdown-body :not(pre) > code")]
+            .every((code) => getComputedStyle(code).overflowWrap === "anywhere"),
+        };
+      });
+      assert.ok(layout.width <= layout.viewport + 1, `${navigation}: mobile width ${layout.width} exceeds ${layout.viewport}`);
+      assert.deepEqual(layout.duplicateIds, [], `mobile ${navigation}`);
+      assert.equal(layout.preWhiteSpace, "pre", "code blocks retain formatting");
+      assert.equal(layout.preOverflowWrap, "normal", "inline wrapping does not affect pre code");
+      assert.equal(layout.preContainerOverflow, "auto", "code blocks retain horizontal scrolling");
+      assert.equal(layout.diagramOverflow, "auto", "Mermaid retains horizontal scrolling");
+      assert.ok(layout.diagramScrollLeft > 0, "wide Mermaid content remains scrollable");
+      assert.equal(layout.inlineWrap, true);
+      const codeBlocks = page.locator(".markdown-body pre");
+      assert.ok(await codeBlocks.count() > 0, "mobile fixture contains ordinary code");
+      const codeBlock = codeBlocks.first();
+      assert.equal(await codeBlock.getAttribute("role"), "region");
+      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.equal(await codeBlock.getAttribute("tabindex"), "0");
+      await codeBlock.scrollIntoViewIfNeeded();
+      await codeBlock.focus();
+      await page.keyboard.press("Shift+Tab");
+      assert.equal(await codeBlock.evaluate((block) => block === document.activeElement), false,
+        "Shift+Tab leaves the code region");
+      await page.keyboard.press("Tab");
+      assert.equal(await codeBlock.evaluate((block) => block === document.activeElement), true,
+        "Tab returns to the ordinary code region");
+      assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
+    }
+
+    // Chapter 6's 38-character code example fits at 390px. The existing chapter
+    // 25 example has a measured 464px scroll width inside a 358px native region.
+    const wideCode = await page.goto(
+      `${origin}/guide/03-build/25-the-12-layer-production-ai-agent-stack`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(wideCode?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      const codeBlocks = page.locator(".markdown-body pre");
+      const overflowingIndex = await codeBlocks.evaluateAll((blocks) =>
+        blocks.findIndex((block) => block.scrollWidth > block.clientWidth + 1));
+      assert.ok(overflowingIndex >= 0, `${navigation}: authoritative stack page contains wide ordinary code`);
+      const codeBlock = codeBlocks.nth(overflowingIndex);
+      assert.equal(await codeBlock.getAttribute("role"), "region");
+      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.equal(await codeBlock.getAttribute("tabindex"), "0");
+      await codeBlock.scrollIntoViewIfNeeded();
+      await codeBlock.focus();
+      const initialCodeScroll = await codeBlock.evaluate((block) => block.scrollLeft);
+      await page.keyboard.press("ArrowRight");
+      await page.waitForFunction(({ index, initial }) => {
+        const block = document.querySelectorAll(".markdown-body pre")[index];
+        return block && block.scrollLeft > initial;
+      }, { index: overflowingIndex, initial: initialCodeScroll });
+      assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
+    }
+    await verifyCommandPaletteMatrix(page, origin);
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(consoleErrors, []);
+    assert.deepEqual(failedManagedAssets, []);
+
+    const response = await page.goto(`${origin}/guide/not-a-real-page`, { waitUntil: "networkidle" });
+    assert.equal(response?.status(), 404);
+    assert.equal(await page.locator("h1").textContent(), "That page is not in the guide.");
+    assert.match(await page.locator("body").innerText(), /Search the guide/);
+    assert.notEqual(await page.locator("html").getAttribute("id"), "__next_error__");
+    await page.getByRole("button", { name: "Use light theme" }).click();
+    assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(
+      consoleErrors.filter(
+        (message) => message !== "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      ),
+      [],
+    );
+    assert.deepEqual(failedManagedAssets, []);
+  } finally {
+    await browser.close();
+  }
+}
+
+const compatibilityRuntime = await startNext();
+
+try {
+  const guide = await compatibilityRuntime.request("/guide");
+  assert.equal(guide.status, 200);
+  const guideHtml = await guide.text();
+  assert.ok(
+    guideHtml.includes(`rel="canonical" href="${expectedGuideCanonical}"`),
+    `Guide canonical should be ${expectedGuideCanonical}`,
+  );
+
+  const nextAssets = managedNextAssets(guideHtml);
+  assert.ok(nextAssets.length > 1, "Guide HTML should reference compiled JS and CSS");
+  assert.ok(nextAssets.some((asset) => /\.js(?:\?|$)/.test(asset)), "Guide HTML should reference JS");
+  assert.ok(nextAssets.some((asset) => /\.css(?:\?|$)/.test(asset)), "Guide HTML should reference CSS");
+  for (const asset of nextAssets) {
+    assert.match(asset, /^\/vc-ap-dd2962\/_next\//, asset);
+    assert.equal((await compatibilityRuntime.request(asset)).status, 200, asset);
+  }
+
+  for (const method of ["GET", "HEAD"]) {
+    const chapterAlias = await compatibilityRuntime.request(`${chapterPath}?q=a%2Fb&q=evidence`, method);
+    assert.equal(chapterAlias.status, compatibleBuild ? 307 : 200);
+    if (compatibleBuild) {
+      assert.equal(new URL(chapterAlias.headers.get("location"), compatibilityRuntime.origin).href, `${compatibilityRuntime.origin}${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
+      assert.match(chapterAlias.headers.get("cache-control"), /private/);
+      assert.match(chapterAlias.headers.get("cache-control"), /no-store/);
+      assert.equal((await compatibilityRuntime.request(publicPagePath(chapterPath), method)).status, 200, "rollback-stable chapter route renders repaired Guide");
+    }
+    assert.equal((await compatibilityRuntime.requestAsFdlcHost(chapterPath, method)).status, 200, "FDLC-host namespace renders directly without a standalone redirect loop");
+  }
+
+  const redirect = await compatibilityRuntime.request("/docs/03-build/10-the-agent-factory?role=buyer&role=seller&q=a%2Fb");
+  assert.equal(redirect.status, 308);
+  assert.equal(
+    redirect.headers.get("location"),
+    `${publicPagePath("/guide/03-build/11-the-agent-factory")}?role=buyer&role=seller&q=a%2Fb`,
+  );
+
+  assert.equal((await compatibilityRuntime.request("/guide/not-a-real-page")).status, 404);
+  await verifyBrowserRuntime(compatibilityRuntime.origin);
+  for (const method of ["GET", "HEAD"]) {
+    const architectureAlias = await compatibilityRuntime.requestAsLegacyHost("/guide/architecture?q=evidence&q=a%2Fb", method);
+    assert.equal(architectureAlias.status, compatibleBuild ? 307 : 200);
+    if (compatibleBuild) {
+      const location = new URL(architectureAlias.headers.get("location"), "https://ai-software-factory-mastery.vercel.app");
+      assert.equal(location.pathname, "/architecture");
+      assert.equal(location.search, "?q=evidence&q=a%2Fb");
+      assert.match(architectureAlias.headers.get("cache-control"), /private/);
+      assert.match(architectureAlias.headers.get("cache-control"), /no-store/);
+    }
+    assert.equal((await compatibilityRuntime.requestAsFdlcHost("/guide/architecture", method)).status, 200, "FDLC-owned architecture namespace never loops to the standalone root");
+  }
+  assert.equal(
+    (await compatibilityRuntime.requestAsLegacyHost("/guide/not-a-real-page?token=secret")).status,
+    404,
+  );
+
+  for (const asset of [
+    "/guide/search-index.json",
+    "/guide/icon.svg",
+    "/guide/og-v2.png",
+    "/guide/infographics/factory-configuration.png",
+  ]) {
+    assert.equal((await compatibilityRuntime.request(asset)).status, 200, asset);
+  }
+} finally {
+  await compatibilityRuntime.stop();
+}
+
+const retirementRuntime = await startNext({ legacyRedirectsEnabled: true });
+
+try {
+  for (const method of ["GET", "HEAD"]) {
+    const legacyHostRedirect = await retirementRuntime.requestAsLegacyHost(
+      "/architecture?token=secret&return=%2Fguide%3Ftab%3Dproof",
+      method,
+    );
+    assert.equal(legacyHostRedirect.status, 308);
+    assert.equal(legacyHostRedirect.headers.get("location"), "https://www.fdlc.ai/guide/architecture");
+  }
+  assert.equal(
+    (await retirementRuntime.requestAsLegacyHost("/guide/not-a-real-page?token=secret")).status,
+    404,
+  );
+} finally {
+  await retirementRuntime.stop();
+}
+
+console.log("Native Next runtime smoke passed (prefixed assets, hydration, unique heading IDs, desktop/mobile palette focus containment, 390×844 inline-code wrapping, pre/Mermaid scrolling, search, compatibility serving, opt-in retirement, redirects, and 404s).");

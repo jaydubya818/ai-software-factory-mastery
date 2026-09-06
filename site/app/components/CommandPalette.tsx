@@ -1,21 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { paletteIndex } from "../../lib/palette.generated";
 import { lifecycleStages } from "../../lib/lifecycle";
+import { GUIDE_ROUTES, guideContentPath, guideDocumentPath, guideNavigationHref } from "../../lib/paths";
 
 type PaletteGroup = "Guide" | "Concepts" | "Architecture" | "Mission Control" | "Glossary" | "Chapters";
 type PaletteItem = { id: string; label: string; meta: string; href: string; text: string; group: PaletteGroup };
 
 const utilityItems: PaletteItem[] = [
-  { id: "guide", label: "Table of contents", meta: "The guide", href: "/guide", text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
-  { id: "visuals", label: "Open the atlas", meta: "System maps", href: "/visuals", text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
-  { id: "architecture", label: "Explore architecture", meta: "System map", href: "/architecture", text: "architecture layers boundaries system map", group: "Architecture" },
-  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: "/topics", text: "reference appendix glossary case studies research", group: "Concepts" },
-  { id: "search", label: "Search the whole guide", meta: "Full text", href: "/search", text: "search full text find", group: "Guide" },
-  { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: "/coverage", text: "coverage maturity evidence", group: "Architecture" },
-  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: "/docs/appendix/reviewer-guide", text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
+  { id: "guide", label: "Table of contents", meta: "The guide", href: GUIDE_ROUTES.home, text: "guide table of contents chapters parts understand design build prove operate improve", group: "Guide" },
+  { id: "visuals", label: "Open the atlas", meta: "System maps", href: GUIDE_ROUTES.atlas, text: "visual diagrams infographics atlas lifecycle stack", group: "Guide" },
+  { id: "architecture", label: "Explore architecture", meta: "System map", href: GUIDE_ROUTES.architecture, text: "architecture layers boundaries system map", group: "Architecture" },
+  { id: "topics", label: "Open the reference shelf", meta: "Appendices", href: GUIDE_ROUTES.topics, text: "reference appendix glossary case studies research", group: "Concepts" },
+  { id: "search", label: "Search the whole guide", meta: "Full text", href: GUIDE_ROUTES.search, text: "search full text find", group: "Guide" },
+  { id: "coverage", label: "Inspect coverage", meta: "Maturity & evidence", href: GUIDE_ROUTES.coverage, text: "coverage maturity evidence", group: "Architecture" },
+  { id: "review", label: "Review the guide", meta: "External reviewer guide", href: guideDocumentPath("appendix/reviewer-guide"), text: "review feedback claims architecture usability terminology sources", group: "Chapters" },
 ];
 
 const groupOrder: PaletteGroup[] = ["Guide", "Concepts", "Architecture", "Mission Control", "Glossary", "Chapters"];
@@ -33,29 +34,35 @@ export function CommandPalette() {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const paletteRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
 
-  function openPalette() {
+  const openPalette = useCallback((invoker = document.activeElement) => {
+    returnFocusRef.current = invoker instanceof HTMLElement && invoker !== document.body ? invoker : triggerRef.current;
     setQuery("");
     setActive(0);
     setOpen(true);
-  }
+  }, []);
 
-  function closePalette({ restoreFocus = true } = {}) {
+  const closePalette = useCallback(({ restoreFocus = true } = {}) => {
     setOpen(false);
-    if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
-  }
+    const invoker = returnFocusRef.current;
+    if (restoreFocus) window.setTimeout(() => {
+      (invoker?.isConnected ? invoker : triggerRef.current)?.focus();
+    }, 0);
+  }, []);
 
   const items = useMemo(() => {
     const documents: PaletteItem[] = paletteIndex.map((document) => ({
       id: document.slug,
       label: document.chapter ? `${document.chapter}. ${document.title}` : document.title,
       meta: document.chapter !== null ? document.section : `${document.section} · ${(document.group as string | null) ?? document.contentType}`,
-      href: `/docs/${document.slug}`,
+      href: guideContentPath(document.slug),
       text: [document.title, document.section, document.description, ...document.headings].join(" ").toLowerCase(),
       group: groupForDocument(document),
     }));
-    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `Stage: ${stage.label}`, meta: stage.canonical, href: `/docs/stages/${stage.slug}`, text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
+    const lifecycle: PaletteItem[] = lifecycleStages.map((stage) => ({ id: `stage-${stage.id}`, label: `Stage: ${stage.label}`, meta: stage.canonical, href: guideDocumentPath(`stages/${stage.slug}`), text: `${stage.label} ${stage.detail} ${stage.concepts.join(" ")}`.toLowerCase(), group: "Concepts" }));
     return [...utilityItems, ...lifecycle, ...documents];
   }, []);
 
@@ -76,40 +83,52 @@ export function CommandPalette() {
     function keydown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((current) => {
-          if (!current) {
-            setQuery("");
-            setActive(0);
-          }
-          return !current;
-        });
+        if (open) closePalette();
+        else openPalette();
       }
-      if (event.key === "Escape") closePalette();
+      if (event.key === "Escape" && open) closePalette();
     }
     window.addEventListener("keydown", keydown);
     return () => window.removeEventListener("keydown", keydown);
-  }, []);
+  }, [open, openPalette, closePalette]);
 
   useEffect(() => {
     if (!open) return;
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    const palette = paletteRef.current;
+    if (!palette) return;
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const controls = palette.querySelectorAll<HTMLElement>("input:not([disabled]), button:not([disabled])");
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (document.activeElement === (event.shiftKey ? first : last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+      }
+    };
+    palette.addEventListener("keydown", containFocus);
+    return () => {
+      window.clearTimeout(focusTimer);
+      palette.removeEventListener("keydown", containFocus);
+    };
   }, [open]);
 
   function choose(index: number) {
     const item = orderedResults[index];
     if (!item) return;
     closePalette({ restoreFocus: false });
-    router.push(item.href);
+    router.push(guideNavigationHref(item.href));
   }
 
   return (
     <>
-      <button aria-controls="command-palette" aria-expanded={open} aria-haspopup="dialog" className="command-trigger" ref={triggerRef} type="button" onClick={openPalette}>
+      <button aria-controls="command-palette" aria-expanded={open} aria-haspopup="dialog" className="command-trigger" ref={triggerRef} type="button" onClick={() => openPalette(triggerRef.current)}>
         <span>Search</span><kbd>⌘K</kbd>
       </button>
       {open && (
         <div className="command-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closePalette()}>
-          <section className="command-palette" id="command-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+          <section className="command-palette" id="command-palette" ref={paletteRef} role="dialog" aria-modal="true" aria-label="Command palette">
             <label className="command-input">
               <span className="sr-only">Search the guide and navigate</span>
               <input

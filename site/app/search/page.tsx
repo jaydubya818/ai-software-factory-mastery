@@ -1,25 +1,10 @@
-import type { Metadata } from "next";
-import { SearchExperience } from "../components/SearchExperience";
-import { SiteFooter } from "../components/SiteFooter";
-import { SiteHeader } from "../components/SiteHeader";
+import { permanentRedirect } from "next/navigation";
+import { GUIDE_ROUTES, GUIDE_COMPATIBLE_MODE, type GuideSearchParams, withSearchParams } from "../../lib/paths";
+import CompatiblePage, { metadata as compatibleMetadata } from "../guide/search/page";
 
-export const metadata: Metadata = {
-  title: "Search · The AI Software Factory Guide",
-  description: "Search the complete AI Software Factory guide.",
-};
+export const metadata = GUIDE_COMPATIBLE_MODE ? compatibleMetadata : {};
 
-export default function SearchPage() {
-  return (
-    <>
-      <SiteHeader />
-      <main className="interior-page search-page">
-        <header className="page-intro compact-intro">
-          <span className="eyebrow">Guide search</span>
-          <h1>Search the whole system.</h1>
-        </header>
-        <SearchExperience />
-      </main>
-      <SiteFooter />
-    </>
-  );
+export default async function LegacySearchPage({ searchParams }: { searchParams: Promise<GuideSearchParams> }) {
+  if (GUIDE_COMPATIBLE_MODE) return <CompatiblePage />;
+  permanentRedirect(withSearchParams(GUIDE_ROUTES.search, await searchParams));
 }

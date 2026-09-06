@@ -77,7 +77,7 @@ merged change, or passing agent report is insufficient on its own.
 
 ## How to use this map
 
-Use the [public Coverage view](https://ai-software-factory-mastery.vercel.app/coverage)
+Use the [public Coverage view](/guide/coverage)
 to inspect guide emphasis, maturity, and implementation evidence boundaries.
 Use the
 [Reviewer Guide](reviewer-guide.md) when providing feedback and the
