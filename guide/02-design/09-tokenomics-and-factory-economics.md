@@ -196,7 +196,7 @@ Choose one admitted-work cohort and cutoff before comparing configurations. Publ
 
 The first two ratios use declared cost boundaries and separate denominators; acceptance does not follow automatically from verification. A production observation window adds later remediation and outcome evidence. Differences between ratios may reflect acceptance delay, rejected work, coverage or cost boundaries as well as escaped defects, so report those causes instead of attributing the entire gap to quality.
 
-Label each component **ACTUAL**, **ESTIMATED**, or **UNKNOWN**. Actual requires an attributable usage/billing record; estimates require a dated rate and method; unknown remains missing, never zero. Human minutes can be measured while their monetary value remains estimated. A partial sum is a known-cost subtotal, not a complete actual total. If the outcome denominator is zero, report the ratio as undefined with spend and counts. If material components are missing, withhold a complete-cost comparison and show coverage.
+Label each monetary component **ACTUAL**, **ESTIMATED**, or **UNKNOWN**. ACTUAL cost requires attributable billing evidence. Provider-reported usage is an observation; multiplying it by a dated rate produces ESTIMATED monetary cost. Estimates retain the rate and method; UNKNOWN remains missing, never zero. Human minutes can be measured while their monetary value remains estimated. A partial sum is a known-cost subtotal, not a complete actual total. If the outcome denominator is zero, report the ratio as UNDEFINED with spend and counts. If material components are missing, withhold a complete-cost comparison and show coverage.
 
 Define which downstream calls count before measuring work amplification, count transport retries explicitly, and separate model, tool, retrieval and verification invocations. Do not count each parent trace span as another operation. A synthetic Mission with 6 model calls, 12 tool calls and 2 verifier invocations has 20 counted operations; this is a worked example, not an observed benchmark.
 
@@ -259,12 +259,14 @@ Every benefit line maps to a metric already defined in this chapter, which is th
 
 ## In Mission Control
 
-Mission Control retains cost, duration, attempt, evidence, and policy records that can support this model. At the studied commits, however, provider, compute, sandbox, and human-attention attribution remain incomplete, so cost per accepted outcome is still a partially projected measure rather than sustained production proof.
+At merged commit [`9a68b56`](https://github.com/jaydubya818/MissionControl/tree/9a68b56c3ee788c4f8b4132a8c7c9d14f32dee28), Mission Control conserves retained inference allocations across requests and Attempts within a WorkOrder ceiling. Canonical intents, receipts, reconciliation references and outcome snapshots preserve their logical identities through durable storage. The [capability and evidence map](../appendix/mission-control/03-capability-workflow-and-admission-map.md) links the local transaction qualification.
+
+Inference remains Experimental/default off. Cancellation, expiry and unknown outcomes do not release the retained allocation; settlement release and actual billing remain incomplete. Provider, compute, sandbox and human-attention attribution still lack complete coverage, so cost per accepted outcome remains a partial projection without sustained production proof.
 
 ## Retain this
 
 - Tokenomics is architecture: users × sessions × turns × requests × tokens × price.
-- Optimize cost per accepted outcome, not cost per token or attempt; retries and senior rework belong in the denominator.
+- Optimize cost per accepted outcome: retries and rework belong in cohort cost; verified and accepted outcomes each have a separate denominator.
 - Budgets are execution controls across spend, time, tools, retries, compute, and model tier, with explicit stop and escalation behavior.
 - Spend intelligence where judgment creates value; deterministic work should remain deterministic.
 - Factory ROI includes operation, verification, review, remediation, and improvement—not inference alone.

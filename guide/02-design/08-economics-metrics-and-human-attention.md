@@ -278,6 +278,8 @@ Assessed at commit [`af414acf`](https://github.com/jaydubya818/MissionControl/tr
 
 The honest product statement: the immutable lineage and metric surfaces exist now; complete outcome economics and sustained production proof remain incomplete.
 
+The later [inference accounting assessment in Chapter 9](./09-tokenomics-and-factory-economics.md#in-mission-control), pinned to merged commit `9a68b56`, adds conserved WorkOrder reservations and durable call/receipt identities. It does not establish complete cost coverage or sustained production outcomes.
+
 ## Retain this
 
 - The clock starts at governed intent and stops at confirmed customer value; merge is a waypoint.
