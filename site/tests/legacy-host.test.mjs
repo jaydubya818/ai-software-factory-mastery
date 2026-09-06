@@ -157,6 +157,24 @@ test("the enabled proxy drops the entire query when crossing origins", () => {
   }
 });
 
+test("the enabled proxy trusts the requested URL when Vercel rewrites Host", () => {
+  const previous = process.env.GUIDE_LEGACY_REDIRECTS_ENABLED;
+  process.env.GUIDE_LEGACY_REDIRECTS_ENABLED = "true";
+  const request = new NextRequest(`https://${LEGACY_GUIDE_HOST}/architecture`, {
+    headers: { host: "ai-software-factory-mastery-1a6psu0hv-jaydubya818.vercel.app" },
+  });
+
+  try {
+    const response = proxy(request);
+
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get("location"), absolute("/guide/architecture"));
+  } finally {
+    if (previous === undefined) delete process.env.GUIDE_LEGACY_REDIRECTS_ENABLED;
+    else process.env.GUIDE_LEGACY_REDIRECTS_ENABLED = previous;
+  }
+});
+
 test("the runtime allowlist contains no wildcard entries", () => {
   assert.ok(legacyGuideRedirectPaths.size > documents.length);
   for (const source of legacyGuideRedirectPaths.keys()) assert.doesNotMatch(source, /[*:]/, source);
