@@ -61,6 +61,12 @@ The **model capability registry** is where those differences live, and the table
 
 > *The model is a replaceable capability, not the architecture.*
 
+Each physical send, including retries and fallbacks, needs bounded exposure
+before transmission. Reserve its maximum liability against the shared workload
+budget using the exact route, supported request limits and frozen prices.
+Ambiguous delivery retains liability and cannot authorize another call until
+reconciled; a timeout alone does not prove that the provider did no work.
+
 ### A model profile is the unit of selection
 
 The router never selects "GPT-something" or "Claude-something." It selects a **model profile**, which pins everything that affects behavior: provider and model identifier; version or snapshot; region; input classes; task eligibility; system prompt; sampling settings; token limits; structured-output and tool settings; safety policy; fallback order; budgets; evaluation suite; and retirement policy. The 12-layer stack calls this **task-specific model profiles**: one profile for classification, another for generation, another for verification, each matched to what that task needs.

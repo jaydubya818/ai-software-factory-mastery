@@ -19,6 +19,11 @@ mission_control_origin_main_ref: 470057334800c7cddfc268b3f26d5ef3fc632088
 > Therefore, this chapter distinguishes implemented mechanisms, qualified local
 > composition, configured production capability, and live operational proof.
 
+The inference row was separately reviewed on 2026-09-06 against merged commit
+[`9a68b56`](https://github.com/jaydubya818/MissionControl/tree/9a68b56c3ee788c4f8b4132a8c7c9d14f32dee28).
+Its reservation and durable-identity evidence is scoped below; the other
+assessments retain their stated source revisions.
+
 ## 1. The problem
 
 A mature agentic software factory contains more than an agent loop. It contains
@@ -174,7 +179,7 @@ present-tense claims.
 | Intent recognition | Mission Spec quality evaluation, clarification, decisions, and requirement identities exist | Default-off feature and bounded V1 journey; not general natural-language intent autonomy |
 | Planning and decomposition | Plans release governed WorkOrder blueprints; graph workflows support explicit dependencies | Plan approval does not dispatch, and graph execution does not grant new scope |
 | Agent definitions | Versioned agent records and exact agent hashes are frozen into execution | Exact skills, credentials, and all policy fields are not consolidated into one definition |
-| Model gateway and routing | Model catalog, exact route identity, evidence qualification, advisory routing, guarded-auto gates, and immutable decision snapshots exist | Production catalog had zero qualified routes; Guarded Auto remained disabled |
+| Model gateway and routing | Exact route qualification and advisory routing exist. At `9a68b56`, retained inference reservations share a WorkOrder ceiling, and canonical intents, receipts and outcome snapshots preserve their identities through durable storage | Inference remains Experimental/default off; settlement release, actual billing and sustained real-work economics are incomplete. Guarded Auto remains disabled |
 | Context and memory | Provenance-backed retrieval, graph relationships, planning, Attempt-bound Context Packages, context evals, and configuration drift scans exist | Factory Memory is advisory and gated by phase; it cannot satisfy acceptance |
 | Tools and MCP | At `ed77c46`, one exact Context7 `query-docs` read is qualified through a Tool Version, Tool Grant, canonical Attempt, broker, durable receipt, schema/currentness checks, and independent verification | The Codex and DeepSeek manifests still declare native MCP unsupported; arbitrary servers/operations, writes, broad credentials, and a general MCP platform are not qualified |
 | Skills | `SKILL.md` parsing, linting, registry import, eval scenarios, and local repository scanning exist | No exact skill digest/version was observed in `factory-execution-manifest/v1` |
@@ -187,6 +192,13 @@ present-tense claims.
 | Deployment and release | Separate PR, acceptance, release, deployment, activation, rollback, and production-evidence records exist | Current V1 proof is stronger before merge than after production outcome validation |
 | Multi-tenancy | Company/workspace/repository boundaries, membership authorization, scoped records, and cross-scope tests exist | Fleet-scale and cross-organization production load are not established by repository tests |
 | Adoption and versioning | Basic/intermediate/advanced presentation, feature flags, immutable versions, migration guidance, and docs exist | Presentation modes do not alter authority; broad company adoption remains a future operating proof |
+
+The inference claim is supported by the
+[reservation qualification](https://github.com/jaydubya818/MissionControl/blob/9a68b56c3ee788c4f8b4132a8c7c9d14f32dee28/docs/testing/evidence/capability-convergence-reservation-final/README.md)
+and [durable-identity qualification](https://github.com/jaydubya818/MissionControl/blob/9a68b56c3ee788c4f8b4132a8c7c9d14f32dee28/docs/testing/evidence/capability-convergence-identity-backend/README.md).
+These exercise real local transactions with synthetic related records. Database
+references remain distinct from the logical identities in immutable evidence;
+storage repair does not rewrite historical digests or confer live authority.
 
 ### Workflow 1: governed intent to review-ready change
 

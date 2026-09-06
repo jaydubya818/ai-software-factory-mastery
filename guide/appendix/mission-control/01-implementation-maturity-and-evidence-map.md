@@ -14,7 +14,7 @@ mission_control_pr: 64
 > Historical assessment: this map captures the repository states listed below.
 > For the verification architecture at merged commit `ff0524e`, continue with
 > the [Verification-First Software Factory case study](./02-verification-first-software-factory.md).
-> For the current checkout at `d902fae`, use the
+> For later capability assessments and their evidence boundaries, use the
 > [Capability, Workflow, and Admission Map](./03-capability-workflow-and-admission-map.md).
 
 ## Purpose
