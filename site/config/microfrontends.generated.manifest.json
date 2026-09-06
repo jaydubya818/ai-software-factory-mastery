@@ -1,0 +1,7 @@
+{
+  "algorithm": "sha256-recursive-key-sort-json-v1",
+  "authoritativeSourceSha256": "e63f913563c1864feac38c7786e06d146892d34a4f0f74179999ff1d565e7e8b",
+  "generatedBy": "npm run microfrontends:sync",
+  "source": "FDLC/microfrontends.json",
+  "sourceCommit": "9e0f913c83d3a9fddfe0fffaae6a53d46c62b5ab"
+}

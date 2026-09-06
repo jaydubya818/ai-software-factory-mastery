@@ -44,6 +44,7 @@ yarn-error.log*
 
 # generated from the repository Markdown source
 /lib/content.generated.ts
+/lib/routes.generated.ts
 /lib/search.generated.ts
 /lib/palette.generated.ts
 *.tsbuildinfo
@@ -51,3 +52,7 @@ public/infographics/
 /public/search-index.json
 /public/sitemap.xml
 /public/robots.txt
+/public/guide/infographics/
+/public/guide/search-index.json
+/public/guide/sitemap.xml
+/public/guide/robots.txt

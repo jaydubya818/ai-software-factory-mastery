@@ -1,20 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { legacyAnchorRedirects } from "../../lib/legacy-routes";
+import { legacyAnchorDestination } from "../../lib/legacy-routes";
+import { guideNavigationHref } from "../../lib/paths";
 
 export function LegacyAnchorRedirect({ currentSlug }: { currentSlug: string }) {
   useEffect(() => {
-    let anchor = window.location.hash.slice(1);
-    try {
-      anchor = decodeURIComponent(anchor);
-    } catch {
-      return;
-    }
-    if (!anchor) return;
-
-    const target = legacyAnchorRedirects[currentSlug]?.[anchor];
-    if (target) window.location.replace(target);
+    const destination = legacyAnchorDestination(currentSlug, window.location.hash, window.location.search);
+    if (destination) window.location.replace(guideNavigationHref(destination));
   }, [currentSlug]);
 
   return null;

@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
+import { GUIDE_ROUTES, GUIDE_COMPATIBLE_MODE, type GuideSearchParams, withSearchParams } from "../../lib/paths";
+import CompatiblePage, { metadata as compatibleMetadata } from "../guide/glossary/page";
 
-export default function GlossaryAliasPage() {
-  redirect("/docs/appendix/glossary");
+export const metadata = GUIDE_COMPATIBLE_MODE ? compatibleMetadata : {};
+
+export default async function LegacyGlossaryPage({ searchParams }: { searchParams: Promise<GuideSearchParams> }) {
+  if (GUIDE_COMPATIBLE_MODE) return <CompatiblePage />;
+  permanentRedirect(withSearchParams(GUIDE_ROUTES.glossary, await searchParams));
 }

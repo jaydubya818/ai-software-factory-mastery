@@ -1,19 +1,19 @@
-import Link from "next/link";
 import { CommandPalette } from "./CommandPalette";
 import { PrimaryNav } from "./PrimaryNav";
 import { ThemeToggle } from "./ThemeToggle";
+import { fdlcUrl } from "../../lib/paths";
 
 export function SiteHeader() {
   return (
     <header className="app-header">
       <div className="site-header">
-        <Link className="brand" href="/" aria-label="The AI Software Factory Guide home">
-          <span className="brand-mark" aria-hidden="true">AF</span>
+        <a className="brand" href={fdlcUrl()} aria-label="FDLC home">
+          <span className="brand-mark" aria-hidden="true">F</span>
           <span className="brand-copy">
-            <strong>AI Software Factory</strong>
+            <strong>FDLC</strong>
             <small>The Guide</small>
           </span>
-        </Link>
+        </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <PrimaryNav />
         </nav>
