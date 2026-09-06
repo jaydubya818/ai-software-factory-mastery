@@ -91,6 +91,31 @@ test("each primary-navigation copy identifies exactly one current Guide surface"
   }
 });
 
+test("Guide pages retain the FDLC global shell and canonical Guide dropdown routes", async () => {
+  const html = await htmlFor(`/guide/${chapterSlugs[2]}`);
+  const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+  assert.ok(header, "renders the persistent FDLC global header");
+  assert.doesNotMatch(header, /brand-copy|<small>The Guide<\/small>/, "Guide identity does not replace the global shell");
+  for (const [label, href] of [
+    ["Framework", "https://www.fdlc.ai/framework"],
+    ["Architecture", "https://www.fdlc.ai/architecture"],
+    ["Mission Control", "https://www.fdlc.ai/mission-control"],
+    ["Maturity", "https://www.fdlc.ai/maturity"],
+  ]) assert.match(header, new RegExp(`href="${href}"[^>]*>${label}<`), label);
+  for (const [label, href] of [
+    ["Guide Home", "/guide"],
+    ["Atlas", "/visuals"],
+    ["Reference", "/topics"],
+    ["Glossary", "/glossary"],
+    ["Search", "/search"],
+  ]) assert.equal([...header.matchAll(new RegExp(`href="${href}"[^>]*>${label}<`, "g"))].length, 2, `${label} exists in desktop and mobile navigation`);
+  assert.match(header, /<button aria-controls="guide-navigation" aria-expanded="false" aria-current="page"/);
+  assert.match(header, /<button aria-controls="mobile-guide-navigation" aria-expanded="true" aria-current="page" class="is-active"/);
+  for (const id of ["guide-navigation", "more-navigation", "mobile-navigation", "mobile-guide-navigation"]) {
+    assert.equal([...header.matchAll(new RegExp(`id="${id}"`, "g"))].length, 1, `${id} is unique`);
+  }
+});
+
 test("renders every canonical primary surface with an explicit canonical", async () => {
   const routes = [
     ["/guide", /Table of contents/, "/guide"],
