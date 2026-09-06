@@ -80,7 +80,7 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
             && Array.isArray(code.properties.className) && code.properties.className.includes("language-mermaid")) {
             return <Mermaid chart={textFromNode(children).trim()} />;
           }
-          return <pre>{children}</pre>;
+          return <pre role="region" aria-label="Scrollable code example" tabIndex={0}>{children}</pre>;
         },
       }}
     >

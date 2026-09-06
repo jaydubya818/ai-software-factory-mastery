@@ -391,6 +391,28 @@ async function verifyBrowserRuntime(origin) {
       assert.equal(layout.diagramOverflow, "auto", "Mermaid retains horizontal scrolling");
       assert.ok(layout.diagramScrollLeft > 0, "wide Mermaid content remains scrollable");
       assert.equal(layout.inlineWrap, true);
+      const codeBlocks = page.locator(".markdown-body pre");
+      const overflowingIndex = await codeBlocks.evaluateAll((blocks) =>
+        blocks.findIndex((block) => block.scrollWidth > block.clientWidth + 1));
+      assert.ok(overflowingIndex >= 0, "mobile fixture contains horizontally overflowing ordinary code");
+      const codeBlock = codeBlocks.nth(overflowingIndex);
+      assert.equal(await codeBlock.getAttribute("role"), "region");
+      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.equal(await codeBlock.getAttribute("tabindex"), "0");
+      await codeBlock.scrollIntoViewIfNeeded();
+      await codeBlock.focus();
+      await page.keyboard.press("Shift+Tab");
+      assert.equal(await codeBlock.evaluate((block) => block === document.activeElement), false,
+        "Shift+Tab leaves the code region");
+      await page.keyboard.press("Tab");
+      assert.equal(await codeBlock.evaluate((block) => block === document.activeElement), true,
+        "Tab returns to the ordinary code region");
+      const initialCodeScroll = await codeBlock.evaluate((block) => block.scrollLeft);
+      await page.keyboard.press("ArrowRight");
+      await page.waitForFunction(({ index, initial }) => {
+        const block = document.querySelectorAll(".markdown-body pre")[index];
+        return block && block.scrollLeft > initial;
+      }, { index: overflowingIndex, initial: initialCodeScroll });
       assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
     }
     await verifyCommandPaletteMatrix(page, origin);

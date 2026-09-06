@@ -171,6 +171,19 @@ test("linked Markdown headings render valid, non-nested anchors", async () => {
   );
 });
 
+test("ordinary code blocks retain keyboard-accessible regions alongside Mermaid dispatch", async () => {
+  const html = await htmlFor("/guide/02-design/06-intent-and-specification-engineering");
+  const blocks = [...html.matchAll(/<pre\b[^>]*>/g)].map((match) => match[0]);
+  assert.ok(blocks.length > 0, "ordinary fenced code remains a pre element");
+  for (const block of blocks) {
+    assert.match(block, /role="region"/);
+    assert.match(block, /aria-label="Scrollable code example"/);
+    assert.match(block, /tabindex="0"/);
+  }
+  assert.match(html, /class="mermaid-diagram"/, "Mermaid keeps its separate renderer");
+  assert.doesNotMatch(html, /<pre[^>]*>\s*<code class="language-mermaid"/);
+});
+
 test("reading sequence runs front matter → stages → chapters → appendices", async () => {
   const frontMatter = await htmlFor("/guide/00-front-matter/00-how-to-read-this-guide");
   assert.match(frontMatter, /Front matter/);

@@ -65,20 +65,36 @@ The Guide owns physical `/guide/...` routes and does not use Next.js
 `basePath`. Its search index, social image, icon, sitemap, robots file, and
 infographics are also published below `/guide`.
 
-Leave `NEXT_PUBLIC_SITE_URL` unset on the standalone Guide deployment and its
-standalone previews. In that compatibility mode, canonicals remain on
+For the migration's Guide-compatible build, set `NEXT_PUBLIC_SITE_URL` to
+`https://ai-software-factory-mastery.vercel.app` (the same default is used when
+unset locally). In that compatibility mode, canonicals remain on
 `https://ai-software-factory-mastery.vercel.app`, while hard links to FDLC-owned
-pages use absolute `https://www.fdlc.ai/...` URLs. Transitional root
+pages use absolute `https://www.fdlc.ai/...` URLs. Article links and canonicals
+use the legacy `/docs/...` tree so a visited URL survives a rollback to old
+Guide. On the allowlisted standalone/Guide Preview host, recognized `/guide/...`
+page aliases return a same-origin 307 to the compatible page path; assets and
+unknown routes are not redirected by that compatibility rule. The internal
+`/guide/...` tree still serves FDLC composition. Transitional root
 `robots.txt` and sitemap-index files point crawlers to the namespaced Guide
 sitemap so the standalone canonical edition retains discovery continuity.
 
-Set `NEXT_PUBLIC_SITE_URL` only for a deliberately composed deployment. Paired
-branch previews should set it to their composed preview origin; the final
-cutover should set it to `https://www.fdlc.ai`. In composed mode, Guide
+For the final migration build, set `NEXT_PUBLIC_SITE_URL=https://www.fdlc.ai`
+and the approved server-only `GUIDE_LEGACY_REDIRECTS_ENABLED=true`. In composed mode, Guide
 canonicals use that origin and cross-application navigation is root-relative,
-so preview traffic stays within the paired preview. Composed builds remove the
+so navigation on a paired Preview stays within that Preview while canonical
+metadata retains its qualified authority. Composed builds remove the
 transitional root discovery files because the parent FDLC application owns
 shared-domain root discovery.
+
+Do not substitute an arbitrary Preview origin for either qualified build mode.
+The approved Guide qualification branches are
+`codex/fdlc-guide-migration-final-compat` (standalone canonical, legacy flag
+absent) and `codex/fdlc-guide-migration-final` (FDLC canonical, legacy flag
+`true`). Both use the same reviewed snapshot trust anchors and Preview-only
+`GUIDE_MFE_PREVIEW_ENABLED=true` pin. Production-target staging uses its
+separate approval flag and the exact mode under the reviewed five-state release
+plan; these branch-scoped Preview pins must not be copied into Production
+project settings. Never place Guide-final behind bridge FDLC during rollback.
 
 FDLC's root `microfrontends.json` is the sole routing authority. This repository
 commits only its generated, schema-pure build snapshot at
