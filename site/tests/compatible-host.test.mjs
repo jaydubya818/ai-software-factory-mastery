@@ -60,6 +60,19 @@ test("compatible redirects reject assets, unknown pages, unsafe paths, final mod
   assert.equal(compatibleGuideRedirectPath(host, "/guide/architecture", "GET", {}, "https://www.fdlc.ai"), null);
 });
 
+test("hosted architecture normalization belongs to the bridge, not a Guide hostname", () => {
+  for (const candidateHost of [host, "ai-software-factory-mastery-fgd1o8awu-jaydubya818.vercel.app"]) {
+    for (const environment of [{ VERCEL: "1" }, { VERCEL_ENV: "preview" }, { VERCEL_ENV: "production" }, { VERCEL_TARGET_ENV: "production" }]) {
+      for (const method of ["GET", "HEAD"]) {
+        assert.equal(compatibleGuideRedirectPath(candidateHost, "/guide/architecture", method, environment), null);
+        assert.equal(compatibleGuideRedirectPath(candidateHost, "/guide/architecture/", method, environment), null);
+        assert.equal(compatibleGuideRedirectPath(candidateHost, "/guide/search", method, environment), "/search");
+      }
+    }
+  }
+  assert.equal(compatibleGuideRedirectPath("127.0.0.1:6125", "/guide/architecture", "GET", local), "/architecture", "An actual uncomposed local Guide owns bare architecture");
+});
+
 test("proxy uses temporary no-store same-origin redirects, preserves queries, and ignores forwarded Host", () => {
   const request = new NextRequest(`https://${host}/guide/search?q=a%2Fb&q=c&tag=one`);
   const response = proxy(request);
@@ -69,6 +82,16 @@ test("proxy uses temporary no-store same-origin redirects, preserves queries, an
   const spoof = proxy(new NextRequest("https://www.fdlc.ai/guide/architecture", { headers: { "x-forwarded-host": host } }));
   assert.equal(spoof.status, 200);
   assert.equal(spoof.headers.get("location"), null);
+});
+
+test("hosted compatible proxy leaves Guide architecture inside its namespace", () => {
+  const script = `import { NextRequest } from 'next/server.js'; import { proxy } from './proxy.ts'; const results=[]; for(const method of ['GET','HEAD']) for(const path of ['/guide/architecture','/guide/architecture/']) { const response=proxy(new NextRequest('https://${host}'+path+'?q=a%2Fb',{method})); results.push({status:response.status,location:response.headers.get('location')}); } process.stdout.write(JSON.stringify(results));`;
+  const result = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "--eval", script], {
+    cwd: new URL("..", import.meta.url), encoding: "utf8",
+    env: { ...process.env, NEXT_PUBLIC_SITE_URL: STANDALONE_GUIDE_ORIGIN, VERCEL: "1", VERCEL_ENV: "preview" },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), Array.from({ length: 4 }, () => ({ status: 200, location: null })));
 });
 
 test("final build retains namespace links, canonicals, and existing retirement destinations", () => {

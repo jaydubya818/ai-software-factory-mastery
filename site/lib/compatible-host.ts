@@ -20,6 +20,10 @@ export function compatibleGuideRedirectPath(host: string | null, pathname: strin
   if (canonicalOrigin !== STANDALONE_GUIDE_ORIGIN || !["GET", "HEAD"].includes(method) || !isCompatibleStandaloneHost(host, environment)) return null;
   const destination = standaloneGuidePagePath(pathname);
   if (!destination || destination === pathname || pathname === "/guide/") return null;
+  // A Guide hostname alone does not own bare /architecture under Vercel MFE.
+  // The bridge normalizes this alias before dispatch only while host isolation
+  // is active. Final routing must retain /guide/architecture on child origins too.
+  if (destination === "/architecture" && (environment.VERCEL === "1" || environment.VERCEL_ENV !== undefined || environment.VERCEL_TARGET_ENV !== undefined)) return null;
   if (!destination.startsWith("/docs/")) return destination;
   const slug = destination.slice("/docs/".length);
   const canonicalSlug = legacyDocumentRedirects[slug] ?? retiredFdlcSummaryRedirects[slug] ?? slug;
