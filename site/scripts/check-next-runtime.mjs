@@ -392,10 +392,8 @@ async function verifyBrowserRuntime(origin) {
       assert.ok(layout.diagramScrollLeft > 0, "wide Mermaid content remains scrollable");
       assert.equal(layout.inlineWrap, true);
       const codeBlocks = page.locator(".markdown-body pre");
-      const overflowingIndex = await codeBlocks.evaluateAll((blocks) =>
-        blocks.findIndex((block) => block.scrollWidth > block.clientWidth + 1));
-      assert.ok(overflowingIndex >= 0, "mobile fixture contains horizontally overflowing ordinary code");
-      const codeBlock = codeBlocks.nth(overflowingIndex);
+      assert.ok(await codeBlocks.count() > 0, "mobile fixture contains ordinary code");
+      const codeBlock = codeBlocks.first();
       assert.equal(await codeBlock.getAttribute("role"), "region");
       assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
       assert.equal(await codeBlock.getAttribute("tabindex"), "0");
@@ -407,6 +405,28 @@ async function verifyBrowserRuntime(origin) {
       await page.keyboard.press("Tab");
       assert.equal(await codeBlock.evaluate((block) => block === document.activeElement), true,
         "Tab returns to the ordinary code region");
+      assert.equal(await page.locator("html").getAttribute("data-theme"), "dark", "theme persists across direct loads and reloads");
+    }
+
+    // Chapter 6's 38-character code example fits at 390px. The existing chapter
+    // 25 example has a measured 464px scroll width inside a 358px native region.
+    const wideCode = await page.goto(
+      `${origin}/guide/03-build/25-the-12-layer-production-ai-agent-stack`,
+      { waitUntil: "networkidle" },
+    );
+    assert.equal(wideCode?.status(), 200);
+    for (const navigation of ["direct", "reload"]) {
+      if (navigation === "reload") await page.reload({ waitUntil: "networkidle" });
+      const codeBlocks = page.locator(".markdown-body pre");
+      const overflowingIndex = await codeBlocks.evaluateAll((blocks) =>
+        blocks.findIndex((block) => block.scrollWidth > block.clientWidth + 1));
+      assert.ok(overflowingIndex >= 0, `${navigation}: authoritative stack page contains wide ordinary code`);
+      const codeBlock = codeBlocks.nth(overflowingIndex);
+      assert.equal(await codeBlock.getAttribute("role"), "region");
+      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.equal(await codeBlock.getAttribute("tabindex"), "0");
+      await codeBlock.scrollIntoViewIfNeeded();
+      await codeBlock.focus();
       const initialCodeScroll = await codeBlock.evaluate((block) => block.scrollLeft);
       await page.keyboard.press("ArrowRight");
       await page.waitForFunction(({ index, initial }) => {
