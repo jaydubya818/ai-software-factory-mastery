@@ -66,7 +66,7 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
               <figure className="infographic" data-slot={slot}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={asset} alt={title} loading="lazy" />
-                <figcaption>{title}</figcaption>
+                <figcaption>{title} · <a href={asset} target="_blank" rel="noreferrer" aria-label={`Open ${title} at full resolution in a new tab`}>Open full-size diagram ↗</a></figcaption>
               </figure>
             );
           }

@@ -232,6 +232,10 @@ The six areas explain who made this possible. **Intent** owned the isolation con
 
 This is how the two models should be used together. Walk the stages to explain what happens next. Use the areas to find the responsible subsystem, owner, and canonical chapter. If a design discussion introduces a third top-level picture, ask which of these two questions it answers and label it as a narrower lens.
 
+### One objective across several factories
+
+The enterprise view composes this model across specialized factories. Mission Control owns the governed Plan and cross-factory dependencies; each factory executes a bounded WorkOrder. Read [Enterprise multi-factory software delivery](../appendix/enterprise-multi-factory-delivery.md) for the architecture poster, three levels of routing, and the distinction between local evidence and integrated objective verification.
+
 ## How to build it
 
 Start with one corridor, not a platform catalog. Choose a workflow whose outcome matters, repeats often, has clear acceptance criteria, and can be reversed safely. Then draw the eight stages and write one accountable owner, durable record, governing decision, and required evidence for every transition.

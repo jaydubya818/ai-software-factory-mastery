@@ -59,6 +59,7 @@ export default function GuidePage() {
             <Link href={guideContentPath("02-design/05-authoritative-records")}>I have to draw the boundaries <small>architect</small></Link>
             <Link href={guideContentPath("03-build/11-the-agent-factory")}>I have to build it <small>builder</small></Link>
             <Link href={guideContentPath("05-operate/34-the-factory-as-a-platform")}>I have to run it <small>operator</small></Link>
+            <Link href={guideContentPath("appendix/enterprise-multi-factory-delivery")}>I have to scale delivery across factories <small>enterprise</small></Link>
           </div>
         </section>
 

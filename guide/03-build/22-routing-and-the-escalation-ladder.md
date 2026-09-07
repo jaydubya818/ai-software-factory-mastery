@@ -244,6 +244,10 @@ That gives the factory four terms it should treat as **model-switching ergonomic
 
 The practical consequence is that routing policy for autonomous lanes can change freely under evaluation, but routing that a human interacts with directly should change deliberately, with prompt portability tested and the switching cost budgeted like any other migration.
 
+### Route objectives, WorkOrders, and Tasks separately
+
+Objective routing identifies capability domains before planning. WorkOrder routing selects a qualified Factory Version and Execution Profile after dependencies and authority permit execution. Task routing selects qualified resources inside that envelope. Every level filters eligibility before optimizing quality, latency, or cost; no eligible route means a blocked or escalated result. The [enterprise routing model](../appendix/enterprise-multi-factory-delivery.md#3-three-levels-of-routing) explains the records and evidence needed for each decision.
+
 ## How to build it
 
 1. Build the catalog first. Register each profile with provider, model, exact version or snapshot, region, tier, capabilities, input classes, task eligibility, availability, deprecation, risk approval, cost estimate, evaluation suite, fallback order, and retirement policy.
