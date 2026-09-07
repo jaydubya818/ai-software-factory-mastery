@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 
-export function Mermaid({ chart }: { chart: string }) {
+export function Mermaid({ chart, label = "Architecture diagram" }: { chart: string; label?: string }) {
   const reactId = useId();
   const [svg, setSvg] = useState("");
   const [failed, setFailed] = useState(false);
@@ -42,14 +42,15 @@ export function Mermaid({ chart }: { chart: string }) {
   }, [chart, reactId]);
 
   if (failed) {
-    return <pre className="mermaid-fallback"><code>{chart}</code></pre>;
+    return <div className="diagram-failure"><p role="status">This diagram could not be displayed.</p><details><summary>Read the diagram source</summary><pre className="mermaid-fallback" tabIndex={0} role="region" aria-label={`${label} source`}><code>{chart}</code></pre></details></div>;
   }
 
   return (
     <div
-      className="mermaid-diagram"
+      className={`mermaid-diagram${svg ? "" : " is-loading"}`}
       role="region"
-      aria-label="Scrollable architecture diagram"
+      aria-label={label}
+      aria-busy={!svg}
       tabIndex={0}
       dangerouslySetInnerHTML={{ __html: svg }}
     />

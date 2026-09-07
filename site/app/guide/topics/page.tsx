@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "../../components/GuideLink";
 import { appendices } from "../../../lib/content";
 import { guidePageMetadata } from "../../../lib/metadata";
-import { GUIDE_ROUTES, guideContentPath } from "../../../lib/paths";
+import { fdlcUrl, GUIDE_ROUTES, guideContentPath } from "../../../lib/paths";
 import { ReferenceSearch } from "../../components/ReferenceSearch";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
@@ -50,6 +50,8 @@ export default function ReferencePage() {
           <h1>The reference shelf.</h1>
           <p>Nine reference groups you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
         </header>
+
+        <aside className="reference-standard"><div><strong>The FDLC Specification</strong><p>The normative model, artifact contracts, and conformance requirements behind this guide.</p></div><a className="button button-secondary" href={fdlcUrl("/specification")}>Read the Specification <span aria-hidden="true">→</span></a></aside>
 
         <ReferenceSearch />
 

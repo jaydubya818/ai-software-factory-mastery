@@ -32,6 +32,14 @@ function infographicSlots(content: string) {
 
 export function Markdown({ content, sourcePath, infographicAssets = {} }: { content: string; sourcePath: string; infographicAssets?: Record<string, string> }) {
   const slots = infographicSlots(content);
+  function regionLabel(kind: string, offset = 0) {
+    const before = content.slice(0, offset);
+    const heading = [...before.matchAll(/^#{1,3}\s+(.+)$/gm)].at(-1)?.[1] ?? "Introduction";
+    const pattern = kind === "Table" ? /^\s*\|?\s*:?-+:?\s*\|.*$/gm : /^```/gm;
+    const count = [...before.matchAll(pattern)].length;
+    const number = kind === "Table" ? count + 1 : Math.floor(count / 2) + 1;
+    return `${kind} ${number}: ${heading}`;
+  }
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkHeadingIds]}
@@ -69,18 +77,21 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
             </aside>
           );
         },
-        table: ({ children }) => (
-          <div className="table-scroll" role="region" aria-label="Scrollable table" tabIndex={0}>
+        table: ({ children, node }) => (
+          <div className="table-block">
+          <p className="table-hint">Scroll horizontally to read every column.</p>
+          <div className="table-scroll" role="region" aria-label={regionLabel("Table", node?.position?.start.offset)} tabIndex={0}>
             <table>{children}</table>
+          </div>
           </div>
         ),
         pre: ({ children, node }) => {
           const code = node?.children[0];
           if (code?.type === "element" && code.tagName === "code"
             && Array.isArray(code.properties.className) && code.properties.className.includes("language-mermaid")) {
-            return <Mermaid chart={textFromNode(children).trim()} />;
+            return <Mermaid chart={textFromNode(children).trim()} label={regionLabel("Diagram", node?.position?.start.offset)} />;
           }
-          return <pre role="region" aria-label="Scrollable code example" tabIndex={0}>{children}</pre>;
+          return <pre role="region" aria-label={regionLabel("Code example", node?.position?.start.offset)} tabIndex={0}>{children}</pre>;
         },
       }}
     >

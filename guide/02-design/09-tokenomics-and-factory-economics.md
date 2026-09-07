@@ -273,6 +273,8 @@ Inference remains Experimental/default off. Cancellation, expiry and unknown out
 
 ## Go deeper
 
+- [FDLC Benchmarks](https://fdlc.ai/benchmarks) for measurement guidance and the evidence boundaries around outcome claims.
+
 - [8. Economics, metrics, and human attention](./08-economics-metrics-and-human-attention.md) for the foundation this chapter builds on.
 - [Canonical glossary](../appendix/glossary.md) for the terms and boundaries used here.
 - Return to the [book map](../README.md) for the complete reading sequence.

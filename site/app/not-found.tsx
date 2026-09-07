@@ -15,6 +15,7 @@ export default function NotFound() {
           <Link className="button button-primary" href={GUIDE_ROUTES.search}>Search the guide</Link>
           <Link className="button button-secondary" href={GUIDE_ROUTES.home}>Table of contents</Link>
           <a className="button button-secondary" href={fdlcUrl()}>FDLC home</a>
+          <a className="text-link" href={fdlcUrl("/framework")}>Explore the Framework →</a>
         </div>
       </main>
       <SiteFooter />
