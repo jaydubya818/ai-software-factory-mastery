@@ -50,7 +50,7 @@ html[data-theme="dark"] .global-wordmark img { filter: invert(1) grayscale(1) br
 .desktop-nav > a, .nav-dropdown > button { min-height: 72px; padding: 3px 0 0; border: 0; border-bottom: 3px solid transparent; background: transparent; color: inherit; cursor: pointer; font: inherit; }
 .desktop-nav > a { display: inline-flex; align-items: center; }
 .desktop-nav > a:hover, .nav-dropdown > button:hover { color: var(--ink); }
-.desktop-nav > a[aria-current="page"], .nav-dropdown.is-active > button { color: var(--green); border-bottom-color: var(--green); font-weight: 700; }
+.desktop-nav > a[aria-current="page"], .nav-dropdown.is-active > button { color: var(--green); border-bottom-color: var(--green); }
 .nav-dropdown { position: relative; }
 .nav-dropdown > button span { margin-left: 3px; font-size: 11px; transition: transform .16s ease; }
 .nav-dropdown.is-open > button span { display: inline-block; transform: rotate(180deg); }
