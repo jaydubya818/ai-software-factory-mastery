@@ -3,8 +3,8 @@ title: Canonical Glossary
 status: review-ready
 audience:
   - all
-last_verified: 2026-09-03
-mission_control_commit: d902fae7032c0696b531c44ae88829c652516fc6
+last_verified: 2026-09-06
+mission_control_commit: eff7f6cd27456943be5f0bafec323949a8ef6092
 ---
 
 # Canonical Glossary
@@ -385,10 +385,16 @@ grant itself authority.
 to approved workflows, executors, environments, tools, verifiers, budgets, risk
 boundaries, and recovery limits.
 
-**Factory Version** — An immutable, activatable snapshot of Factory
-Configuration and its exact workflow, agent, model-route, harness, sandbox,
-policy, verifier, budget, and repository bindings. Creation does not establish
-readiness or authorize execution.
+**Factory Version** — An immutable, qualified composition of Factory
+capabilities used to govern a class of execution. It binds exact workflow,
+agent, Execution Profile, policy, verifier, budget, repository, and
+qualification identities. Creation and qualification do not establish
+readiness, activation, or authority for a particular WorkOrder.
+
+**Execution Profile** — The governed execution composition binding the runtime,
+harness, model and tool capabilities, execution backend, environment, and
+applicable policy for an Attempt. A model or harness name alone is not a
+reproducible execution identity.
 
 **Workflow Contract** — A versioned definition of execution nodes or steps,
 dependencies, input and output schemas, structured completion, failure policy,
@@ -865,15 +871,33 @@ change creates a new baseline and triggers impact analysis.
 and transitions, such as tenant isolation or the prohibition on accepting a
 WorkOrder from a stale Attempt.
 
-**WorkOrder** — The bounded unit of engineering authority and acceptance. It
-defines permitted scope, repositories, tools, agents, constraints, risk, budget,
-acceptance criteria, quality gates, and required evidence.
+**WorkOrder** — The canonical governed unit of approved work, bound to an exact
+revision and Factory Version. It defines permitted scope, repositories, tools,
+agents, constraints, risk, budget, acceptance criteria, quality gates, and
+required evidence.
 
-**Task** — A bounded operational unit used to organize authorized WorkOrder
-execution. Task completion does not accept the parent WorkOrder.
+**Readiness** — A derived determination that the identities, qualifications,
+authorities, resources, currentness, and policies required for a specific
+execution are satisfied. It must not be set as an unsupported `READY` flag.
 
-**Attempt** — One immutable execution try for a Task or WorkOrder. Retries create
+**Task** — A bounded executable portion of an admitted WorkOrder. Task
+completion does not accept the parent WorkOrder.
+
+**Attempt** — One authoritative execution of a Task with durable identity,
+authority, runtime, evidence, and outcome lineage. Retries and recovery create
 new Attempts so history and causality are preserved.
+
+**Unpublished Candidate** — The exact producer output before independent
+verification or publication authority. Producer completion freezes a subject;
+it does not accept, publish, merge, or release it.
+
+**Verification Subject** — The frozen candidate identity and verification
+contract describing exactly what a verifier evaluates. A change to the
+candidate or contract creates a different subject and invalidates stale proof.
+
+**Verifier Attempt** — A separate canonical Attempt that independently
+evaluates a Verification Subject. It cannot share the producer's authority or
+turn its verdict into human acceptance.
 
 **Run (agent turn)** — One low-level agent turn beneath an Attempt: a model
 call, its tool invocations, and its observations, recorded in order with a
@@ -881,9 +905,10 @@ sequence number. An Attempt contains many Runs; a Run never needs approval and
 never decides the Attempt's outcome. "The run finished" is not "the Attempt
 completed".
 
-**Evidence** 🔑 — An attributable receipt or artifact that supports or refutes an
-acceptance criterion. Useful evidence identifies the verifier, method,
-environment, source commit, artifact, time, and result.
+**Evidence** 🔑 — A durable, attributable record of what was authorized,
+executed, observed, verified, or decided. Evidence supporting or refuting an
+acceptance criterion identifies the subject, producer or verifier, method,
+environment, source revision, artifact, time, and result.
 
 **Pull Request** — The review boundary that packages proposed repository changes
 and their source lineage. An open or passing pull request does not prove Mission
@@ -909,6 +934,11 @@ Attempt does not make the Task terminal while recovery is active; none of
 UNKNOWN, MISSING, PENDING, FAILED, or STALE is success.
 
 ## Governance concepts
+
+**Human Authority** — Explicit authority retained for consequential decisions
+such as acceptance, publication, release, restoration, or policy promotion.
+Verification can establish eligibility for a decision; it cannot silently
+inherit the human's authority to make it.
 
 **Policy** 🔑 — A versioned rule that determines whether an action is permitted,
 blocked, or requires approval based on identity, scope, risk, evidence, and

@@ -104,6 +104,8 @@ canonical chapters for technical depth.
 - [E. Software architecture and system design study guide](./appendix/architecture-communication.md)
 - [F. Principles to have cold](./appendix/principles.md)
 - [G. Mission Control operator surfaces](./appendix/operator-surfaces.md)
+- [H. Context, skills, and evidence: five operating practices](./appendix/context-skills-engineering.md)
+- [I. Governed Factory admission and independent verification](./appendix/governed-factory-admission.md)
 
 The v1 curriculum chapters are preserved unchanged in
 [`archive/guide-v1/`](../archive/guide-v1/README.md).
