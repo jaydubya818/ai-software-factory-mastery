@@ -8,7 +8,7 @@ export const primary = [
 ] as const satisfies readonly NavLink[];
 
 export const guide = [
-  ["Guide Home", "/guide"],
+  ["Overview", "/guide"],
   ["Atlas", "/guide/atlas"],
   ["Reference", "/guide/topics"],
   ["Glossary", "/guide/glossary"],
