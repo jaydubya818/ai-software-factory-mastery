@@ -1,8 +1,9 @@
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 
 const port = 4187;
 const origin = `http://127.0.0.1:${port}`;
-const server = spawn("npm", ["run", "start", "--", "--port", String(port)], { cwd: process.cwd(), env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+const useProcessGroup = process.platform !== "win32";
+const server = spawn("npm", ["run", "start", "--", "--port", String(port)], { cwd: process.cwd(), env: process.env, detached: useProcessGroup, stdio: ["ignore", "pipe", "pipe"] });
 let output = "";
 server.stdout.on("data", (chunk) => { output += chunk; });
 server.stderr.on("data", (chunk) => { output += chunk; });
@@ -16,11 +17,36 @@ async function waitUntilReady() {
   throw new Error(`Guide server did not become ready.\n${output}`);
 }
 
+async function runBrowserChecks() {
+  return await new Promise((resolve, reject) => {
+    const checks = spawn(process.execPath, ["tests/reader-browser.mjs"], { cwd: process.cwd(), env: { ...process.env, GUIDE_TEST_ORIGIN: origin }, stdio: "inherit" });
+    checks.once("error", reject);
+    checks.once("exit", (status) => resolve(status ?? 1));
+  });
+}
+
+async function stopServer() {
+  if (server.exitCode !== null) return;
+  const exited = new Promise((resolve) => server.once("exit", resolve));
+  const signal = (name) => {
+    try {
+      if (useProcessGroup && server.pid) process.kill(-server.pid, name);
+      else server.kill(name);
+    } catch (error) {
+      if (error?.code !== "ESRCH") throw error;
+    }
+  };
+  signal("SIGTERM");
+  await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 3000))]);
+  if (server.exitCode === null) {
+    signal("SIGKILL");
+    await exited;
+  }
+}
+
 try {
   await waitUntilReady();
-  const result = spawnSync(process.execPath, ["tests/reader-browser.mjs"], { cwd: process.cwd(), env: { ...process.env, GUIDE_TEST_ORIGIN: origin }, stdio: "inherit" });
-  if (result.error) throw result.error;
-  if (result.status !== 0) process.exitCode = result.status ?? 1;
+  process.exitCode = await runBrowserChecks();
 } finally {
-  server.kill("SIGTERM");
+  await stopServer();
 }
