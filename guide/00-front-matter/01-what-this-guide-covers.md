@@ -43,11 +43,11 @@ Intent covers the human–agent operating model, business outcome, specification
 
 ### Harness
 
-Harness covers the control and execution planes, orchestration, durable state, retries and recovery, inner and outer harness contracts, protocols, environments, tools, context, memory, and autonomous workflows.
+Harness is the architecture area for governed execution. Within it, the Guide keeps the Agent Loop, Agent Harness, Work Graph, Orchestrator, Runtime, Sandbox, and Control Plane as distinct boundaries with distinct owners, identities, and failure modes.
 
 - [Chapter 13](../03-build/13-control-plane-orchestrator-and-execution-plane.md): authority boundaries, command and event contracts, workflow state, and admission.
 - [Chapter 14](../03-build/14-durable-execution.md): Tasks, Attempts, leases, fencing, idempotency, checkpoints, pause, cancel, and recovery.
-- [Chapter 15](../03-build/15-coding-harnesses-and-agent-protocols.md): inner and outer harnesses, adapters, lifecycle hooks, MCP, ACP, AG-UI, and A2A.
+- [Chapter 15](../03-build/15-coding-harnesses-and-agent-protocols.md): Agent and Coding Harnesses, adapters, lifecycle hooks, MCP, ACP, AG-UI, and A2A.
 - [Chapter 17](../03-build/17-development-environments-sandboxes-and-compute.md): reproducible development environments, sandboxes, compute fleets, isolation, and capacity.
 - [Chapter 18](../03-build/18-agent-architecture.md): agent loop, tool gateway, MCP use, context, and memory mechanics.
 - [Chapter 19](../03-build/19-data-knowledge-and-semantic-engineering.md): data quality, authoritative knowledge, ingestion, retrieval, semantic contracts, provenance, and freshness.
@@ -55,6 +55,8 @@ Harness covers the control and execution planes, orchestration, durable state, r
 - [Chapter 26](../03-build/26-autonomous-engineering-workflows.md): long-running, bounded workflow patterns and stopping behavior.
 
 The guide keeps knowledge preparation, per-Attempt context selection, harness execution, and workflow governance distinguishable. They may share infrastructure, but they fail differently and need different owners.
+
+Use [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md) when a product or source uses “harness” for more than one of these responsibilities.
 
 ### Capability
 

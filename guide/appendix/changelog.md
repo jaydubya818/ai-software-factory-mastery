@@ -14,6 +14,19 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-07 — Production reliability and incident operations
+
+Added a production operations playbook covering saga and compensation contracts,
+partial dependency-graph failure, blast-radius analysis, declared degraded modes,
+incident command records, scoped response controls, exact known-good restoration,
+verified closure, and ten representative failure-drill families. Expanded the
+existing durable-execution and resilience chapters at their canonical ownership
+boundaries and added a direct reliability entry point on the Guide home. The
+six-area architecture and 44-chapter reading sequence remain unchanged. Reconciled
+the supplied vocabulary with the existing forty-concept architecture map and
+added canonical glossary entries for the remaining concept and alias gaps rather
+than introducing a second taxonomy.
+
 ## 2026-09-07 — Factory system design playbook
 
 Added a practical workload worksheet, Plan admission checks, routing/scheduling

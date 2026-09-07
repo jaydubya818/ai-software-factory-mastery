@@ -26,6 +26,17 @@ process, automation, environments, quality controls, and feedback from intent
 through production. An AI Software Factory uses agents as bounded participants;
 the factory remains the larger engineering system.
 
+**Factory** — A governed, versioned composition of workflows, capabilities,
+policies, context, execution environments, verification rules, evidence
+requirements, and authority designed to produce a defined class of outcome. A
+Factory may use many agents and harnesses; neither one is the Factory.
+
+**Factory Platform** — Shared enterprise infrastructure supporting many governed
+Factories: control plane, identity, policy, registries, model gateway, context,
+orchestration, runtime, sandboxing, observability, evaluation, evidence,
+approvals, and release integration. Shared infrastructure does not collapse the
+identity or authority of each Factory Version.
+
 **Three actors** — The division of labor a factory is built on: humans define
 intent, constraints, priorities, risk, and consequential decisions; agents
 investigate, plan, use tools, modify software, and execute bounded work;
@@ -44,6 +55,16 @@ identity, stores immutable versions and provenance, resolves dependencies and
 compatibility, records evaluation and certification, and enforces lifecycle
 state for reusable factory capabilities. A searchable catalog may present its
 contents but is not itself the authority.
+
+**Capability** — A qualified ability to perform a defined type of work. It may
+be implemented by a deterministic tool, model, agent, human, API, workflow, or
+hybrid composition; it is not synonymous with Agent.
+
+**Capability Implementation** — One concrete, qualified composition that
+supplies a Capability by binding exact Agent Definition or recipe, Harness,
+Model Route, Runtime Artifact, Execution Backend, tools, Context Policy, and
+qualification evidence as applicable. Routing among implementations must retain
+the complete identity and eligibility decision.
 
 **Agent Registry** — The type-specific registry for Agent Definitions and their
 ownership, composition, eligibility, evaluation, support, and lifecycle. An
@@ -124,6 +145,16 @@ its business reason, constraints, acceptance criteria, risk, source references,
 and stop conditions. Intent is the product interface; a literal prompt is only
 one input used to clarify it.
 
+**Builder Experience (BX)** — The complete path by which a builder expresses an
+outcome, supplies constraints, receives a plan, makes consequential decisions,
+reviews evidence, and accepts a result. It is designed customer-backward so the
+builder does not need to select models, harnesses, skills, or protocols.
+
+**Builder journey** — The measurable adoption path from discovery to a first
+accepted outcome, a first trusted production change, repeat use, and eventual
+end-to-end ownership. Usage alone does not prove that the journey is usable or
+that the builder's work has changed.
+
 **Builder surface** — A UI, CLI, API, chat, IDE, or automation entry point
 through which a developer, PM, QA engineer, designer, or other authorized
 builder expresses intent, reviews evidence, or makes a decision. Every surface
@@ -157,9 +188,13 @@ through explicit handoffs, shared typed state, and bounded authority per
 agent. Every extra agent is tokens, latency, and failure surface; the guide's
 rule is one agent until a boundary demands a second (Chapter 23).
 
-**Agent** — A model-driven worker that can reason, choose tools, act, observe the
-result, and continue toward a bounded objective. Capability does not imply
-authority.
+**Model** — An inference engine that supplies reasoning, generation,
+classification, extraction, or other model intelligence. A Model is not an
+Agent, Harness, Runtime, or Factory.
+
+**Agent** — A goal-directed worker that uses model intelligence, instructions,
+context, state, and capabilities to perform bounded work. It is the execution
+entity, not merely an LLM with tools; capability does not imply authority.
 
 **Autonomous agent** — An agent permitted to perform several steps without
 human instruction at every step. Its autonomy remains scoped by policy,
@@ -184,26 +219,41 @@ instructions, capabilities, eligible models, tools, skills, context policy,
 permissions, budgets, stop conditions, escalation, success criteria, and
 evaluation policy. It is configuration, not a credential.
 
-**Agent Harness** 🔑 — The systems surrounding a model that make agent execution
-usable and controllable through tools, context, state, lifecycle, budgets,
-stop conditions, telemetry, and structured results. This guide separates the
-inner harness from the outer harness so that execution behavior is not confused
-with control-plane authority.
+**Agent Loop (Execution Loop)** — The iterative cycle by which an Agent loads
+state, plans or selects, acts, observes, evaluates, updates or replans, and
+repeats until success, a resource bound, stalled progress, policy escalation, or
+a human decision stops it. FDLC does not use “harness” as the name of this loop.
 
-**AI Coding Harness** — An Agent Harness specialized for repository work such
-as code search, file edits, commands, tests, Git operations, and development
-feedback. Product integrations must still identify which inner- and
-outer-harness responsibilities they implement.
+**Agent Harness** 🔑 — The bounded operating environment governing how an Agent
+interacts with models, context, tools, state, execution resources, and external
+systems. It binds the loop, permissions, budgets, stopping, recovery, telemetry,
+provenance, and artifacts. The Harness enforces controls locally; authority for
+those controls normally remains in the Control Plane.
 
-**Inner Harness** — The coding or agent loop that prepares model input, manages
-context, exposes and executes tools, streams observations, compacts or resumes
-a session, and determines when one session stops. It does not own durable
-cross-run workflow authority.
+**Coding Harness (AI Coding Harness)** — An Agent Harness specialized for
+repository work such as code search, file edits, shell and compiler execution,
+tests, build and package systems, Git operations, diagnostics, language servers,
+checkpoints, repair loops, and artifacts. It is not the whole Runtime,
+Orchestrator, Factory, or Factory Platform.
 
-**Outer Harness** — The adapter and supervisor around an inner harness that
-validates the execution contract, provisions the environment, translates
-lifecycle events, enforces runtime budgets, captures artifacts, classifies
-completion, and tears down resources. It cannot accept or publish its own work.
+**IDE Harness** — A Coding Harness whose main interaction and execution surface
+is integrated into an editor and can use open files, cursor and selection state,
+diagnostics, language-server data, terminal and Git state, diffs, workspace
+state, and user approvals. An IDE may host a harness; an IDE is not inherently a
+harness.
+
+**AI Harness** — A non-canonical industry label whose boundary must be resolved
+before use. Translate it to Model Harness, Agent Harness, Coding Harness,
+Evaluation Harness, Runtime, Orchestrator, or Control Plane according to the
+responsibility actually meant.
+
+**Inner harness (external alias)** — An external term that often means the Agent
+Loop or the native Coding Harness. FDLC names the exact boundary instead of
+using this phrase as an architectural primitive.
+
+**Outer harness (external alias)** — An external term that can combine a Harness
+adapter, Runtime supervisor, Orchestrator, and Control Plane controls. FDLC
+separates those responsibilities and records which component owns each one.
 
 **Maximum review iterations** — An outer-loop parameter, owned by the harness
 rather than the model, that caps how many review-and-fix cycles one Attempt may
@@ -244,6 +294,11 @@ evidence model, policy layers, repository profiles and enterprise context,
 evaluation sets from real work, learning signals, and the Builder Experience.
 The default is to build it and treat its contracts as the product.
 
+**Build vs adopt** — The evidence-based decision about which factory layers an
+organization should own. Adopt commodity execution mechanics behind portable
+contracts; build the control, context, evaluation, learning, and builder
+experience that encode the organization's differentiated operating model.
+
 **Platform boundary** — The set of contracts at which an organization's own
 components meet adopted ones. It is a strategic choice and it moves as
 capabilities become commodity; standard contracts and conformance suites are
@@ -269,10 +324,11 @@ diversity, release cadence, issue response time, and governance model. For a
 commercial foundation, the analogous signals are runway, roadmap transparency,
 and customer base.
 
-**Agent Runtime** 🔑 — The execution substrate that starts, observes, controls,
-and terminates agent sessions or Attempts using an exact harness, environment,
-identity, and model route. Runtime capability does not establish business
-authority.
+**Runtime (Agent Runtime)** 🔑 — The execution substrate that starts, observes, controls,
+persists, resumes, and terminates agent sessions or Attempts using an exact
+Harness, environment, identity, and Model Route. Runtime capability answers
+where and how execution lives and survives; it does not establish business
+authority or define how the Agent operates.
 
 **Skill** 🔑 — A reusable, versioned, evaluated method that supplies instructions,
 decision criteria, examples, and tool-use patterns for a class of tasks. A
@@ -336,10 +392,11 @@ model profile, tools, skills, context, state, policy, budgets, stop conditions,
 handoffs, and evaluation into a reproducible Agent Definition. Capability does
 not grant permission to act.
 
-**Harness Engineering** 🔑 — The discipline of controlling and recording complete
-agent sessions through lifecycle hooks, state, checkpoints, tool events,
-artifacts, receipts, replay, and run comparison. A transcript alone is not a
-reproducible run record.
+**Harness Engineering** 🔑 — The discipline of designing an Agent's operating
+envelope: what it can see, which tools it may use, the identity it operates
+under, the state it can retain, its budgets and stopping rules, failure and
+recovery behavior, action validation, telemetry, provenance, and artifacts. It
+implements external authority; it does not create that authority.
 
 **Infrastructure Engineering** — The discipline of providing environments,
 compute, queues, concurrency, timeouts, backoff, circuit breaking, failover,
@@ -385,16 +442,17 @@ grant itself authority.
 to approved workflows, executors, environments, tools, verifiers, budgets, risk
 boundaries, and recovery limits.
 
-**Factory Version** — An immutable, qualified composition of Factory
-capabilities used to govern a class of execution. It binds exact workflow,
-agent, Execution Profile, policy, verifier, budget, repository, and
-qualification identities. Creation and qualification do not establish
-readiness, activation, or authority for a particular WorkOrder.
+**Factory Version** — An immutable, qualified composition used to govern a
+class of execution. It binds exact Work Graph, Agent Definition, Harness
+Version, Capability Implementations, Model Profiles, Runtime Artifacts, Sandbox
+Profiles, context, policy, verifier, budget, repository, and qualification
+identities. Creation and qualification do not establish readiness, activation,
+or authority for a particular WorkOrder.
 
-**Execution Profile** — The governed execution composition binding the runtime,
-harness, model and tool capabilities, execution backend, environment, and
-applicable policy for an Attempt. A model or harness name alone is not a
-reproducible execution identity.
+**Execution Profile** — The governed execution composition that binds Runtime,
+Harness, Model, Capability Implementations, Execution Backend, Sandbox Profile,
+environment, and applicable policy for an Attempt while preserving each
+identity separately. A Model or Harness name alone is not reproducible.
 
 **Workflow Contract** — A versioned definition of execution nodes or steps,
 dependencies, input and output schemas, structured completion, failure policy,
@@ -649,6 +707,16 @@ capabilities, constraints, cost, latency, availability, security classification,
 qualification evidence, and lifecycle status. Registration does not imply
 production eligibility.
 
+**Model abstraction** — A stable calling and result contract that lets eligible
+model routes change without changing the workflow's authoritative records or
+control logic. It creates replaceability; it does not make different models
+equally capable or interchangeable without qualification.
+
+**Model specialisation** — Matching code-specialized, reasoning, frontier,
+lower-cost, hosted, or tuned models to the workload classes they have proven.
+Specialisation is an eligibility decision supported by evaluation, not a label
+in a provider catalog.
+
 **Exact model route** — A digest-bound execution identity that includes the
 provider route, model, harness adapter and configuration, and runtime artifact.
 It prevents a familiar model name from hiding materially different execution.
@@ -698,6 +766,17 @@ security scanning, tests, policy checks, change classification, and
 dependency analysis run before any model is invoked, so that inference is
 spent only on what software cannot decide reliably. The sequence is
 deterministic → cheap model → specialised model → frontier model.
+
+**Deterministic automation** — Code that applies known rules with repeatable
+inputs and outputs, including parsers, linters, type checkers, tests, scanners,
+policy engines, and dependency analysis. It should resolve facts and enforce
+contracts before inference is spent on judgment; repeatability alone does not
+prove the rule is correct.
+
+**Repository intelligence** — Current, queryable knowledge of a repository's
+symbols, dependencies, owners, architectural boundaries, build and test systems,
+standards, history, and risk surfaces. A Repository Profile binds the relevant
+facts and policies into a versioned admission record for one repository.
 
 **Repository profile** 🔑 — The versioned readiness record for one repository:
 languages, build and test systems, ownership, conventions, architectural
@@ -762,7 +841,7 @@ model adapter changes how it is called.
 
 **Harness as intelligence multiplier** — A harness does not merely invoke a model; it multiplies the model's usefulness by supplying workflow, context, tools, feedback, verification, and adaptation. Model capability ≠ agent capability ≠ factory capability (Chapter 16).
 
-**Universal meta-harness** — An execution system that constructs or selects the workflow needed for a defined outcome — given goal, constraints, and a verification contract it chooses decomposition, workers, skills, strategy, and verification — instead of running a predetermined sequence (Chapters 13, 15).
+**Universal meta-harness (external alias)** — A source-specific phrase that may mean cross-Harness governance or adaptive workflow construction. In canonical FDLC language, map its responsibilities to the Control Plane, Agent Factory, Orchestrator, Work Graph, Runtime, and Sandbox. Use **outcome-driven orchestration** when the intended capability is constructing or selecting a workflow from a goal, constraints, eligible capabilities, and a verification contract (Chapters 13, 15).
 
 **Outcome-driven execution** — Execution governed by verifiable desired outcomes rather than prescribed steps: produce X subject to Y and prove conditions A–F before completion (Chapter 13).
 
@@ -1550,9 +1629,21 @@ still merges in a first version.
 
 ## Runtime concepts
 
-**Orchestrator** — The control-plane actor that sequences authorized work,
-selects eligible execution paths, reacts to events, and escalates exceptions. It
-does not approve its own plan or evidence.
+**Orchestrator** — The durable coordinator that advances a Work Graph by
+tracking dependencies and task state, selecting eligible next work, scheduling
+fan-out and fan-in, handling retries, pauses, human waits, compensation and
+recovery, and deciding when the overall run reaches a terminal state. It does
+not approve its own Plan or evidence.
+
+**Work Graph (Agent Graph)** — The explicit topology of work: typed nodes,
+dependencies, branches, joins, gates, interrupts, cycles, error transitions, and
+terminal states. Nodes do work; edges determine what happens next. An Agent Loop
+may run inside a node, but the Graph coordinates work across nodes.
+
+**Graph Engineering** — The discipline of designing a Work Graph's topology and
+state transitions: parallelism, dependencies, human gates, joins, retry and
+escalation paths, failure behavior, and termination. It answers what work should
+happen next; Loop Engineering answers how one Agent makes progress.
 
 **Executor** — A runtime adapter that performs authorized work using a specific
 agent or tool environment and returns structured events, artifacts, and status.
@@ -1688,6 +1779,17 @@ report; the worker cannot self-authorize from it.
 provider, image and toolchain digests, identity, filesystem, network, secrets,
 resource ceilings, lifecycle, teardown, supported workloads, and qualification
 evidence. Promotion grants only its explicitly scoped eligibility.
+
+**Sandbox** — An isolated execution environment provisioned by or beneath a
+Runtime to constrain filesystem, process, network, credential, dependency, and
+resource effects for one Attempt. The Runtime manages execution lifecycle; the
+Sandbox contains its blast radius.
+
+**Secure sandboxing** — Enforcing an Attempt's isolation model through scoped
+identity and credentials, filesystem and network policy, tool permissions,
+resource and time limits, frozen scope, teardown, and an independent stop path.
+It bounds what untrusted execution may affect; it does not make generated code
+or model decisions trustworthy.
 
 **Repository Workspace Manifest** — A versioned map of repositories, canonical
 identities, baseline selection, checkout layout, ownership, relationships,
@@ -1917,23 +2019,21 @@ act with one tool call, verify with an external signal, and repeat until a goal
 condition is met. Completion is decided by evidence, never by the model's own
 judgment or a step count.
 
-**Graph** — The workflow layer above the loop: nodes do one unit of work
+**Graph** — A short alias for Work Graph: nodes do one unit of work
 against typed shared state, conditional edges read that state and name the
 next node, and checkpoints after each node allow pause, replay, and human
 review. A loop decides whether execution continues; a graph decides where it
 goes.
 
-**Harness** — The runtime wrapped around a model that determines what its
-reasoning can actually do: the callable tool set, permissions and approval
-gates, the context it is shown, the execution environment, and the immutable
-trace of every turn. Model capability and agent capability differ exactly by
-what the harness exposes.
+**Harness** — A short alias for Agent Harness: the bounded operating envelope
+that determines how an Agent may use model intelligence, context, tools, state,
+resources, and external systems. It is not the Agent Loop, Runtime,
+Orchestrator, Control Plane, or Factory Platform.
 
-**Execution graph** — The six typed nodes every production agent runs in
-order — perceive, build context, decide and plan, act, evaluate, respond —
-joined by stateful edges with conditional routing, parallel branches,
-subgraphs, checkpoints, and resumability. Graph engineering is the discipline
-of designing it; the harness owns it.
+**Agent execution graph** — An implementation of one Agent Loop as explicit
+internal states such as perceive, build context, decide, act, evaluate, and
+respond. It may live inside a Harness. It remains distinct from the Work Graph
+that the Orchestrator advances across tasks, workers, and human gates.
 
 **Loop engineering (the bounded feedback path)** — Within one execution
 graph, what runs when evaluation says the goal is not complete: observe,
@@ -1948,11 +2048,10 @@ world: MCP servers, APIs, code execution, databases, files, and other agents,
 behind schemas, permissions, authentication, secrets handling, sandboxing, and
 approvals. A tool the gateway does not expose does not exist for the agent.
 
-**Meta-harness** — A governance layer across several harnesses (hosted coding
-agents, internal agents, domain agents) that supplies composition (which agents
-exist and who may delegate to whom), policy enforced once, shared resumable
-sessions, and pluggable isolation. In this guide its responsibilities belong to
-the control plane and Agent Factory governance.
+**Meta-harness (external alias)** — A non-canonical label sometimes used for
+governance and coordination across several Harnesses. FDLC assigns those
+responsibilities explicitly to the Factory Platform, Control Plane, Agent
+Factory, Orchestrator, Runtime, and Sandbox infrastructure.
 
 **Compaction threshold** — The context size at which a harness summarizes
 conversation history rather than re-sending it; a deliberate default that
@@ -1996,7 +2095,11 @@ be counted, deduplicated, or measured.
 at promotion time, with the completion record and forensic bundle in hand.
 The control tower routes on owners; an incident without one is telemetry.
 
-**Loop engineering** — The discipline of designing agent workflows that grow more reliable, efficient, and capable through repeated execution and measured feedback: trigger design, context assembly, execution, state, logging, verification, evaluation, outcome capture, failure classification, refinement, regression testing, controlled promotion. A loop acts, observes, reasons, and repeats to a termination condition; a chain runs once (Chapter 24).
+**Loop engineering** — The discipline of improving how one Agent iterates toward
+completion: context sufficiency, next-action selection, tool and model fit,
+progress evaluation, replanning, and deterministic stopping. It does not own the
+Work Graph or promotion of factory changes; those belong to Graph Engineering,
+Orchestration, and governed learning (Chapters 23–24).
 
 **Inner loop** 🔑 — Fast, inexpensive feedback available during execution — tests, types, compiler, linters, static analysis, architecture rules, policy checks, local verifiers — that lets the producing agent detect and correct its own mistakes before handoff. Its objective is autonomy (Chapter 16).
 
@@ -2390,6 +2493,11 @@ Evaluate → Learn → Propose → Verify → Promote) run against the factory's
 components with the same records and gates as customer software. Never
 Execute → automatically rewrite production.
 
+**System-level learning** — Diagnosing recurring outcomes and changing the
+factory component that caused them: a rule, context source, prompt, skill, tool,
+route, evaluator, budget, or workflow. An observation becomes a candidate;
+evaluation and governed promotion decide whether it becomes active behavior.
+
 **Adaptation ladder** — The ordered set of ways to change agent behaviour, by
 how much of the system each touches and how reversible it is: Rules →
 Retrieval/Context → Prompt → Skill → Routing → Fine-tuning → Preference
@@ -2590,6 +2698,17 @@ capabilities. The role transfers operating knowledge and ownership to the
 team; it is not open-ended staff augmentation or a substitute for accountable
 product and platform owners.
 
+**Forward-deployed engineering (FDE)** — A bounded adoption practice in which
+an engineer embeds with a team, observes real friction, co-builds the first
+working corridor, productises repeated needs, and returns reusable capabilities
+to the shared platform. Its success measure is how quickly the team no longer
+needs embedded help.
+
+**Migration and adoption** — Moving teams into a governed factory one proven
+workflow at a time through a useful adoption wedge, migration tooling, builder
+enablement, measured outcomes, and a path to self-service. Adoption is sustained
+use of the governed path; it is not account creation or a platform mandate.
+
 **Migration tooling** — The productised form of the most common co-build:
 scripts and adapters that move a team's existing agent, prompts, or
 evaluation cases onto the platform's contracts in the gravity-well order, so
@@ -2605,8 +2724,6 @@ absorbs it.
 template, migration script, or document that a bespoke solution becomes when
 it is productised: versioned in the Agent Factory with an owner and an
 evaluation, rather than a branch in one team's repository.
-
-**Harness engineering (discipline)** — Designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops that let agents complete increasingly complex work with less intervention at equal or better quality: engineering the system in which agents engineer the software (Chapter 16).
 
 **Factory control plane** — The control plane's explicit responsibility list: loop inventory, scheduling, triggers, permissions, identity, model configuration, context deployment, skill versions, policy, budgets, observability, logs, evaluations, verification, dashboards, promotion. Own this even where runtimes are adopted (Chapter 13).
 

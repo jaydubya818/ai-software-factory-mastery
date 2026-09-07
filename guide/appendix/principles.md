@@ -51,15 +51,15 @@ The principles are grouped by the concern they protect. Several appear in more t
 
 ## Harness and execution
 
-**The model reasons. The harness controls.** The harness decides which model runs, what context it sees, which tools it may call, what state persists, and when it must stop. → [15. Coding harnesses and agent protocols](../03-build/15-coding-harnesses-and-agent-protocols.md)
+**The model supplies intelligence. The agent works. The harness bounds operation. The control plane owns authority.** The Harness enforces which model, context, tools, state, budgets, and stopping rules apply from the governed execution contract. → [Execution boundaries and canonical terminology](./execution-boundaries-and-terminology.md)
 
 **The harness turns probabilistic intelligence into bounded execution.** It is an execution boundary, not a loop around an LLM. → [15. Coding harnesses and agent protocols](../03-build/15-coding-harnesses-and-agent-protocols.md)
 
-**Frameworks change. The harness, the graph, and the feedback loops remain.** Every production agent is one diagram: a harness around a six-node execution graph, a bounded loop, memory, a tool gateway, a trust rail, and an observability floor. → [15. Coding harnesses and agent protocols](../03-build/15-coding-harnesses-and-agent-protocols.md)
+**Loop, Harness, Graph, Runtime, and Control Plane are different boundaries.** The Loop governs iteration, the Harness the worker's operating envelope, the Graph the topology of work, the Runtime execution survival, and the Control Plane enterprise authority. → [Execution boundaries and canonical terminology](./execution-boundaries-and-terminology.md)
 
-**The model is just weights. The harness is the agent.** Model capability and agent capability differ exactly by what the harness exposes; a better prompt cannot compensate for a missing capability. → [18. Agent architecture](../03-build/18-agent-architecture.md)
+**Model capability is not Agent capability.** Agent capability emerges from the Model plus its Harness, Capability Implementations, context, state, and Loop. A better prompt cannot compensate for a missing operation. → [18. Agent architecture](../03-build/18-agent-architecture.md)
 
-**Loop makes the work verifiable. Graph makes the workflow structured. Harness makes the model operational. Meta-harness makes many agent environments governable.** Diagnose a failure at its layer before touching the prompt or the model. → [18. Agent architecture](../03-build/18-agent-architecture.md)
+**Diagnose the boundary before changing the model.** Inspect reasoning, iteration, routing, operating controls, execution survival, isolation, and enterprise authority at their owning boundaries. → [Execution boundaries and canonical terminology](./execution-boundaries-and-terminology.md)
 
 **The loop stops when evidence says stop.** A goal condition such as "tests pass", never a step count and never the model's own belief that the work looks right. → [23. Agent and loop engineering](../03-build/23-agent-and-loop-engineering.md)
 
@@ -355,8 +355,8 @@ The principles above are sentences. Underneath them are fifty concepts a reader 
 
 **Harness**
 
-2. **Agent Harness** — The execution boundary around the model that decides which model runs, what context it sees, which tools it may call, what persists, and when it stops. → [15](../03-build/15-coding-harnesses-and-agent-protocols.md)
-3. **Agent Runtime** — The execution platform that hosts harnesses: worker fleet, sandboxes, scheduling, leases, durable state, and recovery. → [13](../03-build/13-control-plane-orchestrator-and-execution-plane.md)
+2. **Agent Harness** — The bounded operating envelope that governs how an Agent uses models, context, tools, state, resources, and external systems. → [15](../03-build/15-coding-harnesses-and-agent-protocols.md)
+3. **Runtime** — The execution substrate that starts, hosts, persists, resumes, and terminates Harness invocations using qualified compute and Sandboxes. → [13](../03-build/13-control-plane-orchestrator-and-execution-plane.md)
 4. **Control Plane** — The durable authority layer owning intent, policy, state, approvals, and evidence rules; it decides, and never performs, the work. → [13](../03-build/13-control-plane-orchestrator-and-execution-plane.md)
 5. **Durable Execution** — Tasks, Attempts, leases, checkpoints, idempotency, and reconciliation that let work outlive any process, conversation, or crash. → [14](../03-build/14-durable-execution.md)
 

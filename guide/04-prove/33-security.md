@@ -461,7 +461,7 @@ Assessment pinned to `main` commit [`b31e275`](https://github.com/jaydubya818/Mi
 - The execution environment is a frozen security boundary — revision, tools, credentials, filesystem, network, dependencies, limits, timeouts, data classification — fixed before the worker starts. Autonomy means narrower boundaries, not broader ambient access.
 - The trust level of an input decides the isolation level of what runs on it. Tools are privilege boundaries; content safety, schema validity, authorization, and transactional correctness are four different checks. Memory can persist an attack beyond the run that introduced it.
 - Tags locate; digests identify. Provenance, attestation, signature, and transparency are different claims, and none is a quality verdict — verify at the consumption boundary against an expected signer and lineage.
-- Seven security layers — identity, policy and access, runtime control plane, detection, response and containment, infrastructure foundation, visibility — crossed by five flows prove who acted inside what policy. Only independent verification proves the change is safe; a trust score can demote but never promote.
+- Seven security layers — identity, policy and access, runtime enforcement, detection, response and containment, infrastructure foundation, visibility — crossed by five flows prove who acted inside what policy. Only independent verification proves the change is safe; a trust score can demote but never promote.
 
 ## Go deeper
 

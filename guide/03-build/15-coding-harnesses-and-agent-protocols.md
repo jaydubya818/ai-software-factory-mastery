@@ -4,12 +4,12 @@ part: build
 chapter: 15
 summary: "How a factory adopts coding harnesses behind an owned execution contract and places MCP, ACP, AG-UI, and A2A at the boundaries they actually standardize."
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
-infographics: [inner-outer-harness, execution-loop, harness-control-plane, agent-contract, meta-harness, protocol-boundaries]
+infographics: [execution-boundaries, execution-loop, harness-control-plane, agent-contract, factory-platform, protocol-boundaries]
 ---
 
 # 15. Coding harnesses and agent protocols
 
-A factory can adopt a coding harness without surrendering its delivery contract. This chapter defines the boundary: the harness owns the model-and-tools loop, while the factory owns identity, authority, durable state, evidence, and acceptance. It also places MCP, ACP, AG-UI, and A2A at the specific seams they standardize.
+A factory can adopt a coding harness without surrendering its delivery contract. This chapter defines the boundary: the harness governs how one agent operates, while the factory owns identity, authority, durable workflow state, evidence requirements, and acceptance. It also places MCP, ACP, AG-UI, and A2A at the specific seams they standardize.
 
 ## The problem
 
@@ -21,159 +21,135 @@ Protocols promise to fix this and partly do, but each one standardizes a single 
 
 ## How it works
 
-### Two harnesses around one loop
+### Resolve the boundary before naming the harness
 
-Two terms need pinning down before the split. An **AI Coding Harness** is an agent harness specialized for repository work: code search, file edits, commands, tests, Git operations, and development feedback. What it enables is **Autonomous Coding**, bounded software-engineering work that the agent may pursue across several tool-use steps without continuous human input. That phrase describes execution autonomy only; it never means autonomous approval, merge, or release, and a product integration that claims the label must still identify which inner- and outer-harness responsibilities it implements.
+Most disagreement about “agent harness” is a boundary disagreement. Some people
+mean the iteration loop inside a worker. Some mean the operating environment
+around the worker. Some mean the workflow coordinating many workers. Others
+include enterprise policy, identity, budgets, and emergency controls. FDLC gives
+each responsibility its own term, owner, lifecycle, and qualification boundary.
 
-The word "harness" hides two different jobs. The **inner harness** owns one model-tool loop. It prepares model input, manages context, exposes tools, executes tool calls under its own permission model, streams observations, compacts or resumes the session, and decides when the loop stops. That is what Claude Code or Codex does when you type a prompt.
+| Boundary | Canonical FDLC term | Question it answers |
+| --- | --- | --- |
+| Intelligence | Model | What reasoning or generation is available? |
+| Worker | Agent | Who is pursuing the bounded task? |
+| Iteration | Agent Loop or Execution Loop | How does this worker make progress and stop? |
+| Operating envelope | Agent Harness | Under what conditions may this worker operate? |
+| Work topology | Work Graph | What work can happen next? |
+| Coordination | Orchestrator | Which eligible node runs next, and how does the overall run progress? |
+| Execution substrate | Runtime | Where and how does execution live and survive? |
+| Isolation | Sandbox | What can this execution affect? |
+| Enterprise authority | Control Plane | Who may authorize, revoke, approve, and release? |
 
-The **outer harness** makes that loop operable inside the factory. It validates the frozen manifest, provisions the environment, starts or resumes the inner harness, converts native events into the factory's schema, enforces budgets and timeouts, requests policy decisions, captures artifacts, classifies completion, and tears down resources. It is the thing HumanLayer's Dexter calls the outer harness and the thing many teams have quietly built as a pile of shell scripts.
+External material often calls the Agent Loop an “inner harness” and a mixture of
+adapter, supervisor, Runtime, Orchestrator, and policy controls an “outer
+harness.” Treat those as source-specific aliases. In canonical FDLC writing,
+name the exact boundary instead.
 
-An analogy that holds: the inner harness is a skilled temp worker who arrives with their own toolbox and habits. The outer harness is the site foreman who signs them in, hands them one work order, watches the clock, keeps them out of areas they are not cleared for, collects the timesheet and the finished part, and walks them out. The foreman does not tell the worker how to hold a drill. The worker does not decide what gets shipped.
+An **Agent Loop** loads state, plans or selects, acts, observes, evaluates,
+updates or replans, and repeats. It terminates on proven success, a turn, time,
+token, or cost limit, stalled progress, policy escalation, or a required human
+decision. Loop Engineering improves next-action choice, context sufficiency,
+progress evaluation, replanning, and stopping. The loop may run inside one Work
+Graph node; it is not the graph.
 
-Neither harness owns Mission approval, WorkOrder acceptance, independent verification, publication authority, merge, or release. Those stay in the control plane and the verification path described in [Chapter 13](./13-control-plane-orchestrator-and-execution-plane.md) and [Chapter 27](../04-prove/27-quality-and-evidence-architecture.md).
+A **Work Graph** holds nodes, dependencies, branches, joins, gates, interrupts,
+cycles, failure transitions, and terminal states. Nodes do work; edges decide
+what happens next. The **Orchestrator** advances this durable graph across agents,
+harness invocations, deterministic work, and human waits. Graph Engineering
+designs topology. Orchestration coordinates work. Neither term means the
+worker's Agent Loop.
 
-<!-- infographic: inner-outer-harness -->
-> **Infographic — Inner and outer harness.**
+### What the Agent Harness owns
 
-```mermaid
-flowchart LR
-    CP["Control plane"] -->|"Attempt contract"| Outer["Outer harness adapter"]
-    Outer -->|"session configuration"| Inner["Inner coding harness"]
-    Inner --> Model["Model route"]
-    Inner --> Tools["Native and MCP tools"]
-    Inner --> Env["Development environment"]
-    Inner -->|"native events"| Outer
-    Outer -->|"normalized events, artifacts, completion"| CP
-    CP --> Verify["Independent verification"]
-```
+An **Agent Harness** is the bounded operating environment governing how an Agent
+interacts with models, context, tools, state, execution resources, and external
+systems. It converts raw model intelligence into an operational capability.
 
-### What the harness owns
+*A harness determines how an agent is allowed to operate.*
 
-Inner and outer together, the harness is where probabilistic reasoning meets deterministic control. The model reasons about the task. The harness controls which model runs, what context it receives, which tools it can invoke, what state persists, how much budget remains, how many retries are left, which execution environment it stands in, when it must stop, and what evidence gets recorded. That is not a loop around an LLM. It is the execution boundary that turns an LLM into an operable enterprise capability.
+Typical responsibilities include the task contract, instructions, context
+construction and compression, conversation state and memory views, tool and
+model interfaces, the Agent Loop, local permission enforcement, capability
+restrictions, retries, recovery behavior, stopping conditions, resource budgets,
+artifact handling, telemetry, provenance, and validation of tool results.
 
-*The model reasons. The harness controls.*
+| Concern | Harness responsibility | External owner or dependency |
+| --- | --- | --- |
+| Model and tools | Expose the exact qualified interfaces | Capability Registry and Model Gateway establish eligibility |
+| Context | Construct the working set from the frozen package | Context Policy and source authority define what may be supplied |
+| Loop | Run iteration and enforce stopping rules | Execution Profile and policy supply the bounds |
+| State | Maintain session state and emit checkpoints | Runtime and Control Plane retain durable state |
+| Permissions | Enforce local scopes and approvals | Control Plane owns identity, grants, policy, and revocation |
+| Recovery | Stop safely and report enough state to resume or reconcile | Runtime and Orchestrator own survival and cross-run progress |
+| Evidence | Emit attributable events, receipts, artifacts, and provenance | Independent Verification determines what the evidence proves |
 
-The full list of harness responsibilities, with the side of the seam each usually lands on:
-
-| Responsibility | Typically owned by |
-|---|---|
-| Model invocation | Inner |
-| Agent lifecycle (start, resume, pause, cancel, terminate) | Outer, driving the inner |
-| Context assembly | Inner, from a package the outer freezes |
-| State (what persists between steps and across crashes) | Outer, in the durable state machine ([Chapter 14](./14-durable-execution.md)) |
-| Tool discovery | Inner, from a registry the outer scopes |
-| Tool execution | Inner, behind a gateway the outer authorizes |
-| Permissions | Outer, through the control plane; the inner harness's own permission model is a convenience, not the boundary |
-| The execution loop | Inner runs it; outer bounds it |
-| Budget and timeouts | Outer |
-| Checkpoints | Outer records; inner may create |
-| Recovery | Outer |
-| Observability | Both; the outer normalizes what the inner emits |
-| Evaluation hooks | Outer |
-| Human intervention | Outer, surfacing structured decision requests |
-
-Where a vendor harness already covers a row, the outer harness's job is to verify that it does so truthfully and to keep an independent record. Where it does not, the outer harness supplies it. Either way the rows that touch authority (permissions, budget, stopping, evidence) belong outside the model and outside any component the model can talk into changing.
-
-*The harness turns probabilistic intelligence into bounded execution.*
-
-### The execution loop
-
-Every harness runs the same loop underneath its product surface. Making it explicit is the fastest way to see where control lives.
+The harness may enforce controls. The Control Plane owns the authority behind
+those controls. A local maximum-turn limit, tool allowlist, filesystem scope, or
+output limit may originate in the Factory Version, Execution Profile, policy
+engine, capability qualification, or accountable user decision. Keep that
+authority outside the replaceable Harness wherever practical.
 
 <!-- infographic: execution-loop -->
-> **Infographic — The execution loop.**
-
-```mermaid
-flowchart TD
-    Load["Load task + state"] --> Ctx["Assemble context<br/>(only what this step needs)"]
-    Ctx --> Route["Select model / route"]
-    Route --> Reason["Model reasons and plans"]
-    Reason --> Act["Select next action"]
-    Act --> Need{"Action needed?"}
-    Need -->|no| Out["Emit output"]
-    Need -->|yes| Policy["Policy check / authorize"]
-    Policy -->|denied| Update
-    Policy -->|allowed| Tool["Execute tool"]
-    Tool --> Observe["Observe result"]
-    Observe --> Update["Update state<br/>(outside the model)"]
-    Out --> Update
-    Update --> Eval["Evaluate progress"]
-    Eval --> Decide{"Next?"}
-    Decide -->|continue| Ctx
-    Decide -->|retry| Ctx
-    Decide -->|checkpoint| Load
-    Decide -->|escalate| Human["Human decision"]
-    Decide -->|pause| Wait["Wait state"]
-    Decide -->|"stop / complete"| Done["Structured completion"]
-```
-
-Read it as the heartbeat of the agent. Each beat loads the task and its current state, assembles only the context this step needs, selects a model, lets the model reason and propose an action, and then does the thing that separates a harness from a chat client: a policy check before any tool runs. The tool executes, its result is observed, and state is updated outside the model, in the durable record, not in the transcript. Then the runtime evaluates progress and picks one of continue, retry, checkpoint, escalate, pause, stop, or complete.
-
-Two properties of the loop carry the whole design. The model proposes the next action; the runtime decides whether that action is permitted and whether the loop continues. And every input to the next beat comes from persisted state, so a beat that starts on a different worker after a crash sees the same world.
-
-### The harness as runtime control plane: one diagram for every production agent
-
-Strip any production agent — a coding agent, a support agent, an on-call triage agent — down to what survives a framework change, and the same diagram appears. It has one outer boundary, three disciplines inside it, three services beside it, and one floor beneath it. Learn the diagram once and every vendor's architecture page becomes a labelled instance of it.
-
-<!-- infographic: harness-control-plane -->
-> **Infographic — The agent harness as runtime control plane.**
+> **Infographic — Distinct execution boundaries.**
 
 ```mermaid
 flowchart TB
-    subgraph H["AGENT HARNESS — runtime control plane: orchestration · run state · context assembly · model routing · policies · budgets · checkpoints · recovery"]
-        direction TB
-        T["TRUST, SAFETY, IDENTITY<br/>input / output guardrails · identity and access · rate and cost limits · human approval"]
-        subgraph X["EXECUTION GRAPH — graph engineering"]
-            direction TB
-            P["1 Perceive<br/>user · event · API · sensor"] --> B["2 Build context<br/>instructions · state · memory · retrieved knowledge"]
-            B --> D["3 Decide and plan<br/>route model · decompose · choose next action<br/>parallel tasks · subgraphs · handoffs"]
-            D --> A["4 Act<br/>invoke model, tool, workflow, or agent"]
-            A --> E["5 Evaluate<br/>validate result · quality · policy · goal progress"]
-            E --> Q{"Goal complete?"}
-            Q -- yes --> R["6 Respond<br/>answer · cite · approve · escalate"]
-            Q -- no --> L["LOOP ENGINEERING<br/>observe → diagnose → refine / replan → retry<br/>termination criteria · max iterations · time / token / cost budgets"]
-            L --> D
-        end
-        M["MEMORY AND KNOWLEDGE<br/>working / session · episodic / semantic · retrieval / RAG<br/>read · write · retain · forget"]
-        S["SECURE TOOL GATEWAY<br/>MCP · APIs · code · databases · files · other agents<br/>schemas · permissions · auth · secrets · sandbox · approvals"]
-        T -. policy .-> D
-        B <-. read .-> M
-        E -. write-back .-> M
-        A <-. every call .-> S
+    CP["Control Plane: authority"] -->|"Execution Profile + manifest"| O["Orchestrator / Work Graph"]
+    O -->|"eligible node"| H["Agent Harness: operating envelope"]
+    subgraph H
+        A["Agent: worker"] --> L["Agent Loop: iterate"]
+        M["Model: intelligence"] --> A
+        T["Tools: bounded effects"] --> L
     end
-    O["OBSERVABILITY AND AGENTOPS — traces · logs · metrics · latency · token and cost usage · quality · audit trail"]
-    H --> O
+    H --> R["Runtime: host and survive"]
+    R --> S["Sandbox: isolate"]
+    H -->|"events · artifacts · completion"| CP
+    CP --> V["Independent verification"]
 ```
 
-**The outer boundary is the harness.** Everything inside the frame is what the harness owns as a **runtime control plane**: orchestration, run state, context assembly, model routing, policies, budgets, checkpoints, and recovery. The model is invoked from inside this frame; it never owns the frame. That is the same claim as the responsibility table above, drawn as a picture.
+The diagram shows responsibility, not strict process nesting. A deployed product
+may package several boxes together, but the immutable identities and authority
+boundaries remain separate.
 
-**The execution graph is the middle.** Six typed nodes, in order, are the anatomy of one turn of any agent:
+### Coding and IDE Harnesses
 
-| Node | What it does | What it must not do |
-|---|---|---|
-| 1 Perceive | Take in the trigger: a user message, an event, an API call, a sensor reading. Attach identity and scope. | Act on the input before it has been classified and guarded. |
-| 2 Build context | Assemble instructions, current state, memory, and retrieved knowledge into the context for this step only. | Load everything that exists; context is selected, not accumulated. |
-| 3 Decide and plan | Route to a model, decompose the task, choose the next action; fan out parallel tasks, subgraphs, or handoffs where the plan calls for them. | Widen its own authority or invent tools that were not exposed. |
-| 4 Act | Invoke a model, a tool, a workflow, or another agent — through the gateway, never around it. | Touch a system the gateway did not authorize. |
-| 5 Evaluate | Validate the result against quality criteria, policy, and goal progress; write back what was learned. | Accept the model's own report of success as evidence. |
-| 6 Respond | Answer, cite, approve, or escalate — the structured completion of the turn. | Complete silently; every response is a record. |
+A **Coding Harness** is an Agent Harness specialized for repository work: code
+search, file edits, shell and compiler execution, tests, build and package
+systems, Git operations, diffs, diagnostics, language servers, repository
+instructions, checkpoints, repair loops, and artifacts. An **IDE Harness** is a
+Coding Harness whose primary interaction and execution experience is integrated
+into an editor. An IDE can host a Coding Harness; it is not inherently one. A
+terminal-based harness remains a Coding Harness without being an IDE Harness.
 
-The edges are the discipline of **graph engineering**: typed nodes, stateful edges, conditional routing, parallel branches, subgraphs, checkpoints, and resumability. A conditional edge after Decide reads state and names the next node; a checkpoint after each node is what makes pause, replay, and human review possible; a subgraph is how a specialist agent is invoked without giving it the parent's authority. [Chapter 23](./23-agent-and-loop-engineering.md) builds the graph in detail.
+The familiar classification is useful: Claude is a Model. Claude Code is a
+Coding Harness or coding-agent operating environment. A hardened container is a
+Runtime Artifact or Sandbox according to the boundary. A durable graph executor
+is an Orchestrator. Mission Control is the Control Plane and factory
+coordination. A Software Delivery Factory is the outcome-producing composition
+that uses all of them. Product packaging may differ, so classify by
+architectural responsibility rather than marketing terminology.
 
-**The loop is the feedback path.** When Evaluate answers "goal not complete", control does not return blindly to Decide; it passes through **loop engineering**: observe what actually happened, diagnose why it fell short, refine the plan or replan, then retry. The loop is bounded by termination criteria — maximum iterations, time, token, and cost budgets — set by the harness, not chosen by the model. Without the diagnose step a retry is just the same mistake with a higher bill; without the bound the loop is an outage.
+The broad phrase **AI harness** is not a canonical FDLC primitive. Translate it
+to Model Harness, Agent Harness, Coding Harness, Evaluation Harness, Runtime,
+Orchestrator, or Control Plane after establishing which boundary is meant.
 
-**Three services stand beside the graph, and the graph never bypasses them.**
+### Harness versus Runtime and Orchestrator
 
-- *Memory and knowledge* — working or session memory, episodic and semantic memory, and knowledge retrieval — is read by Build context and written by Evaluate (the write-back). Read, write, retain, forget are explicit operations with policy; nothing enters long-term memory because a model happened to say it.
-- *The secure tool gateway* is the only door from Act to the world: MCP servers, APIs, code execution, databases, files, and other agents, all behind schemas, permissions, authentication, secrets handling, sandboxing, and approvals. A tool the gateway does not expose does not exist for the agent, which is exactly the point.
-- *Trust, safety, and identity* is the rail on the left: input and output guardrails on Perceive and Respond, identity and access on every call, rate and cost limits on the loop, and human approval as a first-class node that Decide can route to. Policy enters the graph at Decide, not after the fact.
+The Harness answers how the Agent operates. The Runtime answers where and how
+execution lives and survives: process lifecycle, compute, queues, leases,
+persistence, checkpoints, resume, retry infrastructure, filesystem and network
+lifecycle, credential injection, concurrency, and isolation provisioning. The
+Sandbox is the isolated environment the Runtime provisions for an Attempt.
 
-**Observability and AgentOps is the floor.** Traces, logs, metrics, latency, token and cost usage, quality signals, and the audit trail are emitted by every node and every service, and they are the only thing an operator ever sees of a run. They explain; they do not decide ([Chapter 35](../05-operate/35-observability-telemetry-and-forensics.md)).
+The Orchestrator answers what executes next across the Work Graph. It owns
+dependencies, fan-out and fan-in, pauses, human waits, compensation, recovery,
+and terminal workflow state. A Harness controls one worker's operating envelope;
+an Orchestrator coordinates work across workers and time.
 
-*Frameworks change. The harness, the graph, and the feedback loops remain.*
-
-The diagram also gives a fast diagnosis when an agent underperforms. Wrong or missing input handling: Perceive and the guardrails. Hallucination or stale facts: Build context and the memory service. Wrong action chosen: Decide and the routing policy. Action refused or unsafe: the gateway. Confident wrong answers: Evaluate is trusting the model. Runaway cost: the loop's termination criteria. Nobody can explain what happened: the floor. Fixing the prompt is the right answer for none of these.
+The full canonical map, capability implementation example, failure-diagnosis
+questions, and executive explanation are in [Execution boundaries and canonical
+terminology](../appendix/execution-boundaries-and-terminology.md).
 
 ### A harness is not a software factory
 
@@ -221,38 +197,57 @@ flowchart TB
 
 The analogy is a shipping container. Nobody who ships goods builds their own crane; the crane, the ship, and the truck are commodity mechanics. What the shipper owns is the container standard: the dimensions, the corner fittings, the seal, the manifest on the door. Because the standard is fixed, any port can handle any box, and the shipper can change carriers without repacking. The agent loop is the crane. The agent contract is the container.
 
-### The meta-harness: one governance layer across many harnesses
+### One Factory Platform across many Harnesses
 
-Nobody runs one harness. A working team has Claude Code on some desks, Codex on others, an internal agent for the company's own systems, and a few specialized domain agents, each with its own tools, sessions, policies, permission model, and execution environment. Wrap each one with a thin adapter and you have five operable harnesses and five silos: five places policy is configured, five session formats nobody else can resume, five sandboxes with five isolation stories. The layer that closes that gap is the **meta-harness**, the governance layer *across* harnesses, and it is the outermost of the four nested layers that [Chapter 18](./18-agent-architecture.md) describes (meta-harness, then harness, then graph, then loop, then the model).
+A working organization rarely uses one Harness. Different teams may use
+terminal Coding Harnesses, IDE Harnesses, internal agents, and specialized
+domain workers. Wrapping each product separately without a shared authority
+layer creates policy drift, incompatible session records, inconsistent
+isolation, and fragmented cost and evidence.
 
-A meta-harness supplies four things. **Composition**: a manifest declares which agents exist and who may delegate to whom, so the delegation graph is written down rather than discovered in a transcript. **Policy**: token caps, file rules, and permission defaults are enforced once and applied to every harness, instead of re-implemented in each product's settings hierarchy. **Collaboration**: sessions are shared and resumable across people, devices, and agents, so a run started in one harness by one engineer can be picked up elsewhere. **Sandbox**: isolation is pluggable, so the provider can be swapped while the policy stays constant. Omnigent is one open-source implementation of this layer; the vocabulary is the useful part, whichever implementation you choose or build.
+External sources sometimes call the layer above those Harnesses a
+“meta-harness.” FDLC does not. Its responsibilities belong to explicit Factory
+Platform components:
 
-The practical form of a meta-harness inside a large engineering organization is a **unified wrapper**. Uber's engineering team, which runs every interactive coding harness its engineers use through one such wrapper, describes it as owning installation, configuration, authentication, and cost visibility across all of them, and as the place where the standard defaults live: compaction at a fixed token threshold, a medium reasoning effort, a cheaper default model for subagents, prompt-cache lifetimes matched to how people actually pause, and a live cost counter in the status line of whichever harness is running. Because every session passes through it, the wrapper can also collect every trace into one session-analysis dashboard, flag anti-patterns with their cost, and route all MCP traffic through one gateway. None of that changes what any single harness does; it changes what all of them share.
+- the **Control Plane** owns identity, authority, policy, budgets, approvals,
+  evidence requirements, revocation, and release authority;
+- the **Agent Factory** owns reusable Agent Definitions, skills, tools, adapters,
+  and their qualification lifecycle;
+- the **Orchestrator** advances durable Work Graphs;
+- the **Runtime** starts, persists, resumes, and terminates execution;
+- Sandbox infrastructure enforces isolated execution; and
+- shared gateways and telemetry normalize tool access, cost, events, and
+  evidence without becoming authority themselves.
 
-<!-- infographic: meta-harness -->
-> **Infographic — The meta-harness across harnesses.**
+> **Diagram — Shared platform contracts across replaceable Harnesses.**
 
 ```mermaid
 flowchart TB
-    subgraph Meta["Meta-harness: composition manifest, policy once, shared sessions, pluggable sandbox"]
-        Wrapper["Unified wrapper: install, config, auth, defaults, cost visibility"]
-        Wrapper --> H1["Claude Code adapter"]
-        Wrapper --> H2["Codex adapter"]
-        Wrapper --> H3["Internal agent"]
-        Wrapper --> H4["Domain agent"]
-    end
-    H1 & H2 & H3 & H4 --> GW["One MCP and tool gateway"]
-    H1 & H2 & H3 & H4 --> Traces["One trace store and session analysis"]
-    Meta --> CP["Control plane: identity, authority, evidence"]
+    CP["Control Plane: authority and policy"] --> O["Orchestrator: Work Graph"]
+    AF["Agent Factory: qualified capabilities"] --> O
+    O --> H1["Coding Harness adapter A"]
+    O --> H2["Coding Harness adapter B"]
+    O --> H3["Domain Agent Harness"]
+    H1 & H2 & H3 --> R["Runtime and Sandbox infrastructure"]
+    H1 & H2 & H3 --> GW["Shared tool gateway"]
+    H1 & H2 & H3 --> Traces["Shared events, cost, and evidence"]
+    Traces --> CP
 ```
 
-In this guide's terms the meta-harness is the control plane's harness-facing half ([Chapter 13](./13-control-plane-orchestrator-and-execution-plane.md)) together with the Agent Factory's governance across agent definitions ([Chapter 11](./11-the-agent-factory.md)). The composition manifest is the agent registry and its delegation rules; policy-once is the policy engine the outer harness already routes through; shared resumable sessions are the durable Attempt record with native session identity attached; the pluggable sandbox is the environment layer of [Chapter 17](./17-development-environments-sandboxes-and-compute.md). The adapter contract and conformance suite later in this chapter are how a harness earns a seat inside the meta-harness. What the meta-harness adds to a single outer harness is that the rules are written once and the evidence lands in one place, which is the only arrangement in which a second harness is cheap to add and a first one is cheap to leave.
+### Where the adapter seam sits
 
-### Where the seam sits: thin or thick
+A rich Coding Harness may already supply browsers, testing, subagents,
+compaction, and repair loops. A smaller harness may require the adapter and
+Runtime supervisor to supply more lifecycle behavior. The adapter must state
+which component owns each responsibility rather than labeling one side “inner”
+and the other “outer.”
 
-You choose where to put the seam between the two. Buy a rich inner harness that ships with a browser, testing, subagents, and compaction, and your outer harness can be thin, little more than the skills you inject and the loop that drives it. Or take a thin, configurable inner harness such as OpenCode or one of the smaller build-your-own harnesses, where you set up every behavior yourself, and build a thick outer harness around it. Dexter's framing on the HumanLayer and BAML livestream is that Claude Code is "bring it and it's good," while a thin harness "comes with control but you have to build more." Both are legitimate; they are different bets on where your team's effort goes.
-
-The same tradeoff shows up in the adapter itself. A **thin adapter** preserves native features and exposes the control plane to provider differences. A **thick adapter** normalizes behavior across providers but may erase useful capabilities or invent a false lowest-common-denominator abstraction. The practical answer is to translate only the events and commands the factory contracts require, and to preserve the native payloads as diagnostic artifacts alongside the normalized stream. Think of a travel power adapter: it converts the plug shape so the factory can connect, but it does not pretend every appliance behaves the same.
+A **thin adapter** preserves native features and exposes more provider
+differences. A **thick adapter** normalizes more behavior but can erase useful
+capabilities or create a false lowest-common-denominator abstraction. Translate
+only the commands and events the Agent Contract requires, preserve native
+payloads as diagnostic artifacts, and prove compatibility with the conformance
+suite.
 
 ### Protocols and their boundaries
 
@@ -265,11 +260,11 @@ Four protocols come up constantly, and they are not competitors. Each standardiz
 | **AG-UI** | Agent backend to user-facing application | Bidirectional event streaming, state, tool, and user interaction | Durable domain authority or independent verification |
 | **A2A** (Agent2Agent) | Independent agent application to agent application | Capability discovery, delegation, messaging, remote task coordination | Permission to delegate factory authority or trust a remote agent |
 
-A plumbing analogy: a pipe-thread standard guarantees the pipes join. It says nothing about whether the water is safe to drink. MCP created what Dexter calls an ecosystem explosion precisely because it fixed one narrow join, letting agent builders, harness builders, and integration builders mix and match. It did not make any tool trustworthy.
+A plumbing analogy: a pipe-thread standard guarantees the pipes join. It says nothing about whether the water is safe to drink. MCP accelerated tool interoperability because it fixed one narrow join, letting agent builders, harness builders, and integration builders mix and match. It did not make any tool trustworthy.
 
-The acronym ACP is ambiguous in the wider ecosystem; this guide uses it for the Agent Client Protocol associated with editor-agent interoperability (Zed's), and any design that depends on its behavior must pin the specification or implementation version. On the livestream, Dexter's assessment is that ACP is the right idea for the control-plane-to-harness seam but quite narrow, and that a thicker, wider interface is needed for a coding harness to talk to a UI, an editor, or a web app. AG-UI is good at broadcasting UI events. Neither supports hooks, which is exactly what an outer harness needs: the ability to lifecycle a harness and react to its events.
+The acronym ACP is ambiguous in the wider ecosystem; this guide uses it for the Agent Client Protocol associated with editor-agent interoperability, and any design that depends on its behavior must pin the specification or implementation version. ACP is intentionally narrow. A factory still needs an owned adapter for lifecycle commands and normalized events when a Coding Harness must connect to a control surface, editor, or web application. AG-UI carries user-interface events. Neither protocol establishes the Agent Contract, lifecycle guarantees, or enterprise authority.
 
-Vaibhav's counterpoint is that a good abstraction here may not be possible yet, because harnesses differ by design and the abstraction "by design can't be that good." His hopeful analogy is React: the web looked unabstractable until someone noticed that state is all you need and the rest falls out. Nobody has found the equivalent primitive for harnesses. Until they do, expect to wrap each one.
+Harnesses differ by design, so a universal abstraction may erase behavior the factory needs. The durable approach is an intentionally small Agent Contract plus capability declarations and native-extension envelopes. Expect to qualify each adapter rather than assuming protocol compatibility proves behavioral equivalence.
 
 Protocols coexist. An editor talks to a coding agent through ACP; that agent reaches tools through MCP; a factory UI receives events through AG-UI; a remote specialist is contacted through A2A. In every case the control plane still authenticates principals, scopes authority, freezes contracts, reconciles state, and evaluates evidence. Protocol identity is never authority.
 
@@ -282,17 +277,17 @@ flowchart LR
     Agent -->|"MCP"| Tools["Tools, resources, prompts"]
     Agent -->|"AG-UI"| UI["Factory web UI"]
     Agent -->|"A2A"| Remote["Remote specialist agent"]
-    Agent -->|"hooks / adapter"| Outer["Outer harness"]
-    Outer --> CP["Control plane: identity, authority, evidence"]
+    Agent -->|"hooks / adapter"| Boundary["External adapter layer"]
+    Boundary --> CP["Control plane: identity, authority, evidence"]
 ```
 
 ### The dated landscape, and the bet on owning it
 
 Product names belong in dated case studies; contract vocabulary belongs in the canon. As of this writing (verified 2026-08-30), Codex and Claude Code are the two most useful case studies: both offer a CLI, an SDK or programmatic mode, hooks, tool and permission models, session persistence, and automation features, each on a different model, local/cloud split, and lifecycle. OpenCode and the thinner configurable harnesses are the build-your-own end. Amp, Devin, Factory, Gemini's agent, and vendor "cloud agents" such as Cursor's and Cognition's bundle harness, environment, and orchestration together. That is the line between a **vertically integrated stack**, where one vendor supplies model, harness, environment, and orchestration as a single product, and a **composable stack**, where each layer is a separately chosen component behind an interface you own; the first is faster to adopt, the second is easier to leave. The same line separates **managed execution**, where the vendor runs the harness on its own fleet, from a **self-hosted harness** that you run on your own workers with your own identity and network boundaries. Every one of these must be verified against current official documentation and a pinned runtime before use. The product name describes a suite of experiences; the factory integrates with one exact harness and version.
 
-Why are there so many? Because, as Dexter puts it, a lot of people are betting that owning the harness is worth a lot of money, the way owning the browser and owning mobile turned out to be. That bet is why vendors keep their hooks and instruction files different, and why you should assume APIs will keep breaking. The vendors' incentive is not your portability.
+Harness vendors have strong incentives to own the execution experience. Their hooks, instruction files, lifecycle behavior, and event formats will continue to differ and change. Plan for version drift and prove portability with contracts and conformance evidence.
 
-For the factory that means a build-versus-buy decision made deliberately, not by drift. Wrapping a mature harness gives rapid capability and creates adapter work each time native behavior changes. Building an inner harness gives control and demands sustained investment in tool execution, context management, model integration, permissions, user experience, and safety. Tessl's experience with off-the-shelf orchestrators applies to harnesses too: great for getting from zero to half, then a black box owning your SDLC grates. Their answer, and HumanLayer's, is a swappable harness behind an interface you own.
+For the factory that means a build-versus-buy decision made deliberately. Wrapping a mature Coding Harness gives rapid capability and creates adapter work each time native behavior changes. Building an Agent Harness gives control and demands sustained investment in tool execution, context management, model integration, permissions, user experience, and safety. Keep either choice replaceable behind an interface the factory owns.
 
 **Lock-in and exit** should be part of the design from day one. **Provider lock-in** is the condition in which switching harness or model vendor would cost more than the switch is worth, because transcripts, instructions, skills, and evidence exist only in one vendor's shape. An **exit strategy** is the documented, rehearsed path out: what you keep in your own format, which adapter you would qualify next, and how long it would take. Keep native transcripts and normalized events both. Keep skills and instructions in the repository in a form more than one harness can read. Keep the adapter conformance suite so that a second adapter can be qualified when needed. The exit is not "we could switch"; it is "we ran the same workload through two adapters last quarter and here are the traces."
 
@@ -300,12 +295,12 @@ For the factory that means a build-versus-buy decision made deliberately, not by
 
 ### Steps
 
-1. Write the outer-harness lifecycle as a contract first, harness-agnostic, using the lifecycle list above. Mark each item required, optional, or unsupported for your first workloads.
-2. Pick one inner harness and pin an exact version. Read its headless mode, event schema, transcript format, hook model, and configuration hierarchy from official documentation, not from memory.
+1. Write the Agent Contract and lifecycle first, independent of any Harness product. Mark each operation required, optional, or unsupported for the first workloads.
+2. Pick one Coding Harness and pin an exact version. Read its headless mode, event schema, transcript format, hook model, and configuration hierarchy from official documentation.
 3. Build a thin adapter that translates only the required events and commands, archives raw payloads, and records native session identity before the first tool call.
 4. Publish the adapter's capability manifest. Every "no" must be explicit.
 5. Run the conformance suite (below) and keep the results next to the manifest.
-6. Add the outer-harness loops: budgets, timeouts, bounded fix-until-green with a human exit, and completion classification.
+6. Add bounded review and repair workflows: budgets, timeouts, a human exit, and completion classification. Put durable routing in the Work Graph and local iteration in the Agent Loop.
 7. Route policy through the control plane, using hooks only as observation and callback points.
 8. Only then consider a second adapter, and qualify it against the same suite for the same workload.
 
@@ -329,7 +324,7 @@ For the factory that means a build-versus-buy decision made deliberately, not by
 
 **State updated inside the model.** The only place "step three is done" exists is the model's context; a compaction or crash loses it and the loop repeats step three. Detect by asking where the loop reads state from at the start of each beat. Fix by updating state outside the model and loading it back in.
 
-**Tool before policy.** The inner harness executes a tool call and the policy check happens, if at all, in a log review afterwards. Detect by tracing one consequential tool call and looking for the authorization decision that preceded it. Fix by putting the policy check between action selection and tool execution, in the outer harness or gateway.
+**Tool before policy.** The Harness executes a tool call and the policy check happens, if at all, in a log review afterwards. Detect by tracing one consequential tool call and looking for the authorization decision that preceded it. Fix by putting a qualified enforcement point between action selection and tool execution, backed by Control Plane authority.
 
 **The harness that thinks it is the factory.** Budgets and checkpoints inside the loop are mistaken for governance, and the harness's "complete" flows straight to merge. Detect by asking who verified the result independently of the process that produced it. Fix by treating structured completion as an input to the control plane.
 
@@ -371,17 +366,16 @@ The repository glossary and lexicon reviewed 2026-09-02 describe the admission m
 
 ## Go deeper
 
-- *One architecture diagram that explains every production AI agent* (Brij Kishore Pandey, public diagram, 2026) — the harness, graph engineering, loop engineering framing reproduced in "The harness as runtime control plane".
-- [Chapter 13. Control plane, orchestrator, and execution plane](./13-control-plane-orchestrator-and-execution-plane.md) — where the Attempt contract that the outer harness receives is defined.
+- [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md) — the authoritative map for Model, Agent, Loop, Harness, Graph, Runtime, Sandbox, Orchestrator, Control Plane, and Factory.
+- [Chapter 13. Control plane, orchestrator, and execution plane](./13-control-plane-orchestrator-and-execution-plane.md) — where the Agent Contract is authorized and dispatched.
 - [Chapter 14. Durable execution](./14-durable-execution.md) — leases, heartbeats, and the recovery semantics session resume must honor.
 - [Chapter 17. Development environments, sandboxes, and compute](./17-development-environments-sandboxes-and-compute.md) — the layer beneath the harness.
-- [Chapter 18. Agent architecture: loop, MCP, tools, context, and memory](./18-agent-architecture.md) — what happens inside the inner harness.
+- [Chapter 18. Agent architecture: loop, MCP, tools, context, and memory](./18-agent-architecture.md) — how the Model, Agent, Loop, and Harness compose.
 - [Chapter 23. Agent and loop engineering](./23-agent-and-loop-engineering.md) — the attempt loop and loop engineering as a discipline.
 - [Chapter 29. Evaluation engineering](../04-prove/29-evaluation-engineering.md) — the with-and-without evaluation that harness pruning and the model × harness matrix depend on.
 - [Chapter 39. Production feedback, automated review, and the agentic merge queue](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md) — the CodeRabbit loop and merge queue in context.
 - [Chapter 7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) — why enforcement cannot live in a hook.
-- [Glossary](../appendix/glossary.md) — inner harness, outer harness, adapter, capability manifest, ACP, AG-UI, A2A, MCP.
+- [Glossary](../appendix/glossary.md) — canonical execution terms, adapter, capability manifest, ACP, AG-UI, A2A, and MCP.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
-- Source transcripts: HumanLayer × BAML livestream, "Software factory design patterns" (Dexter and Vaibhav) — inner/outer harness, headless JSONL, bounded CodeRabbit loop, ACP/AG-UI/hooks, the harness bet; Tessl, AI Engineer SF conversation and talk on harness engineering — inner/outer/meta loops, verifiers, legible surfaces; public practitioner talks (2026) — harness engineering as a named discipline and its scope, the three-loops table with the question and objective each serves, harness–model co-design, model-agnostic versus model-uniform, the harness profile fields, the performance equation, the model × harness matrix, the three levels of capability, harness debt and harness pruning; Jay West, factory architecture notes — what the harness owns, the execution loop, harness versus factory, the agent contract, execution backends and delegated execution, frozen scope, conversation versus durable state, portability; Mission Control repository glossary and lexicon, reviewed 2026-09-02 — the adapter lifecycle, `factory-result/v1`, the capability manifest, canonical event types and idempotency key, phase-to-tendency mapping, the fake-engine fixture, and the approve-then-run admission posture.
-- Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) — the meta-harness layer (composition, policy, collaboration, sandbox) and Omnigent as one implementation; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) — the unified wrapper across interactive harnesses, its standard defaults, cost visibility, and the single MCP gateway.
+- Source materials: public discussions of harness engineering, protocol boundaries, adapter lifecycles, bounded review loops, capability manifests, portability, conformance, and shared factory governance; factory architecture notes; and the Mission Control repository glossary and lexicon reviewed 2026-09-02.
 - Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.

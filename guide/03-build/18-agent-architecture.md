@@ -2,7 +2,7 @@
 title: "Agent architecture: loop, MCP, tools, context, and memory"
 part: build
 chapter: 18
-summary: An engineering agent is a governed runtime composition around a fallible model — an execution loop, a protocol boundary for capabilities, behavioral tool contracts, a context compiler, and a memory lifecycle — with authority held by the runtime, never by the model.
+summary: An engineering agent is a goal-directed worker composed from a model, Agent Loop, Agent Harness, capabilities, context, state, and evaluation profile, with enterprise authority held by the Control Plane.
 absorbs: [06-ai-engineering/00-ai-systems-foundations-for-software-factory-architects.md, 06-ai-engineering/01-agent-architecture-mcp-tools-context-and-memory.md]
 infographics: [agent-loop, agent-layers, mcp-topology, context-assembly, memory-admission]
 ---
@@ -21,7 +21,7 @@ The problem exists for structural reasons. A model call does not by itself provi
 
 ## How it works
 
-### An agent is a governed runtime composition
+### An agent is a goal-directed worker
 
 Start with the plain definition. An **AI agent** is a system that can interpret a goal, reason about the work, use tools, take actions, observe results, and continue until it reaches a completion or escalation condition. An **autonomous agent** can take many such steps without a human instruction at each one, but still operates inside permissions, policies, budgets, and escalation boundaries. An **agentic workflow** is a structured sequence in which one or more agents reason, use tools, decide, and complete work toward an objective; **orchestration** coordinates which agent does which task, in what order, with what context, permissions, dependencies, and completion conditions. **Tool use** is how an agent touches external systems such as GitHub, Jira, CI/CD, databases, cloud environments, and observability platforms.
 
@@ -43,7 +43,7 @@ Behind those definitions sits the idea that organizes the whole chapter: an engi
 | State | Makes execution durable | Task, Attempt, lease, checkpoints, cancellation state |
 | Evaluation profile | Defines expected behavior | Dataset, graders, thresholds, evidence requirements |
 
-This is the same thing Jay's capability taxonomy calls an **agent definition**: the configuration that fixes an agent's purpose, instructions, tools, permissions, and behavior, with its role, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, and success criteria. Change any material component and you have a different worker; evidence from an earlier Attempt may no longer apply. A model name alone is never a sufficient reproducibility record.
+The canonical taxonomy calls this an **Agent Definition**: the configuration that fixes an agent's purpose, instructions, tools, permissions, and behavior, with its role, capabilities, policies, goals, permissions, tool access, model configuration, autonomy level, escalation rules, and success criteria. Change any material component and you have a different worker; evidence from an earlier Attempt may no longer apply. A model name alone is never a sufficient reproducibility record.
 
 Think of a surgeon on shift. The surgeon supplies judgment; the hospital supplies the badge, the operating list, the protocols, the checked-out instruments, the chart, the consent forms, the theatre time, and the audit trail. Nobody calls that "a surgeon with a long set of instructions." The institution around the person is what makes the judgment safe to act on.
 
@@ -51,7 +51,7 @@ Think of a surgeon on shift. The surgeon supplies judgment; the hospital supplie
 flowchart TB
     Human["Human intent and material decisions"] --> Control["Control plane: policy, authority, durable state"]
     Control --> Manifest["Frozen execution manifest"]
-    subgraph Runtime["Governed agent runtime"]
+    subgraph Harness["Agent Harness: bounded operating envelope"]
         Compiler["Context compiler"] --> Model["Model profile"]
         Memory["Authorized memory view"] --> Compiler
         Manifest --> Compiler
@@ -63,7 +63,7 @@ flowchart TB
         Observation --> Compiler
     end
     Gateway --> Receipts["Call receipts and denials"]
-    Runtime --> Trace["Trace, artifacts, checkpoints"]
+    Harness --> Trace["Trace, artifacts, checkpoints"]
     Receipts --> Evidence["Independent evidence path"]
     Trace --> Evidence
     Evidence --> Decision["Human or policy admission decision"]
@@ -71,9 +71,9 @@ flowchart TB
 
 ### The execution loop
 
-Inside the runtime the agent runs a cycle. The taxonomy names it the **execution loop**: understand → plan → act → observe → evaluate → adjust, repeated until the goal is met or an escalation condition is reached. Each step has a concrete meaning in a factory.
+Inside the Harness, the Agent runs a cycle. The taxonomy names it the **Agent Loop**, also called the **Execution Loop**: understand → plan → act → observe → evaluate → adjust, repeated until the goal is met or an escalation condition is reached. Each step has a concrete meaning in a factory.
 
-*Understand* means reading the frozen objective and the compiled context, not the raw repository. *Plan* means choosing the next bounded step, which may be revising the Plan the human approved but never silently widening it. *Act* means proposing a tool call. *Observe* means receiving the tool's result as an untrusted observation. *Evaluate* means checking the observation against acceptance criteria, budgets, and policy, with the deterministic checks the runtime owns rather than the model's own opinion. *Adjust* means deciding whether to continue, retry, replan, stop, or escalate. The loop decides the next action; the workflow around it, covered in [chapter 14](./14-durable-execution.md), owns durable progress and authority.
+*Understand* means reading the frozen objective and the compiled context, not the raw repository. *Plan* means choosing the next bounded step, which may be revising the Plan the human approved but never silently widening it. *Act* means proposing a tool call. *Observe* means receiving the tool's result as an untrusted observation. *Evaluate* means checking the observation against acceptance criteria, budgets, and policy, with deterministic checks outside the Model rather than the Model's own opinion. *Adjust* means deciding whether to continue, retry, replan, stop, or escalate. The loop decides the next action; the workflow around it, covered in [chapter 14](./14-durable-execution.md), owns durable progress and authority.
 
 <!-- infographic: agent-loop -->
 > **Infographic — The execution loop.**
@@ -93,46 +93,43 @@ flowchart LR
 
 The taxonomy names what surrounds the loop. **Context management** supplies the right code, documents, history, state, and information at the right time; **context window management** decides what fits. **Control mechanisms** are the guardrails: permissions, approvals, policies, budgets, and human-in-the-loop checkpoints. A **guardrail** is any control that limits or redirects agent behavior; a **policy engine** evaluates rules and decides whether an action may proceed, needs approval, or must be blocked. The **execution environment** is the sandbox, container, or workspace where the agent runs commands and changes code; **sandboxing** isolates it so a mistake cannot reach what it should not. **State management** tracks progress across the loop, **error recovery** retries, repairs, or replans after failure, and **observability** traces decisions, actions, latency, failures, and cost.
 
-### Four layers: loop, graph, harness, meta-harness
+### Model, Agent, Loop, Graph, Harness, Runtime, and Control Plane
 
-For the harness layer drawn as a single runtime control plane — execution graph, loop, memory, tool gateway, trust rail, observability floor — see [Chapter 15](./15-coding-harnesses-and-agent-protocols.md#the-harness-as-runtime-control-plane-one-diagram-for-every-production-agent).
+Production failures are repaired faster when each boundary has one name. The **Model** supplies reasoning and generation. The **Agent** is the goal-directed worker. The **Agent Loop** is its bounded plan-act-observe-evaluate cycle. The **Agent Harness** governs how that worker interacts with context, models, tools, state, permissions, budgets, and external systems.
 
-An agent that burns tokens, declares the task complete, and then fails the tests is usually an architecture problem, not a prompting problem. The reflex is to rewrite the prompt or reach for a stronger model. Most of the time the failure came from the system around the model, and different failures have to be fixed at different layers. A public four-layer model, drawn as nested boxes, is the clearest way to see which layer is which; the outer layers each contain the inner ones, so the nesting reads meta-harness, then harness, then graph, then loop, then the model itself.
+The **Work Graph** represents nodes, dependencies, branches, joins, gates, interrupts, cycles, failure transitions, and terminal states. The **Orchestrator** advances that graph across Agents, deterministic work, and human waits. **Graph Engineering** designs the topology; **Loop Engineering** improves iteration inside a node.
 
-The **loop** is the smallest unit of agency. It observes what the environment actually returned rather than what the model expected, acts with one tool call and one real-world side effect per turn, and verifies against an external signal only: tests, a build exit code, a grader, CI. The part that matters is how completion is decided. Completion is a goal condition such as "the tests pass," never a step count and never the model's belief that the work looks right. Without an external verification signal an agent will confidently declare success on an incomplete task. *The model never grades its own work.* This is the execution loop above with its evaluate step made strict.
-
-The **graph** is the workflow. Where a loop decides *whether* execution continues, a graph decides *where* it goes next. Nodes do the work: read shared state, do one thing, write the result back. Conditional edges read the state and return the name of the next node. Shared state is a typed record every node reads and writes, and it is the binding contract between them. Checkpoints snapshot the state after each node, which is what makes pause, replay, and human review possible. Branches, retries, specialist hand-offs, and fallbacks all live here. Use a graph when the path is uncertain, because it makes the route explicit, inspectable, and controllable. In this guide the graph is the task graph the orchestrator schedules ([chapter 23](./23-agent-and-loop-engineering.md)) on top of the durable workflow engine ([chapter 14](./14-durable-execution.md)).
-
-The **harness** is the environment the model touches the world through. *The model is just weights. The harness is the agent.* Four things belong to it: the tools (the callable set, every action the model is allowed to attempt), the permissions (gates on tool calls, which actions need human approval first), the context (instruction files, loaded files, injected knowledge: what the model sees), and the traces (an immutable per-turn log of every call, input, and output). The consequence everyone underestimates is that **model capability is not agent capability**. A model may know exactly how to solve a task; if the tool, the data source, or the permission is not exposed through the harness, the agent still cannot do it. *A better prompt cannot compensate for a missing capability.* Fix capability in the harness, never in the prompt. [Chapter 15](./15-coding-harnesses-and-agent-protocols.md) and [Stage 4](../stages/04-execute-through-harness.md) cover the harness in full.
-
-The **meta-harness** is the governance layer across harnesses. A real team runs Claude Code, Codex, an internal agent, and a few specialized domain agents side by side, and each arrives with its own tools, sessions, policies, permissions, and execution environment. Without a common layer, five harnesses are five silos. The meta-harness supplies four things: composition (a manifest that declares which agents exist and who may delegate to whom), policy (token caps and file rules enforced once and applied everywhere), collaboration (shared, resumable sessions across people, devices, and agents), and a pluggable sandbox (swap the isolation provider; the policy stays constant). Omnigent is one open-source implementation of this layer. In this guide it is the control plane and the Agent Factory's governance across harnesses ([chapter 11](./11-the-agent-factory.md), [chapter 13](./13-control-plane-orchestrator-and-execution-plane.md)).
-
-The meta-harness has a stronger form that the four-layer model only implies. A **universal meta-harness** does not run a predetermined workflow; it constructs or selects the workflow an outcome needs. Given a goal, its constraints, and a **verification contract** (the structured list of claims that must be demonstrated before completion and how each is validated), the system decides the decomposition, the workers, the skills, the strategy, and the verification, rather than a human wiring those in advance. That is **outcome-driven execution**: work is governed by verifiable outcomes, not prescribed steps, and the instruction has the shape "produce X subject to Y and prove A through F before completion." In this guide the goal and constraints are the Mission and Plan the control plane of [chapter 13](./13-control-plane-orchestrator-and-execution-plane.md) holds, the verification contract is the quality contract the validator path checks, and the harness of [chapter 15](./15-coding-harnesses-and-agent-protocols.md) is what each chosen worker runs inside; the meta-harness's freedom is over the route, never over the authority, and a route it chooses is still frozen into the execution manifest before the first model call.
+The **Runtime** hosts execution and provides process lifecycle, persistence, leases, checkpoints, resume, concurrency, filesystem and network lifecycle, and recovery infrastructure. The **Sandbox** isolates the effects of an Attempt. The **Control Plane** owns enterprise identity, authority, policy, approvals, budgets, revocation, evidence requirements, promotion, and release. A component can enforce a decision locally without owning the authority that created it.
 
 <!-- infographic: agent-layers -->
-> **Infographic — Four layers around the model.**
+> **Infographic — Distinct boundaries in one governed execution.**
 
 ```mermaid
 flowchart TB
-    subgraph Meta["Meta-harness: composition, policy, shared sessions, pluggable sandbox"]
-        subgraph Harness["Harness: tools, permissions, context, traces"]
-            subgraph Graph["Graph: nodes, conditional edges, typed shared state, checkpoints"]
-                subgraph Loop["Loop: observe, act, verify against external evidence"]
-                    LLM["LLM: weights only"]
-                end
-            end
-        end
+    CP["Control Plane: authority"] --> O["Orchestrator: advance Work Graph"]
+    O --> H["Agent Harness: operating envelope"]
+    subgraph H
+        A["Agent: goal-directed worker"] --> L["Agent Loop: iterate and stop"]
+        M["Model: intelligence"] --> A
+        C["Capabilities: bounded operations"] --> L
     end
+    H --> R["Runtime: host and recover"]
+    R --> S["Sandbox: isolate effects"]
+    H --> E["Events, artifacts, completion"]
+    E --> CP
 ```
 
-| Layer | What it owns | What it makes possible | The guide's term for it |
-|---|---|---|---|
-| Loop | Observe, act, verify; the completion rule | Verifiable work | The execution loop (this chapter); the attempt loop (chapter 18) |
-| Graph | Nodes, conditional edges, typed shared state, checkpoints | A structured, inspectable workflow | The task graph and the workflow engine (chapters 12 and 18) |
-| Harness | Tools, permissions, context, traces | An operational model | The inner and outer harness (chapter 13, Stage 4) |
-| Meta-harness | Composition manifest, policy once, shared sessions, pluggable sandbox | Governable multiple agent environments | The control plane and Agent Factory governance (chapters 10 and 11) |
+The same product may package several boxes together, but the responsibilities and immutable identities stay separate. An Agent identity is not a Model identity. A Harness version is not a Runtime Artifact. A Runtime identity is not a Sandbox identity. A Factory Version records the qualified composition without collapsing those records.
 
-The diagnostic rule that follows is the one to keep. When an agent fails, ask *which layer is the failure at?* A task declared complete with red tests is a loop failure: the completion rule accepted the model's opinion. Work that took the wrong route, or retried the wrong thing, is a graph failure. A task the model understood but could not perform is a harness failure: a capability was missing. Two teams' agents that cannot share a session, or a policy that is enforced in one harness and absent in another, is a meta-harness failure. A stronger model improves reasoning; a reliable agent depends just as much on the architecture around it, and the incident question in [chapter 36](../05-operate/36-resilience-incidents-and-the-control-tower.md) is this rule applied after the fact.
+Use five questions before changing the model or prompt:
+
+1. Was the reasoning wrong? Inspect the Model route and context.
+2. Was iteration or stopping wrong? Inspect the Agent Loop.
+3. Was the route or dependency wrong? Inspect the Work Graph and Orchestrator.
+4. Was a tool, permission, context, state, or lifecycle control missing? Inspect the Agent Harness and Capability Implementations.
+5. Did execution fail to start, survive, resume, isolate, or obey enterprise authority? Inspect the Runtime, Sandbox, and Control Plane respectively.
+
+The full definitions, the three common meanings of “harness,” capability examples, and the executive explanation are in [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md).
 
 ### Six layers of a working agentic system
 
@@ -151,7 +148,7 @@ Three lines from the source are worth carrying as they stand. On layer three: an
 
 ### Reasoning is separated from authority
 
-The single most important design rule is that the model proposes and the runtime disposes. The model can interpret intent, form hypotheses, choose among allowed options, and propose a tool call. It cannot expand its own scope. Before anything executes, the runtime validates the acting identity, the input schema, the policy, the repository and path scope, the risk class, the budget, the approval state, the idempotency strategy, and the environment. The result comes back as an observation, never as trusted instructions. And the runtime records both approved and denied calls, so a reviewer can reconstruct what the agent attempted, what actually ran, and why.
+The single most important design rule is that the Model proposes; governed authority and deterministic enforcement dispose. The model can interpret intent, form hypotheses, choose among allowed options, and propose a tool call. It cannot expand its own scope. Before anything executes, a qualified gateway validates the acting identity, the input schema, the policy, the repository and path scope, the risk class, the budget, the approval state, the idempotency strategy, and the environment. The result comes back as an observation, never as trusted instructions. And the Harness records both approved and denied calls, so a reviewer can reconstruct what the agent attempted, what actually ran, and why.
 
 ```mermaid
 flowchart LR
@@ -518,7 +515,7 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 ## Retain this
 
 - An agent is a versioned composition of identity, objective, instructions, model profile, tools, context, memory view, policy, budgets, state, and evaluation profile, not a model with a long prompt; change any component and evidence from an earlier Attempt may no longer apply.
-- Diagnose a failure by layer: loop (completion is a goal condition, the model never grades its own work), graph (routing), harness (a missing capability, since a better prompt cannot compensate for it), meta-harness (cross-harness policy and sessions). Model capability is not agent capability.
+- Diagnose a failure by boundary: Model (reasoning), Loop (iteration or stopping), Work Graph and Orchestrator (routing), Harness and Capability Implementation (operating behavior), Runtime (execution survival), Sandbox (isolation), or Control Plane (authority and governance). Model capability is not Agent capability.
 - The model proposes; only the runtime authorizes. Every call passes a gateway (identity, authorization, validation, scope, rate limits, approval) before it executes, and the execution manifest is frozen before the first model call so every event and piece of evidence points back to it.
 - MCP standardizes connectivity, not governance, and solves the N×M integration problem and nothing more. Choosing it over a direct call is an interoperability decision, not a religion.
 - Context is a governed input, not everything we can fit into the window: the minimum relevant, permission-aware, attributable set for one decision. Durable memory is promoted deliberately, never silently.
@@ -531,6 +528,5 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - MCP `2025-11-25` baseline: [specification](https://modelcontextprotocol.io/specification/2025-11-25), [architecture](https://modelcontextprotocol.io/specification/2025-11-25/architecture), [lifecycle and capability negotiation](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports), [authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), [tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools), [resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), [prompts](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts), [sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling), [elicitation](https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation), [tasks (experimental)](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks), [changelog](https://modelcontextprotocol.io/specification/2025-11-25/changelog).
 - Mission Control at `b31e275`: [agent identities](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentIdentities.ts), [agent versions](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/registry/agentVersions.ts), [context manifests](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/manifests.ts), [context activation](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/context/activation.ts), [context router](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/packages/context-router/src/router.ts), [memory lifecycle](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/memoryLifecycle.ts), [graph-assisted memory proposal](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/plans/memory-graphrag-architecture.md), [plugin and MCP guidance](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/CREATING_PLUGINS.md).
 - Sources: Jay West, "Key terms and definitions" capability taxonomy (execution loop, agent definitions, harness terms); Jay West, factory architecture notes (the four context types, the governed tool registry, MCP versus direct calls); the AI Software Factory study guide, chapter 6 terminology; the agent platform technology glossary (MCP, FastMCP, durable context patterns); the "Factory in one line" notes on harness ownership and the incident layer list.
-- Public sources: *The 4 Layers of an Agent System Explained* (public post, 2026) for the loop, graph, harness, and meta-harness nesting, the completion rule, and "model capability is not agent capability"; *Six layers of a working agentic system* (public post, 2026) for the six-layer table and "the durable asset is the harness"; Uber Engineering, *Running a Software Factory Efficiently at Uber Scale* (2026) for the MCP gateway, CLI tool resolution, tool search, code-mode measurements, and SaaS MCP schema sizes.
-- Public practitioner talks, 2026: the universal meta-harness, outcome-driven execution and the verification contract, and agent affordances.
+- Source materials: public architecture models covering Agent Loops, Work Graphs, Harnesses, production agent systems, tool gateways, context, verification contracts, and agent affordances.
 - [Glossary](../appendix/glossary.md).

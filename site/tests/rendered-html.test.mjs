@@ -332,6 +332,18 @@ test("system design playbook is discoverable and operational", async () => {
   assert.match(playbook, /Intent.*Plan.*Factory Version.*WorkOrder.*Producer Attempt.*candidate.*Verifier Attempt.*approval.*Release.*outcome economics.*learning candidate/is);
 });
 
+test("execution terminology keeps agent boundaries and identities distinct", async () => {
+  const topics = await htmlFor("/guide/topics");
+  const reference = await htmlFor("/guide/appendix/execution-boundaries-and-terminology");
+  assert.match(topics, /Execution boundaries and canonical terminology/i);
+  assert.match(reference, /boundary disagreement/i);
+  assert.match(reference, /Model.*Agent.*Agent Loop.*Agent Harness.*Work Graph.*Orchestrator.*Runtime.*Sandbox.*Capability Implementation.*Control Plane.*Factory Platform/is);
+  assert.match(reference, /Claude.*Model.*Claude Code.*Coding Harness/is);
+  assert.match(reference, /Enforcement and authority are not the same thing/i);
+  assert.match(reference, /Harness.*how the agent.*operate.*Runtime.*where and how.*execution.*survive/is);
+  assert.match(reference, /Agent Loop\s+can operate inside one\s+node.*not the graph/is);
+});
+
 test("keeps requested exclusions out of canonical public routes", async () => {
   const documents = await generatedDocuments();
   const contentRoutes = documents

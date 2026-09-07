@@ -18,7 +18,7 @@ This is a concise orientation brief. [Chapter 14](../03-build/14-durable-executi
 
 The model is probabilistic. Production control cannot be. The model may propose a next action, but it should not decide which credentials it receives, whether a tool call is authorized, whether a side effect may be repeated, what state survives a restart, how much budget remains, or whether its result is correct.
 
-The harness is the boundary where probabilistic reasoning meets deterministic control. The model reasons. The harness controls. The runtime and control plane around it make work durable, bounded, observable, and recoverable.
+The Agent Harness is the boundary that turns probabilistic reasoning into bounded operation. It controls how the Agent uses context, models, tools, state, permissions, budgets, and stopping rules. The Runtime hosts and preserves execution, the Sandbox isolates effects, the Orchestrator advances the Work Graph, and the Control Plane owns authority.
 
 ## Inputs
 
@@ -32,7 +32,7 @@ The harness is the boundary where probabilistic reasoning meets deterministic co
 
 Admission confirms Task authority, worker identity, session, capability, capacity, Factory Version, backend, and environment. A worker claims one Attempt through an atomic, fenced lease. Heartbeats prove liveness. If the lease expires, reconciliation may assign a new generation; a late worker with the old fence can report an event but cannot continue mutating authoritative state.
 
-The harness then runs a bounded loop: load Task and durable state; assemble current context; ask the model for a proposed action; check that action against policy; invoke the tool through a governed gateway; record the observation and receipt; update state and budget; and continue, checkpoint, retry, escalate, pause, cancel, or stop.
+The Harness then runs a bounded Agent Loop: load Task and working state; assemble current context; ask the Model for a proposed action; check that action at a qualified policy enforcement point; invoke the tool; record the observation and receipt; update state and budget; and continue, checkpoint, escalate, or stop. The Runtime persists durable checkpoints and supports recovery. The Orchestrator owns cross-node retry, pause, cancel, and workflow progress.
 
 Model context is not workflow state or a transaction log. The Attempt record persists outside the model. Tool side effects use logical-operation idempotency keys owned by the orchestrator. A retry creates a new Attempt or step hypothesis without blindly repeating the external effect. Pause and cancel are explicit states, and recovery starts from recorded facts rather than regenerated conversation.
 
@@ -48,7 +48,7 @@ Context is also governed. The Attempt receives only the operational, repository,
 
 ## Governing decision
 
-The model proposes the next action. Deterministic policy decides whether it is permitted. The harness decides whether the loop continues and owns state, context, budgets, retries, and stopping. The control plane admits workers and owns leases. A human may intervene, pause, cancel, or approve a specified high-risk action. Nobody in this stage decides whether the Candidate is correct; that belongs to [Stage 6](./06-evaluate.md).
+The Model proposes the next action. A qualified enforcement point applies the decision issued under Control Plane authority. The Harness controls local context, tools, working state, budgets, and stopping. The Runtime owns execution lifecycle and recovery; the Orchestrator owns durable workflow progress and retries. A human may intervene, pause, cancel, or approve a specified high-risk action. Nobody in this stage decides whether the Candidate is correct; that belongs to [Stage 6](./06-evaluate.md).
 
 ## Required evidence
 
@@ -72,7 +72,7 @@ harness-native MCP; the broader subsystem remains partial.
 
 ## Retain this
 
-- The model reasons; the harness controls execution, state, tools, budgets, and stopping.
+- The Model supplies intelligence; the Agent works; the Harness bounds operation; the Runtime hosts execution; the Orchestrator advances the Work Graph; the Control Plane owns authority.
 - Model context is not durable workflow state or a transaction log.
 - Retry the intent with a new hypothesis; do not blindly repeat a side effect.
 - Context and tool content can inform action but cannot grant authority.
@@ -85,3 +85,4 @@ harness-native MCP; the broader subsystem remains partial.
 - [Chapter 14 — Durable execution](../03-build/14-durable-execution.md)
 - [Chapter 15 — Coding harnesses and agent protocols](../03-build/15-coding-harnesses-and-agent-protocols.md)
 - [Chapter 20 — Context engineering](../03-build/20-context-engineering.md)
+- [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md)

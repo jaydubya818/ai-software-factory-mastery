@@ -107,7 +107,7 @@ function KnowledgeCheck() {
   const correct = answer === "verification";
   const options = [
     ["agent", "The producing agent"],
-    ["harness", "The inner harness"],
+    ["harness", "The producing Agent Harness"],
     ["verification", "Independent verification and the governed decision path"],
     ["router", "The model router"],
   ] as const;

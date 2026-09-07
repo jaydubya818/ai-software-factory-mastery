@@ -59,7 +59,7 @@ Promotion is earned with baseline-versus-candidate evaluation, non-regression on
 
 ### The shape of the work is a graph
 
-The six-node execution graph every production agent runs — perceive, build context, decide and plan, act, evaluate, respond — and its properties (typed nodes, stateful edges, conditional routing, parallel branches, subgraphs, checkpoints, resumability) are drawn once in [Chapter 15](./15-coding-harnesses-and-agent-protocols.md#the-harness-as-runtime-control-plane-one-diagram-for-every-production-agent); this chapter is about designing the graph well.
+The Agent Loop every production worker runs—load state, select, act, observe, evaluate, update, repeat—is drawn in [Chapter 15](./15-coding-harnesses-and-agent-protocols.md#resolve-the-boundary-before-naming-the-harness). This chapter explains how to engineer that loop and the Work Graph around it without collapsing the two.
 
 A prompt is a sentence. A loop is a cycle. A harness is the floor the agent stands on. But the shape of the work, what runs before what, what can run at the same time, what has to wait for everything else, is a graph. Most people who build a multi-step agent end up with a straight line: step one, then two, then three, each waiting politely for the last. Nine times out of ten, half of those steps never needed to wait. The 0xCodez "graph engineering" roadmap turns that line into a graph in fourteen moves, compressed here because the whole factory depends on them.
 
@@ -80,7 +80,9 @@ A prompt is a sentence. A loop is a cycle. A harness is the floor the agent stan
 
 The lesson underneath the roadmap is the one this guide keeps returning to: coordination should be code, not conversation. When orchestration is a script, it costs no model tokens, it runs the same way every time, and the agent's own context never has to hold nine sources at once.
 
-One distinction keeps the loop and the graph from blurring into each other. A loop decides *whether* execution continues; a graph decides *where* it goes next. In the graph, nodes do the work (read the shared state, do one thing, write the result back), **conditional edges** read that state and return the name of the next node, and the **shared state** is a typed record every node reads and writes, which makes it the binding contract between them. A **checkpoint** snapshots the state after each node, and that snapshot is what makes pause, replay, and human review possible mid-workflow. Branches, retries, specialist hand-offs, and fallbacks are all edges in that graph. Reach for it when the path is uncertain, because it turns the route into something explicit, inspectable, and controllable instead of a decision buried in a transcript. [Chapter 18](./18-agent-architecture.md) places the loop and the graph inside the harness and the meta-harness as four nested layers.
+One distinction keeps the loop and the graph from blurring into each other. A loop decides *whether* one Agent continues; a graph decides *where* the workflow goes next. In the Work Graph, nodes do the work, **conditional edges** select the next eligible node, and **shared state** is the typed contract between them. A **checkpoint** snapshots durable graph state after a node, enabling pause, replay, and human review. Branches, retries, specialist hand-offs, and fallbacks are edges. An Agent Loop may run inside a node, but it is never the Work Graph itself.
+
+**Graph Engineering** designs nodes, dependencies, branches, joins, gates, interrupts, cycles, failure transitions, and terminal states. The **Orchestrator** advances that design at runtime. It coordinates Agents, Harness invocations, deterministic work, and human waits without taking over the Agent Loop or enterprise authority. See [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md).
 
 ### Decomposition produces a task graph, not a pile of prompts
 

@@ -109,6 +109,8 @@ canonical chapters for technical depth.
 - [H. Context, skills, and evidence: five operating practices](./appendix/context-skills-engineering.md)
 - [I. Governed Factory admission and independent verification](./appendix/governed-factory-admission.md)
 - [J. Factory system design playbook](./appendix/factory-system-design-playbook.md) — workload brief, plan admission, routing and scheduling, recovery drills, evidence currentness, and outcome measurement.
+- [K. Production reliability and incident operations playbook](./appendix/production-reliability-operations-playbook.md) — saga recovery, blast radius, degraded modes, incident command, known-good restoration, and verified closure.
+- [L. Execution boundaries and canonical terminology](./appendix/execution-boundaries-and-terminology.md) — precise responsibilities, identities, failure diagnosis, and Mission Control implications across Model, Agent, Loop, Harness, Graph, Runtime, Sandbox, Orchestrator, Control Plane, and Factory.
 
 The v1 curriculum chapters are preserved unchanged in
 [`archive/guide-v1/`](../archive/guide-v1/README.md).
