@@ -37,6 +37,8 @@ export function CommandPalette() {
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
 
+  useEffect(() => { triggerRef.current?.setAttribute("data-ready", "true"); }, []);
+
   const openPalette = useCallback((invoker = document.activeElement) => {
     returnFocusRef.current = invoker instanceof HTMLElement && invoker !== document.body ? invoker : triggerRef.current;
     setQuery(""); setActive(0); setOpen(true);

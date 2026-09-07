@@ -80,7 +80,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "
   report.checks.push(`${viewport.name}: spaced search reached a subsection`);
 
   await page.goto(`${origin}/guide`, { waitUntil: "domcontentloaded" });
-  const paletteTrigger = page.getByRole("button", { name: /Search/ }).first();
+  const paletteTrigger = page.locator(".command-trigger[data-ready='true']");
   await paletteTrigger.focus();
   await page.keyboard.press("Control+k");
   const paletteInput = page.getByRole("combobox", { name: "Search the Guide and navigate" });
