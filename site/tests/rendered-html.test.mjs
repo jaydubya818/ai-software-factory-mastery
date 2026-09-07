@@ -117,6 +117,12 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   }
 });
 
+test("Guide keeps the global navigation centered like the FDLC shell", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.site-header\s*\{[\s\S]*?grid-template-columns:\s*1fr auto 1fr;/);
+  assert.match(css, /\.header-tools\s*\{\s*justify-self:\s*end;/);
+});
+
 test("renders every canonical primary surface with an explicit canonical", async () => {
   const routes = [
     ["/guide", /Table of contents/, "/guide"],

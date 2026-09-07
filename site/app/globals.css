@@ -37,7 +37,7 @@ button, input { font: inherit; }
   margin: 0 auto;
   min-height: 72px;
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) auto auto;
+  grid-template-columns: 1fr auto 1fr;
   gap: 28px;
   align-items: center;
 }
@@ -45,6 +45,7 @@ button, input { font: inherit; }
 .global-wordmark { display: inline-flex; align-items: center; width: 220px; max-width: 100%; }
 .global-wordmark img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
 html[data-theme="dark"] .global-wordmark img { filter: invert(1) grayscale(1) brightness(1.6); mix-blend-mode: screen; }
+.header-tools { justify-self: end; }
 
 .desktop-nav { display: flex; align-items: center; gap: 25px; color: var(--muted); font-size: 13px; font-weight: 560; }
 .desktop-nav > a, .nav-dropdown > button { min-height: 72px; padding: 3px 0 0; border: 0; border-bottom: 3px solid transparent; background: transparent; color: inherit; cursor: pointer; font: inherit; }
