@@ -12,13 +12,21 @@ export function CopyableCodeBlock({ children, label }: { children: ReactNode; la
       setStatus("copied");
     } catch {
       setStatus("failed");
-      codeRef.current?.focus();
+      const code = codeRef.current;
+      code?.focus();
+      if (code) {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
     }
   }
 
   return <div className="code-block">
     <div className="code-block-toolbar"><span>{label}</span><button type="button" onClick={copy}>{status === "copied" ? "Copied" : "Copy code"}</button></div>
     <pre ref={codeRef} role="region" aria-label={label} tabIndex={0}>{children}</pre>
-    {status === "failed" && <p className="code-copy-error" role="status">Copy was blocked. The code is focused so you can select it manually.</p>}
+    {status === "failed" && <p className="code-copy-error" role="status">Copy was blocked. The code is selected so you can copy it manually.</p>}
   </div>;
 }
