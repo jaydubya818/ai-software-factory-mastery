@@ -256,6 +256,24 @@ Approval creates a **specification baseline**: an immutable version with a canon
 
 NASA's systems-engineering guidance is a useful discipline here, because it was written for exactly this class of problem: requirements should be clear, unambiguous, singular, traceable, and individually verifiable; **verification** shows conformance to specified requirements, while **validation** shows that the right product works in its intended environment. A factory needs both, and they are produced by different evidence.
 
+### Plan admission and revision impact
+
+Evaluate the proposed Plan before paying to execute it. Check criterion coverage,
+graph validity, capability qualification, dependency readiness, aggregate budget,
+fan-out limits, and required authority. Reserve enough capacity and budget for
+independent verification and recovery. A valid graph is necessary but cannot
+establish that the strategy will satisfy the user's goal.
+
+When new information materially changes the Plan, record the reason and identify
+affected tasks, downstream artifacts, evidence, and approvals. Release affected
+work only after the new revision passes its required gates. Local tactics can
+adapt within the approved envelope; changes to intent, authority, acceptance, or
+budget require explicit change control. Measure planner quality through plan
+rejection, missed dependencies, rework, and human correction.
+
+Use the [system design playbook](../appendix/factory-system-design-playbook.md)
+to review the workload brief, Plan, and failure drills together.
+
 ### Prototype as specification
 
 There is a second route to a specification that is worth naming because senior practitioners increasingly use it for large, experimental work. Instead of writing the specification in prose and then implementing it, you build a rough prototype and use the prototype as the specification.

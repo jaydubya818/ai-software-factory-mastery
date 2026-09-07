@@ -14,6 +14,16 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-07 — Factory system design playbook
+
+Added a practical workload worksheet, Plan admission checks, routing/scheduling
+decision table, recovery drills, evidence-currentness rules, outcome measurement,
+and an illustrative dependency-upgrade exercise. Expanded Chapters 6 and 22 at
+their existing ownership boundaries, linked the playbook from the Guide and
+reference index, and retained the 44-chapter structure. The Mission Control note
+uses revision-pinned evidence and distinguishes narrow incident qualification
+from broader containment and unqualified real outcome economics.
+
 ## 2026-09-07 — Enterprise multi-factory delivery
 
 Added the enterprise architecture diagram and its detailed companion: governed WorkOrders, three routing levels, artifact invalidation, local and global verification, release authority, immutable factory compositions, adoption, metrics, and pricing discussions. Linked the companion from the Guide, Atlas, and the relevant architecture, routing, verification, and adoption chapters. Examples remain illustrative and commercial availability remains scoped.
