@@ -9,7 +9,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 
 export const metadata: Metadata = guidePageMetadata({
   title: "Reference · The AI Software Factory Guide",
-  description: "The reference shelf: glossary, Mission Control case studies, research canon, coverage and maturity, changelog, reviewer guide, and architecture communication.",
+  description: "The reference shelf: glossary, Mission Control case studies, research canon, coverage, operating practices, and governed Factory admission.",
   canonical: GUIDE_ROUTES.topics,
 });
 
@@ -36,6 +36,8 @@ const shelf: ShelfRow[] = [
   { letter: "E", slug: "appendix/architecture-communication", title: "Software architecture and system design", description: "How to scope, estimate, design, operate, explain, and defend a production architecture — from core distributed systems through governed agent execution.", use: "Before you have to design or defend a system." },
   { letter: "F", slug: "appendix/principles", title: "Principles to have cold", description: "The book's one-line principles, grouped by concern, each with a plain-English gloss and the chapter that earns it.", use: "When you want the whole book in fifty lines." },
   { letter: "G", slug: "appendix/operator-surfaces", title: "Mission Control operator surfaces", description: "The eleven operational views that make authority, evidence, cost, incidents, and learning visible without creating a second source of truth.", use: "When designing or reviewing the operator experience." },
+  { letter: "H", slug: "appendix/context-skills-engineering", title: "Context, skills, and evidence", description: "Five operating practices for treating reusable agent context as governed, measured software assets.", use: "When authoring, admitting, evaluating, or improving skills and context." },
+  { letter: "I", slug: "appendix/governed-factory-admission", title: "Governed Factory admission", description: "The exact chain from qualified Factory composition and derived readiness through producer and verifier Attempts.", use: "When designing execution identity, independent verification, or human authority boundaries." },
 ];
 
 export default function ReferencePage() {
@@ -46,7 +48,7 @@ export default function ReferencePage() {
         <header className="page-intro shelf-intro">
           <span className="eyebrow">Reference</span>
           <h1>The reference shelf.</h1>
-          <p>Seven reference groups you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
+          <p>Nine reference groups you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
         </header>
 
         <ReferenceSearch />

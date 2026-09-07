@@ -32,6 +32,7 @@ test("generated content reflects the book structure", async () => {
   assert.ok(documents.some((document) => document.slug === "00-front-matter/00-how-to-read-this-guide" && document.chapter === 0));
   assert.ok(documents.some((document) => document.slug === "guide" && document.contentType === "overview"));
   assert.ok(documents.some((document) => document.slug === "appendix/glossary"));
+  assert.ok(documents.some((document) => document.slug === "appendix/governed-factory-admission"));
   assert.equal(documents.filter((document) => document.contentType === "lab").length, 0, "labs removed");
   assert.equal(documents.filter((document) => document.contentType === "stage").length, 8, "8 stages");
   assert.ok(documents.filter((document) => document.contentType === "case study").length >= 3);
@@ -43,6 +44,15 @@ test("generated content reflects the book structure", async () => {
     assert.ok(chapter.summary.length > 0, `${chapter.slug} has a summary`);
     assert.ok(chapter.part, `${chapter.slug} has a part`);
   }
+});
+
+test("governed Factory admission keeps execution and authority boundaries explicit", async () => {
+  const html = await htmlFor("/guide/appendix/governed-factory-admission");
+  assert.match(html, /Factory Version.*WorkOrder.*Task.*Attempt.*Unpublished Candidate.*Verification Subject.*Verifier Attempt.*Human Decision/is);
+  assert.match(html, /Readiness is a conclusion over authoritative records.*must not set.*READY/is);
+  assert.match(html, /Producer completion ≠ independent verification ≠ human acceptance ≠ publication ≠ release ≠ observed outcome/);
+  assert.match(html, /SYNTHETIC_FACTORY_ADMISSION_QUALIFIED/);
+  assert.match(html, /zero external model calls.*zero provider calls.*zero model transmissions.*zero publications.*zero Production mutations/is);
 });
 
 test("renders the canonical FDLC Guide landing and preserves role entry paths", async () => {
