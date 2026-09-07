@@ -67,21 +67,6 @@ producing a fake red baseline; unset it first.
   chosen, `check-links.mjs` should also assert route resolvability, and
   `site/tests/markdown-links.test.mjs` is where the regression belongs.
 
-- [ ] 2026-08-31 — **`extractHeadings` slugifies raw Markdown, not rendered
-  text** — `scripts/generate-content.mjs` builds table-of-contents ids from the
-  raw heading line while `site/app/components/Markdown.tsx` builds the heading
-  element's id from what react-markdown rendered. They agree across all 943
-  headings today only because both collapse runs of non-alphanumerics to one
-  dash. A heading containing a link renders fewer words than it spells and the
-  two diverge: `## See [the topic index](./07-topic-index.md) first` yields a
-  contents entry pointing at `#see-the-topic-index-07-topic-index-md-first`
-  against a heading rendered as `#see-the-topic-index-first`, and the link
-  scrolls nowhere. The same raw text is also used as the visible contents
-  label, so the Markdown syntax would be displayed verbatim.
-  Guarded on `main` by `site/tests/toc-anchors.test.mjs`, which fails on that
-  input. Fix proposed on branch `nightly/2026-08-31-improvements`; close this
-  when that branch merges.
-
 ## Closed
 
 <!-- Resolved items, most recent first. -->
@@ -93,6 +78,7 @@ producing a fake red baseline; unset it first.
 <!-- Investigated and deliberately not actioned. Record the reason and the paths
      checked so a later run does not re-derive it. -->
 
+- 2026-09-07 — **`extractHeadings` slugifies raw Markdown, not rendered text — already implemented** — the 2026-08-31 entry described `scripts/generate-content.mjs` and `site/app/components/Markdown.tsx` computing heading ids independently (raw heading line vs. react-markdown output) and diverging on headings containing inline links. That is no longer how either builds an id: both now call the shared `markdownHeadings()` / `remarkHeadingIds()` in `site/lib/markdown-headings.ts`, which parses the Markdown to an mdast tree, extracts each heading's rendered text via `headingText()` (walking into link/emphasis children rather than reading raw source), and slugifies that. `generate-content.mjs` imports `markdownHeadings` at line 5; `Markdown.tsx` imports `remarkHeadingIds` and passes it as a `remarkPlugins` entry, so both consumers share one id allocation per document. Verified rather than inferred: cut `origin/main` into an isolated worktree, ran `npm run content:generate` then a full `vinext build`, then `node --experimental-strip-types --test tests/toc-anchors.test.mjs` — both cases in the file the 2026-08-31 entry cited as failing now pass (`every table-of-contents entry targets a heading that exists`, `changelog repeated headings have distinct TOC and search destinations`). The `nightly/2026-08-31-improvements` branch this entry pointed at as the fix is not what resolved it and should not be merged for this: as of 2026-09-07 that branch is a 473-file / -47,388-line restructuring unrelated in scope (see ACTION REQUIRED). No branch needed; the shared module already shipped to `main` under a different change. Source: apple-notes harvest, notes-to-factory scheduled run (Phase 2e backlog survey, no Apple Notes work orders this run).
 - 2026-08-31 — **Next.js August 2026 advisories** — already patched, no bump
   needed. `site/package.json` pins `next` to an exact `16.3.3` and
   `site/package-lock.json` resolves `node_modules/next` to `16.3.3`, above the
