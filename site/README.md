@@ -160,3 +160,6 @@ routes and explicit legacy aliases permanently redirect to their allowlisted
 the entire query string; unknown paths and non-navigation methods are not
 forwarded. Same-origin route redirects still preserve queries, and client-side
 retired-fragment remaps preserve both query and fragment.
+# Shared public design
+
+The header, footer, navigation destinations, and design primitives are maintained in FDLC. Run `node scripts/sync-global-navigation.mjs --source=/path/to/FDLC` to update both generated files; add `--check` to verify that neither has drifted. Page composition and reading/search controls remain Guide-owned. The common shell switches to touch navigation at 1100px; Guide search and theme controls remain below it.

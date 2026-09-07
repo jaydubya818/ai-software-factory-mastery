@@ -1,32 +1,33 @@
 import Link from "./GuideLink";
-import { fdlcUrl, GUIDE_ROUTES, guideDocumentPath } from "../../lib/paths";
+import { FDLC_ORIGIN, fdlcUrl } from "../../lib/paths";
+
+
+import { footerGroups } from "../../lib/global-navigation.generated";
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer">
-      <div>
-        <a className="brand footer-brand" href={fdlcUrl()}>
-          <span className="brand-mark" aria-hidden="true">F</span>
-          <span className="brand-copy">
-            <strong>FDLC</strong>
-            <small>The Guide</small>
-          </span>
-        </a>
-        <p>The practical guide to the Factory Development Lifecycle.</p>
+    <footer className="global-footer">
+      <div className="global-footer-inner">
+        <div className="global-footer-brand">
+          <a className="global-logo" href={fdlcUrl()} aria-label="FDLC.ai home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="brand-logo" src={`${FDLC_ORIGIN}/fdlc-logo-transparent.png`} alt="FDLC.ai — Factory Development Lifecycle" width={2007} height={784} />
+          </a>
+          <p>The operating model and technical foundation for trusted autonomous software delivery.</p>
+        </div>
+        {footerGroups.map(([title, links]) => (
+          <nav aria-label={`${title} links`} className="global-footer-group" key={title}>
+            <strong>{title}</strong>
+            {links.map(([label, href]) => href.startsWith("/guide")
+              ? <Link href={href} key={href}>{label}</Link>
+              : <a href={href.startsWith("/") ? fdlcUrl(href) : href} key={href}>{label}{href.startsWith("http") && <span aria-hidden="true"> ↗</span>}</a>)}
+          </nav>
+        ))}
       </div>
-      <div className="footer-links">
-        <a href={fdlcUrl("/framework")}>FDLC framework</a>
-        <a href={fdlcUrl("/mission-control")}>Mission Control</a>
-        <Link href={GUIDE_ROUTES.home}>Table of contents</Link>
-        <Link href={GUIDE_ROUTES.atlas}>Atlas</Link>
-        <Link href={GUIDE_ROUTES.topics}>Reference</Link>
-        <Link href={GUIDE_ROUTES.glossary}>Glossary</Link>
-        <Link href={GUIDE_ROUTES.architecture}>Architecture explorer</Link>
-        <Link href={GUIDE_ROUTES.coverage}>Coverage and maturity</Link>
-        <Link href={guideDocumentPath("appendix/reviewer-guide")}>Reviewer guide</Link>
-        <Link href={guideDocumentPath("appendix/changelog")}>Changelog</Link>
-        <Link href={guideDocumentPath("appendix/research/initial-canon")}>Research canon</Link>
-        <a href="https://github.com/jaydubya818/ai-software-factory-mastery/issues">Give feedback</a>
+      <div className="global-footer-base">
+        <span>© 2026 FDLC.ai</span>
+        <span>Factory Development Lifecycle</span>
+        <span><Link href="/guide/appendix/reviewer-guide">Reviewer guide</Link> · <Link href="/guide/appendix/changelog">Changelog</Link> · <a href="https://github.com/jaydubya818/ai-software-factory-mastery/issues">Give feedback</a></span>
       </div>
     </footer>
   );

@@ -6,6 +6,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
+import { readFile } from "node:fs/promises";
 import { request as httpRequest } from "node:http";
 import { createServer } from "node:net";
 import { chromium } from "playwright";
@@ -54,11 +55,27 @@ async function startNext({ legacyRedirectsEnabled = false } = {}) {
   delete nextEnvironment.VERCEL_ENV;
   delete nextEnvironment.VERCEL_PROJECT_NAME;
   nextEnvironment.GUIDE_NATIVE_LOCAL = "1";
+  nextEnvironment.NODE_ENV = "production";
   if (legacyRedirectsEnabled) nextEnvironment.GUIDE_LEGACY_REDIRECTS_ENABLED = "true";
+  // Emulate Vercel's public request URL when exercising trusted Host aliases
+  // over loopback. This is a test-process configuration, never a source or
+  // deployment setting. Bare Next start otherwise rewrites every Host to its
+  // listening hostname before our ownership logic receives the request.
+  const { config: builtConfig } = JSON.parse(await readFile(new URL(".next/required-server-files.json", root), "utf8"));
+  nextEnvironment.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify({
+    ...builtConfig,
+    skipProxyUrlNormalize: true,
+    experimental: { ...builtConfig.experimental, trustHostHeader: true },
+  });
 
   const next = spawn(
     process.execPath,
-    ["node_modules/next/dist/bin/next", "start", "--hostname", host, "--port", String(port)],
+    ["--input-type=module", "--eval", `
+      import { createServer } from "node:http";
+      import { getRequestHandlers } from "next/dist/server/lib/start-server.js";
+      const { requestHandler } = await getRequestHandlers({ dir: process.cwd(), isDev: false });
+      createServer(requestHandler).listen(${port}, "${host}");
+    `],
     { cwd: root, env: nextEnvironment, stdio: ["ignore", "pipe", "pipe"] },
   );
 
@@ -292,7 +309,7 @@ async function verifyBrowserRuntime(origin) {
     await page.reload({ waitUntil: "networkidle" });
     assert.equal(page.url(), `${origin}${publicPagePath(chapterPath)}`, "reloaded chapter keeps its published URL");
 
-    const searchResponse = await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
+    const searchResponse = await page.goto(`${origin}${publicPagePath("/guide/search")}`, { waitUntil: "networkidle" });
     assert.equal(searchResponse?.status(), 200);
     assert.equal(page.url(), `${origin}${publicPagePath("/guide/search")}`, "standalone search URL remains valid across rollback");
     const input = page.getByPlaceholder("Search agents, harnesses, evidence, environments…");
@@ -395,7 +412,7 @@ async function verifyBrowserRuntime(origin) {
       assert.ok(await codeBlocks.count() > 0, "mobile fixture contains ordinary code");
       const codeBlock = codeBlocks.first();
       assert.equal(await codeBlock.getAttribute("role"), "region");
-      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.match(await codeBlock.getAttribute("aria-label"), /^Code example \d+: .+/);
       assert.equal(await codeBlock.getAttribute("tabindex"), "0");
       await codeBlock.scrollIntoViewIfNeeded();
       await codeBlock.focus();
@@ -423,7 +440,7 @@ async function verifyBrowserRuntime(origin) {
       assert.ok(overflowingIndex >= 0, `${navigation}: authoritative stack page contains wide ordinary code`);
       const codeBlock = codeBlocks.nth(overflowingIndex);
       assert.equal(await codeBlock.getAttribute("role"), "region");
-      assert.equal(await codeBlock.getAttribute("aria-label"), "Scrollable code example");
+      assert.match(await codeBlock.getAttribute("aria-label"), /^Code example \d+: .+/);
       assert.equal(await codeBlock.getAttribute("tabindex"), "0");
       await codeBlock.scrollIntoViewIfNeeded();
       await codeBlock.focus();
@@ -482,11 +499,17 @@ try {
 
   for (const method of ["GET", "HEAD"]) {
     const chapterAlias = await compatibilityRuntime.request(`${chapterPath}?q=a%2Fb&q=evidence`, method);
-    assert.equal(chapterAlias.status, compatibleBuild ? 307 : 200);
+    // NextURL normalizes loopback to localhost, the shared local proxy host.
+    // Test standalone redirects using their actual trusted hostname instead.
+    assert.equal(chapterAlias.status, 200);
     if (compatibleBuild) {
-      assert.equal(new URL(chapterAlias.headers.get("location"), compatibilityRuntime.origin).href, `${compatibilityRuntime.origin}${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
-      assert.match(chapterAlias.headers.get("cache-control"), /private/);
-      assert.match(chapterAlias.headers.get("cache-control"), /no-store/);
+      const standaloneAlias = await compatibilityRuntime.requestAsLegacyHost(`${chapterPath}?q=a%2Fb&q=evidence`, method);
+      assert.equal(standaloneAlias.status, 307);
+      const destination = new URL(standaloneAlias.headers.get("location"), "https://ai-software-factory-mastery.vercel.app");
+      assert.equal(destination.hostname, "ai-software-factory-mastery.vercel.app");
+      assert.equal(destination.pathname + destination.search, `${publicPagePath(chapterPath)}?q=a%2Fb&q=evidence`);
+      assert.match(standaloneAlias.headers.get("cache-control"), /private/);
+      assert.match(standaloneAlias.headers.get("cache-control"), /no-store/);
       assert.equal((await compatibilityRuntime.request(publicPagePath(chapterPath), method)).status, 200, "rollback-stable chapter route renders repaired Guide");
     }
     assert.equal((await compatibilityRuntime.requestAsFdlcHost(chapterPath, method)).status, 200, "FDLC-host namespace renders directly without a standalone redirect loop");

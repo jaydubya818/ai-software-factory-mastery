@@ -93,7 +93,7 @@ test("each primary-navigation copy identifies exactly one current Guide surface"
 
   for (const [route, expectedHref] of matrix) {
     const html = await htmlFor(route);
-    const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+    const header = html.match(/<header class="global-header">[\s\S]*?<\/header>/)?.[0];
     assert.ok(header, `${route} renders the shared header`);
     const current = [...header.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/g)]
       .map((match) => match[0].match(/href="([^"]+)"/)?.[1]);
@@ -103,7 +103,7 @@ test("each primary-navigation copy identifies exactly one current Guide surface"
 
 test("Guide pages retain the FDLC global shell and canonical Guide dropdown routes", async () => {
   const html = await htmlFor(`/guide/${chapterSlugs[2]}`);
-  const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+  const header = html.match(/<header class="global-header">[\s\S]*?<\/header>/)?.[0];
   assert.ok(header, "renders the persistent FDLC global header");
   assert.doesNotMatch(header, /brand-copy|<small>The Guide<\/small>/, "Guide identity does not replace the global shell");
   for (const [label, href] of [
@@ -128,15 +128,15 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
 });
 
 test("Guide keeps the global navigation centered like the FDLC shell", async () => {
-  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-  assert.match(css, /\.site-header\s*\{[\s\S]*?grid-template-columns:\s*1fr auto 1fr;/);
-  assert.match(css, /\.header-tools\s*\{\s*justify-self:\s*end;/);
+  const css = await readFile(new URL("../app/design-system.generated.css", import.meta.url), "utf8");
+  assert.match(css, /\.global-header-inner\s*\{[\s\S]*?grid-template-columns:\s*1fr auto 1fr;/);
+  assert.match(css, /\.header-github\s*\{[^}]*justify-self:\s*end;/);
 });
 
 test("all Guide surfaces share the five-item More menu on desktop and mobile", async () => {
   for (const route of ["/guide", `/guide/${chapterSlugs[2]}`, "/guide/atlas", "/guide/topics", "/guide/glossary", "/guide/search"]) {
     const html = await htmlFor(route);
-    const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+    const header = html.match(/<header class="global-header">[\s\S]*?<\/header>/)?.[0];
     assert.ok(header, route);
     const more = header.match(/id="more-navigation"[^>]*>([\s\S]*?)<\/div>/)?.[1];
     const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
@@ -234,10 +234,10 @@ test("ordinary code blocks retain keyboard-accessible regions alongside Mermaid 
   assert.ok(blocks.length > 0, "ordinary fenced code remains a pre element");
   for (const block of blocks) {
     assert.match(block, /role="region"/);
-    assert.match(block, /aria-label="Scrollable code example"/);
+    assert.match(block, /aria-label="Code example \d+: [^"]+"/);
     assert.match(block, /tabindex="0"/);
   }
-  assert.match(html, /class="mermaid-diagram"/, "Mermaid keeps its separate renderer");
+  assert.match(html, /class="mermaid-diagram(?: is-loading)?"/, "Mermaid keeps its separate renderer");
   assert.doesNotMatch(html, /<pre[^>]*>\s*<code class="language-mermaid"/);
 });
 

@@ -3,7 +3,9 @@ import path from "node:path";
 
 const outputRoot = path.resolve(".next/static");
 const requiredSelectors = [
-  ".site-header",
+  ".global-header",
+  ".global-header-inner",
+  ".global-footer",
   ".guide-home-hero",
   ".home-pipeline",
   ".pipeline-node",
