@@ -94,7 +94,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "
   await paletteTrigger.focus();
   await page.keyboard.press("Control+k");
   await page.keyboard.press("Escape");
-  assert.equal(await paletteTrigger.evaluate((node) => node === document.activeElement), true);
+  await page.waitForFunction((button) => button === document.activeElement, await paletteTrigger.elementHandle());
 
   for (const term of ["factory-version", "verification-subject", "factory-deployed-engineer"]) {
     await page.goto(`${origin}/guide/glossary#term-${term}`, { waitUntil: "domcontentloaded" });
