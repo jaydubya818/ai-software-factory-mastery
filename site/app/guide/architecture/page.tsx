@@ -20,7 +20,7 @@ export default function ArchitecturePage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page architecture-page">
+      <main className="interior-page architecture-page" id="main-content" tabIndex={-1}>
         <header className="architecture-hero">
           <div>
             <span className="eyebrow">The complete governed system</span>

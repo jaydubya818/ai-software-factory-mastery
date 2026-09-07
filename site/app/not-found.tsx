@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page not-found-page">
+      <main className="interior-page not-found-page" id="main-content" tabIndex={-1}>
         <span className="eyebrow">404</span>
         <h1>That page is not in the guide.</h1>
         <p>The address may have changed when the book was reorganized. Search for the term you were after, or start from the map.</p>

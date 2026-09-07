@@ -1,6 +1,7 @@
 "use client";
 
 import { guideAssetPath, guideContentPath, guideNavigationHref } from "./paths.ts";
+import { normalizeSearchText, searchTerms } from "./text.ts";
 
 export type SearchSection = { id: string; heading: string; text: string };
 export type SearchDocument = {
@@ -48,23 +49,24 @@ function excerptFor(text: string, terms: string[], width = 180) {
 }
 
 export function searchDocuments(index: SearchDocument[], query: string, limit = 30): SearchHit[] {
-  const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  const terms = searchTerms(query);
   if (!terms.length) return [];
   const hits: SearchHit[] = [];
   for (const document of index) {
-    const title = document.title.toLowerCase();
-    const description = document.description.toLowerCase();
+    const title = normalizeSearchText(document.title);
+    const description = normalizeSearchText(document.description);
     const titleScore = terms.reduce((total, term) => total + (title.includes(term) ? 12 : 0) + (description.includes(term) ? 3 : 0), 0);
     // Whole-document hit when the title matches every term.
     if (terms.every((term) => title.includes(term))) {
       hits.push({ document, section: null, excerpt: document.description, href: guideNavigationHref(guideContentPath(document.slug)), relevance: titleScore + 20 });
     }
     for (const section of document.sections) {
-      const heading = section.heading.toLowerCase();
-      const text = section.text.toLowerCase();
+      const heading = normalizeSearchText(section.heading);
+      const text = normalizeSearchText(section.text);
       if (!terms.every((term) => heading.includes(term) || text.includes(term))) continue;
-      const phraseBonus = terms.length > 1 && (text.includes(terms.join(" ")) || text.includes(terms.join("-"))) ? 10 : 0;
-      const relevance = terms.reduce((total, term) => total + (heading.includes(term) ? 9 : 0) + Math.min(4, text.split(term).length - 1), 0) + titleScore + phraseBonus;
+      const phraseBonus = terms.length > 1 && text.includes(terms.join(" ")) ? 10 : 0;
+      const exactHeadingBonus = heading === terms.join(" ") ? 80 : 0;
+      const relevance = terms.reduce((total, term) => total + (heading.includes(term) ? 9 : 0) + Math.min(4, text.split(term).length - 1), 0) + titleScore + phraseBonus + exactHeadingBonus;
       hits.push({ document, section, excerpt: excerptFor(section.text, terms), href: guideNavigationHref(`${guideContentPath(document.slug)}#${section.id}`), relevance });
     }
   }

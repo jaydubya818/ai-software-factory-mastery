@@ -16,7 +16,7 @@ export default function SearchPage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page search-page">
+      <main className="interior-page search-page" id="main-content" tabIndex={-1}>
         <header className="page-intro compact-intro">
           <span className="eyebrow">Guide search</span>
           <h1>Search the whole system.</h1>

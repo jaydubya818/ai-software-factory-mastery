@@ -4,6 +4,7 @@ import { GUIDE_ROUTES, guideDocumentPath, guideNavigationHref } from "../../lib/
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadSearchIndex, searchDocuments, type SearchDocument, type SearchHit } from "../../lib/search-client";
+import { normalizeSearchText, searchTerms } from "../../lib/text";
 
 const starters: { title: string; description: string; href: string; meta: string }[] = [
   { title: "The factory in one view", description: "The whole system on one page — five systems, five verbs, the one line.", href: guideDocumentPath("01-understand/02-the-factory-in-one-view"), meta: "Chapter 2" },
@@ -42,12 +43,13 @@ export function SearchExperience() {
   const results: SearchHit[] = useMemo(() => (index && query.trim() ? searchDocuments(index, query) : []), [index, query]);
 
   function highlighted(value: string) {
-    const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const terms = searchTerms(query);
     if (!terms.length) return value;
-    const lower = value.toLowerCase();
+    const lower = normalizeSearchText(value);
     const term = terms.find((candidate) => lower.includes(candidate));
     if (!term) return value;
-    const at = lower.indexOf(term);
+    const at = value.toLowerCase().indexOf(term);
+    if (at < 0) return value;
     return <>{value.slice(0, at)}<mark>{value.slice(at, at + term.length)}</mark>{value.slice(at + term.length)}</>;
   }
 
@@ -63,7 +65,7 @@ export function SearchExperience() {
           value={query}
           onChange={(event) => { setQuery(event.target.value); setActive(0); }}
           onKeyDown={(event) => {
-            if (event.key === "ArrowDown") { event.preventDefault(); setActive((value) => Math.min(value + 1, results.length - 1)); }
+            if (event.key === "ArrowDown") { event.preventDefault(); setActive((value) => results.length ? Math.min(value + 1, results.length - 1) : 0); }
             if (event.key === "ArrowUp") { event.preventDefault(); setActive((value) => Math.max(value - 1, 0)); }
             if (event.key === "Enter" && results[active]) { event.preventDefault(); router.push(results[active].href); }
           }}

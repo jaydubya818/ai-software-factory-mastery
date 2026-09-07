@@ -40,7 +40,7 @@ export default function CoveragePage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page coverage-page">
+      <main className="interior-page coverage-page" id="main-content" tabIndex={-1}>
         <header className="page-intro split-intro">
           <div>
             <span className="eyebrow">Truth before breadth</span>
