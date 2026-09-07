@@ -275,7 +275,7 @@ The nine classes and the seven-layer isolation step in the framework below are t
 
 ### The incident framework
 
-The framework wraps the procedure above in the eight steps Jay runs every incident through:
+The framework wraps the procedure above in eight repeatable incident steps:
 
 **Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure**
 
@@ -314,6 +314,13 @@ The framework applies to eleven recurring scenarios, and rehearsing each is the 
 | Evaluation regression | Evaluation | Block promotion; recheck graders |
 | Model-provider outage | Model | Scoped circuit; queue or fallback by eligibility |
 
+Use the [production reliability and incident operations playbook](../appendix/production-reliability-operations-playbook.md)
+for the incident record, blast-radius query, saga and compensation contract,
+degraded-mode matrix, known-good definition, response controls, exercise set,
+and verified-closure packet. It consolidates a large symptom catalog into ten
+failure families so operators can rehearse distinct boundaries without creating
+one disconnected runbook per alert.
+
 The security scenarios in the table map onto the threat list in [Chapter 33](../04-prove/33-security.md). The layer column is a starting hypothesis, not a verdict; the *Isolate* step exists to test it.
 
 Incident triage is itself a candidate for agent execution. The mission's **Workflow 5** runs alert → evidence collection → severity → hypotheses → root cause → recommendation → postmortem: the agent gathers evidence, forms hypotheses, and drafts the recommendation; a human owns severity and the response decision. Log and telemetry analysis, triage, and root-cause investigation are among the first tasks the operating model expects agents to absorb; incident *response*, the consequential action, stays with humans. The framework above is that workflow's harness.
@@ -335,6 +342,8 @@ The tower is used by tired people at bad hours. Colour never carries state alone
 9. **Adopt the incident framework** and rehearse it against all eleven scenarios, including the layer-isolation step.
 10. **Run a game day** each quarter from the disaster scenario list; record detection, decision, containment, restore, reconciliation, communication, and return to service, and keep the gaps.
 11. **Gate autonomy promotion on recent recovery evidence.**
+12. **Adopt the production operations packet** for impact, command, unknowns,
+    containment enforcement, known-good identity, recovery, and closure.
 
 **Closure checklist**
 
@@ -390,5 +399,5 @@ Not implemented or proven: complete disaster recovery, regional failover, backup
 - [Chapter 34](./34-the-factory-as-a-platform.md) and [Chapter 35](./35-observability-telemetry-and-forensics.md) for the scheduling contract and the telemetry and forensic bundle the tower consumes.
 - [Chapter 37, Control surfaces, event contracts, and storage](./37-control-surfaces-event-contracts-and-storage.md) for the control APIs the tower calls.
 - [Chapter 40, Governed learning and compounding engineering](../06-improve/40-governed-learning.md) for the Improve stage.
+- [Production reliability and incident operations playbook](../appendix/production-reliability-operations-playbook.md) for a copyable incident packet, degraded modes, saga recovery, blast-radius analysis, and game-day scenarios.
 - Primary references: NIST SP 800-34 Rev. 1, Contingency Planning Guide for Federal Information Systems (accessed 2026-08-30); Google SRE guidance on SLOs and error budgets.
-- Sources: Jay West, reliability and security round notes, the Clarify → Contain → Observe → Isolate → Restore → Correct → Prevent → Measure framework, layer isolation, the incident scenario list, and production controls; Jay West, AI Software Factory mission, Workflow 5 (incident triage and RCA) and the task split between agents and humans; Jay West, factory architecture notes, on the production-incident procedure, mid-workflow recovery, reliability dimensions, and the model-failure versus platform-failure distinction.

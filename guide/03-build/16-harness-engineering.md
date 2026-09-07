@@ -2,14 +2,14 @@
 title: "Harness engineering"
 part: build
 chapter: 16
-summary: "How to engineer reproducible agent sessions, inner, outer, and meta loops, lifecycle controls, event streams, adapters, and conformance evidence."
+summary: "How to engineer reproducible Agent Harnesses, feedback loops, lifecycle controls, event streams, adapters, and conformance evidence."
 absorbs: [05-runtime-architecture/08-coding-harnesses-adapters-and-agent-protocols.md]
 infographics: [three-loops, harness-pruning, harness-adapter-contract, adapter-admission]
 ---
 
 # 16. Harness engineering
 
-Harness engineering is the discipline of making agent execution reproducible, observable, bounded, and replaceable. It designs the inner, outer, and meta loops; the event stream; lifecycle and checkpoints; adapter admission; and the conformance evidence required before a harness can execute governed work.
+Harness Engineering is the discipline of designing, implementing, and improving the operating environment around Agents. It makes agent execution reproducible, observable, bounded, recoverable, and replaceable through explicit context, tool, state, loop, permission, lifecycle, telemetry, and conformance contracts.
 
 ## The problem
 
@@ -19,13 +19,13 @@ Interactive coding agents assume a person can watch a terminal, answer prompts, 
 
 ### Harness engineering
 
-Everything above describes a harness as a thing. **Harness engineering** is the discipline of building it on purpose: designing the execution environment, feedback mechanisms, checks, tools, context, and improvement loops that let agents complete increasingly complex work with less intervention at equal or better quality. The sentence to keep is the one practitioners use to explain it to their own teams: *engineer the system in which agents engineer the software.* The engineer's product is no longer the code; it is the place the code gets made.
+Harness Engineering asks concrete questions: how context is assembled and refreshed; how tools and models are exposed; where permissions are enforced; how the Agent Loop observes progress and stops; how state, checkpoints, and recovery behave; how budgets constrain execution; what telemetry and artifacts are emitted; and how one Harness implementation is qualified or replaced.
 
-That system has a fixed scope, and each item on it is a chapter of this book: context (what good looks like, [Chapter 19](./19-data-knowledge-and-semantic-engineering.md)); skills ([Chapter 11](./11-the-agent-factory.md)); tools and the gateway ([Chapter 18](./18-agent-architecture.md)); the environment ([Chapter 17](./17-development-environments-sandboxes-and-compute.md)); tests and verifiers ([Chapter 27](../04-prove/27-quality-and-evidence-architecture.md)); evals ([Chapter 29](../04-prove/29-evaluation-engineering.md)); feedback and observability ([Chapter 35](../05-operate/35-observability-telemetry-and-forensics.md)); and the improvement loops ([Chapter 40](../06-improve/40-governed-learning.md)). The harness is the machine; the loops below are what you run through it. Practitioners at Tessl are candid about why the discipline is hard: the field changes weekly, the work is fundamentally unplanned and competes with shipping, and the signals you need are hidden in local logs or in someone's head until you move the workflow onto legible surfaces.
+The Harness depends on adjacent components without absorbing them. The Runtime hosts and preserves execution. The Sandbox isolates effects. The Orchestrator advances a Work Graph. The Control Plane owns identity, authority, policy, approvals, budgets, and release decisions. Tests and independent verifiers establish whether an outcome is acceptable. [Execution boundaries and canonical terminology](../appendix/execution-boundaries-and-terminology.md) is the authoritative map.
 
-### Inner loop, outer loop, meta loop
+### Inner feedback loop, outer verification loop, meta learning loop
 
-The "inner" and "outer" of the harness split above describe two pieces of software. Practitioners also use "inner" and "outer" for a different but complementary idea, three loops that run *through* the harness, and it is worth holding both in your head. Each loop has its own examples, answers its own question, and serves a different objective.
+This chapter uses **inner**, **outer**, and **meta** only for feedback scopes. They are not Harness components. The **Agent Loop** is the worker's plan-act-observe-evaluate cycle; these three feedback loops describe how quickly results feed back into execution, verification, and system improvement.
 
 | Loop | What runs in it | The question it answers | Objective |
 |---|---|---|---|
@@ -98,7 +98,7 @@ flowchart LR
 
 ### Headless execution and the structured event stream
 
-The first concrete decision is how the outer harness talks to the inner one. Every serious harness offers a **headless** or non-interactive mode that emits typed events or a stable structured stream, usually JSON Lines. BAML's team, for example, runs Claude Code and Codex headless with a streaming JSON output, and reads the JSONL transcript the harness writes: either tailing the file as it grows or scooping it up when the session ends. Both work. What does not work is parsing the pretty terminal rendering, which changes with every release and encodes no completion semantics.
+The first concrete integration decision is how the Factory Platform talks to a Coding Harness. A production-ready Harness should offer a **headless** or non-interactive mode that emits typed events or a stable structured stream, often JSON Lines. The adapter can consume the stream as it grows or archive it when the session ends. What does not work is parsing the decorative terminal rendering, which changes across releases and encodes no reliable completion semantics.
 
 The analogy is a flight data recorder versus listening through the cockpit door. Terminal text may remain a diagnostic artifact, but the authoritative completion contract must be the structured stream. And process exit zero never means the engineering task is complete; it means the process stopped.
 
@@ -115,23 +115,23 @@ For every session the factory should retain:
 
 A harness session is a stateful thing that the factory needs to drive from outside. A portable **harness lifecycle** covers capability discovery and version negotiation; preflight and configuration validation; start, attach, resume, pause, cancel, drain, and terminate; user input and structured human-decision requests; model, tool, file, command, subagent, progress, warning, and cost events; permission and policy-decision callbacks; checkpoints, compaction, and session identity; structured terminal completion and unresolved-work reporting; artifact and receipt export; classification of timeout, crash, malformed output, and unavailable provider; secret redaction and content-retention controls; and environment teardown and reconciliation.
 
-Two items deserve emphasis. **Session resume** means the outer harness can reattach to a session after a worker crash or lease expiry and continue, which only works if the native session identity was recorded before the first tool call and the environment still exists. **Compaction** is the inner harness summarizing its own context to stay under the window; the factory must know when it happened, because evidence gathered before a compaction may no longer be in the model's view, and a checkpoint taken across a compaction boundary is a different object from one taken within it. Dexter lists compaction and testing among the choices the inner harness makes for you when you buy it and that you make yourself when you build it.
+Two items deserve emphasis. **Session resume** means the Runtime and Harness adapter can reattach after a worker crash or lease expiry, which only works if the native session identity was recorded before the first tool call and the environment still exists. **Compaction** is the Harness summarizing working context to stay under the model's context window; the factory must record when it happened because earlier evidence may no longer be in the Model's view, and a checkpoint across a compaction boundary is materially different from one taken within it.
 
 ### Hooks are integration points, not authority
 
-Most harnesses expose **lifecycle hooks**: callbacks on session start, tool calls, file changes, subagent spawn, permission requests, stop, and completion. They are useful for logging, policy callbacks, credential injection, validation, notifications, and cleanup. HumanLayer uses a stack of them.
+Most harnesses expose **lifecycle hooks**: callbacks on session start, tool calls, file changes, subagent spawn, permission requests, stop, and completion. They are useful for logging, policy callbacks, credential injection, validation, notifications, and cleanup.
 
 But a native hook is not automatically trustworthy. Before relying on one for anything consequential, the factory must know whether it is synchronous or fire-and-forget, bypassable by a flag or a config edit, ordered relative to other hooks, retryable, authenticated, and covered by the harness's own configuration hierarchy (user, project, enterprise). A hook in a user-editable settings file is a smoke detector wired to your phone: valuable, and not the fire code. Consequential policy belongs in an external authoritative control path or a qualified enforcement point, per [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md).
 
-Hooks are also where cross-harness portability dies. Claude Code and Codex do not have the same hooks. The thin configurable harnesses differ again. OpenCode has a plugin system in which hooks are a separate concept entirely. Dexter's diagnosis is that every harness is, underneath, its own bespoke UI, and the hook model is part of that UI. Even the instruction file is contested: Claude Code reads `CLAUDE.md` while most other tools converged on `AGENTS.md`, and the vendors have not agreed to share. Expect to maintain both.
+Hooks are also where cross-Harness portability often fails. Coding Harnesses expose different events, ordering, configuration, and instruction-file conventions. Treat those differences as adapter behavior, preserve native evidence, and qualify each version against the Agent Contract.
 
 ### Driving to completion with bounded loops
 
-The outer harness is also where "keep going until it is actually done" lives. BAML's practice is instructive because it is so plain: a hard-coded while loop that reruns the agent against CodeRabbit review comments until the PR is mergeable, with a maximum of three iterations, after which the loop boots the work out to a human. That number is the **maximum review iterations** parameter: an outer-loop setting, owned by the harness rather than the model, that caps how many review-and-fix cycles a single Attempt may consume before the work is escalated. Nobody is notified until either the reviewer bot is satisfied or the budget is spent. A second loop, which they were adding at the time, babysits an approved PR against a moving main branch until it merges: an **agentic merge queue**, covered in [Chapter 39](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md). The pattern to retain is: bounded iterations, a deterministic exit condition, and a human handoff when the bound is hit. An unbounded "fix until green" loop is a spend incident waiting to happen.
+Bounded continuation belongs in explicit Loop and Work Graph contracts. A **maximum review iterations** setting caps how many review-and-repair cycles an Attempt or workflow may consume before escalation. The Harness enforces local turn, time, token, and cost limits; the Orchestrator owns durable review routing and human waits; the Control Plane supplies authority and budget. The pattern is bounded iterations, a deterministic exit condition, and a human handoff when the bound is hit. An unbounded "fix until green" loop is a spend incident waiting to happen.
 
 ### The adapter contract and the capability manifest
 
-The outer harness talks to a specific inner harness through an **adapter**. Each adapter publishes a **Harness Capability Manifest** that declares, truthfully, which lifecycle behaviors it supports and which it does not. Unsupported behavior must be visible, not silently absent, and adapters should fail closed: if a WorkOrder requires a capability the harness cannot prove (say, cancellation mid-tool-call, or verified session resume), the adapter refuses the work rather than pretending.
+The Factory Platform talks to a specific Harness implementation through an **adapter**. Each adapter publishes a **Harness Capability Manifest** that declares, truthfully, which lifecycle behaviors it supports and which it does not. Unsupported behavior must be visible, and adapters should fail closed: if a WorkOrder requires a capability the Harness cannot prove, such as cancellation during a tool call or verified session resume, the adapter refuses the work.
 
 <!-- infographic: harness-adapter-contract -->
 > **Infographic — The harness adapter contract.**

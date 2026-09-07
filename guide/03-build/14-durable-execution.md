@@ -147,6 +147,26 @@ A search that returns no match from an eventually consistent index is not conclu
 
 For a PR creation whose response is lost, match repository, branch/head and operation identity before creating anything again. If the provider cannot support safe deduplication or reconciliation, stop for a decision. Test a lost response after success, delayed visibility, conflicting identity, cancellation during the call, and a stale worker delivering late success. [Chapter 29](../04-prove/29-evaluation-engineering.md) connects these failures to the regression suite; [FDLC Harness](https://fdlc.ai/architecture#harness) defines their architectural owner.
 
+### A multi-system workflow needs a saga contract
+
+When a WorkOrder changes several external systems, one database transaction
+cannot make the whole graph atomic. Treat the sequence as a saga: every step has
+a stable logical operation identity, a forward action, a durable receipt, an
+idempotency or reconciliation boundary, and an explicitly authorized
+compensation or repair path. Record irreversible consequences separately.
+Compensation is another effect; it can fail, require stronger authority, and
+leave residual harm.
+
+Partial success is represented per Task and per effect. If three independent
+branches finish and a fourth fails, retain the valid results only when their
+acceptance and dependencies remain current. Mark downstream work invalidated,
+find orphaned Tasks whose parent, lease, grant, or Factory Version is no longer
+current, and hold every unknown effect for reconciliation. Do not collapse the
+graph into a reassuring percentage or restart it from the root.
+
+The complete design and incident procedure are in the
+[production reliability and incident operations playbook](../appendix/production-reliability-operations-playbook.md).
+
 ### Recovery requires classification and a changed hypothesis
 
 Retry is appropriate only when the failure is transient or when a concrete input, environment, plan, or implementation has changed. Repeating the same action without new evidence wastes budget and can compound damage: a worker that failed validation because it misunderstood the spec will misunderstand it again. Policy, not the worker, controls retry by failure class.
@@ -354,5 +374,5 @@ At commit [`b31e275`](https://github.com/jaydubya818/MissionControl/tree/b31e275
 - Previous: [Chapter 13, Control plane, orchestrator, and execution plane](./13-control-plane-orchestrator-and-execution-plane.md) for the state machine, stop-condition table, and error taxonomy this chapter operationalizes.
 - Related: [Chapter 5, Authoritative records](../02-design/05-authoritative-records.md); [Chapter 8, Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) for budgets and attention items; [Chapter 23, Agent and loop engineering](./23-agent-and-loop-engineering.md); [Chapter 25, The 12-layer stack](./25-the-12-layer-production-ai-agent-stack.md); [Chapter 32, CI/CD and progressive delivery](../04-prove/32-cicd-progressive-delivery-and-production-verification.md); [Chapter 36, Resilience, incidents, and the control tower](../05-operate/36-resilience-incidents-and-the-control-tower.md); [Chapter 37, Control surfaces, event contracts, and storage](../05-operate/37-control-surfaces-event-contracts-and-storage.md).
 - Glossary: [Appendix A](../appendix/glossary.md).
-- Sources: the 12-layer production AI agent stack notes (Loop Engineering, Infrastructure Engineering, and the production reliability vocabulary in the coverage audit); Jay West, factory architecture notes (durable execution, retries and idempotency, mid-workflow failure, reliability dimensions).
+- Sources: internal architecture and reliability working notes covering durable execution, retries, idempotency, mid-workflow failure, and production operating controls.
 - Mission Control at `b31e275`: [Task Attempt Scheduler architecture](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/architecture/task-attempt-scheduler-pr2.md), [Task–WorkOrder linkage](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/architecture/task-workorder-linkage-pr1.md), [Attempt scheduler rules](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/taskAttemptScheduler.ts), [Task workflow rules](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/lib/taskWorkflowState.ts), [Tasks](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/convex/tasks.ts), [scheduler test results](https://github.com/jaydubya818/MissionControl/blob/b31e27564deb1c03c167e61b5ee094567c2ba7b1/docs/testing/task-attempt-scheduler-results.md).

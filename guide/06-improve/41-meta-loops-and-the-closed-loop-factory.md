@@ -135,7 +135,7 @@ it supplies concrete improvement candidates and never changes active behavior
 by itself. The control-plane framing from the "Software factory design
 patterns" conversation is the memorable version: if all your engineers are
 saying the same thing to the agent all day, how do you incorporate that into
-the outer harness?
+the governed Harness, Work Graph, context, skills, tools, or verification path?
 
 A concrete example of the harvest, from one of the practitioners' own writing
 process: rather than accept three pages of generated prose, he has the model
