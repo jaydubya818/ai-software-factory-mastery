@@ -100,6 +100,7 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
     ["Framework", "https://www.fdlc.ai/framework"],
     ["Architecture", "https://www.fdlc.ai/architecture"],
     ["Mission Control", "https://www.fdlc.ai/mission-control"],
+    ["FDE", "https://www.fdlc.ai/deploy"],
     ["Maturity", "https://www.fdlc.ai/maturity"],
   ]) assert.match(header, new RegExp(`href="${href}"[^>]*>${label}<`), label);
   for (const [label, href] of [
@@ -113,6 +114,21 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   assert.match(header, /<button aria-controls="mobile-guide-navigation" aria-expanded="true" aria-current="page" class="is-active"/);
   for (const id of ["guide-navigation", "more-navigation", "mobile-navigation", "mobile-guide-navigation"]) {
     assert.equal([...header.matchAll(new RegExp(`id="${id}"`, "g"))].length, 1, `${id} is unique`);
+  }
+});
+
+test("all Guide surfaces share the five-item More menu on desktop and mobile", async () => {
+  for (const route of ["/guide", `/guide/${chapterSlugs[2]}`, "/guide/atlas", "/guide/topics", "/guide/glossary", "/guide/search"]) {
+    const html = await htmlFor(route);
+    const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+    assert.ok(header, route);
+    const more = header.match(/id="more-navigation"[^>]*>([\s\S]*?)<\/div>/)?.[1];
+    const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
+    for (const menu of [more, mobileMore]) {
+      assert.ok(menu, route);
+      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["FDLC in 5 Minutes", "Manifesto", "Start", "Enterprise", "About"], route);
+    }
+    assert.doesNotMatch(header, /href="[^"]*\/(?:spec|specification|benchmarks)"/, route);
   }
 });
 
