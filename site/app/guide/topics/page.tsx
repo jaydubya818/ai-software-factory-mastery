@@ -44,7 +44,7 @@ export default function ReferencePage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page topics-page">
+      <main className="interior-page topics-page" id="main-content" tabIndex={-1}>
         <header className="page-intro shelf-intro">
           <span className="eyebrow">Reference</span>
           <h1>The reference shelf.</h1>

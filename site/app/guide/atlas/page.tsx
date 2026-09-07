@@ -16,7 +16,7 @@ export default function VisualsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page visual-guide-page">
+      <main className="interior-page visual-guide-page" id="main-content" tabIndex={-1}>
         <header className="visual-guide-hero">
           <div>
             <span className="eyebrow">Atlas</span>

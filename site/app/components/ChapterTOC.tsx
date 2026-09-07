@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type Heading = { id: string; text: string };
+type Heading = { id: string; text: string; depth: number };
 
 export function ChapterTOC({ headings, variant = "aside" }: { headings: Heading[]; variant?: "aside" | "mobile" }) {
   const [active, setActive] = useState(headings[0]?.id ?? "");
@@ -13,7 +13,7 @@ export function ChapterTOC({ headings, variant = "aside" }: { headings: Heading[
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [headings]);
-  const list = <ol>{headings.map((heading) => <li className={active === heading.id ? "is-active" : undefined} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>;
+  const list = <ol>{headings.map((heading) => <li className={`${active === heading.id ? "is-active " : ""}toc-depth-${heading.depth}`} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>;
   if (variant === "mobile") {
     return (
       <details className="toc-mobile">

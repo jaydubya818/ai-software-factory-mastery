@@ -918,6 +918,12 @@ acceptance or production value.
 deployment, activation, observation, rollback readiness, and production
 verification. These states should not be compressed into “done.”
 
+**Outcome** — The observable result the governed work was intended to create,
+measured after delivery against the Mission's stated success criteria. A
+verified artifact, accepted WorkOrder, merged pull request, or deployment may
+be necessary evidence on the way to an Outcome; none proves the Outcome by
+itself.
+
 **Authoritative states** — The seven state machines a control plane keeps, one
 per record, with the rules that relate them. Mission: DRAFT, PLANNING,
 AWAITING_PLAN_APPROVAL, READY, IN_PROGRESS, BLOCKED, AWAITING_VALIDATION,
@@ -2576,6 +2582,13 @@ leaves. A working integration only the engineer understands is a failure.
 for a bounded period, working from that team's backlog on that team's
 repositories. The first step of the forward-deployed loop: Embed → Observe →
 Co-build → Productise → Contribute → Reuse → Scale.
+
+**Factory Deployed Engineer** — An engineer embedded with a team to establish
+one governed factory line, connect it to the team's real repositories and
+controls, and turn repeated integration work into reusable platform
+capabilities. The role transfers operating knowledge and ownership to the
+team; it is not open-ended staff augmentation or a substitute for accountable
+product and platform owners.
 
 **Migration tooling** — The productised form of the most common co-build:
 scripts and adapters that move a team's existing agent, prompts, or

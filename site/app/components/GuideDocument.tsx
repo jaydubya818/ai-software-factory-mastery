@@ -29,6 +29,7 @@ import { Markdown } from "./Markdown";
 import { MissionControlStatusNotice } from "./MissionControlStatusNotice";
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
+import { readingMinutes } from "../../lib/text";
 
 export function guideDocumentMetadata(requestedSlug: string): Metadata {
   const canonicalSlug = legacyDocumentRedirects[requestedSlug] ?? retiredFdlcSummaryRedirects[requestedSlug] ?? requestedSlug;
@@ -89,7 +90,7 @@ export function GuideDocument({
   if (!document) notFound();
 
   const part = partForDocument(document);
-  const headings = document.headings.filter((heading) => heading.depth === 2);
+  const headings = document.headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
   const { previous, next } = adjacentDocuments(requestedSlug);
   const label = chapterLabel(document);
   const crumb = part ? `Part ${part.number} — ${part.verb}` : document.section;
@@ -121,22 +122,22 @@ export function GuideDocument({
       <SiteHeader />
       <main className="docs-layout">
         <DocumentNav currentSlug={requestedSlug} sections={navSections} />
-        <article className="document-article">
+        <article className="document-article" id="main-content" tabIndex={-1}>
           <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href={GUIDE_ROUTES.home}>Guide</Link><span>/</span><Link href={crumbHref}>{crumb}</Link></nav>
           <header className="document-header">
-            <div className="document-labels">{part && <span>Part {part.number} — {part.verb}</span>}{document.stage !== null && <span>The factory in one line</span>}<span>{label}</span>{!part && document.stage === null && document.contentType !== "overview" && <span>{document.contentType}</span>}</div>
+            <div className="document-labels">{part && <span>Part {part.number} — {part.verb}</span>}{document.stage !== null && <span>The factory in one line</span>}<span>{label}</span><span>About {readingMinutes(document.content)} min</span>{!part && document.stage === null && document.contentType !== "overview" && <span>{document.contentType}</span>}</div>
             <h1>{document.chapter ? `${document.chapter}. ${document.title}` : document.title}</h1>
             {document.summary && <p>{document.summary}</p>}
           </header>
           {isMissionControlStatusDocument(document.slug, document.contentType) && <MissionControlStatusNotice />}
-          <ChapterTOC variant="mobile" headings={headings.map((heading) => ({ id: heading.id, text: heading.text }))} />
-          <div className="markdown-body"><Markdown content={document.content} sourcePath={document.sourcePath} infographicAssets={"infographicAssets" in document ? (document.infographicAssets as Record<string, string>) : {}} /></div>
+          <ChapterTOC variant="mobile" headings={headings.map((heading) => ({ id: heading.id, text: heading.text, depth: heading.depth }))} />
+          <div className="markdown-body"><Markdown content={document.content} sourcePath={document.sourcePath} glossary={document.slug === "appendix/glossary"} infographicAssets={"infographicAssets" in document ? (document.infographicAssets as Record<string, string>) : {}} /></div>
           <nav className="document-pagination" aria-label="Previous and next">
             {previous ? <Link href={guideContentPath(previous.slug)}><span>Previous · {chapterLabel(previous)}</span><strong>{previous.title}</strong></Link> : <span />}
             {next ? <Link className="next-document" href={guideContentPath(next.slug)}><span>Next · {chapterLabel(next)}</span><strong>{next.title}</strong></Link> : <span />}
           </nav>
         </article>
-        <ChapterTOC headings={headings.map((heading) => ({ id: heading.id, text: heading.text }))} />
+        <ChapterTOC headings={headings.map((heading) => ({ id: heading.id, text: heading.text, depth: heading.depth }))} />
       </main>
       <SiteFooter />
     </>

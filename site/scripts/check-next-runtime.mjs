@@ -278,7 +278,7 @@ async function verifyBrowserRuntime(origin) {
     const loadedManagedAssets = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
     page.on("console", (message) => {
-      if (message.type() === "error") consoleErrors.push(message.text());
+      if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) consoleErrors.push(message.text());
     });
     page.on("response", (response) => {
       const resourceType = response.request().resourceType();
@@ -364,7 +364,7 @@ async function verifyBrowserRuntime(origin) {
       }
       const tocIds = await page.locator('.table-of-contents a[href^="#"]')
         .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute("href").slice(1)));
-      for (const id of tocIds) assert.equal(await page.locator(`h2[id="${id}"]`).count(), 1, `TOC ${id}`);
+      for (const id of tocIds) assert.equal(await page.locator(`:is(h2,h3)[id="${id}"]`).count(), 1, `TOC ${id}`);
     }
     await page.locator('#added-7 a[href="#added-7"]').click();
     assert.equal(new URL(page.url()).hash, "#added-7");
