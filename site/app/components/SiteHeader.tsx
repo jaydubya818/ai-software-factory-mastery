@@ -154,7 +154,7 @@ export function SiteHeader() {
         <a className="global-wordmark" href={fdlcUrl()} aria-label="FDLC.ai home">
           {/* The logo remains owned by the FDLC default application across the MFE boundary. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt="FDLC.ai — Factory Development Lifecycle" src={`${FDLC_ORIGIN}/fdlc-logo-updated.png`} />
+          <img alt="FDLC.ai — Factory Development Lifecycle" src={`${FDLC_ORIGIN}/fdlc-logo-transparent.png`} width={2007} height={784} />
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {primary.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
