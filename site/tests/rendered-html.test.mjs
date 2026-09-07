@@ -315,6 +315,23 @@ test("every canonical document link on primary surfaces resolves to generated co
   assert.deepEqual(broken, []);
 });
 
+test("system design playbook is discoverable and operational", async () => {
+  const landing = await htmlFor("/guide");
+  const topics = await htmlFor("/guide/topics");
+  const playbook = await htmlFor("/guide/appendix/factory-system-design-playbook");
+  assert.match(landing, /review a workflow before launch/i);
+  assert.match(topics, /Factory system design playbook/i);
+  assert.match(playbook, /Requirements.*scale.*invariants.*components.*state.*authority.*failure modes.*economics.*observability.*rollout.*recovery.*learning/is);
+  for (const field of ["Baseline cycle time", "Current human effort", "Acceptance criteria", "Verification strategy", "Authority boundaries", "Candidate Factory capabilities"]) {
+    assert.match(playbook, new RegExp(field, "i"));
+  }
+  for (const drill of ["Model failure", "Stale context", "Worker crash", "Lease loss", "Verifier disagreement", "Candidate mutation", "Cost overrun", "Provider ambiguity", "Tool failure", "Publication uncertainty", "Production regression", "Conflicting agents", "Stale evidence"]) {
+    assert.match(playbook, new RegExp(drill, "i"));
+  }
+  assert.match(playbook, /detect.*contain.*reconcile.*recover.*verify.*learn/is);
+  assert.match(playbook, /Intent.*Plan.*Factory Version.*WorkOrder.*Producer Attempt.*candidate.*Verifier Attempt.*approval.*Release.*outcome economics.*learning candidate/is);
+});
+
 test("keeps requested exclusions out of canonical public routes", async () => {
   const documents = await generatedDocuments();
   const contentRoutes = documents

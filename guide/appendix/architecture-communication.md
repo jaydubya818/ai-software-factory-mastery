@@ -554,6 +554,15 @@ State what result would weaken each proposition. Technical vision should guide
 investment and experiments; it should not turn a plausible future into a
 present-tense fact.
 
+### Turn the explanation into a reviewable operating contract
+
+Use the [Factory System Design Playbook](./factory-system-design-playbook.md)
+to leave the review with a workload brief, Plan admission checks, routing and
+scheduling decisions, recovery drills, criterion-level evidence, and an
+observation contract. It includes a dependency-upgrade exercise and a bounded
+Mission Control evidence assessment. Explaining a design and proving that an
+implementation satisfies it are separate deliverables.
+
 ## 4. Tradeoffs and alternatives
 
 Strong opinions demonstrate judgment, but dogma signals shallow understanding.

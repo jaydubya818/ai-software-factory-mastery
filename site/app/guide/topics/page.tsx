@@ -38,6 +38,7 @@ const shelf: ShelfRow[] = [
   { letter: "G", slug: "appendix/operator-surfaces", title: "Mission Control operator surfaces", description: "The eleven operational views that make authority, evidence, cost, incidents, and learning visible without creating a second source of truth.", use: "When designing or reviewing the operator experience." },
   { letter: "H", slug: "appendix/context-skills-engineering", title: "Context, skills, and evidence", description: "Five operating practices for treating reusable agent context as governed, measured software assets.", use: "When authoring, admitting, evaluating, or improving skills and context." },
   { letter: "I", slug: "appendix/governed-factory-admission", title: "Governed Factory admission", description: "The exact chain from qualified Factory composition and derived readiness through producer and verifier Attempts.", use: "When designing execution identity, independent verification, or human authority boundaries." },
+  { letter: "J", slug: "appendix/factory-system-design-playbook", title: "Factory system design playbook", description: "A workload brief, plan checks, routing and scheduling boundaries, recovery drills, evidence validity, and outcome measurement in one practical review.", use: "Before a new workflow takes on real work, or when reviewing an existing factory line." },
 ];
 
 export default function ReferencePage() {

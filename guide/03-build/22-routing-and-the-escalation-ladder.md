@@ -248,6 +248,22 @@ The practical consequence is that routing policy for autonomous lanes can change
 
 Objective routing identifies capability domains before planning. WorkOrder routing selects a qualified Factory Version and Execution Profile after dependencies and authority permit execution. Task routing selects qualified resources inside that envelope. Every level filters eligibility before optimizing quality, latency, or cost; no eligible route means a blocked or escalated result. The [enterprise routing model](../appendix/enterprise-multi-factory-delivery.md#3-three-levels-of-routing) explains the records and evidence needed for each decision.
 
+### Routing and scheduling have separate decisions
+
+Routing selects an eligible capability for the workload. Scheduling determines
+when and where admitted work receives resources. The two exchange capacity,
+deadline, and locality constraints, but capacity pressure cannot relax policy or
+qualification. Record the selected capability and rejected alternatives separately
+from queue state, quota, priority, resource reservation, and lease ownership.
+
+If no qualified fallback exists, wait within the deadline or escalate. Start with
+explicit rules and bounded queues; introduce fair-share scheduling or preemption
+only when measured contention warrants it. Reserve resources for verification
+and recovery so producer fan-out cannot prevent safe completion.
+
+The [system design playbook](../appendix/factory-system-design-playbook.md)
+provides the decision table and provider-failure drill.
+
 ## How to build it
 
 1. Build the catalog first. Register each profile with provider, model, exact version or snapshot, region, tier, capabilities, input classes, task eligibility, availability, deprecation, risk approval, cost estimate, evaluation suite, fallback order, and retirement policy.
