@@ -46,7 +46,9 @@ test("Guide discovery, search, and public assets are published under /guide", as
   const index = JSON.parse(await readFile(new URL("../public/guide/search-index.json", import.meta.url), "utf8"));
   assert.ok(index.length > 50 && index[0].sections.length > 0, "section-level search index");
   const infographics = await readdir(new URL("../public/guide/infographics", import.meta.url));
-  assert.equal(infographics.length, 186, "all generated infographic assets are namespaced");
+  const sourceInfographics = (await readdir(new URL("../../guide/assets/infographics", import.meta.url))).filter((name) => /\.(png|svg|jpe?g|webp)$/i.test(name));
+  assert.deepEqual(infographics.sort(), sourceInfographics.sort(), "every source infographic is published in the Guide namespace");
+  assert.ok(infographics.includes("enterprise-multi-factory-delivery.png"));
   for (const asset of ["og.png", "og-v2.png", "icon.svg"]) {
     await readFile(new URL(`../public/guide/${asset}`, import.meta.url));
   }

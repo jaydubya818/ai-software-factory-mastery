@@ -403,6 +403,10 @@ The build, buy, or bring decisions of [Chapter 2](../01-understand/02-the-factor
 
 The left column is the factory's identity; the right column is its plumbing. A vendor can replace anything on the right without the factory changing what it produces or how it proves it. A vendor that owns anything on the left has become the factory, and the organisation has become its customer.
 
+### Cross-factory and intra-factory orchestration
+
+Mission Control owns Objective and Plan state, WorkOrder readiness, factory routing, evidence freshness, and consequential authority across factories. A Factory Supervisor coordinates Tasks, specialists, and deterministic tools inside the selected Factory Version and Execution Profile. It cannot independently release unrelated WorkOrders or enlarge its authority. See [Enterprise multi-factory software delivery](../appendix/enterprise-multi-factory-delivery.md) for the complete contract.
+
 ## How to build it
 
 ### Trade-offs you will make

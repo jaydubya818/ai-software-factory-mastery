@@ -29,6 +29,9 @@ export default function VisualsPage() {
         </header>
         <div className="visual-guide-note"><strong>Designed for retention</strong><span>No screenshots with tiny labels. The diagrams are semantic HTML, responsive on mobile, keyboard accessible, and readable at normal zoom.</span></div>
         <VisualAtlas />
+        <section className="guide-orientation" aria-labelledby="enterprise-atlas-title">
+          <div><span className="section-kicker">Enterprise delivery</span><h2 id="enterprise-atlas-title">One objective, multiple qualified factories.</h2><p>Explore the enterprise architecture poster with readable explanations of three routing levels, governed WorkOrder dependencies, local and global verification, immutable versions, and release authority.</p><Link className="button button-secondary" href="/guide/appendix/enterprise-multi-factory-delivery">Read the enterprise diagram companion</Link></div>
+        </section>
       </main>
       <SiteFooter />
     </>

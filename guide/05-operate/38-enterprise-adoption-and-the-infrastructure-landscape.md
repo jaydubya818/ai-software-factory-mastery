@@ -463,6 +463,10 @@ To a **developer**, the aim is not to remove judgment but to remove repetitive w
 
 To a **board**, it is an engineering-leverage strategy with a governance model: faster delivery and better economics without accepting uncontrolled operational risk, and the credible message is "we expand proven corridors", never "AI transforms everything".
 
+### Adopt a multi-factory operating model
+
+Expand through reusable Factory Definitions, immutable qualified Factory Versions, and approved Execution Profiles rather than cloning a factory per builder or repository. Begin with one measurable workflow; add teams, risk classes, and concurrency only when qualification, isolation, recovery, and operator capacity support them. [Enterprise multi-factory software delivery](../appendix/enterprise-multi-factory-delivery.md) includes the reference diagram, ownership and readiness matrix, outcome measures, and a scoping brief. Large organizations can [contact FDLC Enterprise at support@fdlc.ai](mailto:support@fdlc.ai?subject=FDLC%20Enterprise%20pricing%20and%20scope) for details on pricing, design partnerships, and rollout requirements. Commercial availability and commitments must be confirmed for the agreed scope.
+
 ## How to build it
 
 **Assess**

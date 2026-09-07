@@ -168,6 +168,10 @@ The **integration candidate** is a manifest of repository commits and artifacts,
 
 Each repository keeps its own owners, approvers, and policy. A coordinated change does not get a blanket approval; each pull request is approved under its own repository's rules, and the Plan is approved by whoever owns the cross-repository outcome. The manifest is where ownership is recorded so the planner can route approvals correctly. Where ownership is ambiguous or missing, the planner should flag it rather than guess, because an unowned repository in a coordinated change is a repository nobody will roll back.
 
+### Cross-factory dependency contracts
+
+A repository boundary and a factory boundary are different. One factory may work across repositories; one repository may require modernization, security, and test factories. Keep their handoffs in the governed Plan, pin input and output artifacts, and invalidate downstream evidence when an upstream identity changes. Parallel branches require isolated execution and verification of their combined Candidate. The [enterprise delivery companion](../appendix/enterprise-multi-factory-delivery.md#4-governed-dependencies-and-artifact-handoffs) works through this dependency graph.
+
 ## How to build it
 
 ### Choosing a workspace mechanism

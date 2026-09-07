@@ -14,6 +14,10 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-09-07 — Enterprise multi-factory delivery
+
+Added the enterprise architecture diagram and its detailed companion: governed WorkOrders, three routing levels, artifact invalidation, local and global verification, release authority, immutable factory compositions, adoption, metrics, and pricing discussions. Linked the companion from the Guide, Atlas, and the relevant architecture, routing, verification, and adoption chapters. Examples remain illustrative and commercial availability remains scoped.
+
 ## 2026-09-05 — Software Factory operating contracts
 
 - Refined Chapter 9's verified/accepted denominators, cohort accounting, missing-cost semantics, work amplification and critical-path example. Corrected the implication that deterministic execution needs no evaluation.

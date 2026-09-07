@@ -306,6 +306,10 @@ Evidence architecture is what makes the factory's business metrics honest. Jay's
 
 The three constrain one another. Faster lead time with more failures is reckless acceleration. A lower failure rate achieved by shipping less is not improvement. More output that consumes more review attention is automation theater. Production health and customer value are later evidence layers — they are not implied by merge, and the factory has to go and collect them. [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md) covers the economics of these measures; here the point is that none of them can be computed without the receipts this chapter describes.
 
+### Verify the node and the composition
+
+Local verification checks a WorkOrder against exact inputs and an immutable Candidate. Global verification checks the integrated Candidate and original objective criteria; several local passes do not establish an objective pass. A pre-release gate requires all prerequisite WorkOrders, not downstream deployment and production validation. Final objective closure also requires any production acceptance conditions. Read the [enterprise verification companion](../appendix/enterprise-multi-factory-delivery.md#6-local-and-global-verification) for the evidence matrix and failure cases.
+
 ## How to build it
 
 Build the evidence architecture in this order; each step depends on the one before it.

@@ -14,6 +14,8 @@ teaches how the two fit together.
 
 Read the guide front to back, or enter at the part that matches your question.
 
+For enterprise architecture and adoption, read [Enterprise multi-factory software delivery](./appendix/enterprise-multi-factory-delivery.md): the diagram companion covering governed Plans, three routing levels, local and global verification, reusable factory versions, rollout, and [FDLC Enterprise pricing discussions](mailto:support@fdlc.ai?subject=FDLC%20Enterprise%20pricing%20and%20scope).
+
 ## The factory in one line, stage by stage
 
 Click a stage for a concise contract brief, then follow its links to the
