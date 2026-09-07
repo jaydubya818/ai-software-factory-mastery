@@ -123,6 +123,21 @@ test("Guide keeps the global navigation centered like the FDLC shell", async () 
   assert.match(css, /\.header-tools\s*\{\s*justify-self:\s*end;/);
 });
 
+test("all Guide surfaces share the five-item More menu on desktop and mobile", async () => {
+  for (const route of ["/guide", `/guide/${chapterSlugs[2]}`, "/guide/atlas", "/guide/topics", "/guide/glossary", "/guide/search"]) {
+    const html = await htmlFor(route);
+    const header = html.match(/<header class="app-header">[\s\S]*?<\/header>/)?.[0];
+    assert.ok(header, route);
+    const more = header.match(/id="more-navigation"[^>]*>([\s\S]*?)<\/div>/)?.[1];
+    const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
+    for (const menu of [more, mobileMore]) {
+      assert.ok(menu, route);
+      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["FDLC in 5 Minutes", "Manifesto", "Start", "Enterprise", "About"], route);
+    }
+    assert.doesNotMatch(header, /href="[^"]*\/(?:spec|specification|benchmarks)"/, route);
+  }
+});
+
 test("renders every canonical primary surface with an explicit canonical", async () => {
   const routes = [
     ["/guide", /Table of contents/, "/guide"],

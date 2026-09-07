@@ -43,8 +43,8 @@ button, input { font: inherit; }
 }
 
 .global-wordmark { display: inline-flex; align-items: center; width: 220px; max-width: 100%; }
-.global-wordmark img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
-html[data-theme="dark"] .global-wordmark img { filter: invert(1) grayscale(1) brightness(1.6); mix-blend-mode: screen; }
+.global-wordmark img { display: block; width: 100%; height: auto; }
+html[data-theme="dark"] .global-wordmark img { filter: invert(1) grayscale(1) brightness(1.6); }
 .header-tools { justify-self: end; }
 
 .desktop-nav { display: flex; align-items: center; gap: 25px; color: var(--muted); font-size: 13px; font-weight: 560; }

@@ -7,38 +7,18 @@ import Link from "./GuideLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { canonicalGuidePagePath, FDLC_ORIGIN, fdlcUrl, GUIDE_ROUTES } from "../../lib/paths";
 
-type NavLink = readonly [label: string, href: string];
+import { primary, guide as guideDestinations, afterGuide, secondary, type NavLink } from "../../lib/global-navigation.generated";
+
 type GuideNavLink = readonly [label: string, href: string, isActive: (pathname: string) => boolean];
 
-const primary: readonly NavLink[] = [
-  ["Framework", "/framework"],
-  ["Architecture", "/architecture"],
-];
-
-const guide: readonly GuideNavLink[] = [
-  ["Overview", GUIDE_ROUTES.home, (p) => p === GUIDE_ROUTES.home || /^\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve))\//.test(p)],
-  ["Atlas", GUIDE_ROUTES.atlas, (p) => p === GUIDE_ROUTES.atlas || p === GUIDE_ROUTES.architecture],
-  ["Reference", GUIDE_ROUTES.topics, (p) => p === GUIDE_ROUTES.topics || p === GUIDE_ROUTES.coverage || p.startsWith(`${GUIDE_ROUTES.home}/appendix/`)],
-  ["Glossary", GUIDE_ROUTES.glossary, (p) => p === GUIDE_ROUTES.glossary],
-  ["Search", GUIDE_ROUTES.search, (p) => p === GUIDE_ROUTES.search],
-];
-
-const afterGuide: readonly NavLink[] = [
-  ["Mission Control", "/mission-control"],
-  ["FDE", "/deploy"],
-  ["Maturity", "/maturity"],
-];
-
-const secondary: readonly NavLink[] = [
-  ["FDLC in 5 Minutes", "/in-5-minutes"],
-  ["Manifesto", "/manifesto"],
-  ["Specification", "/spec"],
-  ["Benchmarks", "/benchmarks"],
-  ["Start", "/start"],
-  ["Enterprise", "/enterprise"],
-  ["Deploy", "/deploy"],
-  ["About", "/about"],
-];
+const guideActiveStates: Record<string, (pathname: string) => boolean> = {
+  [GUIDE_ROUTES.home]: (p) => p === GUIDE_ROUTES.home || /^\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve))\//.test(p),
+  [GUIDE_ROUTES.atlas]: (p) => p === GUIDE_ROUTES.atlas || p === GUIDE_ROUTES.architecture,
+  [GUIDE_ROUTES.topics]: (p) => p === GUIDE_ROUTES.topics || p === GUIDE_ROUTES.coverage || p.startsWith(`${GUIDE_ROUTES.home}/appendix/`),
+};
+const guide: readonly GuideNavLink[] = guideDestinations.map(([label, href]) => [
+  label, href, guideActiveStates[href] ?? ((pathname) => pathname === href),
+]);
 
 function focusAt(container: HTMLElement | null, index: number) {
   const links = Array.from(container?.querySelectorAll<HTMLAnchorElement>("a[href]") ?? []);
@@ -155,7 +135,7 @@ export function SiteHeader() {
         <a className="global-wordmark" href={fdlcUrl()} aria-label="FDLC.ai home">
           {/* The logo remains owned by the FDLC default application across the MFE boundary. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt="FDLC.ai — Factory Development Lifecycle" src={`${FDLC_ORIGIN}/fdlc-logo-updated.png`} />
+          <img alt="FDLC.ai — Factory Development Lifecycle" src={`${FDLC_ORIGIN}/fdlc-logo-transparent.png`} width={2007} height={784} />
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {primary.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}

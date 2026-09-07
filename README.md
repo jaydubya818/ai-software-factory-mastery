@@ -107,3 +107,7 @@ cd site && npm install && npm run dev
 
 `npm run build`, `npm test`, `npm run lint`, and `npm run links` must pass
 before publishing.
+
+## Shared FDLC navigation
+
+The global header consumes `site/lib/global-navigation.generated.ts`, generated from FDLC's canonical `lib/global-navigation.ts`. Run `node site/scripts/sync-global-navigation.mjs --source=/path/to/FDLC` after a navigation change, and add `--check` to verify against the exact qualified FDLC source before releasing both applications. Do not edit the generated copy. Guide-specific active states remain local.
