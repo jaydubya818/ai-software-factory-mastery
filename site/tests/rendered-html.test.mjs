@@ -100,10 +100,11 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
     ["Framework", "https://www.fdlc.ai/framework"],
     ["Architecture", "https://www.fdlc.ai/architecture"],
     ["Mission Control", "https://www.fdlc.ai/mission-control"],
+    ["FDE", "https://www.fdlc.ai/deploy"],
     ["Maturity", "https://www.fdlc.ai/maturity"],
   ]) assert.match(header, new RegExp(`href="${href}"[^>]*>${label}<`), label);
   for (const [label, href] of [
-    ["Guide Home", "/guide"],
+    ["Overview", "/guide"],
     ["Atlas", "/visuals"],
     ["Reference", "/topics"],
     ["Glossary", "/glossary"],

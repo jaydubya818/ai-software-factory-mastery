@@ -16,7 +16,7 @@ const primary: readonly NavLink[] = [
 ];
 
 const guide: readonly GuideNavLink[] = [
-  ["Guide Home", GUIDE_ROUTES.home, (p) => p === GUIDE_ROUTES.home || /^\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve))\//.test(p)],
+  ["Overview", GUIDE_ROUTES.home, (p) => p === GUIDE_ROUTES.home || /^\/guide\/(?:00-front-matter|stages|0[1-6]-(?:understand|design|build|prove|operate|improve))\//.test(p)],
   ["Atlas", GUIDE_ROUTES.atlas, (p) => p === GUIDE_ROUTES.atlas || p === GUIDE_ROUTES.architecture],
   ["Reference", GUIDE_ROUTES.topics, (p) => p === GUIDE_ROUTES.topics || p === GUIDE_ROUTES.coverage || p.startsWith(`${GUIDE_ROUTES.home}/appendix/`)],
   ["Glossary", GUIDE_ROUTES.glossary, (p) => p === GUIDE_ROUTES.glossary],
@@ -25,6 +25,7 @@ const guide: readonly GuideNavLink[] = [
 
 const afterGuide: readonly NavLink[] = [
   ["Mission Control", "/mission-control"],
+  ["FDE", "/deploy"],
   ["Maturity", "/maturity"],
 ];
 
