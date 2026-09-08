@@ -34,6 +34,7 @@ each responsibility its own term, owner, lifecycle, and qualification boundary.
 | Intelligence | Model | What reasoning or generation is available? |
 | Worker | Agent | Who is pursuing the bounded task? |
 | Iteration | Agent Loop or Execution Loop | How does this worker make progress and stop? |
+| Construction toolkit | Agentic SDK | Which reusable abstractions or supplied implementations are used to build it? |
 | Operating envelope | Agent Harness | Under what conditions may this worker operate? |
 | Work topology | Work Graph | What work can happen next? |
 | Coordination | Orchestrator | Which eligible node runs next, and how does the overall run progress? |
@@ -111,6 +112,46 @@ flowchart TB
 The diagram shows responsibility, not strict process nesting. A deployed product
 may package several boxes together, but the immutable identities and authority
 boundaries remain separate.
+
+### Agentic SDK versus Harness
+
+An **Agentic SDK** is the toolkit used to construct an agentic application. It
+may provide Agent definitions, a Runner or Agent Loop, tools, handoffs,
+guardrails, sessions, tracing, evaluation hooks, and integrations with
+orchestration or execution infrastructure. The **Agent Harness** is the actual
+machinery that operates one Agent under a bounded contract. The SDK may supply a
+Harness implementation; the terms remain different.
+
+This matters when selecting or upgrading an SDK. “Uses OpenAI Agents SDK,”
+“uses Google ADK,” or “uses LangGraph” does not identify the effective execution
+contract. The Factory Version must still resolve the Agent Definition, SDK and
+adapter versions, Harness behavior, model route, tools, Work Graph, Runtime,
+Sandbox profile, policy, and qualification evidence that apply to the Attempt.
+
+SDK features also stop at their authority boundary. A framework guardrail may
+reject an input, output, or tool call, and a framework handoff may move work to
+another Agent. Neither event grants enterprise permission to run the WorkOrder,
+modify a repository, spend beyond the approved budget, accept a Candidate,
+publish a release, or change Production. Those decisions remain with the
+Control Plane and its qualified enforcement points.
+
+| If an SDK supplies… | Record and qualify it as… |
+| --- | --- |
+| Agent class or configuration | Agent Definition implementation |
+| Runner or iterative tool-use loop | Agent Loop and Harness implementation |
+| Handoffs or graph helpers | Work Graph or Orchestrator behavior |
+| Session persistence | Harness state behavior; durable state only if the Runtime contract proves it |
+| Tracing | Telemetry implementation; evidence only after provenance and completeness checks |
+| Sandbox or hosted execution integration | Runtime or Sandbox implementation with its own identity and controls |
+| Guardrails | Local enforcement behavior backed by external policy authority |
+
+The same classification applies to FDLC's own implementations. Mission Control
+is the Control Plane and factory coordinator. Fab is an Experimental Coding
+Harness and Capability Implementation with a bounded repository-editing Agent
+Loop. Fab can sit behind Mission Control's Harness adapter contract, but it has
+no independent acceptance, publication, or Production authority. If Fab adopts
+an Agentic SDK, pin and qualify the SDK as one input to Fab's implementation;
+do not reclassify Fab or transfer Mission Control authority to the library.
 
 ### Coding and IDE Harnesses
 
@@ -283,7 +324,7 @@ flowchart LR
 
 ### The dated landscape, and the bet on owning it
 
-Product names belong in dated case studies; contract vocabulary belongs in the canon. As of this writing (verified 2026-08-30), Codex and Claude Code are the two most useful case studies: both offer a CLI, an SDK or programmatic mode, hooks, tool and permission models, session persistence, and automation features, each on a different model, local/cloud split, and lifecycle. OpenCode and the thinner configurable harnesses are the build-your-own end. Amp, Devin, Factory, Gemini's agent, and vendor "cloud agents" such as Cursor's and Cognition's bundle harness, environment, and orchestration together. That is the line between a **vertically integrated stack**, where one vendor supplies model, harness, environment, and orchestration as a single product, and a **composable stack**, where each layer is a separately chosen component behind an interface you own; the first is faster to adopt, the second is easier to leave. The same line separates **managed execution**, where the vendor runs the harness on its own fleet, from a **self-hosted harness** that you run on your own workers with your own identity and network boundaries. Every one of these must be verified against current official documentation and a pinned runtime before use. The product name describes a suite of experiences; the factory integrates with one exact harness and version.
+Product names belong in dated case studies; contract vocabulary belongs in the canon. As of this writing (verified 2026-09-07), SDKs and frameworks such as OpenAI Agents SDK, Anthropic's tool runner and managed-agent surfaces, Google ADK, and LangGraph intentionally span different combinations of Agent, Loop, Harness, Work Graph, tracing, and Runtime concerns. Coding products such as Codex and Claude Code add repository-specialized execution environments and interfaces. Vertically integrated products may package model, harness, environment, and orchestration together; composable stacks choose each layer behind an owned contract. Every option must be verified against current official documentation and a pinned version before use. A product name describes a suite of experiences; the Factory integrates with exact, separately attributable implementations.
 
 Harness vendors have strong incentives to own the execution experience. Their hooks, instruction files, lifecycle behavior, and event formats will continue to differ and change. Plan for version drift and prove portability with contracts and conformance evidence.
 
@@ -359,6 +400,7 @@ The repository glossary and lexicon reviewed 2026-09-02 describe the admission m
 ## Retain this
 
 - Adopt the harness loop; own the factory contract around it.
+- Treat an Agentic SDK as a toolkit and implementation source, then record which Harness, Work Graph, Runtime, and other contracts it actually supplies.
 - The harness executes and reports observations; it never grants authority, accepts work, or certifies its own result.
 - Protocols standardize particular seams: MCP for model-context capabilities, ACP for editor-agent interaction, AG-UI for agent-user events, and A2A for remote-agent collaboration.
 - A capability contract and conformance suite are more durable than a product feature matrix.
@@ -378,4 +420,4 @@ The repository glossary and lexicon reviewed 2026-09-02 describe the admission m
 - [Glossary](../appendix/glossary.md) — canonical execution terms, adapter, capability manifest, ACP, AG-UI, A2A, and MCP.
 - [Mission Control capability, workflow, and admission map](../appendix/mission-control/03-capability-workflow-and-admission-map.md), assessed at `d902fae`.
 - Source materials: public discussions of harness engineering, protocol boundaries, adapter lifecycles, bounded review loops, capability manifests, portability, conformance, and shared factory governance; factory architecture notes; and the Mission Control repository glossary and lexicon reviewed 2026-09-02.
-- Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.
+- Primary references: [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2026-07-28), version 2026-07-28; [Zed: Agent Client Protocol](https://zed.dev/acp), accessed 2026-08-30; [AG-UI protocol overview](https://docs.ag-ui.com/), accessed 2026-08-30; [A2A Protocol specification](https://a2a-protocol.org/dev/specification/), accessed 2026-08-30; [OpenAI: Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/), accessed 2026-08-30; [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/agents/), [Anthropic tool runner](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-runner), [Google ADK](https://google.github.io/adk-docs/), and [LangGraph](https://langchain-ai.github.io/langgraph/), accessed 2026-09-07; [Claude Code: programmatic execution](https://code.claude.com/docs/en/headless) and [hooks](https://code.claude.com/docs/en/hooks), accessed 2026-08-30.

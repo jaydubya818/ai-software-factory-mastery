@@ -596,8 +596,8 @@ h1 {
 
 .markdown-body { overflow-wrap: anywhere; padding: 28px 0 0; color: #27332e; font-family: var(--serif); font-size: 17px; line-height: 1.78; }
 .markdown-body > h2:first-child { margin-top: 12px; }
-.markdown-body h2 { scroll-margin-top: 24px; margin: 74px 0 22px; color: var(--ink); font-family: var(--font-geist-sans), sans-serif; font-size: 31px; line-height: 1.2; letter-spacing: -0.04em; }
-.markdown-body h3 { scroll-margin-top: 24px; margin: 46px 0 14px; color: var(--ink); font-family: var(--font-geist-sans), sans-serif; font-size: 21px; line-height: 1.3; letter-spacing: -0.025em; }
+.markdown-body h2 { scroll-margin-top: 120px; margin: 74px 0 22px; color: var(--ink); font-family: var(--font-geist-sans), sans-serif; font-size: 31px; line-height: 1.2; letter-spacing: -0.04em; }
+.markdown-body h3 { scroll-margin-top: 120px; margin: 46px 0 14px; color: var(--ink); font-family: var(--font-geist-sans), sans-serif; font-size: 21px; line-height: 1.3; letter-spacing: -0.025em; }
 .heading-anchor:hover::after { content: " #"; color: #9aaba1; font-family: var(--font-geist-mono), monospace; font-size: 0.7em; }
 .markdown-body p { margin: 0 0 22px; }
 .markdown-body strong { color: var(--ink); font-family: inherit; font-weight: 650; }

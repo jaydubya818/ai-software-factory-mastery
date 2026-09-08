@@ -337,11 +337,29 @@ test("execution terminology keeps agent boundaries and identities distinct", asy
   const reference = await htmlFor("/guide/appendix/execution-boundaries-and-terminology");
   assert.match(topics, /Execution boundaries and canonical terminology/i);
   assert.match(reference, /boundary disagreement/i);
-  assert.match(reference, /Model.*Agent.*Agent Loop.*Agent Harness.*Work Graph.*Orchestrator.*Runtime.*Sandbox.*Capability Implementation.*Control Plane.*Factory Platform/is);
+  assert.match(reference, /Model.*Agent.*Agent Loop.*Agentic SDK.*Agent Harness.*Work Graph.*Orchestrator.*Runtime.*Sandbox.*Capability Implementation.*Control Plane.*Factory Platform/is);
   assert.match(reference, /Claude.*Model.*Claude Code.*Coding Harness/is);
   assert.match(reference, /Enforcement and authority are not the same thing/i);
   assert.match(reference, /Harness.*how the agent.*operate.*Runtime.*where and how.*execution.*survive/is);
   assert.match(reference, /Agent Loop\s+can operate inside one\s+node.*not the graph/is);
+  assert.match(reference, /Agentic SDK.*toolkit, not authority/is);
+  assert.match(reference, /SDK guardrails are not FDLC authority/is);
+  assert.match(reference, /FDLC ecosystem mapping.*Mission Control and Fab/is);
+  assert.match(reference, /Fab.*Experimental Coding Harness and Capability Implementation/is);
+  assert.match(reference, /no independent authority.*accept a Candidate.*publish a\s+release.*change Production/is);
+
+  const glossary = await htmlFor("/guide/glossary");
+  assert.match(glossary, /Agentic SDK/is);
+  assert.match(glossary, /software-development toolkit providing reusable primitives/is);
+  assert.match(glossary, /not synonymous with any of them/is);
+  assert.match(glossary, /does not own.*Control.*Plane.*authority/is);
+
+  const harnessChapter = await htmlFor("/guide/03-build/15-coding-harnesses-and-agent-protocols");
+  assert.match(harnessChapter, /Agentic SDK versus Harness/is);
+  assert.match(harnessChapter, /Factory.*Version.*must still resolve/is);
+  assert.match(harnessChapter, /SDK and\s+adapter versions/is);
+  assert.match(harnessChapter, /Sandbox profile/is);
+  assert.match(harnessChapter, /qualification evidence/is);
 });
 
 test("keeps requested exclusions out of canonical public routes", async () => {
