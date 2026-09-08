@@ -93,9 +93,16 @@ flowchart LR
 
 The taxonomy names what surrounds the loop. **Context management** supplies the right code, documents, history, state, and information at the right time; **context window management** decides what fits. **Control mechanisms** are the guardrails: permissions, approvals, policies, budgets, and human-in-the-loop checkpoints. A **guardrail** is any control that limits or redirects agent behavior; a **policy engine** evaluates rules and decides whether an action may proceed, needs approval, or must be blocked. The **execution environment** is the sandbox, container, or workspace where the agent runs commands and changes code; **sandboxing** isolates it so a mistake cannot reach what it should not. **State management** tracks progress across the loop, **error recovery** retries, repairs, or replans after failure, and **observability** traces decisions, actions, latency, failures, and cost.
 
-### Model, Agent, Loop, Graph, Harness, Runtime, and Control Plane
+### Model, Agent, SDK, Loop, Graph, Harness, Runtime, and Control Plane
 
 Production failures are repaired faster when each boundary has one name. The **Model** supplies reasoning and generation. The **Agent** is the goal-directed worker. The **Agent Loop** is its bounded plan-act-observe-evaluate cycle. The **Agent Harness** governs how that worker interacts with context, models, tools, state, permissions, budgets, and external systems.
+
+An **Agentic SDK** is the developer toolkit used to construct this behavior. It
+may supply Agent definitions, the Loop, a Harness Runner, tools, handoffs,
+guardrails, sessions, tracing, Work Graph helpers, or Runtime integrations. It
+can implement several boxes in the architecture without becoming a canonical
+box itself. Pin and qualify each supplied implementation under the Factory
+Version rather than treating the SDK name as the identity of the system.
 
 The **Work Graph** represents nodes, dependencies, branches, joins, gates, interrupts, cycles, failure transitions, and terminal states. The **Orchestrator** advances that graph across Agents, deterministic work, and human waits. **Graph Engineering** designs the topology; **Loop Engineering** improves iteration inside a node.
 
@@ -107,6 +114,8 @@ The **Runtime** hosts execution and provides process lifecycle, persistence, lea
 ```mermaid
 flowchart TB
     CP["Control Plane: authority"] --> O["Orchestrator: advance Work Graph"]
+    SDK["Agentic SDK: may supply implementations"] -.-> O
+    SDK -.-> H
     O --> H["Agent Harness: operating envelope"]
     subgraph H
         A["Agent: goal-directed worker"] --> L["Agent Loop: iterate and stop"]

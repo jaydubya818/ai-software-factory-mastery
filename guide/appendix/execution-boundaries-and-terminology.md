@@ -5,7 +5,7 @@ audience: [architect, builder, operator, product, executive]
 last_verified: 2026-09-07
 lifecycle: [design, build, operate]
 risk: medium
-topics: [model, agent, loop, harness, runtime, orchestrator, graph, capability, factory, control-plane]
+topics: [model, agent, loop, agentic-sdk, harness, runtime, orchestrator, graph, capability, factory, control-plane]
 infographics: [execution-boundaries, harness-meanings]
 ---
 
@@ -29,6 +29,7 @@ or the enterprise control plane.
 | **Model** | An inference engine that supplies reasoning, generation, classification, or other model intelligence | What intelligence is available? |
 | **Agent** | A goal-directed worker using model intelligence, instructions, context, state, and capabilities | Who is pursuing the task? |
 | **Agent Loop** | The worker’s bounded iteration cycle | How does this worker make progress and stop? |
+| **Agentic SDK** | A developer toolkit that supplies reusable primitives or implementations for constructing agentic applications | Which library abstractions or supplied implementations are we building with? |
 | **Agent Harness** | The operating envelope governing how the agent interacts with models, context, tools, state, resources, and external systems | Under what conditions may this worker operate? |
 | **Work Graph** | The explicit topology of nodes, dependencies, branches, joins, gates, interrupts, cycles, error transitions, and terminal states | What work can happen next? |
 | **Orchestrator** | The durable coordinator that advances the Work Graph and its task state | Which eligible work executes next, and how does the overall run progress? |
@@ -98,6 +99,71 @@ results.
 controls locally, but it does not own every enterprise policy or grant itself
 authority. These three layers cooperate; they should not be collapsed into one
 architectural primitive.
+
+## Agentic SDK: toolkit, not authority
+
+An **Agentic SDK** is a software-development toolkit that provides reusable
+primitives and implementations for constructing agentic applications. Depending
+on the package, it may supply Agent definitions, an Agent Loop or Runner, tool
+abstractions, handoffs, guardrails, sessions, tracing, evaluation hooks, Work
+Graph helpers, or integration with a Runtime and Sandbox. The package boundary
+may cross several FDLC responsibilities; that convenience does not merge them.
+
+The distinction is operational:
+
+| Term | What it answers | Example responsibility |
+| --- | --- | --- |
+| **Agentic SDK** | What toolkit and supplied implementations are used to build the application? | Agent classes, Runner, tool wrappers, handoffs, sessions, tracing |
+| **Agent Harness** | How is one Agent operated for an Attempt? | Loop, context, tools, local controls, state, budgets, stopping |
+| **Runtime** | Where and how does execution live and survive? | Process lifecycle, compute, persistence, resume, recovery |
+| **Orchestrator** | What eligible work runs next across time and dependencies? | Work Graph transitions, joins, waits, retries, coordination |
+| **Control Plane** | Who holds enterprise authority? | Identity, policy, budgets, approval, verification, release, revocation |
+
+An SDK may implement a Harness. It may also include orchestration helpers or a
+Runtime integration. Record those as implementations of their respective
+contracts. Do not record “uses SDK X” as if it identified the Agent, Harness,
+Runtime, Sandbox, Orchestrator, or Factory Version that actually ran.
+
+Current products demonstrate the overlap. OpenAI's Agents SDK can manage turns,
+tools, guardrails, handoffs, sessions, and tracing through Agent and Runner
+abstractions. Anthropic's client SDK tool runner can operate an agentic tool-use
+loop, while its managed-agent configuration binds model, prompt, tools, MCP
+servers, and skills. Google ADK and LangGraph cover overlapping agent,
+orchestration, state, and runtime concerns. These are implementation examples,
+not canonical boundaries, and their exact features must be verified and pinned
+when a Factory Version is qualified.
+
+### SDK guardrails are not FDLC authority
+
+SDK guardrails can validate inputs, outputs, or tool calls inside the framework.
+That is useful enforcement. It does not inherently answer whether a WorkOrder
+may run, which repository may change, how much the Attempt may spend, whether a
+Candidate is accepted, whether a release may be published, or whether Production
+may be modified. The Control Plane owns those decisions and supplies the grants,
+policy, evidence requirements, and revocation path enforced at qualified points.
+
+A guardrail firing after model or tool work has begun can still prevent an
+output or later effect, but it cannot retroactively establish that earlier work
+was authorized. Consequential actions therefore require pre-execution policy
+checks at the tool or capability boundary, plus durable receipts and independent
+verification after execution.
+
+### FDLC ecosystem mapping: Mission Control and Fab
+
+In the FDLC ecosystem, **Mission Control** is the governed Control Plane and
+factory coordinator. It owns the WorkOrder, resolved execution composition,
+authority, durable state, verification, acceptance, release coordination, and
+audit record. Mission Control may host or invoke components built with an
+Agentic SDK, but the SDK does not inherit those responsibilities.
+
+**Fab** is an Experimental Coding Harness and Capability Implementation. It runs
+a bounded repository-editing Agent Loop and can integrate through Mission
+Control's Harness adapter contract. Its provider adapters, tool abstractions,
+loop, sessions, and local checks are implementation details at the Harness
+boundary. Fab has no independent authority to accept a Candidate, publish a
+release, or change Production. If Fab later adopts an Agentic SDK, that SDK and
+version become additional immutable inputs to qualify; Fab does not become the
+Control Plane, and the SDK does not become Fab's authority.
 
 ## Harness, Runtime, Sandbox, and Control Plane
 
@@ -226,6 +292,7 @@ of execution. Keep these identities separate:
 - Model identity;
 - Model Route identity;
 - Agent Recipe or Agent Definition identity;
+- Agentic SDK package and version when its behavior affects execution;
 - Harness identity and version;
 - Runtime Artifact identity;
 - Execution Backend and Sandbox Profile identity;
@@ -250,6 +317,8 @@ flowchart TB
     Plan --> Orch["Orchestrator / Work Graph"]
     Orch --> Router["Capability Router"]
     Router --> Impl["Qualified Capability Implementation"]
+    SDK["Agentic SDK: supplied implementations"] -.-> Harness
+    SDK -.-> Orch
     subgraph Worker["Bounded worker execution"]
         Harness["Agent Harness: operating envelope"] --> Agent["Agent: goal-directed worker"]
         Harness --> Model["Model: intelligence"]
@@ -281,13 +350,16 @@ When an autonomous run fails, ask these questions in order:
 2. **Did the workflow route incorrectly or coordinate work badly?** Inspect
    Graph Engineering and Orchestration: dependencies, eligibility, fan-out,
    joins, retries, handoffs, human gates, and failure transitions.
-3. **Did the worker see, spend, retry, call, or modify beyond its intended
+3. **Did an SDK upgrade change loop, tool, handoff, state, or guardrail behavior?**
+   Inspect the pinned package version, adapter, conformance results, and exact
+   Factory Version binding before changing the Agent or Model.
+4. **Did the worker see, spend, retry, call, or modify beyond its intended
    authority?** Inspect Harness Engineering and the Control Plane: local
    enforcement, the originating grant, policy version, and observed revocation.
-4. **Did execution disappear, fail to resume, lose state, or corrupt external
+5. **Did execution disappear, fail to resume, lose state, or corrupt external
    effects?** Inspect Runtime and durable orchestration: leases, checkpoints,
    persistence, idempotency, reconciliation, compensation, and recovery.
-5. **Was an output accepted without adequate proof?** Inspect Verification,
+6. **Was an output accepted without adequate proof?** Inspect Verification,
    Evidence, and Authority: subject binding, verifier independence, currentness,
    required gates, and the accountable decision.
 
@@ -297,7 +369,8 @@ a generic “agent problem.”
 ## Explain it in thirty seconds
 
 The model supplies intelligence. The agent is the goal-directed worker. The
-Agent Loop is how that worker iterates. The Agent Harness is the operating
+Agent Loop is how that worker iterates. An Agentic SDK is a toolkit that may
+supply implementations of those parts. The Agent Harness is the operating
 envelope controlling what the worker can see and do. The Work Graph describes
 the topology of the larger job, and the Orchestrator advances it. The Runtime
 keeps execution alive, while a Sandbox contains its effects. A Capability is an
@@ -316,3 +389,4 @@ remains in the Control Plane.
 - [Chapter 18 — Agent architecture](../03-build/18-agent-architecture.md)
 - [Chapter 23 — Agent and loop engineering](../03-build/23-agent-and-loop-engineering.md)
 - [Canonical glossary](./glossary.md)
+- Primary implementation references, accessed 2026-09-07: [OpenAI Agents SDK — Agents](https://openai.github.io/openai-agents-python/agents/), [Runner](https://openai.github.io/openai-agents-python/ref/run/), [Tracing](https://openai.github.io/openai-agents-python/tracing/), and [Context management](https://openai.github.io/openai-agents-python/context/); [Anthropic Claude Platform — Tool runner](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-runner) and [Managed Agent definition](https://platform.claude.com/docs/en/managed-agents/agent-setup); [Google Agent Development Kit](https://google.github.io/adk-docs/); [LangGraph overview](https://langchain-ai.github.io/langgraph/).

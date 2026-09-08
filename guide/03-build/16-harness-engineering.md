@@ -133,6 +133,14 @@ Bounded continuation belongs in explicit Loop and Work Graph contracts. A **maxi
 
 The Factory Platform talks to a specific Harness implementation through an **adapter**. Each adapter publishes a **Harness Capability Manifest** that declares, truthfully, which lifecycle behaviors it supports and which it does not. Unsupported behavior must be visible, and adapters should fail closed: if a WorkOrder requires a capability the Harness cannot prove, such as cancellation during a tool call or verified session resume, the adapter refuses the work.
 
+When an Agentic SDK supplies the loop, state, tracing, handoff, guardrail, or
+Runtime behavior behind the adapter, the manifest must pin the SDK package and
+version and identify which declared capabilities depend on it. An SDK upgrade is
+therefore a Harness implementation change: rerun the affected conformance and
+evaluation suites before promotion. A semantic-version claim alone is not
+evidence that event ordering, cancellation, session recovery, guardrail timing,
+or tool-call behavior stayed compatible.
+
 <!-- infographic: harness-adapter-contract -->
 > **Infographic — The harness adapter contract.**
 

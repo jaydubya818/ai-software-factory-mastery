@@ -224,6 +224,14 @@ state, plans or selects, acts, observes, evaluates, updates or replans, and
 repeats until success, a resource bound, stalled progress, policy escalation, or
 a human decision stops it. FDLC does not use “harness” as the name of this loop.
 
+**Agentic SDK** — A software-development toolkit providing reusable primitives
+or implementations for constructing agentic applications, such as Agent
+definitions, execution loops, tools, handoffs, guardrails, sessions, tracing,
+evaluation hooks, and sometimes orchestration or Runtime integration. An
+Agentic SDK may implement parts of an Agent Harness, Work Graph, Runtime, or
+Orchestrator; it is not synonymous with any of them and does not own Control
+Plane authority.
+
 **Agent Harness** 🔑 — The bounded operating environment governing how an Agent
 interacts with models, context, tools, state, execution resources, and external
 systems. It binds the loop, permissions, budgets, stopping, recovery, telemetry,
