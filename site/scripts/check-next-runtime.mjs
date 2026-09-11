@@ -275,14 +275,6 @@ async function verifyBrowserRuntime(origin) {
 
   try {
     const page = await browser.newPage();
-    // The standalone Guide intentionally references the FDLC-owned global logo.
-    // Stub that one cross-application asset so this local runtime test remains
-    // deterministic while the DOM still proves canonical asset ownership.
-    await page.route("https://www.fdlc.ai/fdlc-logo-transparent.png", (route) => route.fulfill({
-      status: 200,
-      contentType: "image/png",
-      body: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+3MxZ5wAAAABJRU5ErkJggg==", "base64"),
-    }));
     const pageErrors = [];
     const consoleErrors = [];
     const failedManagedAssets = [];
@@ -311,10 +303,20 @@ async function verifyBrowserRuntime(origin) {
     });
 
     await page.goto(`${origin}/guide`, { waitUntil: "networkidle" });
+    const logo = page.locator(".global-logo img").first();
     assert.equal(
-      await page.locator(".global-logo img").first().getAttribute("src"),
-      "https://www.fdlc.ai/fdlc-logo-transparent.png",
-      "the Guide attributes the shared brand asset to the FDLC application",
+      await logo.getAttribute("src"),
+      "/guide/fdlc-logo-transparent.png",
+      "the Guide loads its shell logo from a Guide-owned asset path",
+    );
+    assert.deepEqual(
+      await logo.evaluate((image) => ({
+        complete: image.complete,
+        naturalWidth: image.naturalWidth,
+        naturalHeight: image.naturalHeight,
+      })),
+      { complete: true, naturalWidth: 2007, naturalHeight: 784 },
+      "the bundled shell logo loads at its intrinsic dimensions",
     );
     const chapterLink = page.locator(`a[href="${publicPagePath(chapterPath)}"]`).first();
     assert.equal(await chapterLink.count(), 1, "Guide landing publishes the reviewed chapter path");
@@ -564,6 +566,7 @@ try {
   );
 
   for (const asset of [
+    "/guide/fdlc-logo-transparent.png",
     "/guide/search-index.json",
     "/guide/icon.svg",
     "/guide/og-v2.png",
