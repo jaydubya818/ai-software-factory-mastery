@@ -1,5 +1,5 @@
 import Link from "./GuideLink";
-import { FDLC_ORIGIN, fdlcUrl } from "../../lib/paths";
+import { fdlcUrl, guideAssetPath } from "../../lib/paths";
 
 
 import { footerGroups } from "../../lib/global-navigation.generated";
@@ -11,7 +11,7 @@ export function SiteFooter() {
         <div className="global-footer-brand">
           <a className="global-logo" href={fdlcUrl()} aria-label="FDLC.ai home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="brand-logo" src={`${FDLC_ORIGIN}/fdlc-logo-transparent.png`} alt="FDLC.ai — Factory Development Lifecycle" width={2007} height={784} />
+            <img className="brand-logo" src={guideAssetPath("fdlc-logo-transparent.png")} alt="FDLC.ai — Factory Development Lifecycle" width={2007} height={784} />
           </a>
           <p>The operating model and technical foundation for trusted autonomous software delivery.</p>
         </div>

@@ -127,6 +127,21 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   }
 });
 
+test("the Guide owns the logo asset rendered by its global shell", async () => {
+  const html = await htmlFor("/guide");
+  const header = html.match(/<header class="global-header">[\s\S]*?<\/header>/)?.[0];
+  const footer = html.match(/<footer class="global-footer">[\s\S]*?<\/footer>/)?.[0];
+
+  assert.ok(header, "renders the persistent FDLC global header");
+  assert.ok(footer, "renders the persistent FDLC global footer");
+  assert.match(header, /src="\/guide\/fdlc-logo-transparent\.png"/);
+  assert.match(footer, /src="\/guide\/fdlc-logo-transparent\.png"/);
+  assert.doesNotMatch(html, /https:\/\/www\.fdlc\.ai\/fdlc-logo-transparent\.png/);
+
+  const logo = await readFile(new URL("../public/guide/fdlc-logo-transparent.png", import.meta.url));
+  assert.deepEqual([...logo.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], "bundles a valid PNG logo");
+});
+
 test("Guide keeps the global navigation centered like the FDLC shell", async () => {
   const css = await readFile(new URL("../app/design-system.generated.css", import.meta.url), "utf8");
   assert.match(css, /\.global-header-inner\s*\{[\s\S]*?grid-template-columns:\s*1fr auto 1fr;/);

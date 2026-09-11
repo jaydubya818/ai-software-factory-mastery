@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, 
 import { CommandPalette } from "./CommandPalette";
 import Link from "./GuideLink";
 import { ThemeToggle } from "./ThemeToggle";
-import { canonicalGuidePagePath, FDLC_ORIGIN, fdlcUrl, GUIDE_ROUTES } from "../../lib/paths";
+import { canonicalGuidePagePath, fdlcUrl, GUIDE_ROUTES, guideAssetPath } from "../../lib/paths";
 
 import { primary, guide as guideDestinations, afterGuide, secondary, type NavLink } from "../../lib/global-navigation.generated";
 
@@ -127,9 +127,8 @@ export function SiteHeader() {
     <header className="global-header">
       <div className="global-header-inner">
         <a className="global-logo" href={fdlcUrl()} aria-label="FDLC.ai home">
-          {/* The logo remains owned by the FDLC default application across the MFE boundary. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt="FDLC.ai — Factory Development Lifecycle" src={`${FDLC_ORIGIN}/fdlc-logo-transparent.png`} width={2007} height={784} />
+          <img alt="FDLC.ai — Factory Development Lifecycle" src={guideAssetPath("fdlc-logo-transparent.png")} width={2007} height={784} />
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {primary.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
