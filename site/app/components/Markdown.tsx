@@ -4,12 +4,20 @@ import remarkGfm from "remark-gfm";
 import { resolveDocumentHref } from "../../lib/content";
 import { remarkHeadingIds } from "../../lib/markdown-headings";
 import { Mermaid } from "./Mermaid";
+import { CopyableCodeBlock } from "./CopyableCodeBlock";
+import { stableAnchorId } from "../../lib/text";
 
 function textFromNode(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(textFromNode).join("");
   if (isValidElement<{ children?: ReactNode }>(node)) return textFromNode(node.props.children);
   return "";
+}
+
+function firstStrongText(node: ReactNode): string {
+  const children = Array.isArray(node) ? node : [node];
+  const strong = children.find((child) => isValidElement(child) && child.type === "strong");
+  return strong ? textFromNode(strong) : "";
 }
 
 function containsAnchor(node: unknown): boolean {
@@ -30,7 +38,7 @@ function infographicSlots(content: string) {
   return slots;
 }
 
-export function Markdown({ content, sourcePath, infographicAssets = {} }: { content: string; sourcePath: string; infographicAssets?: Record<string, string> }) {
+export function Markdown({ content, sourcePath, infographicAssets = {}, glossary = false }: { content: string; sourcePath: string; infographicAssets?: Record<string, string>; glossary?: boolean }) {
   const slots = infographicSlots(content);
   function regionLabel(kind: string, offset = 0) {
     const before = content.slice(0, offset);
@@ -44,6 +52,11 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkHeadingIds]}
       components={{
+        p: ({ children }) => {
+          if (!glossary) return <p>{children}</p>;
+          const term = firstStrongText(children).trim();
+          return <p className={term ? "glossary-entry" : undefined} id={term ? stableAnchorId(term, "term-") : undefined}>{children}</p>;
+        },
         h2: ({ children, node, id }) => (
           <h2 id={id}>{containsAnchor(node) ? children : <a className="heading-anchor" href={`#${id}`}>{children}</a>}</h2>
         ),
@@ -91,7 +104,7 @@ export function Markdown({ content, sourcePath, infographicAssets = {} }: { cont
             && Array.isArray(code.properties.className) && code.properties.className.includes("language-mermaid")) {
             return <Mermaid chart={textFromNode(children).trim()} label={regionLabel("Diagram", node?.position?.start.offset)} />;
           }
-          return <pre role="region" aria-label={regionLabel("Code example", node?.position?.start.offset)} tabIndex={0}>{children}</pre>;
+          return <CopyableCodeBlock label={regionLabel("Code example", node?.position?.start.offset)}>{children}</CopyableCodeBlock>;
         },
       }}
     >

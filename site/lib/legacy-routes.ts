@@ -77,7 +77,7 @@ export const legacyAnchorRedirects: Readonly<Record<string, Readonly<Record<stri
   },
   "03-build/15-coding-harnesses-and-agent-protocols": {
     "harness-engineering": "/guide/03-build/16-harness-engineering#harness-engineering",
-    "inner-loop-outer-loop-meta-loop": "/guide/03-build/16-harness-engineering#inner-loop-outer-loop-meta-loop",
+    "inner-loop-outer-loop-meta-loop": "/guide/03-build/16-harness-engineering#inner-feedback-loop-outer-verification-loop-meta-learning-loop",
     "harness-model-co-design-and-harness-profiles": "/guide/03-build/16-harness-engineering#harness-model-co-design-and-harness-profiles",
     "headless-execution-and-the-structured-event-stream": "/guide/03-build/16-harness-engineering#headless-execution-and-the-structured-event-stream",
     "lifecycle-sessions-checkpoints-and-compaction": "/guide/03-build/16-harness-engineering#lifecycle-sessions-checkpoints-and-compaction",

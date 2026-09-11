@@ -202,7 +202,7 @@ These are **design principles** that keep both canonical models honest:
 
 ### The capability model
 
-This is a **reference model** for implementation depth. The detailed stack—compute, environments, inner and outer harnesses, orchestration, tools, context, models, evidence, security, control plane, delivery, and learning—belongs in the owning chapters and [Chapter 25](../03-build/25-the-12-layer-production-ai-agent-stack.md). Use it to inventory components after the orientation models are understood, not to teach a third top-level architecture.
+This is a **reference model** for implementation depth. The detailed stack—Models, Agents, Agent Loops, Agent Harnesses, Work Graphs, Orchestration, Runtimes, Sandboxes, capabilities, context, evidence, security, Control Plane, delivery, and learning—belongs in the owning chapters, [Chapter 25](../03-build/25-the-12-layer-production-ai-agent-stack.md), and the [canonical execution-boundary map](../appendix/execution-boundaries-and-terminology.md). Use it to inventory components after the orientation models are understood, not to teach a third top-level architecture.
 
 ### What the rest of the book expands
 

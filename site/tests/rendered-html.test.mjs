@@ -330,6 +330,53 @@ test("every canonical document link on primary surfaces resolves to generated co
   assert.deepEqual(broken, []);
 });
 
+test("system design playbook is discoverable and operational", async () => {
+  const landing = await htmlFor("/guide");
+  const topics = await htmlFor("/guide/topics");
+  const playbook = await htmlFor("/guide/appendix/factory-system-design-playbook");
+  assert.match(landing, /review a workflow before launch/i);
+  assert.match(topics, /Factory system design playbook/i);
+  assert.match(playbook, /Requirements.*scale.*invariants.*components.*state.*authority.*failure modes.*economics.*observability.*rollout.*recovery.*learning/is);
+  for (const field of ["Baseline cycle time", "Current human effort", "Acceptance criteria", "Verification strategy", "Authority boundaries", "Candidate Factory capabilities"]) {
+    assert.match(playbook, new RegExp(field, "i"));
+  }
+  for (const drill of ["Model failure", "Stale context", "Worker crash", "Lease loss", "Verifier disagreement", "Candidate mutation", "Cost overrun", "Provider ambiguity", "Tool failure", "Publication uncertainty", "Production regression", "Conflicting agents", "Stale evidence"]) {
+    assert.match(playbook, new RegExp(drill, "i"));
+  }
+  assert.match(playbook, /detect.*contain.*reconcile.*recover.*verify.*learn/is);
+  assert.match(playbook, /Intent.*Plan.*Factory Version.*WorkOrder.*Producer Attempt.*candidate.*Verifier Attempt.*approval.*Release.*outcome economics.*learning candidate/is);
+});
+
+test("execution terminology keeps agent boundaries and identities distinct", async () => {
+  const topics = await htmlFor("/guide/topics");
+  const reference = await htmlFor("/guide/appendix/execution-boundaries-and-terminology");
+  assert.match(topics, /Execution boundaries and canonical terminology/i);
+  assert.match(reference, /boundary disagreement/i);
+  assert.match(reference, /Model.*Agent.*Agent Loop.*Agentic SDK.*Agent Harness.*Work Graph.*Orchestrator.*Runtime.*Sandbox.*Capability Implementation.*Control Plane.*Factory Platform/is);
+  assert.match(reference, /Claude.*Model.*Claude Code.*Coding Harness/is);
+  assert.match(reference, /Enforcement and authority are not the same thing/i);
+  assert.match(reference, /Harness.*how the agent.*operate.*Runtime.*where and how.*execution.*survive/is);
+  assert.match(reference, /Agent Loop\s+can operate inside one\s+node.*not the graph/is);
+  assert.match(reference, /Agentic SDK.*toolkit, not authority/is);
+  assert.match(reference, /SDK guardrails are not FDLC authority/is);
+  assert.match(reference, /FDLC ecosystem mapping.*Mission Control and Fab/is);
+  assert.match(reference, /Fab.*Experimental Coding Harness and Capability Implementation/is);
+  assert.match(reference, /no independent authority.*accept a Candidate.*publish a\s+release.*change Production/is);
+
+  const glossary = await htmlFor("/guide/glossary");
+  assert.match(glossary, /Agentic SDK/is);
+  assert.match(glossary, /software-development toolkit providing reusable primitives/is);
+  assert.match(glossary, /not synonymous with any of them/is);
+  assert.match(glossary, /does not own.*Control.*Plane.*authority/is);
+
+  const harnessChapter = await htmlFor("/guide/03-build/15-coding-harnesses-and-agent-protocols");
+  assert.match(harnessChapter, /Agentic SDK versus Harness/is);
+  assert.match(harnessChapter, /Factory.*Version.*must still resolve/is);
+  assert.match(harnessChapter, /SDK and\s+adapter versions/is);
+  assert.match(harnessChapter, /Sandbox profile/is);
+  assert.match(harnessChapter, /qualification evidence/is);
+});
+
 test("keeps requested exclusions out of canonical public routes", async () => {
   const documents = await generatedDocuments();
   const contentRoutes = documents

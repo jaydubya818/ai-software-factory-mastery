@@ -6,6 +6,7 @@ import { guidePageMetadata } from "../../lib/metadata";
 import { fdlcUrl, GUIDE_ROUTES, guideContentPath } from "../../lib/paths";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { readingMinutes } from "../../lib/text";
 
 export const metadata: Metadata = guidePageMetadata({
   title: "Table of Contents · The AI Software Factory Guide",
@@ -16,11 +17,12 @@ export const metadata: Metadata = guidePageMetadata({
 export default function GuidePage() {
   const frontMatter = chapters.filter((chapter) => chapter.sectionKey === "00-front-matter");
   const firstChapter = getChapter(1);
+  const modelChapter = getChapter(2);
 
   return (
     <>
       <SiteHeader />
-      <main className="interior-page field-guide-page">
+      <main className="interior-page field-guide-page" id="main-content" tabIndex={-1}>
         <header className="field-guide-hero">
           <div>
             <span className="eyebrow">Table of contents</span>
@@ -38,7 +40,7 @@ export default function GuidePage() {
         <section className="home-entry" aria-label="Where to start">
           <div className="home-entry-paths">
             <Link href={guideContentPath("01-understand/02-the-factory-in-one-view")} className="home-entry-card">
-              <span>10 minutes</span>
+              <span>{modelChapter ? `About ${readingMinutes(modelChapter.content)} min` : "Start here"}</span>
               <strong>Understand the model</strong>
               <em>The whole factory on one page: the value stream, six-domain architecture, and the boundary between agents, evidence, and human authority.</em>
             </Link>
@@ -57,8 +59,10 @@ export default function GuidePage() {
             <span>Start by outcome</span>
             <Link href={guideContentPath("appendix/architecture-communication")}>I have to explain or fund this <small>executive</small></Link>
             <Link href={guideContentPath("02-design/05-authoritative-records")}>I have to draw the boundaries <small>architect</small></Link>
+            <Link href={guideContentPath("appendix/factory-system-design-playbook")}>I have to review a workflow before launch <small>design review</small></Link>
             <Link href={guideContentPath("03-build/11-the-agent-factory")}>I have to build it <small>builder</small></Link>
             <Link href={guideContentPath("05-operate/34-the-factory-as-a-platform")}>I have to run it <small>operator</small></Link>
+            <Link href={guideContentPath("appendix/production-reliability-operations-playbook")}>I have to prepare for or manage an incident <small>reliability</small></Link>
             <Link href={guideContentPath("appendix/enterprise-multi-factory-delivery")}>I have to scale delivery across factories <small>enterprise</small></Link>
           </div>
         </section>

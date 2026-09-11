@@ -247,7 +247,10 @@ async function verifyCommandPaletteMatrix(page, origin) {
     for (const theme of ["light", "dark"]) {
       await page.goto(`${origin}/guide/search`, { waitUntil: "networkidle" });
       if (await page.locator("html").getAttribute("data-theme") !== theme) {
-        await page.getByRole("button", { name: `Use ${theme} theme` }).click();
+        await page.evaluate(() => window.scrollTo(0, 0));
+        const themeToggle = page.getByRole("button", { name: `Use ${theme} theme` });
+        await themeToggle.focus();
+        await page.keyboard.press("Enter");
       }
       for (let round = 1; round <= 2; round += 1) {
         for (const navigation of ["direct", "reload"]) {
@@ -272,13 +275,24 @@ async function verifyBrowserRuntime(origin) {
 
   try {
     const page = await browser.newPage();
+    // The standalone Guide intentionally references the FDLC-owned global logo.
+    // Stub that one cross-application asset so this local runtime test remains
+    // deterministic while the DOM still proves canonical asset ownership.
+    await page.route("https://www.fdlc.ai/fdlc-logo-transparent.png", (route) => route.fulfill({
+      status: 200,
+      contentType: "image/png",
+      body: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+3MxZ5wAAAABJRU5ErkJggg==", "base64"),
+    }));
     const pageErrors = [];
     const consoleErrors = [];
     const failedManagedAssets = [];
     const loadedManagedAssets = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
     page.on("console", (message) => {
-      if (message.type() === "error") consoleErrors.push(message.text());
+      if (message.type() === "error") {
+        const source = message.location().url;
+        consoleErrors.push(source ? `${message.text()} @ ${source}` : message.text());
+      }
     });
     page.on("response", (response) => {
       const resourceType = response.request().resourceType();
@@ -297,6 +311,11 @@ async function verifyBrowserRuntime(origin) {
     });
 
     await page.goto(`${origin}/guide`, { waitUntil: "networkidle" });
+    assert.equal(
+      await page.locator(".global-logo img").first().getAttribute("src"),
+      "https://www.fdlc.ai/fdlc-logo-transparent.png",
+      "the Guide attributes the shared brand asset to the FDLC application",
+    );
     const chapterLink = page.locator(`a[href="${publicPagePath(chapterPath)}"]`).first();
     assert.equal(await chapterLink.count(), 1, "Guide landing publishes the reviewed chapter path");
     const documentTimeOrigin = await page.evaluate(() => performance.timeOrigin);
@@ -320,7 +339,8 @@ async function verifyBrowserRuntime(origin) {
     });
     assert.ok(await page.locator(".search-result").count() > 0, "hydrated search should render results");
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
-    await page.getByRole("button", { name: "Use dark theme" }).click();
+    await page.getByRole("button", { name: "Use dark theme" }).focus();
+    await page.keyboard.press("Enter");
     assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
 
     const linkedHeadingResponse = await page.goto(
@@ -364,7 +384,7 @@ async function verifyBrowserRuntime(origin) {
       }
       const tocIds = await page.locator('.table-of-contents a[href^="#"]')
         .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute("href").slice(1)));
-      for (const id of tocIds) assert.equal(await page.locator(`h2[id="${id}"]`).count(), 1, `TOC ${id}`);
+      for (const id of tocIds) assert.equal(await page.locator(`:is(h2,h3)[id="${id}"]`).count(), 1, `TOC ${id}`);
     }
     await page.locator('#added-7 a[href="#added-7"]').click();
     assert.equal(new URL(page.url()).hash, "#added-7");
@@ -462,12 +482,14 @@ async function verifyBrowserRuntime(origin) {
     assert.equal(await page.locator("h1").textContent(), "That page is not in the guide.");
     assert.match(await page.locator("body").innerText(), /Search the guide/);
     assert.notEqual(await page.locator("html").getAttribute("id"), "__next_error__");
-    await page.getByRole("button", { name: "Use light theme" }).click();
+    const notFoundThemeToggle = page.getByRole("button", { name: "Use light theme" });
+    await notFoundThemeToggle.focus();
+    await page.keyboard.press("Enter");
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
     assert.deepEqual(pageErrors, []);
     assert.deepEqual(
       consoleErrors.filter(
-        (message) => message !== "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        (message) => !message.startsWith("Failed to load resource: the server responded with a status of 404 (Not Found)"),
       ),
       [],
     );

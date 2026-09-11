@@ -9,7 +9,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 
 export const metadata: Metadata = guidePageMetadata({
   title: "Reference · The AI Software Factory Guide",
-  description: "The reference shelf: glossary, Mission Control case studies, research canon, coverage, operating practices, and governed Factory admission.",
+  description: "The reference shelf: glossary, case studies, architecture, reliability, execution terminology, and governed Factory admission.",
   canonical: GUIDE_ROUTES.topics,
 });
 
@@ -38,17 +38,20 @@ const shelf: ShelfRow[] = [
   { letter: "G", slug: "appendix/operator-surfaces", title: "Mission Control operator surfaces", description: "The eleven operational views that make authority, evidence, cost, incidents, and learning visible without creating a second source of truth.", use: "When designing or reviewing the operator experience." },
   { letter: "H", slug: "appendix/context-skills-engineering", title: "Context, skills, and evidence", description: "Five operating practices for treating reusable agent context as governed, measured software assets.", use: "When authoring, admitting, evaluating, or improving skills and context." },
   { letter: "I", slug: "appendix/governed-factory-admission", title: "Governed Factory admission", description: "The exact chain from qualified Factory composition and derived readiness through producer and verifier Attempts.", use: "When designing execution identity, independent verification, or human authority boundaries." },
+  { letter: "J", slug: "appendix/factory-system-design-playbook", title: "Factory system design playbook", description: "A workload brief, plan checks, routing and scheduling boundaries, recovery drills, evidence validity, and outcome measurement in one practical review.", use: "Before a new workflow takes on real work, or when reviewing an existing factory line." },
+  { letter: "K", slug: "appendix/production-reliability-operations-playbook", title: "Production reliability and incident operations", description: "Failure domains, overload control, graceful degradation, incident response, capacity, and evidence-led operational decisions.", use: "Before production admission, capacity changes, or incident reviews." },
+  { letter: "L", slug: "appendix/execution-boundaries-and-terminology", title: "Execution boundaries and canonical terminology", description: "The canonical map for Model, Agent, Loop, Harness, Graph, Runtime, Sandbox, Orchestrator, Control Plane, capabilities, and Factory versions.", use: "When architecture discussions use the same word for different responsibilities." },
 ];
 
 export default function ReferencePage() {
   return (
     <>
       <SiteHeader />
-      <main className="interior-page topics-page">
+      <main className="interior-page topics-page" id="main-content" tabIndex={-1}>
         <header className="page-intro shelf-intro">
           <span className="eyebrow">Reference</span>
           <h1>The reference shelf.</h1>
-          <p>Nine reference groups you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
+          <p>Twelve reference groups you reach for while reading, not a sequence to read through. The glossary pins the words; the case studies show the ideas running; the rest tell you how far to trust what you just read.</p>
         </header>
 
         <aside className="reference-standard"><div><strong>The FDLC Specification</strong><p>The normative model, artifact contracts, and conformance requirements behind this guide.</p></div><a className="button button-secondary" href={fdlcUrl("/specification")}>Read the Specification <span aria-hidden="true">→</span></a></aside>

@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState<boolean | null>(null);
 
   useEffect(() => {
-    let preference = false;
+    let preference = document.documentElement.dataset.theme === "dark";
     try {
-      preference = window.localStorage.getItem("asfm-theme") === "dark";
+      const saved = window.localStorage.getItem("asfm-theme");
+      preference = saved ? saved === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     } catch {
       preference = false;
     }
@@ -20,7 +21,7 @@ export function ThemeToggle() {
   }, []);
 
   function toggle() {
-    const next = !dark;
+    const next = dark !== true;
     setDark(next);
     document.documentElement.dataset.theme = next ? "dark" : "light";
     try {

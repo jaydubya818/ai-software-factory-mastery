@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import { markdownHeadings } from "../lib/markdown-headings.ts";
+import { stableAnchorId } from "../lib/text.ts";
 import {
   GUIDE_CANONICAL_ORIGIN,
   absoluteGuideUrl,
@@ -138,6 +139,20 @@ function sectionsFor(markdown) {
   return sections
     .map((section) => ({ ...section, text: plainText(section.text).slice(0, 6000) }))
     .filter((section) => section.text.length > 40);
+}
+
+function glossarySectionsFor(markdown) {
+  const entries = [];
+  const pattern = /^\*\*([^*]+?)\*\*(?:\s*🔑)?(?:\s+\([^\n]*\))?\s*[—–-]\s*([\s\S]*?)(?=\n\n\*\*[^*]+?\*\*(?:\s*🔑)?(?:\s+\([^\n]*\))?\s*[—–-]|\n##\s|$)/gm;
+  for (const match of markdown.matchAll(pattern)) {
+    const heading = match[1].trim();
+    entries.push({
+      id: stableAnchorId(heading, "term-"),
+      heading,
+      text: plainText(`${heading} ${match[2]}`),
+    });
+  }
+  return entries;
 }
 
 function extractHeadings(markdown) {
@@ -277,7 +292,7 @@ const searchIndex = documents.map((document) => ({
   stage: document.stage,
   contentType: document.contentType,
   description: document.description,
-  sections: sectionsFor(document.content),
+  sections: document.slug === "appendix/glossary" ? glossarySectionsFor(document.content) : sectionsFor(document.content),
 }));
 
 const siteUrl = GUIDE_CANONICAL_ORIGIN;
@@ -301,7 +316,7 @@ const paletteIndex = documents.map((document) => ({
   stage: document.stage,
   contentType: document.contentType,
   description: document.description,
-  headings: document.headings.map((heading) => heading.text),
+  headings: document.headings,
 }));
 
 await mkdir(outputRoot, { recursive: true });
