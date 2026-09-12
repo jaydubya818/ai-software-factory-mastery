@@ -148,7 +148,7 @@ test("Guide keeps the global navigation centered like the FDLC shell", async () 
   assert.match(css, /\.header-github\s*\{[^}]*justify-self:\s*end;/);
 });
 
-test("all Guide surfaces share the five-item More menu on desktop and mobile", async () => {
+test("all Guide surfaces share the six-item More menu and preview footer link", async () => {
   for (const route of ["/guide", `/guide/${chapterSlugs[2]}`, "/guide/atlas", "/guide/topics", "/guide/glossary", "/guide/search"]) {
     const html = await htmlFor(route);
     const header = html.match(/<header class="global-header">[\s\S]*?<\/header>/)?.[0];
@@ -157,9 +157,15 @@ test("all Guide surfaces share the five-item More menu on desktop and mobile", a
     const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
     for (const menu of [more, mobileMore]) {
       assert.ok(menu, route);
-      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["FDLC in 5 Minutes", "Manifesto", "Start", "Enterprise", "About"], route);
+      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["FDLC in 5 Minutes", "Learning Library (Preview)", "Manifesto", "Start", "Enterprise", "About"], route);
     }
     assert.doesNotMatch(header, /href="[^"]*\/(?:spec|specification|benchmarks)"/, route);
+    const footer = html.match(/<footer class="global-footer">[\s\S]*?<\/footer>/)?.[0];
+    assert.match(
+      footer ?? "",
+      /href="https:\/\/www\.fdlc\.ai\/corpus-preview"[^>]*>Learning Library \(Preview\)<\/a>/,
+      route,
+    );
   }
 });
 
