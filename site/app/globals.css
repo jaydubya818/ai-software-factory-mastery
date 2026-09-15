@@ -1096,10 +1096,10 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .home-guide-map li b { color: var(--green); font-size: 22px; }
 .home-reference-callout { margin-top: 10px; }
 
-.field-guide-hero, .visual-guide-hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 90px; align-items: end; padding: 92px 0 78px; border-bottom: 1px solid var(--line); }
-.field-guide-hero h1, .visual-guide-hero h1 { margin-bottom: 0; font-size: clamp(54px, 6.8vw, 88px); }
+.field-guide-hero, .visual-guide-hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; padding: var(--section-space) 0; border-bottom: 1px solid var(--line); }
+.field-guide-hero h1, .visual-guide-hero h1 { margin-bottom: 0; font-size: clamp(40px, 4.8vw, 64px); }
 .field-guide-hero > div:last-child > p, .visual-guide-hero > div:last-child > p { margin: 0; color: var(--muted); font-size: 19px; line-height: 1.7; }
-.guide-orientation { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; padding: 78px 0; border-bottom: 1px solid var(--line); }
+.guide-orientation { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; padding: var(--section-space) 0; border-bottom: 1px solid var(--line); }
 .guide-orientation h2, .guide-foundation h2 { margin: 10px 0 15px; font-family: var(--serif); font-size: 43px; font-weight: 500; line-height: 1.08; letter-spacing: -.045em; }
 .guide-orientation p { margin: 0; color: var(--muted); font-size: 16px; }
 .guide-orientation ol { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); margin: 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -1255,7 +1255,7 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .guide-home-hero { padding-top: 58px; }
   .home-guide-map > header, .home-lifecycle > header, .field-guide-hero, .visual-guide-hero, .guide-orientation, .visual-atlas-callout { grid-template-columns: 1fr; gap: 26px; }
   .home-guide-map li div { grid-template-columns: 1fr; gap: 3px; }
-  .field-guide-hero, .visual-guide-hero { padding-top: 64px; }
+  .field-guide-hero, .visual-guide-hero { padding-top: var(--section-space); }
   .guide-orientation ol { grid-template-columns: 1fr; }
   .guide-orientation li:nth-child(odd) a { border-right: 0; }
   .guide-part > header { grid-template-columns: 40px 1fr; }
