@@ -15,8 +15,11 @@ export const guide = [
   ["Search", "/guide/search"],
 ] as const satisfies readonly NavLink[];
 
+export const aiFde = [
+  ["Engagement workspace", "/deploy/app"],
+] as const satisfies readonly NavLink[];
+
 export const afterGuide = [
-  ["AI-FDE", "/deploy"],
   ["Mission Control", "/mission-control"],
   ["Maturity", "/maturity"],
 ] as const satisfies readonly NavLink[];
