@@ -14,7 +14,7 @@ import {
 
 test("compatibility mode keeps Guide canonicals standalone and FDLC links absolute", () => {
   assert.equal(absoluteGuideUrl(GUIDE_ROUTES.home), `${STANDALONE_GUIDE_ORIGIN}/guide`);
-  assert.equal(fdlcUrl("/framework"), "https://www.fdlc.ai/framework");
+  assert.equal(fdlcUrl("/framework"), "https://fdlc.ai/framework");
   assert.equal(guideDocumentPath("03-build/11-the-agent-factory"), "/guide/03-build/11-the-agent-factory");
   assert.equal(guideAssetPath("search-index.json"), "/guide/search-index.json");
   assert.match(standaloneDiscoveryFiles()?.sitemap ?? "", /<loc>https:\/\/ai-software-factory-mastery\.vercel\.app\/guide\/sitemap\.xml<\/loc>/);

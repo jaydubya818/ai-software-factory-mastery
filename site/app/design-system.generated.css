@@ -60,8 +60,11 @@
 .nav-dropdown-panel a { min-height: var(--control-height); display: flex; align-items: center; padding: 10px 12px; border-radius: var(--radius-control); }
 .nav-dropdown-panel a:hover, .nav-dropdown-panel a:focus-visible, .nav-dropdown-panel a[aria-current="page"] { background: var(--sage); color: var(--green); }
 .nav-dropdown-panel a[aria-current="page"] { box-shadow: inset 3px 0 var(--green); }
-.header-github { min-height: var(--control-height); justify-self: end; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font-family: var(--sans); font-size: 13px; font-weight: 600; }
+.header-utilities { justify-self: end; display: inline-flex; align-items: center; gap: 10px; }
+.header-github { min-height: var(--control-height); display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font-family: var(--sans); font-size: 13px; font-weight: 600; }
 .header-github:hover { background: var(--green); border-color: var(--green); color: white; }
+.header-search { min-height: var(--control-height); display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); color: var(--ink); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; }
+.header-search kbd { padding: 1px 5px; border: 1px solid var(--line); border-radius: 3px; font-family: var(--mono); font-size: 10px; }
 .global-mobile { display: none; position: relative; justify-self: end; }
 .global-mobile > button { min-height: var(--control-height); min-width: 60px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: transparent; color: var(--ink); cursor: pointer; font: inherit; font-size: 13px; }
 .global-mobile nav { position: absolute; right: 0; top: 52px; width: min(320px, calc(100vw - 40px)); max-height: calc(100dvh - 110px); overflow-y: auto; overscroll-behavior: contain; padding: 8px; display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-menu); }
@@ -71,7 +74,7 @@
 .global-mobile nav a[aria-current="page"] { box-shadow: inset 3px 0 var(--green); }
 .global-mobile nav > span { padding: 20px 12px 8px; color: var(--muted); font-family: var(--mono); font-size: var(--text-label); letter-spacing: .06em; text-transform: uppercase; }
 .mobile-guide-links { display: grid; padding: 4px 0 8px 12px; background: color-mix(in srgb, var(--sage) 50%, transparent); }
-.mobile-guide-links a { border-left: 1px solid var(--line); }
+.global-mobile nav a.mobile-guide-search { font-weight: 700; color: var(--green); }
 .nav-dropdown-panel[hidden], .global-mobile nav[hidden], .mobile-guide-links[hidden] { display: none; }
 
 .global-footer { padding: 64px 0 0; background: #171a18; color: #c8d0ca; font-family: var(--sans); font-size: 14px; line-height: 1.6; }
@@ -87,7 +90,7 @@
 @media (max-width: 1100px) {
   .global-header-inner { grid-template-columns: 1fr auto; gap: 16px; height: 76px; }
   .global-logo { width: 190px; }
-  .desktop-nav, .global-header .header-github { display: none; }
+  .desktop-nav, .header-utilities { display: none; }
   .global-mobile { display: block; }
   .global-footer-inner { grid-template-columns: repeat(4, 1fr); }
   .global-footer-brand { grid-column: 1 / -1; }
@@ -102,4 +105,17 @@
 }
 @media (prefers-reduced-motion: reduce) {
   :root { --motion-duration: 0ms; }
+}
+
+/* Container sizing also follows enlarged text/CSS zoom inside a composed shell. */
+.global-header { container-type: inline-size; }
+@container (max-width: 1100px) {
+  .global-header-inner { grid-template-columns: 1fr auto; gap: 16px; height: 76px; }
+  .global-logo { width: 190px; }
+  .desktop-nav, .header-utilities { display: none; }
+  .global-mobile { display: block; }
+}
+@container (max-width: 640px) {
+  .global-header-inner { width: calc(100% - 40px); height: 72px; }
+  .global-logo { width: 180px; }
 }

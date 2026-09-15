@@ -136,7 +136,7 @@ export function SiteHeader() {
           {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
           <NavDropdown active={false} id="more-navigation" label="More" links={secondary} />
         </nav>
-        <a className="header-github" href="https://github.com/jaydubya818/MissionControl" rel="noreferrer" target="_blank">GitHub <span aria-hidden="true">↗</span></a>
+        <div className="header-utilities"><a className="header-github" href="https://github.com/jaydubya818/MissionControl" rel="noreferrer" target="_blank">GitHub <span aria-hidden="true">↗</span></a></div>
         <div className={`global-mobile${mobileOpen ? " is-open" : ""}`} ref={mobileRoot} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setMobileOpen(false); }}>
           <button aria-controls="mobile-navigation" aria-expanded={mobileOpen} aria-label="Open navigation" onClick={() => setMobileOpen((value) => !value)} onKeyDown={(event) => { if (event.key === "Escape") setMobileOpen(false); }} ref={mobileTrigger} type="button">Menu</button>
           <nav aria-label="Mobile navigation" hidden={!mobileOpen} id="mobile-navigation">
@@ -145,6 +145,7 @@ export function SiteHeader() {
             <div className="mobile-guide-links" hidden={!mobileGuideOpen} id="mobile-guide-navigation">
               {guide.map(([label, href, isActive]) => <Link aria-current={isActive(pathname) ? "page" : undefined} href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</Link>)}
             </div>
+            <Link className="mobile-guide-search" href={GUIDE_ROUTES.search} onClick={() => setMobileOpen(false)}>Search the Guide</Link>
             {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <span>More</span>
             {secondary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}

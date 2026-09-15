@@ -107,11 +107,11 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   assert.ok(header, "renders the persistent FDLC global header");
   assert.doesNotMatch(header, /brand-copy|<small>The Guide<\/small>/, "Guide identity does not replace the global shell");
   for (const [label, href] of [
-    ["Framework", "https://www.fdlc.ai/framework"],
-    ["Architecture", "https://www.fdlc.ai/architecture"],
-    ["Mission Control", "https://www.fdlc.ai/mission-control"],
-    ["FDE", "https://www.fdlc.ai/deploy"],
-    ["Maturity", "https://www.fdlc.ai/maturity"],
+    ["Framework", "https://fdlc.ai/framework"],
+    ["Architecture", "https://fdlc.ai/architecture"],
+    ["Mission Control", "https://fdlc.ai/mission-control"],
+    ["AI-FDE", "https://fdlc.ai/deploy"],
+    ["Maturity", "https://fdlc.ai/maturity"],
   ]) assert.match(header, new RegExp(`href="${href}"[^>]*>${label}<`), label);
   for (const [label, href] of [
     ["Overview", "/guide"],
@@ -136,7 +136,7 @@ test("the Guide owns the logo asset rendered by its global shell", async () => {
   assert.ok(footer, "renders the persistent FDLC global footer");
   assert.match(header, /src="\/guide\/fdlc-logo-transparent\.png"/);
   assert.match(footer, /src="\/guide\/fdlc-logo-transparent\.png"/);
-  assert.doesNotMatch(html, /https:\/\/www\.fdlc\.ai\/fdlc-logo-transparent\.png/);
+  assert.doesNotMatch(html, /https:\/\/fdlc\.ai\/fdlc-logo-transparent\.png/);
 
   const logo = await readFile(new URL("../public/guide/fdlc-logo-transparent.png", import.meta.url));
   assert.deepEqual([...logo.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], "bundles a valid PNG logo");
@@ -145,7 +145,7 @@ test("the Guide owns the logo asset rendered by its global shell", async () => {
 test("Guide keeps the global navigation centered like the FDLC shell", async () => {
   const css = await readFile(new URL("../app/design-system.generated.css", import.meta.url), "utf8");
   assert.match(css, /\.global-header-inner\s*\{[\s\S]*?grid-template-columns:\s*1fr auto 1fr;/);
-  assert.match(css, /\.header-github\s*\{[^}]*justify-self:\s*end;/);
+  assert.match(css, /\.header-utilities\s*\{[^}]*justify-self:\s*end;/);
 });
 
 test("all Guide surfaces share the six-item More menu and preview footer link", async () => {
@@ -157,13 +157,13 @@ test("all Guide surfaces share the six-item More menu and preview footer link", 
     const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
     for (const menu of [more, mobileMore]) {
       assert.ok(menu, route);
-      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["FDLC in 5 Minutes", "Learning Library (Preview)", "Manifesto", "Start", "Enterprise", "About"], route);
+      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["In 5 Minutes", "Start", "Learning Library (Preview)", "Manifesto", "Enterprise", "About"], route);
     }
     assert.doesNotMatch(header, /href="[^"]*\/(?:spec|specification|benchmarks)"/, route);
     const footer = html.match(/<footer class="global-footer">[\s\S]*?<\/footer>/)?.[0];
     assert.match(
       footer ?? "",
-      /href="https:\/\/www\.fdlc\.ai\/corpus-preview"[^>]*>Learning Library \(Preview\)<\/a>/,
+      /href="https:\/\/fdlc\.ai\/corpus-preview"[^>]*>Learning Library \(Preview\)<\/a>/,
       route,
     );
   }

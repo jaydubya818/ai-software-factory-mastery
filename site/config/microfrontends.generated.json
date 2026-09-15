@@ -30,7 +30,7 @@
     },
     "fdlc": {
       "development": {
-        "fallback": "https://www.fdlc.ai"
+        "fallback": "https://fdlc.ai"
       },
       "packageName": "fdlc-site"
     }

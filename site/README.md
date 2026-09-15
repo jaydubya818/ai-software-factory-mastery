@@ -163,3 +163,13 @@ retired-fragment remaps preserve both query and fragment.
 # Shared public design
 
 The header, footer, navigation destinations, and design primitives are maintained in FDLC. Run `node scripts/sync-global-navigation.mjs --source=/path/to/FDLC` to update both generated files; add `--check` to verify that neither has drifted. Page composition and reading/search controls remain Guide-owned. The common shell switches to touch navigation at 1100px; Guide search and theme controls remain below it.
+
+### PR45 UX shell synchronization (2026-09-14)
+
+The navigation and CSS mirror FDLC UI source `065563d5feffb2efe8752603c7324acfcb10891c`.
+The canonical fallback is `https://fdlc.ai`; legacy compatible authorities remain supported.
+The authoritative MFE config last changed at `fcccb3e568e3bd4ad96ad4167415d2a7e7a48cff`, with digest
+`6520e43f55c4dc03c3c51b1ae69a4ee11788b4d6b2175511a98b2a9e8dcace6e`.
+This is a Preview-only source update. Production remains disabled. The previously qualified
+snapshot (`9e0f913c83d3a9fddfe0fffaae6a53d46c62b5ab`, digest
+`e63f913563c1864feac38c7786e06d146892d34a4f0f74179999ff1d565e7e8b`) must be retained with its compatible FDLC release for rollback.

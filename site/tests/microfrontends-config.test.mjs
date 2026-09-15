@@ -19,7 +19,7 @@ import { synchronizeMicrofrontendsSnapshot } from "../scripts/sync-microfrontend
 
 const siteRoot = fileURLToPath(new URL("..", import.meta.url));
 const nextConfigUrl = pathToFileURL(path.join(siteRoot, "next.config.ts")).href;
-const expectedFingerprint = "e63f913563c1864feac38c7786e06d146892d34a4f0f74179999ff1d565e7e8b";
+const expectedFingerprint = "6520e43f55c4dc03c3c51b1ae69a4ee11788b4d6b2175511a98b2a9e8dcace6e";
 const expectedManifest = JSON.parse(await readFile(MICROFRONTENDS_MANIFEST_PATH, "utf8"));
 const expectedSourceCommit = expectedManifest.sourceCommit;
 
