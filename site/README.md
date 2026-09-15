@@ -69,7 +69,7 @@ For the migration's Guide-compatible build, set `NEXT_PUBLIC_SITE_URL` to
 `https://ai-software-factory-mastery.vercel.app` (the same default is used when
 unset locally). In that compatibility mode, canonicals remain on
 `https://ai-software-factory-mastery.vercel.app`, while hard links to FDLC-owned
-pages use absolute `https://www.fdlc.ai/...` URLs. Article links and canonicals
+pages use absolute `https://fdlc.ai/...` URLs. Article links and canonicals
 use the legacy `/docs/...` tree so a visited URL survives a rollback to old
 Guide. On the allowlisted standalone host, recognized `/guide/...` page aliases
 return a same-origin 307 to the compatible page path; assets and unknown routes
@@ -83,7 +83,7 @@ serves FDLC composition. Transitional root
 `robots.txt` and sitemap-index files point crawlers to the namespaced Guide
 sitemap so the standalone canonical edition retains discovery continuity.
 
-For the final migration build, set `NEXT_PUBLIC_SITE_URL=https://www.fdlc.ai`
+For the final migration build, set `NEXT_PUBLIC_SITE_URL=https://fdlc.ai`
 and the approved server-only `GUIDE_LEGACY_REDIRECTS_ENABLED=true`. In composed mode, Guide
 canonicals use that origin and cross-application navigation is root-relative,
 so navigation on a paired Preview stays within that Preview while canonical
@@ -163,3 +163,18 @@ retired-fragment remaps preserve both query and fragment.
 # Shared public design
 
 The header, footer, navigation destinations, and design primitives are maintained in FDLC. Run `node scripts/sync-global-navigation.mjs --source=/path/to/FDLC` to update both generated files; add `--check` to verify that neither has drifted. Page composition and reading/search controls remain Guide-owned. The common shell switches to touch navigation at 1100px; Guide search and theme controls remain below it.
+
+### PR45 UX shell synchronization (2026-09-14)
+
+The navigation and CSS mirror FDLC UI source `065563d5feffb2efe8752603c7324acfcb10891c`.
+The canonical fallback is `https://fdlc.ai`; legacy compatible authorities remain supported.
+The authoritative MFE config last changed at `fcccb3e568e3bd4ad96ad4167415d2a7e7a48cff`, with digest
+`6520e43f55c4dc03c3c51b1ae69a4ee11788b4d6b2175511a98b2a9e8dcace6e`.
+This is a Preview-only source update. Production remains disabled. The previously qualified
+snapshot (`9e0f913c83d3a9fddfe0fffaae6a53d46c62b5ab`, digest
+`e63f913563c1864feac38c7786e06d146892d34a4f0f74179999ff1d565e7e8b`) must be retained with its compatible FDLC release for rollback.
+
+The UX companion branch `codex/fdlc-ux-shell-sync` is qualified in composed Preview mode with
+`NEXT_PUBLIC_SITE_URL=https://fdlc.ai` plus the three provenance/Preview pins above.
+This keeps global links root-relative through the matched FDLC Preview. It does not
+activate legacy Production host retirement or authorize Production deployment.

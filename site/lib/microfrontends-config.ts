@@ -43,7 +43,7 @@ type SnapshotManifest = {
 const expectedApplications = {
   fdlc: {
     packageName: "fdlc-site",
-    development: { fallback: "https://www.fdlc.ai" },
+    development: { fallback: "https://fdlc.ai" },
   },
   "ai-software-factory-mastery": {
     packageName: "ai-software-factory-mastery-site",

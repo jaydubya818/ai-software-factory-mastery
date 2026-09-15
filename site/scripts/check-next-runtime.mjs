@@ -16,7 +16,7 @@ const root = new URL("..", import.meta.url);
 const expectedSiteOrigin = process.env.GUIDE_RUNTIME_EXPECTED_SITE_URL
   ?? "https://ai-software-factory-mastery.vercel.app";
 const expectedGuideCanonical = new URL("/guide", expectedSiteOrigin).href;
-assert.ok(["https://ai-software-factory-mastery.vercel.app", "https://www.fdlc.ai"].includes(expectedSiteOrigin), "Runtime checks require an explicit reviewed canonical authority");
+assert.ok(["https://ai-software-factory-mastery.vercel.app", "https://www.fdlc.ai", "https://fdlc.ai"].includes(expectedSiteOrigin), "Runtime checks require an explicit reviewed canonical authority");
 const compatibleBuild = expectedSiteOrigin === "https://ai-software-factory-mastery.vercel.app";
 const chapterPath = "/guide/01-understand/02-the-factory-in-one-view";
 function publicPagePath(pathname) {
@@ -587,7 +587,7 @@ try {
       method,
     );
     assert.equal(legacyHostRedirect.status, 308);
-    assert.equal(legacyHostRedirect.headers.get("location"), "https://www.fdlc.ai/guide/architecture");
+    assert.equal(legacyHostRedirect.headers.get("location"), "https://fdlc.ai/guide/architecture");
   }
   assert.equal(
     (await retirementRuntime.requestAsLegacyHost("/guide/not-a-real-page?token=secret")).status,

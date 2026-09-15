@@ -1,5 +1,5 @@
 export const STANDALONE_GUIDE_ORIGIN = "https://ai-software-factory-mastery.vercel.app";
-export const FDLC_ORIGIN = "https://www.fdlc.ai";
+export const FDLC_ORIGIN = "https://fdlc.ai";
 export const GUIDE_CANONICAL_ORIGIN = (process.env.NEXT_PUBLIC_SITE_URL ?? STANDALONE_GUIDE_ORIGIN).replace(/\/$/, "");
 export const GUIDE_ROOT = "/guide";
 export const GUIDE_COMPATIBLE_MODE = GUIDE_CANONICAL_ORIGIN === STANDALONE_GUIDE_ORIGIN;

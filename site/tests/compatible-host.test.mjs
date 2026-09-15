@@ -98,5 +98,5 @@ test("final build retains namespace links, canonicals, and existing retirement d
   const script = `import { guideNavigationHref,absoluteGuideUrl } from './lib/paths.ts'; import { compatibleGuideRedirectPath } from './lib/compatible-host.ts'; import { legacyGuideHostRedirect } from './lib/legacy-host.ts'; process.stdout.write(JSON.stringify({href:guideNavigationHref('/guide/architecture'),canonical:absoluteGuideUrl('/guide/architecture'),compat:compatibleGuideRedirectPath('${host}','/guide/architecture','GET',{}),retirement:legacyGuideHostRedirect('${host}','/architecture','GET',{GUIDE_LEGACY_REDIRECTS_ENABLED:'true'})}));`;
   const result = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "--eval", script], { cwd: new URL("..", import.meta.url), encoding: "utf8", env: { ...process.env, NEXT_PUBLIC_SITE_URL: "https://www.fdlc.ai" } });
   assert.equal(result.status, 0, result.stderr);
-  assert.deepEqual(JSON.parse(result.stdout), { href: "/guide/architecture", canonical: "https://www.fdlc.ai/guide/architecture", compat: null, retirement: "https://www.fdlc.ai/guide/architecture" });
+  assert.deepEqual(JSON.parse(result.stdout), { href: "/guide/architecture", canonical: "https://www.fdlc.ai/guide/architecture", compat: null, retirement: "https://fdlc.ai/guide/architecture" });
 });
