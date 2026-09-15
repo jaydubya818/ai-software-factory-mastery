@@ -53,6 +53,11 @@
 .desktop-nav > a:hover, .nav-dropdown > button:hover { color: var(--green); }
 .desktop-nav > a[aria-current="page"], .nav-dropdown.is-active > button { color: var(--green); border-bottom-color: var(--green); }
 .nav-dropdown { position: relative; }
+.nav-dropdown-linked { display: flex; align-items: stretch; }
+.desktop-nav .nav-dropdown-linked > a { display: inline-flex; align-items: center; min-height: 88px; padding-top: 3px; border-bottom: 3px solid transparent; }
+.desktop-nav .nav-dropdown-linked > button { min-width: 32px; }
+.desktop-nav .nav-dropdown-linked.is-active > a { color: var(--green); border-bottom-color: var(--green); }
+.nav-dropdown-linked > a:hover { color: var(--green); }
 .nav-dropdown > button span { display: inline-block; margin-left: 3px; font-size: 11px; transition: transform var(--motion-duration) ease; }
 .nav-dropdown.is-open > button span { transform: rotate(180deg); }
 .nav-dropdown-panel { position: absolute; z-index: 30; top: 76px; left: -16px; width: 208px; padding: 8px; display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-menu); }
@@ -74,6 +79,10 @@
 .global-mobile nav a[aria-current="page"] { box-shadow: inset 3px 0 var(--green); }
 .global-mobile nav > span { padding: 20px 12px 8px; color: var(--muted); font-family: var(--mono); font-size: var(--text-label); letter-spacing: .06em; text-transform: uppercase; }
 .mobile-guide-links { display: grid; padding: 4px 0 8px 12px; background: color-mix(in srgb, var(--sage) 50%, transparent); }
+.global-mobile .nav-dropdown-linked { display: grid; grid-template-columns: 1fr 44px; }
+.global-mobile .nav-dropdown-linked > button { min-height: 44px; padding: 0; border-bottom: 1px solid var(--line); }
+.global-mobile .nav-dropdown-linked.is-active > a, .global-mobile .nav-dropdown-linked.is-active > button { color: var(--green); background: var(--sage); }
+.global-mobile .nav-dropdown-panel { position: static; grid-column: 1 / -1; width: auto; padding: 4px 0 8px 12px; border: 0; border-radius: 0; box-shadow: none; background: color-mix(in srgb, var(--sage) 50%, transparent); }
 .global-mobile nav a.mobile-guide-search { font-weight: 700; color: var(--green); }
 .nav-dropdown-panel[hidden], .global-mobile nav[hidden], .mobile-guide-links[hidden] { display: none; }
 

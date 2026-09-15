@@ -7,7 +7,7 @@ import Link from "./GuideLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { canonicalGuidePagePath, fdlcUrl, GUIDE_ROUTES, guideAssetPath } from "../../lib/paths";
 
-import { primary, guide as guideDestinations, afterGuide, secondary, type NavLink } from "../../lib/global-navigation.generated";
+import { primary, guide as guideDestinations, afterGuide, aiFde, secondary, type NavLink } from "../../lib/global-navigation.generated";
 
 type GuideNavLink = readonly [label: string, href: string, isActive: (pathname: string) => boolean];
 
@@ -49,7 +49,7 @@ function GlobalLink({ children, href, onClick }: { children: ReactNode; href: st
   return <a href={fdlcUrl(href)} onClick={onClick}>{children}</a>;
 }
 
-function NavDropdown({ active, id, label, links, local = false, pathname = "" }: { active: boolean; id: string; label: string; links: readonly (NavLink | GuideNavLink)[]; local?: boolean; pathname?: string }) {
+function NavDropdown({ active, id, label, links, href, onNavigate, local = false, pathname = "" }: { active: boolean; id: string; label: string; href?: string; onNavigate?: () => void; links: readonly (NavLink | GuideNavLink)[]; local?: boolean; pathname?: string }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -88,14 +88,15 @@ function NavDropdown({ active, id, label, links, local = false, pathname = "" }:
   }
 
   return (
-    <div className={`nav-dropdown${active ? " is-active" : ""}${open ? " is-open" : ""}`} ref={root} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
-      <button aria-controls={id} aria-expanded={open} aria-current={active ? "page" : undefined} onClick={() => setOpen((value) => !value)} onKeyDown={handleTriggerKeyDown} ref={trigger} type="button">
-        {label} <span aria-hidden="true">⌄</span>
+    <div className={`nav-dropdown${href ? " nav-dropdown-linked" : ""}${active ? " is-active" : ""}${open ? " is-open" : ""}`} ref={root} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
+      {href && <GlobalLink href={href} onClick={onNavigate}>{label}</GlobalLink>}
+      <button aria-label={href ? `${label} menu` : undefined} aria-controls={id} aria-expanded={open} aria-current={active ? "page" : undefined} onClick={() => setOpen((value) => !value)} onKeyDown={handleTriggerKeyDown} ref={trigger} type="button">
+        {!href && label} <span aria-hidden="true">⌄</span>
       </button>
       <div className="nav-dropdown-panel" hidden={!open} id={id} ref={panel}>
         {links.map(([itemLabel, href, isActive]) => local
-          ? <Link aria-current={isActive?.(pathname) ? "page" : undefined} href={href} key={href} onClick={() => setOpen(false)}>{itemLabel}</Link>
-          : <GlobalLink href={href} key={href} onClick={() => setOpen(false)}>{itemLabel}</GlobalLink>)}
+          ? <Link aria-current={isActive?.(pathname) ? "page" : undefined} href={href} key={href} onClick={() => { setOpen(false); onNavigate?.(); }}>{itemLabel}</Link>
+          : <GlobalLink href={href} key={href} onClick={() => { setOpen(false); onNavigate?.(); }}>{itemLabel}</GlobalLink>)}
       </div>
     </div>
   );
@@ -133,6 +134,7 @@ export function SiteHeader() {
         <nav className="desktop-nav" aria-label="Primary navigation">
           {primary.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
           <NavDropdown active id="guide-navigation" label="Guide" links={guide} local pathname={pathname} />
+          <NavDropdown active={false} id="ai-fde-navigation" label="AI-FDE" href="/deploy" links={aiFde} />
           {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
           <NavDropdown active={false} id="more-navigation" label="More" links={secondary} />
         </nav>
@@ -146,6 +148,7 @@ export function SiteHeader() {
               {guide.map(([label, href, isActive]) => <Link aria-current={isActive(pathname) ? "page" : undefined} href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</Link>)}
             </div>
             <Link className="mobile-guide-search" href={GUIDE_ROUTES.search} onClick={() => setMobileOpen(false)}>Search the Guide</Link>
+            <NavDropdown active={false} id="mobile-ai-fde-navigation" label="AI-FDE" href="/deploy" links={aiFde} onNavigate={() => setMobileOpen(false)} />
             {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <span>More</span>
             {secondary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
