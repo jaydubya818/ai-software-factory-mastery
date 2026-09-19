@@ -78,24 +78,4 @@ An agent may draft tests and development cases. A reviewer must check their expe
 
 No fixed count, including twenty passing examples, proves readiness. Report coverage, cohort, repeat trials where appropriate, uncertainty, failures, and cost beside the score. Deterministic tests, behavioral evaluations, and production monitoring answer complementary questions. [Evaluation engineering](../04-prove/29-evaluation-engineering.md) defines dataset splits, graders, negative controls, and promotion evidence. [Anthropic's agent evaluation guidance](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) provides supporting discussion of tasks, trials, graders, and outcomes.
 
-## Source review and editorial decisions
-
-Reviewed on 2026-09-19. All thirteen supplied public post bodies were accessible. These are editorial summaries, not reproduced posts or endorsements. Embedded outbound courses, repositories, videos, and commercial offers are not certified by this review. Existing FDLC coverage takes precedence over alternate layer counts. The project-structure infographic was also inspected to distinguish versioned configuration from secrets and live data.
-
-| Supplied source | Decision and FDLC destination |
-| --- | --- |
-| [Deepak Tomar — agent evaluation](https://lnkd.in/p/gnGyM64V) | Improve practical boundary checks above; existing [evaluation engineering](../04-prove/29-evaluation-engineering.md) already covers retrieval metrics, graders, and production outcomes. |
-| [John Wernfeldt — executive outcomes](https://lnkd.in/p/gaHmDrtU) | Add the outcome brief. Retain explicit delegated authority and operational risk; do not equate agent governance with ordinary data governance. |
-| [Durga Prasad Mokara — six frameworks](https://lnkd.in/p/gWqkNFiD) | Add workload qualification criteria. Omit fixed vendor rankings and blanket production-readiness labels. |
-| [Brij Kishore Pandey — RAG](https://lnkd.in/p/g76GTi-Y) | Improve the retrieval diagnosis table. Reject the implication that retrieval eliminates unsupported answers. |
-| [AIChief — engineering stack](https://lnkd.in/p/gpWiYtCx) | Already covered by [platform architecture](../05-operate/34-the-factory-as-a-platform.md) and context engineering. Do not add a competing eight-layer taxonomy or vendor-logo inventory. |
-| [Rajesh Kumar — agent harness](https://lnkd.in/p/gqnmd_mr) | Add retry, reconcile, replan, fallback, and escalation choices; preserve independent verification. |
-| [Sivasankar Natarajan — enterprise layers](https://lnkd.in/p/gSsqmxt9) | Existing platform and harness contracts cover the useful boundaries. Do not present MCP as the control plane or confidence as authorization. |
-| [Satyendra Pandey — project structure](https://lnkd.in/p/g8fEJ4RN) | Add repository ownership and storage distinctions. Omit a mandatory Python tree and claims that a template solves production controls. |
-| [Prabhata Kumar Maharana — RAG reliability](https://lnkd.in/p/gw4bBm2g) | Combine with retrieval diagnosis, permission-aware reuse, deletion propagation, and citation support. |
-| [Aman Kumar — enterprise architecture](https://lnkd.in/p/gNX2HiY5) | Clarify discovery versus qualified tool admission. Existing routing, memory, policy, and observability coverage remains canonical. |
-| [Shalini Goyal — agent design](https://lnkd.in/p/gfayAytm) | Existing lifecycle, harness, and evaluation chapters cover the design sequence. Omit book promotion and the implication that adding specialists automatically makes high-risk work safer. |
-| [Basia Kubicka — agent development workflow](https://lnkd.in/p/gPMZ2SjM) | Clarify generated tests, protected holdouts, and bounded repair. Omit unverified startup-time claims, fixed case-count readiness, and vendor-specific installation advice. |
-| [Sunil Pachori — agent architecture](https://lnkd.in/p/g_iFw4Dd) | Existing platform architecture covers the responsibilities. Retain governed learning; do not imply deployed agents can change themselves without qualification. |
-
-On FDLC.ai, the [architecture operating checks](https://fdlc.ai/architecture#operating-checks) and [benchmark evaluation boundaries](https://fdlc.ai/benchmarks#evaluation-boundaries) summarize these decisions and link back here.
+On FDLC.ai, the [architecture operating checks](https://fdlc.ai/architecture#operating-checks) and [benchmark evaluation boundaries](https://fdlc.ai/benchmarks#evaluation-boundaries) summarize these practices and link back here.
