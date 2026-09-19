@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SITE_URL } from "../lib/content";
 import { GUIDE_ROUTES, guideAssetPath } from "../lib/paths";
 import "./globals.css";
+import "./components/reference-diagrams/diagrams.css";
 
 const title = "The AI Software Factory Guide · FDLC";
 const description = "The practical guide to the Factory Development Lifecycle.";

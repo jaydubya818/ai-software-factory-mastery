@@ -1,3 +1,4 @@
+import { ReferenceDiagram, isReferenceDiagramName } from "./reference-diagrams";
 import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -100,6 +101,11 @@ export function Markdown({ content, sourcePath, infographicAssets = {}, glossary
         ),
         pre: ({ children, node }) => {
           const code = node?.children[0];
+          if (code?.type === "element" && code.tagName === "code"
+            && Array.isArray(code.properties.className) && code.properties.className.includes("language-fdlc-diagram")) {
+            const name = textFromNode(children).trim();
+            if (isReferenceDiagramName(name)) return <ReferenceDiagram name={name} />;
+          }
           if (code?.type === "element" && code.tagName === "code"
             && Array.isArray(code.properties.className) && code.properties.className.includes("language-mermaid")) {
             return <Mermaid chart={textFromNode(children).trim()} label={regionLabel("Diagram", node?.position?.start.offset)} />;

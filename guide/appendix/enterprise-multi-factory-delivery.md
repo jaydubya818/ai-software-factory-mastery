@@ -3,7 +3,6 @@ title: Enterprise multi-factory software delivery
 summary: Separate one shared enterprise software-factory platform from outcome-specific factories and reusable capabilities, then govern work from builder intent through verified outcomes. Includes scaling, adoption, and enterprise pricing guidance.
 audience: [executive, architect, operator, builder]
 status: reference-architecture
-infographics: [enterprise-multi-factory-delivery]
 ---
 
 # Enterprise multi-factory software delivery
@@ -16,22 +15,27 @@ This is a reference architecture and implementation recommendation. It does not 
 
 ## Read the diagram at the right level
 
-<!-- infographic: enterprise-multi-factory-delivery -->
-> **Infographic — Enterprise multi-factory software delivery**
+```fdlc-diagram
+enterprise
+```
 
 The diagram separates the architecture into three layers. The top is shared enterprise infrastructure. The middle is a portfolio of outcome-specific factories. The bottom is a set of reusable agents, harnesses, tools, model routes, and Execution Profiles. A seven-step flow—**Intent → Plan → Route → Execute → Verify → Release → Learn**—shows how the layers cooperate without confusing architecture with process.
 
 | View | Question it answers | Relationship to this diagram |
 | --- | --- | --- |
-| Seven-stage FDLC | How do we design, qualify, operate, and improve the factory? | The outer lifecycle governs the factories used here. |
+| Factory Development Lifecycle | How do we design, qualify, operate, and improve the factory? | The outer lifecycle governs the factories used here. |
 | Guide’s eight-stage value stream | How does software move through a factory? | Intent, planning, harnesses, capabilities, evaluation, improvement, and delivery remain the inner execution model. |
 | Enterprise platform view | What is shared, what is outcome-specific, and what is reusable? | This diagram separates the common substrate, factory portfolio, and capability ecosystem. |
 | Enterprise delivery flow | How do factories achieve a governed objective? | The bottom flow connects builder intent, durable planning, routing, execution, verification, authority, and learning. |
 | Six architecture areas | Which responsibilities must exist? | Intent, Harness, Capability, Model, Trust, and Learning support all these views. |
 
-The diagram is a teaching view, not a literal state machine or a published capacity result. Its 100+ builder and repository figures describe an architecture scenario. They are not evidence of FDLC throughput or a customer deployment. Its release arrow must be read with the explicit authority gate below. “Ready for release” is not “released,” and an objective with production criteria is not complete until those criteria are observed.
+The diagram is a teaching view, not a literal state machine or a published capacity result. The [original source illustration](https://fdlc.ai/enterprise/multi-factory-software-delivery.png) contains illustrative scale figures, not measured capacity. Its release arrow must be read with the explicit authority gate below. “Ready for release” is not “released,” and an objective with production criteria is not complete until those criteria are observed.
 
 ## 1. Scale capacity without multiplying factories
+
+```fdlc-diagram
+shared-platform
+```
 
 Separate adoption scale from outcome diversity. A hundred or thousands of builders create scheduling, quota, tenant-fairness, concurrency, and backpressure concerns. Hundreds or thousands of repositories create context, configuration, language, toolchain, ownership, and policy diversity. High WorkOrder volume creates queue, sandbox-capacity, retry, and recovery concerns. None of these dimensions inherently requires another Factory Definition.
 
@@ -66,6 +70,10 @@ Keep three routing identities separate. Factory routing selects the qualified sy
 
 ## 3. Builder intent and objective classification
 
+```fdlc-diagram
+delivery
+```
+
 Start with a natural-language or structured request: “Modernize payments to Java 21, remediate vulnerabilities, improve test coverage, and deploy safely.” Normalize it into a durable Objective with identity, owner, repository scope, desired outcomes, acceptance criteria, constraints, risk, budget, deadline, provenance, and authority context. Keep the original request as evidence. Execution should not repeatedly reinterpret an uncontrolled conversation.
 
 Enrich the Objective with authorized repository and enterprise context: language manifests, dependency graphs, software bills of materials, CI configuration, ownership, data classification, target environments, and relevant policy. Model reasoning can help classify the work, but deterministic constraints define what is allowed.
@@ -92,6 +100,10 @@ The planner is replaceable intelligence. The Plan is a durable execution contrac
 A Plan must remain operable after the planner’s session disappears. The control plane reconstructs readiness and recovery from records, not from agent memory.
 
 ## 5. Three levels of routing
+
+```fdlc-diagram
+routing
+```
 
 | Level | Decision | Output |
 | --- | --- | --- |
@@ -158,6 +170,10 @@ Define maximum Attempts, aggregate budget, repeated-failure thresholds, alternat
 
 ## 8. Local and global verification
 
+```fdlc-diagram
+verification
+```
+
 **Local verification asks whether the factory satisfied its WorkOrder against the exact inputs it consumed. Global verification asks whether the integrated result satisfies the Objective.** A local PASS is necessary for the relevant handoff but insufficient for objective acceptance.
 
 | Boundary | Evidence to examine | Meaning of a passing result |
@@ -208,6 +224,10 @@ Most implementation diversity belongs below the factory boundary. The same quali
 Build once and qualify once where the evidence transfers, then qualify each assembled composition for its interactions. Component qualification does not prove that the combination is safe or effective. Capability count and factory count are independent.
 
 ## 12. Immutable versions and qualified profiles
+
+```fdlc-diagram
+composition
+```
 
 A Factory Definition names the capability. A Factory Version identifies an immutable composition. An Execution Profile defines a versioned operating configuration within that composition’s qualified envelope. Pin the supervisor recipe, skills, model routes, harnesses, tool versions, context policies, sandbox/runtime, verification contract, and governance policy.
 
