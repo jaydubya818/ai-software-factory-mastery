@@ -558,6 +558,8 @@ Future: a maturity evidence dashboard by repository and workflow (prerequisites,
 
 ## Go deeper
 
+- [Practical operating checks](../appendix/agentic-system-operating-checks.md): outcome brief, retrieval diagnosis, recovery decisions, framework qualification, and independent evaluation.
+
 - Related chapters: [2. The factory in one view](../01-understand/02-the-factory-in-one-view.md) · [3. First principles](../01-understand/03-first-principles-trust-evidence-and-authority.md) · [7. Governance, policy, and risk-proportional approval](../02-design/07-governance-policy-and-risk-proportional-approval.md) · [8. Economics, metrics, and human attention](../02-design/08-economics-metrics-and-human-attention.md) · [17. Development environments, sandboxes, and compute](../03-build/17-development-environments-sandboxes-and-compute.md) · [25. The 12-layer production AI agent stack](../03-build/25-the-12-layer-production-ai-agent-stack.md) · [33. Security](../04-prove/33-security.md) · [34. The factory as a platform](./34-the-factory-as-a-platform.md) · [40. Governed learning and compounding engineering](../06-improve/40-governed-learning.md) · [43. Mastering the factory](../06-improve/43-mastering-the-factory.md) · [44. Where this is going](../06-improve/44-where-this-is-going.md)
 - Glossary: [maturity level, corridor, shadow governance, BYOC, vendor-exit criteria, commodity layer, differentiated layer, exit cost, adoption wedge](../appendix/glossary.md)
 - Related for the two bands and the loop: [11. The Agent Factory](../03-build/11-the-agent-factory.md) for where productised artifacts live; [26. Autonomous engineering workflows](../03-build/26-autonomous-engineering-workflows.md) for the wedge workflow.

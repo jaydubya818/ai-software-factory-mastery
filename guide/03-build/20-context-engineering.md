@@ -291,6 +291,8 @@ Mission Control includes versioned context packages, manifests, lock files, acti
 
 ## Go deeper
 
+- [Practical operating checks](../appendix/agentic-system-operating-checks.md): outcome brief, retrieval diagnosis, recovery decisions, framework qualification, and independent evaluation.
+
 - [19. Data, knowledge, and semantic engineering](./19-data-knowledge-and-semantic-engineering.md) for the foundation this chapter builds on.
 - [Canonical glossary](../appendix/glossary.md) for the terms and boundaries used here.
 - Return to the [book map](../README.md) for the complete reading sequence.

@@ -268,6 +268,8 @@ Mission Control demonstrates parts of this boundary through frozen executor conf
 
 ## Go deeper
 
+- [Practical operating checks](../appendix/agentic-system-operating-checks.md): outcome brief, retrieval diagnosis, recovery decisions, framework qualification, and independent evaluation.
+
 - [15. Coding harnesses and agent protocols](./15-coding-harnesses-and-agent-protocols.md) for the foundation this chapter builds on.
 - [Canonical glossary](../appendix/glossary.md) for the terms and boundaries used here.
 - Return to the [book map](../README.md) for the complete reading sequence.
