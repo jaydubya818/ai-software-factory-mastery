@@ -323,6 +323,8 @@ The intended direction is for Mission Control to compile versioned Eval Tasks an
 
 ## Go deeper
 
+- [Practical operating checks](../appendix/agentic-system-operating-checks.md): outcome brief, retrieval diagnosis, recovery decisions, framework qualification, and independent evaluation.
+
 - Before this: [27. Quality and evidence architecture](./27-quality-and-evidence-architecture.md), [28. Testing strategy for agentic change](./28-testing-strategy-for-agentic-change.md). After this: [31. Quality contracts, proof packages, and certificates](./31-quality-contracts-proof-packages-and-certificates.md); [32. CI/CD, progressive delivery, and production verification](./32-cicd-progressive-delivery-and-production-verification.md) for canaries and rollback in delivery.
 - What evaluation feeds: [40. Governed learning and compounding engineering](../06-improve/40-governed-learning.md) (regression control, capability optimization, promotion governance). What it evaluates: [21. Models: routing, profiles, and capability selection](../03-build/21-models-and-capability-selection.md), [23. Agent and loop engineering](../03-build/23-agent-and-loop-engineering.md), [25. The 12-layer production AI agent stack](../03-build/25-the-12-layer-production-ai-agent-stack.md). Where traces come from: [35. Observability, telemetry, and forensics](../05-operate/35-observability-telemetry-and-forensics.md).
 - Terms: [Glossary](../appendix/glossary.md).
