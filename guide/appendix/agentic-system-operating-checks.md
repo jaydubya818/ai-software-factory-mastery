@@ -1,6 +1,6 @@
 ---
 title: "Agentic systems: practical operating checks"
-summary: "Pilot decisions, retrieval diagnosis, recovery choices, framework qualification, and evaluation independence."
+summary: "Pilot decisions, action-level autonomy, execution authority, recovery choices, and evaluation independence."
 ---
 
 # Agentic systems: practical operating checks
@@ -21,6 +21,34 @@ Before choosing a framework, record a decision that a business owner can review.
 | Next decision | Expand, revise, or stop on a named review date; who owns rollback and ongoing operation? |
 
 For example, a dependency-update pilot can cover one repository and a defined update class, with a person accepting releases. Compare accepted updates, review effort, escaped defects, and total cost against the existing process. Faster draft pull requests alone do not justify expansion. A thirty-day review is a decision point, not a promise of production readiness. [Enterprise adoption](../05-operate/38-enterprise-adoption-and-the-infrastructure-landscape.md) owns the rollout and maturity gates.
+
+## Choose autonomy for each decision
+
+Start with the simplest execution pattern that can satisfy the acceptance contract. A fixed workflow can contain model calls; it is still a workflow when code determines the permitted sequence and branches. Use an agent loop when selecting the next step requires judgment that cannot reasonably be encoded upfront, and bound its tools, iterations, time, and spend. Add specialist agents only when their separate responsibilities improve measured outcomes enough to justify coordination and recovery costs.
+
+For each step, name who chooses the next action, which actions are permitted, what evidence is required, and who handles an exception. Model discretion and execution authority are separate: an agent may choose a useful action that it has no grant to perform. Planning, retrieval, memory, and critique are capabilities within this design, not mandatory stages or permission grants. Retrieval can use lexical search, structured queries, or other eligible sources; a vector database is not a prerequisite. Self-critique can help repair a draft but cannot accept the producer's own work.
+
+Consider a dependency-update workflow. The following is an illustrative operating contract, not a claim that every action is implemented or qualified today.
+
+| Step | Execution pattern | Authority and evidence |
+| --- | --- | --- |
+| Inspect the manifest and approved release notes | Fixed retrieval path where possible | Read only eligible sources; record versions, repository revision, and relevant constraints |
+| Resolve ambiguous compatibility findings | Bounded agent investigation | Choose from approved read tools; stop with explicit gaps when evidence or budget is insufficient |
+| Prepare the patch and run tests | Scoped editing plus deterministic checks | Confine writes to the authorized workspace and change scope; retain the diff and test evidence |
+| Open a draft pull request | Fixed publication action after validation | Require the exact repository grant; preserve operation identity so recovery does not publish twice |
+| Merge or release | Separate governed decision | Bind acceptance and release authority to the reviewed revision; drafting or testing authority does not imply permission to ship |
+
+Compare this workflow against its baseline before widening any action grant. Use [governance by action class](../02-design/07-governance-policy-and-risk-proportional-approval.md#autonomy-per-action-class) for the governing risk policy and [evaluation engineering](../04-prove/29-evaluation-engineering.md) for independent outcome evidence.
+
+## Recheck authority at the action boundary
+
+An earlier approval is evidence for a particular decision, not a permanent capability. Immediately before a consequential operation, validate the originating principal and delegated workload identity, purpose, target, exact action and relevant arguments, active policy, grant scope, expiry, revocation, and any required approval. Bind the decision to the artifact or revision that was reviewed. Recheck after a human wait, queue delay, resumed session, or changed plan; do not replay a cached allow decision as fresh authority.
+
+For example, if a pull request receives another commit after its release approval, the old approval cannot authorize the new revision. Stop that release path and reevaluate the changed subject under policy. Likewise, a revoked repository grant must prevent a queued publication even when the agent's plan and tests remain valid. Credentials that technically permit an API call do not establish that the current task authorizes it.
+
+Keep responsibilities explicit. The Control Plane defines the authority and governing records; the Orchestrator coordinates durable work and waits; the Harness runs the bounded model loop; enforcement points and enterprise services validate the permitted operation and business invariants. A tool success response is one observation. Verification, acceptance, and release remain separate decisions.
+
+Exercise the boundary with an expired approval, revoked grant, changed target, changed revision, and lost response after a write. Expected results must distinguish denial before an effect from an unknown effect that needs reconciliation. At handoff, state what was requested, what was attempted, which effects were confirmed, which checks passed or failed, what remains unknown, and the next permitted action with its owner. Link evidence without exposing secrets or unauthorized context.
 
 ## Diagnose retrieval before changing the model
 
