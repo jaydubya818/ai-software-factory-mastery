@@ -145,6 +145,7 @@ export function SiteHeader() {
           <nav aria-label="Mobile navigation" hidden={!mobileOpen} id="mobile-navigation">
             {primary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <NavDropdown active={true} id="mobile-guide-navigation" label="Guide" href="/guide" links={guide} local pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+            <Link className="mobile-guide-search" href={GUIDE_ROUTES.search} onClick={() => setMobileOpen(false)}>Search the Guide</Link>
             <NavDropdown active={false} id="mobile-ai-fde-navigation" label="AI-FDE" href="/deploy" links={aiFde} onNavigate={() => setMobileOpen(false)} />
             {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <span>More</span>
