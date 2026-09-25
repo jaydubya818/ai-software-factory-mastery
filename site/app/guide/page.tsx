@@ -16,7 +16,6 @@ export const metadata: Metadata = guidePageMetadata({
 
 export default function GuidePage() {
   const frontMatter = chapters.filter((chapter) => chapter.sectionKey === "00-front-matter");
-  const firstChapter = getChapter(1);
   const modelChapter = getChapter(2);
 
   return (
@@ -31,8 +30,9 @@ export default function GuidePage() {
           <div>
             <p><strong>The practical guide to the Factory Development Lifecycle.</strong> Six parts, forty-four chapters, and a reference shelf. Read it front to back, or enter at the part that matches your question.</p>
             <div className="hero-actions">
-              {firstChapter && <Link className="button button-primary" href={guideContentPath(firstChapter.slug)}>Start with chapter 1</Link>}
-              <Link className="button button-secondary" href={guideContentPath("00-front-matter/00-how-to-read-this-guide")}>How to read this guide</Link>
+              <Link className="button button-primary" href={guideContentPath("00-front-matter/00-how-to-read-this-guide")}>Start reading</Link>
+              <a className="button button-secondary" href="#chapters">Browse chapters</a>
+              <Link className="button button-secondary" href={GUIDE_ROUTES.search}>Search the Guide</Link>
             </div>
           </div>
         </header>
@@ -67,7 +67,7 @@ export default function GuidePage() {
           </div>
         </section>
 
-        <section className="guide-orientation" aria-labelledby="guide-orientation-title">
+        <section id="chapters" className="guide-orientation" aria-labelledby="guide-orientation-title">
           <div><span className="section-kicker">The journey</span><h2 id="guide-orientation-title">Understand → Design → Build → Prove → Operate → Improve</h2><p>Each part answers one question. The chapters inside it answer that question in order.</p></div>
           <ol>
             {guideParts.map((part) => <li key={part.id}><a href={`#${part.id}`}><span>{part.number}</span><strong>{part.verb}</strong><small>{part.question}</small></a></li>)}

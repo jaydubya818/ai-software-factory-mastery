@@ -60,7 +60,7 @@ test("renders the canonical FDLC Guide landing and preserves role entry paths", 
 
   assert.match(html, /<title>Table of Contents · The AI Software Factory Guide · FDLC<\/title>/i);
   assert.match(html, /The practical guide to the Factory Development Lifecycle/);
-  assert.match(html, /Start with chapter 1/i);
+  assert.match(html, /Start reading/i);
   assert.match(html, /How to read this guide/);
   assert.match(html, /Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software/);
   for (const role of ["executive", "architect", "builder", "operator"]) assert.match(html, new RegExp(role));
@@ -120,8 +120,9 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
     ["Glossary", "/glossary"],
     ["Search", "/search"],
   ]) assert.equal([...header.matchAll(new RegExp(`href="${href}"[^>]*>${label}<`, "g"))].length, 2, `${label} exists in desktop and mobile navigation`);
-  assert.match(header, /<button aria-controls="guide-navigation" aria-expanded="false" aria-current="page"/);
-  assert.match(header, /<button aria-controls="mobile-guide-navigation" aria-expanded="true" aria-current="page" class="is-active"/);
+  assert.equal([...header.matchAll(/href="\/guide"[^>]*>Guide<\/a>/g)].length, 2, "Guide opens directly on desktop and mobile");
+  assert.match(header, /<button aria-label="Guide menu" aria-controls="guide-navigation" aria-expanded="false"/);
+  assert.match(header, /<button aria-label="Guide menu" aria-controls="mobile-guide-navigation" aria-expanded="false"/);
   for (const id of ["guide-navigation", "more-navigation", "mobile-navigation", "mobile-guide-navigation"]) {
     assert.equal([...header.matchAll(new RegExp(`id="${id}"`, "g"))].length, 1, `${id} is unique`);
   }

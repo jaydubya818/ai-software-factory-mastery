@@ -1660,3 +1660,10 @@ html[data-theme="dark"] .global-header .global-logo img { filter: grayscale(1) b
 @media (max-width: 800px) { .reference-standard { flex-direction: column; align-items: start; } }
 
 @media (max-width: 800px) { :root { --section-space: 28px; } }
+
+/* Keep the reader's current part visible without expanding the whole book. */
+.document-nav-groups { gap: 8px; }
+.document-nav-groups > details > summary { cursor: pointer; padding: 12px 0; color: var(--ink); font-size: 13px; font-weight: 650; line-height: 1.4; }
+.document-nav-groups > details > summary:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.document-nav-groups > details[open] { padding-bottom: 12px; }
+#chapters { scroll-margin-top: 130px; }

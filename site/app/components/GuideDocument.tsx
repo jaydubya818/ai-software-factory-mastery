@@ -121,9 +121,9 @@ export function GuideDocument({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader />
       <main className="docs-layout">
-        <DocumentNav currentSlug={requestedSlug} sections={navSections} />
+        <DocumentNav key={requestedSlug} currentSlug={requestedSlug} sections={navSections} />
         <article className="document-article" id="main-content" tabIndex={-1}>
-          <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href={GUIDE_ROUTES.home}>Guide</Link><span>/</span><Link href={crumbHref}>{crumb}</Link></nav>
+          <nav className="document-breadcrumb" aria-label="Breadcrumb"><Link href={GUIDE_ROUTES.home}>All chapters</Link><span>/</span><Link href={crumbHref}>{crumb}</Link></nav>
           <header className="document-header">
             <div className="document-labels">{part && <span>Part {part.number} — {part.verb}</span>}{document.stage !== null && <span>The factory in one line</span>}<span>{label}</span><span>About {readingMinutes(document.content)} min</span>{!part && document.stage === null && document.contentType !== "overview" && <span>{document.contentType}</span>}</div>
             <h1>{document.chapter ? `${document.chapter}. ${document.title}` : document.title}</h1>
