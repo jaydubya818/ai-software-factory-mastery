@@ -91,7 +91,7 @@ function NavDropdown({ active, id, label, links, href, onNavigate, local = false
 
   return (
     <div className={`nav-dropdown${href ? " nav-dropdown-linked" : ""}${active ? " is-active" : ""}${open ? " is-open" : ""}`} ref={root} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
-      {href && (local ? <Link aria-current={pathname === href ? "page" : undefined} href={href} onClick={onNavigate}>{label}</Link> : <GlobalLink href={href} onClick={onNavigate}>{label}</GlobalLink>)}
+      {href && (local ? <Link href={href} onClick={onNavigate}>{label}</Link> : <GlobalLink href={href} onClick={onNavigate}>{label}</GlobalLink>)}
       <button aria-label={href ? `${label} menu` : undefined} aria-controls={id} aria-expanded={open} onClick={() => setOpen((value) => !value)} onKeyDown={handleTriggerKeyDown} ref={trigger} type="button">
         {!href && label} <span aria-hidden="true">⌄</span>
       </button>
