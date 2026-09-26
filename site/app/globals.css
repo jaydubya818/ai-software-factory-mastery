@@ -1262,7 +1262,7 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .field-guide-hero, .visual-guide-hero { padding-top: var(--section-space); }
   .guide-orientation ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .guide-part > header { grid-template-columns: 40px 1fr; }
-  .guide-part > header > strong { grid-column: 2; }
+  .guide-part > header > strong, .guide-part-tools { grid-column: 2; }
   .guide-reference-callout { grid-template-columns: 1fr; padding: 30px; }
   .guide-reference-callout > div:last-child { grid-column: 1; }
   .visual-guide-note { grid-template-columns: 1fr; gap: 6px; }
