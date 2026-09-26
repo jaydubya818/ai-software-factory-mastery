@@ -1099,16 +1099,17 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .field-guide-hero, .visual-guide-hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; padding: var(--section-space) 0; border-bottom: 1px solid var(--line); }
 .field-guide-hero h1, .visual-guide-hero h1 { margin-bottom: 0; font-size: clamp(40px, 4.8vw, 64px); }
 .field-guide-hero > div:last-child > p, .visual-guide-hero > div:last-child > p { margin: 0; color: var(--muted); font-size: 19px; line-height: 1.7; }
-.guide-orientation { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; padding: var(--section-space) 0; border-bottom: 1px solid var(--line); }
+.guide-orientation { display: grid; grid-template-columns: 1fr; gap: 28px; padding: var(--section-space) 0; border-bottom: 1px solid var(--line); }
 .guide-orientation h2, .guide-foundation h2 { margin: 10px 0 15px; font-family: var(--serif); font-size: 43px; font-weight: 500; line-height: 1.08; letter-spacing: -.045em; }
 .guide-orientation p { margin: 0; color: var(--muted); font-size: 16px; }
-.guide-orientation ol { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); margin: 0; padding: 0; border-top: 1px solid var(--ink); }
-.guide-orientation li a { min-height: 92px; display: grid; grid-template-columns: 36px 115px 1fr; gap: 12px; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); }
-.guide-orientation li:nth-child(odd) a { border-right: 1px solid var(--line); }
-.guide-orientation li a:hover { background: var(--surface); }
-.guide-orientation li span { color: var(--amber-text); font-family: var(--font-geist-mono), monospace; font-size: 11px; }
-.guide-orientation li strong { font-family: var(--serif); font-size: 21px; font-weight: 500; }
-.guide-orientation li small { color: var(--muted); font-size: 12px; }
+.guide-orientation ol { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; }
+.guide-orientation li a { height: 100%; display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.guide-orientation li a:hover { border-color: var(--green); background: var(--surface-2); }
+.guide-orientation li span { color: var(--amber-text); font-family: var(--font-geist-mono), monospace; font-size: 12px; }
+.guide-orientation li strong { display: flex; justify-content: space-between; gap: 12px; font-family: var(--serif); font-size: 30px; font-weight: 500; }
+.guide-orientation li strong b { color: var(--green); font-family: var(--font-geist-sans), sans-serif; font-size: 20px; font-weight: 400; }
+.guide-orientation li small { color: var(--muted); font-size: 15px; line-height: 1.55; }
+.guide-orientation li em { margin-top: auto; padding-top: 4px; color: var(--green); font-size: 13px; font-style: normal; font-weight: 650; }
 .guide-parts { display: grid; gap: 18px; padding: 0 0 100px; }
 .guide-part { scroll-margin-top: 120px; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--surface) 76%, transparent); overflow: hidden; }
 .guide-part > header { display: grid; grid-template-columns: 54px 1fr auto; gap: 24px; align-items: start; padding: 34px; border-bottom: 1px solid var(--line); background: var(--surface); }
@@ -1117,6 +1118,9 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .guide-part > header h2 { margin: 5px 0 8px; font-family: var(--serif); font-size: 39px; font-weight: 500; letter-spacing: -.04em; }
 .guide-part > header p { max-width: 700px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 .guide-part > header > strong { color: var(--muted); font-size: 12px; font-weight: 500; }
+.guide-part-tools { display: grid; gap: 12px; font-size: 13px; white-space: nowrap; }
+.guide-part-tools > span { color: var(--muted); }
+.guide-part-tools > a { display: inline-flex; align-items: center; min-height: 44px; color: var(--green); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .guide-reference-callout { display: grid; grid-template-columns: 1fr .8fr auto; gap: 48px; align-items: end; margin-bottom: 110px; padding: 42px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .guide-reference-callout h2 { font-size: 38px; }
 .guide-reference-callout > div:last-child { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1256,8 +1260,7 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .home-guide-map > header, .home-lifecycle > header, .field-guide-hero, .visual-guide-hero, .guide-orientation, .visual-atlas-callout { grid-template-columns: 1fr; gap: 26px; }
   .home-guide-map li div { grid-template-columns: 1fr; gap: 3px; }
   .field-guide-hero, .visual-guide-hero { padding-top: var(--section-space); }
-  .guide-orientation ol { grid-template-columns: 1fr; }
-  .guide-orientation li:nth-child(odd) a { border-right: 0; }
+  .guide-orientation ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .guide-part > header { grid-template-columns: 40px 1fr; }
   .guide-part > header > strong { grid-column: 2; }
   .guide-reference-callout { grid-template-columns: 1fr; padding: 30px; }
@@ -1281,7 +1284,9 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .home-guide-map, .home-lifecycle { padding-block: 72px; }
   .home-guide-map li a { grid-template-columns: 32px 1fr auto; gap: 12px; }
   .home-guide-map li strong { font-size: 23px; }
-  .guide-orientation li a { grid-template-columns: 30px 100px 1fr; }
+  .guide-orientation ol { grid-template-columns: 1fr; }
+  .guide-orientation li a { padding: 22px; }
+  .guide-part-tools { grid-column: 2; display: flex; align-items: center; justify-content: space-between; }
   .guide-part > header, .guide-section-groups > section { padding: 22px; }
   .atlas-section { padding: 19px; }
   .atlas-loop, .atlas-stop-grid, .atlas-risk-tiers, .atlas-attention-rules { grid-template-columns: 1fr; }

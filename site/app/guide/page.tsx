@@ -38,7 +38,7 @@ export default function GuidePage() {
         <section id="chapters" className="guide-orientation" aria-labelledby="guide-orientation-title">
           <div><span className="section-kicker">Browse by part</span><h2 id="guide-orientation-title">Find the chapter you need.</h2><p>Six parts take you from understanding the factory to operating and improving it. Choose one to jump to its chapters.</p></div>
           <ol>
-            {guideParts.map((part) => <li key={part.id}><a href={`#${part.id}`}><span>{part.number}</span><strong>{part.verb}</strong><small>{part.question}</small></a></li>)}
+            {guideParts.map((part) => <li key={part.id}><a href={`#${part.id}`}><span>Part {part.number}</span><strong>{part.verb}<b aria-hidden="true">↗</b></strong><small>{part.question}</small><em>{chaptersForPart(part.id).length} chapters</em></a></li>)}
           </ol>
         </section>
 
@@ -99,8 +99,8 @@ export default function GuidePage() {
               <section className="guide-part toc-part" id={part.id} key={part.id}>
                 <header>
                   <span>{part.number}</span>
-                  <div><small>Part {part.number} — {part.verb}</small><h2>{part.question}</h2><p>{part.summary}</p></div>
-                  <strong>{partChapters.length} chapters</strong>
+                  <div><small>Part {part.number} — {part.verb}</small><h2>{part.verb}</h2><p>{part.question}</p></div>
+                  <div className="guide-part-tools"><span>{partChapters.length} chapters</span><a href="#chapters">All parts ↑</a></div>
                 </header>
                 <ol className="toc-list">
                   {partChapters.map((document) => (
