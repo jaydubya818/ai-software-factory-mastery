@@ -59,7 +59,9 @@ test("renders the canonical FDLC Guide landing and preserves role entry paths", 
   const html = await htmlFor("/guide");
 
   assert.match(html, /<title>Table of Contents · The AI Software Factory Guide · FDLC<\/title>/i);
-  assert.match(html, /The practical guide to the Factory Development Lifecycle/);
+  assert.match(html, /New here\? Start with the introduction/);
+  assert.match(html, /Find the chapter you need/);
+  assert.match(html, /Find a starting point for your work/);
   assert.match(html, /Start reading/i);
   assert.match(html, /How to read this guide/);
   assert.match(html, /Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software/);

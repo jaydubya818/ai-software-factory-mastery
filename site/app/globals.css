@@ -1603,6 +1603,13 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .home-entry-outcomes a:hover { border-color: var(--green); color: var(--green); }
 .home-entry-outcomes a small { color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500; }
 @media (max-width: 900px) { .home-entry-paths { grid-template-columns: 1fr; } .home-entry { margin-top: 0; } }
+.field-guide-hero .guide-search-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--green); font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.home-entry { width: 100%; margin: 0 auto 38px; padding: 0; display: block; border-bottom: 1px solid var(--line); }
+.home-entry > summary { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 22px 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--green); cursor: pointer; font-size: 15px; font-weight: 700; list-style: none; }
+.home-entry > summary::-webkit-details-marker { display: none; }
+.home-entry > summary:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.home-entry[open] > summary span { transform: rotate(180deg); }
+.home-entry-outcomes { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 0 0 24px; }
 
 /* Docs: mobile "On this page" */
 .toc-mobile { display: none; margin: 0 0 22px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); }
