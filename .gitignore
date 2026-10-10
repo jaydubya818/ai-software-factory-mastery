@@ -3,3 +3,4 @@
 recordings/
 raw-evidence/
 .vercel
+node_modules
