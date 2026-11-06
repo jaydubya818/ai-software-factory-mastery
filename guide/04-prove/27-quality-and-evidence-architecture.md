@@ -9,6 +9,9 @@ infographics: [evidence-architecture, completion-vs-acceptance, signal-aggregati
 
 # 27. Quality and evidence architecture
 
+> **Practical engineering exercise:** [Run protected API checks and inspect the evidence boundary](../appendix/engineering-experience.md#concept-architecture-contract-implementation-test-evidence). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 Part III built a factory that can plan, execute, and produce candidate changes at a rate no human team could match. Part IV asks the only question that matters after that: how do you know any of it is right? This chapter lays the foundation for everything else in Part IV. It explains how the factory proves that an exact candidate satisfies exact requirements under known conditions, why the producer's "done" can never be the proof, and how the evidence it collects becomes the control system that makes greater autonomy safe. After reading it you should be able to design an evidence record, explain every evidence state and invalidation rule, defend the independence of validation, and resolve a conflict between validators without guessing.
 
 ## The problem

@@ -9,6 +9,9 @@ infographics: [attempt-lifecycle, lease-and-recovery, retry-backoff-escalate, mi
 
 # 14. Durable execution: tasks, attempts, leases, and recovery
 
+> **Practical engineering exercise:** [Retain a failed Attempt and re-verify a corrected Candidate](../appendix/engineering-experience.md#3-break-recover-and-inspect-evidence-10-minutes). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 The previous chapter established that the control plane owns lifecycle state and the execution plane performs bounded work. This chapter is about what happens when that work goes wrong in the ordinary ways: a worker vanishes while its process keeps running, a retry duplicates a pull request, a stale worker reports success after another worker took over. The answer is a small set of mechanisms (Task versus Attempt, leases with fencing, idempotency keys, classified recovery, and a cancellation protocol) plus the reliability vocabulary that production systems have used for decades to survive unreliable dependencies. After reading it you should be able to specify an attempt lifecycle that survives crashes, explain why a retry is always a new Attempt, and place every reliability term at the point in that lifecycle where it applies.
 
 ## The problem

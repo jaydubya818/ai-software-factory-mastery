@@ -9,6 +9,9 @@ infographics: [intent-to-plan, builder-journey, spec-contract, task-graph, proto
 
 # 6. Intent and specification engineering
 
+> **Practical engineering exercise:** [Freeze a bounded API outcome and its acceptance criteria](../appendix/engineering-experience.md#1-inspect-the-frozen-contract-5-minutes). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 The previous chapter described the records that carry work through the factory. This chapter is about the first and most dangerous translation among them: turning what a person wants into something an agent can be held to. Most agent failures that look like coding failures are actually specification failures that happened before any code existed. After reading this chapter you should be able to take an ambiguous request, turn it into a governed Mission with testable criteria, have a plan reviewed against it, and know exactly which downstream records a change to the specification invalidates.
 
 ## The problem

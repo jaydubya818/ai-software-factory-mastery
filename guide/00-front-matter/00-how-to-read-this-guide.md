@@ -27,6 +27,12 @@ It is written for three readers with the same problem. Engineers who will build 
 
 Start with [chapter 38’s ownership model](../05-operate/38-enterprise-adoption-and-the-infrastructure-landscape.md#software-factory-engineering-ownership). Follow [validated knowledge and the payment example](../03-build/19-data-knowledge-and-semantic-engineering.md#worked-example-the-payment-segment-exception), [operating domains](../02-design/07-governance-policy-and-risk-proportional-approval.md#autonomous-operating-domains), [independent proof and release authority](../04-prove/27-quality-and-evidence-architecture.md#protected-criteria-and-release-authority), [governed improvement](../06-improve/40-governed-learning.md#production-failure-to-qualified-factory-improvement) and the [performance scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard). These are entry points within the existing chapters, not additional lifecycle stages.
 
+## Experience, build and verify a factory
+
+Follow **Learn → Design → Build → Run → Verify → Improve** in the [practical engineering tutorial](../appendix/engineering-experience.md). Start with the account-free deterministic browser demo, then run the existing dependency-free Reference Lab, inspect real failed and passing evidence, and replace the producer with your preferred stack. The tutorial also offers an optional source-checked Mission Control path, portable contract examples, a qualification report and a concise engineering playbook.
+
+FDLC defines the engineering discipline, not the technology stack. Choose your own agents, harnesses, models, tools, orchestration and infrastructure. Mission Control is an optional reference implementation of selected control-plane concepts; it is never a prerequisite. This six-step learning path does not change the lifecycle models below. Compatibility and qualification require evidence for the exact implementation.
+
 ## The two orientation models
 
 The whole book unfolds from one primary value stream:
@@ -45,7 +51,7 @@ Three terms carry the book. Keep them apart.
 
 **AI Software Factory** composes people, policy, capabilities, execution, verification, delivery, and feedback from intent through validated production value.
 
-**Mission Control** is the living implementation and case study for the control-plane responsibilities required to govern execution, evidence, and human authority. It is not the definition of the complete factory.
+**Mission Control** is an optional open-source implementation and case study for selected control-plane responsibilities that govern execution, evidence, and human authority. It is not the definition of the complete factory.
 
 The Agent Factory supplies parts. The AI Software Factory turns governed intent into validated value using those parts. Mission Control is one concrete control plane, studied with its gaps visible.
 

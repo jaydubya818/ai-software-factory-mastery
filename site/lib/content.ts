@@ -1,7 +1,7 @@
 import path from "node:path";
 import { documents } from "./content.generated";
 import { guideParts } from "./guide";
-import { GUIDE_CANONICAL_ORIGIN, guideContentPath, guideNavigationHref } from "./paths";
+import { FDLC_ORIGIN, fdlcUrl, GUIDE_CANONICAL_ORIGIN, guideContentPath, guideNavigationHref } from "./paths";
 
 export type DocumentRecord = (typeof documents)[number];
 
@@ -83,6 +83,11 @@ export const REPO_BLOB_URL = "https://github.com/jaydubya818/ai-software-factory
 export const SITE_URL = GUIDE_CANONICAL_ORIGIN;
 
 export function resolveDocumentHref(sourcePath: string, href?: string) {
+  // Canonical cross-app links stay on the coordinated candidate in composed mode.
+  if (href?.startsWith(`${FDLC_ORIGIN}/`)) {
+    const target = new URL(href);
+    return `${fdlcUrl(target.pathname)}${target.search}${target.hash}`;
+  }
   if (!href || href.startsWith("#") || /^(https?:|mailto:)/.test(href)) return href;
 
   const [pathname, hash] = href.split("#", 2);
