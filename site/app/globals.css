@@ -1183,7 +1183,7 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
 .atlas-stop-grid section:last-child { border-right: 0; }
 .atlas-stop-grid h3 { margin: 0 0 8px; font-size: 14px; }
 .atlas-stop-grid p { font-size: 12px; }
-.atlas-governance { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; }
+.atlas-governance { list-style: none; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; }
 .atlas-governance li { min-height: 220px; padding: 17px; border-right: 1px solid var(--line); }
 .atlas-governance li:last-child { border-right: 0; }
 .atlas-governance li > span, .atlas-observability article > span { display: block; margin-bottom: 42px; color: var(--amber-text); font-family: var(--font-geist-mono), monospace; font-size: 11px; }
@@ -1290,6 +1290,12 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .guide-part > header, .guide-section-groups > section { padding: 22px; }
   .atlas-section { padding: 19px; }
   .atlas-loop, .atlas-stop-grid, .atlas-risk-tiers, .atlas-attention-rules { grid-template-columns: 1fr; }
+  .atlas-memory-grid, .atlas-governance, .atlas-observability, .atlas-protocol-grid { grid-template-columns: minmax(0, 1fr); }
+  .atlas-memory-grid article, .atlas-governance li, .atlas-observability article, .atlas-protocol-grid article { min-width: 0; min-height: 0; padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .atlas-memory-grid article:last-child, .atlas-governance li:last-child, .atlas-observability article:last-child, .atlas-protocol-grid article:last-child { border-bottom: 0; }
+  .atlas-governance li > span, .atlas-observability article > span { margin-bottom: 16px; }
+  .atlas-protocol-grid article > span { min-height: 0; }
+  .atlas-protocol-grid h3 { margin-top: 16px; }
   .atlas-loop > div::after { display: none; }
   .atlas-stop-grid section { border-right: 0; border-bottom: 1px solid #3b5045; }
   .atlas-response-flow { align-items: stretch; flex-direction: column; }
