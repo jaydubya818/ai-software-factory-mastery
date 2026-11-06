@@ -217,6 +217,35 @@ The comparison that organisation published is the whole argument in one pair of 
 
 A context graph is the knowledge graph of the retrieval section, built at organisational scope, and it is governed by the same rules. Its nodes need the semantic layer's canonical identifiers, or "service" in the incident system and "service" in the deployment system become two nodes for one thing. Its edges need lineage, so an answer can say which system asserted the relationship and when. Its freshness needs an SLO per source, because a graph that still shows last quarter's ownership grounds the agent on the wrong world. And its queries run under least privilege: the graph is a retrieval source like any other, filtered per node by requester, tenant, and purpose before anything reaches the model. The **trusted context** layer of the six-layer view in [chapter 18](./18-agent-architecture.md), systems of record, a read-only data layer, schema and semantic catalog, scoped knowledge, lineage and freshness, retrieved just in time under least privilege, is the same thing said as an architecture. The line that goes with it is worth keeping verbatim: *trusted context is 80 percent of the agent's success; skip it and the agent hallucinates.* The remaining 20 percent is everything else in this book.
 
+### Organizational knowledge as production infrastructure
+
+A larger context window and a source-code index improve capacity and discovery; neither makes a claim authoritative. A usable knowledge system connects architecture and cross-repository dependencies to service ownership, business definitions, customer commitments, standards, historical decisions, original change intent, incidents, production behavior, and security or regulatory constraints. It persists beyond one session, repository, Task or employee.
+
+Keep the transitions explicit: **raw information** is source material; a **retrieval result** is a selected lead; an **assumption** is an unconfirmed interpretation; **validated knowledge** is confirmed by an authoritative source and accountable owner; an **executable rule** operationalizes approved meaning; a **qualified capability** has evidence that the exact composition applies it correctly within scope. None of these transitions is implied by a confident model response.
+
+```fdlc-diagram
+knowledge
+```
+
+The knowledge record needs an owner, exact source and revision, provenance, applicability, valid dates, freshness requirement, revision triggers and revocation behavior. A source owner validates facts; a policy owner approves constraints. Enforce access before restricted content reaches an Agent, including cached and derived material. A Context Package records authorized selection and lineage; it is not an authorization mechanism. Unsupported, stale, contradictory and unauthorized material stays excluded or quarantined until the responsible owner resolves it.
+
+### Worked example: the payment segment exception
+
+This is an illustrative engineering scenario, not a claim about a deployed FDLC payment capability. A payment-workflow Agent proposes the default settlement retry for every customer. A protected regression check reveals that the proposal violates an exception agreed after incident `INC-PAY-42`: customers in the illustrative **assisted-settlement** segment must enter reconciliation before retry when the provider acknowledgment is unknown. Ordinary customers continue to use the existing, separately validated retry contract.
+
+| Step | Engineering artifact and decision | Evidence required |
+| --- | --- | --- |
+| Detect the gap | Link the failing payment scenario to the Candidate and its frozen Context Package. Classify missing knowledge as a hypothesis. | Expected versus observed behavior; the package lacks the current exception. |
+| Find authority | Resolve the incident decision record and current payment service owner, rather than elevating a chat fragment. | Authorized source access, incident revision and ownership record. |
+| Validate | The payment owner confirms whether the exception still applies; the customer-commitment owner confirms its scope. | Explicit owner confirmation, effective dates and superseded decisions. |
+| Version | Record `knowledge/payment-reconciliation/v2`, exact source revision, segment, unknown-ack condition, owner, freshness and revocation triggers. | Provenance chain; review on provider-contract or customer-segment changes. |
+| Make executable | Propose a scoped architectural constraint, acceptance test and behavioral evaluation. Store an investigation Skill if diagnosis needs a reusable method. | Rule changes reviewed by the policy / requirements owner; implementation author cannot redefine acceptance. |
+| Test applicability | Assisted-settlement + unknown acknowledgment must reconcile before retry. **Negative control:** ordinary segment + definitive failure must not inherit the assisted-settlement exception; its own retry contract still applies. | Tests for both cases, expired exception, changed segment, missing source and unauthorized access. |
+| Qualify | Independently evaluate the exact Agent, Harness, context policy and rule versions, then qualify the assembled Factory Version. | Local and integrated-Candidate proof; no regression in ordinary-segment behavior. |
+| Reuse | Admit the eligible version under delegated authority in later Tasks and repositories. Monitor wrong-segment application and knowledge gaps. | Pinned version, access decision, observed outcomes; revocation blocks future reuse and invalidates affected proof. |
+
+Do not patch this by asking the Agent to “remember the incident.” The durable repair is the validated knowledge path and executable regression asset. If the owner cannot confirm the exception, preserve an explicit unknown and block the affected decision. The [context compiler](./20-context-engineering.md#from-validated-knowledge-to-a-context-package) selects the eligible revision; it does not invent policy.
+
 ## How to build it
 
 ### The records

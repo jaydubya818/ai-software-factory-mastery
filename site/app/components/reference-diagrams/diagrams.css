@@ -1,4 +1,4 @@
-/* The six reference figures only. Existing diagram renderers remain unchanged. */
+/* Native reference figures. Existing diagram renderers remain unchanged. */
 .fd-figure, .fd-dialog {
   --fd-paper: #f5f3eb; --fd-surface: #fffef9; --fd-ink: #172b24; --fd-muted: #4e6259;
   --fd-green: #103e30; --fd-line: #bdc9bd; --fd-blue: #e8f0f7; --fd-teal: #e5efe7;
@@ -156,3 +156,20 @@
 .fd-figure .fd-canvas strong, .fd-dialog .fd-canvas strong { color: inherit; }
 
 .fd-figure .fd-branch-label, .fd-dialog .fd-branch-label { margin: 12px 0; padding: 10px 0; border-top: 2px dashed #a76b5c; color: var(--fd-muted); font-size: 13px; }
+
+/* Engineering teaching lenses extend the existing reference figure vocabulary. */
+.fd-knowledge-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; }
+.fd-knowledge-grid > aside { padding-left: 24px; border-left: 1px solid var(--fd-line); }
+.fd-decision-branches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.fd-learning-causes { display: grid; gap: 8px; }
+.fd-learning-causes > div { display: grid; grid-template-columns: 1fr 20px 1fr; gap: 8px; padding: 10px; background: var(--fd-surface); font-size: 14px; }
+@container (max-width: 760px) {
+  .fd-knowledge-grid, .fd-decision-branches { grid-template-columns: 1fr; }
+  .fd-knowledge-grid > aside { padding: 0; border: 0; }
+}
+
+/* A figure can be narrow inside a wide viewport or at layout zoom. */
+@container (max-width: 600px) {
+  .fd-figure .fd-heading { display: block; padding: 18px 16px; }
+  .fd-figure .fd-heading .fd-expand { margin-top: 14px; }
+}

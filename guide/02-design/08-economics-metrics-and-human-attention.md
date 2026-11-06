@@ -201,6 +201,27 @@ Governed control is not hands-off. It moves human effort from performing every s
 
 An agent workflow is **inside evaluated coverage** when its material inputs, state, tools, side effects, failure modes, and expected outcomes are represented by current qualification evidence, and **outside evaluated coverage** when any of those differs materially from what was tested. Typical cases: a familiar change in a new language or framework; a normal migration against an unfamiliar data volume or tenancy model; an approved tool used with a new side effect or permission scope; a known repository after a major architecture or dependency change; a common incident with a novel cause or conflicting telemetry; a task whose acceptance depends on domain knowledge absent from the context and evaluation set. Out-of-distribution detection is not one model score; it combines repository and dependency fingerprints, schema compatibility, task classification, source freshness, tool eligibility, evaluation coverage, uncertainty, novelty, conflict, and production drift. When coverage is unclear, reduce autonomy and ask for closer inspection.
 
+### Factory Performance Scorecard
+
+Use these eight categories as a measurement contract across the existing metrics. They are recommendations, not published FDLC benchmark results. Declare workload, risk, Factory Version, evaluator, intent-intake window, production follow-up window, baseline and cost assumptions before the run. Segment comparisons by operating domain; do not hide hard-gate failures in an average.
+
+| Category | Definition / denominator | Window and missing-data treatment |
+| --- | --- | --- |
+| Delivery | Verified outcomes per observation window; median and p90 elapsed time from intent to validated production outcome. | Cohort by intent intake; report accepted count, pending age and unresolved outcomes so failures do not disappear from cycle-time claims. |
+| Quality | Escaped consequential defects / observed releases; releases rolled back / observed releases; verifier recall and false-positive / false-negative rates. | Declare production follow-up duration; immature releases remain pending. Use independently adjudicated defect cases for verifier denominators. |
+| Autonomy | Accepted work completed without unplanned human rescue / **all admitted work within the approved domain**. | Count failed and escalated work in the denominator; show outside-domain work separately. Scheduled approvals remain visible in attention cost. |
+| Reliability | Successfully reconciled recoveries / all recovery events; median and p90 recovery time; interruptions / admitted work; repeated failures by root cause. | Include unresolved recovery events and elapsed age; silence is not recovery. |
+| Human attention | Intervention count and verification + investigation minutes / accepted outcomes. | Include effort spent on failed work. Record context switches, investigation duration and a fixed perceived-effort survey with response coverage. |
+| Economics | Total attributable model + compute + tooling + verification + human cost / verified outcomes; separately, cost / accepted changes. | Include retries, failures and incident work. Label actual, estimated and unknown costs; never treat unknown as zero. |
+| Knowledge effectiveness | Decisions with current authoritative context / decisions requiring it; wrong-applicability cases / audited knowledge uses; freshness breaches and recurring gaps. | Publish audit and provenance coverage. Missing ownership or source revision is incomplete; unaudited decisions are unknown. |
+| Governance effectiveness | Correct policy decisions / independently audited decisions; improper blocks / authorized cases; missed escalations / cases requiring escalation; complete evidence packages / required packages. | Freeze policy version and audit window. Report each denominator and unadjudicated cases; a missing decision record is not a pass. |
+
+A zero denominator makes a ratio **undefined**, not zero or perfect. Publish sample sizes, dates, pending observations and cost coverage next to each value. Avoid claiming population-wide knowledge or governance accuracy from a convenience sample.
+
+Count human cognitive burden through observable proxies and a stable survey, not an invented universal unit. Pair minutes and context switches with the same short perceived-effort question at fixed points; report response rate and cohort. Fewer interventions can conceal longer investigations. Faster output that creates incidents reduces value; excessive approvals can consume the economic gain from autonomy. Assess quality, attention, cost and throughput together.
+
+**Implementation checklist:** agree metric owners and definitions; capture intent, Candidate, release and incident identities; attribute full cost without double counting; record intervention start / stop and reason; audit context and policy decisions; retain missing-data states; compare like workloads only. The [public Benchmarks page](https://fdlc.ai/benchmarks#factory-performance-scorecard) provides the concise scorecard.
+
 ## How to build it
 
 **Metric dictionary.** For each metric record: tier (business, delivery, factory, diagnostic); dimension (speed, quality, economics, human outcomes, factory intelligence); exact start and stop events; the authoritative record it is computed from; whether the value is measured, a proxy, or missing; segmentation keys (risk band, repository, workflow, autonomy level, change type, time window); sample size and confidence.
