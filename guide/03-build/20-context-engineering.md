@@ -238,6 +238,14 @@ That requires both **forward lineage** (what did this source produce?) and **rev
 
 Poisoning defense follows the same shape. External content is untrusted: sanitize active content, separate data from instructions, validate provenance and signing where available, watch for unexpected authority changes and embedding or index drift, and monitor retrieval for abnormal dominance by one source. A suspected source or connector is suspended, its artifacts and caches quarantined, and the affected packages, attempts, evidence, and releases found through reverse lineage.
 
+### From validated knowledge to a Context Package
+
+For the [payment exception](./19-data-knowledge-and-semantic-engineering.md#worked-example-the-payment-segment-exception), compile the owner-confirmed rule revision with the current segment definition, service dependencies and acceptance contract. Record why each item applies and which candidate sources were excluded. Distinguish the source fact from an Agent’s inference about how to implement it.
+
+Enforce principal, tenant and purpose permissions before retrieval, cache reuse or model disclosure. Pin the package to the Attempt with source revisions and selection reasons. If authority, applicability or freshness changes, stop affected work, invalidate dependent proof and compile a new eligible package. A package digest makes the selection reproducible; it does not grant access or prove the selected knowledge is true.
+
+Before reuse, test an allowed principal, a denied principal, the intended customer segment, an unrelated segment, expired knowledge and a revoked source. Measure missing-context failures separately from applicability errors: retrieving the right rule for the wrong customer is still a failure.
+
 ## How to build it
 
 ### The retrieval contract

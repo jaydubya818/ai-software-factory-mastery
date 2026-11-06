@@ -175,6 +175,28 @@ the same work order, passes the same inspection, and ships under the same
 release process as the products it makes. The recursive object changes;
 accountability does not.
 
+### Production failure to qualified factory improvement
+
+```fdlc-diagram
+learning
+```
+
+Keep **observation → hypothesis → proposal → evaluated change → qualified change → authorized promotion** distinct. A production signal can suggest that context was missing; only an investigation confirms the cause. A passing evaluation supports qualification; it does not authorize activation. Promote a new immutable Factory Version for a declared operating domain, with observation and revocation conditions, then measure future outcomes against the baseline.
+
+| Diagnosed failure | Responsible component and proposed improvement | Independent proof before promotion |
+| --- | --- | --- |
+| Missing / outdated knowledge | Owned knowledge pipeline; validate sources, applicability and revocation. | Positive and wrong-segment negative cases, freshness and denied-access tests. |
+| Ambiguous requirement | Intent / Outcome Contract; ask the accountable requirements owner to clarify. | Reviewed criteria revision and fresh affected evidence. |
+| Model or Agent limitation | Capability selection and evaluation; propose a qualified alternative. | Representative protected workload comparison, including consequential failures. |
+| Poor decomposition / orchestration | Workflow and routing; revise dependencies or handoffs. | Integrated-Candidate checks and interruption / concurrency scenarios. |
+| Tool or environment failure | Runtime / tooling; reconcile effects and repair the integration contract. | Failure injection, recovery and idempotency evidence. |
+| Weak verification | Protected tests, evaluator or verification strategy. | Known defects detected, acceptable cases preserved, calibrated false-positive and false-negative rates. |
+| Invalid policy transition | Governance / authority enforcement; correct the transition under the policy owner. | Denied-transition, missed-escalation and legitimate-progression cases. |
+
+**Worked continuation:** the payment incident is an observation; “the context omitted an active segment exception” is a hypothesis. The owner confirms it and proposes a versioned rule plus an evaluation. Independent tests prove that the intended segment reconciles while an unrelated segment keeps its own behavior. Qualify the exact composition, obtain authorized version promotion and monitor recurrence and human investigation time. If the new rule harms another segment, reject or revoke it; do not weaken the negative test to get a pass.
+
+The factory’s own policies, acceptance criteria and authority boundaries are controlled artifacts. Changes need the same independent evaluation, qualification and appropriate authorization as application changes. Learning must never silently grant the factory permission to rewrite its controls.
+
 ### Signals and source diagnosis
 
 A thumbs-up is not a learning signal; it is one bit of one person's mood at

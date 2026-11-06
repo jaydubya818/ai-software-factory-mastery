@@ -694,6 +694,12 @@ must be re-based and their evidence refreshed. About ninety percent of work is
 small enough to do in one pass; slicing is for the large, experimental
 prototype that needs to become a vision before it becomes a change.
 
+### A repaired application is not yet a repaired factory
+
+After a deployment regression, retain rollout results, incidents, rollbacks, customer-impact signals, recovery events, verification failures, human interventions and repeated mistakes with exact artifact and factory lineage. A successful application fix closes one defect. Recurrence still requires investigation of the system that produced or accepted it.
+
+For the [payment exception](../03-build/19-data-knowledge-and-semantic-engineering.md#worked-example-the-payment-segment-exception), restoring correct payment behavior is the service repair. Confirming and versioning the missing knowledge, protecting the positive and negative tests, evaluating the verifier, and qualifying future context selection is the factory repair. Classify the responsible component through [chapter 40’s improvement loop](./40-governed-learning.md#production-failure-to-qualified-factory-improvement); do not turn every incident into a prompt patch or silently expand permissions.
+
 ## How to build it
 
 Build the pipeline as a chain of records with explicit promotion, and instrument

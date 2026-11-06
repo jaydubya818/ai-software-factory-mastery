@@ -125,6 +125,27 @@ Jay's platform-adoption notes describe the operating model that supports this: p
 
 Maturity models become compliance theater when they assess policy documents instead of workflows. The defence is to require retained proof and to rate what actually ran. Uniform enterprise standards improve control and suppress local learning; the resolution is to define mandatory boundaries centrally (identity, evidence, audit, quarantine) and let teams experiment inside them. Early automation shows fast savings while increasing hidden review and incident costs, so the measure is total human and operational effort, not agent hours saved.
 
+### Software Factory Engineering ownership
+
+Software Factory Engineering is hands-on systems building: designing, building, integrating, operating, measuring and continuously improving the systems that produce verified software outcomes. The primary engineering artifact is the factory itself. The role is responsible for working interfaces, recovery mechanisms, knowledge infrastructure, independent verification and controlled evolution, as well as Agent and workflow integration.
+
+| Responsibility | Concrete artifacts | Handoff / retained decision rights |
+| --- | --- | --- |
+| Architecture | Factory Definition, Outcome Contract, workflow graph and replaceable component contracts. | Business and service owners agree outcomes, scope and service obligations. |
+| Agent and Harness integration | Adapters, conformance tests, pinned Models, Tools, Skills and Execution Profiles. | Security approves credential and environment constraints; vendors document supported contracts. |
+| Context and knowledge | Owned source registry, versioned knowledge, permission-aware retrieval, applicability and revocation tests. | Domain owners validate meaning; security owns access policy. |
+| Verification | Protected acceptance criteria, local / global checks, exact-Candidate evidence and verifier calibration. | Requirements owners set acceptance; independent reviewers retain judgment. |
+| Governance | Operating domains, executable action policies, approval records and safe-stop controls. | Leadership delegates authority; risk, security and service owners approve consequential exceptions. |
+| Reliability | Durable state, leases, concurrency limits, interruption recovery, reconciliation, CI/CD, telemetry and runbooks. | Service owners authorize production rollout and recovery objectives. |
+| Optimization | Workload scorecards, full cost attribution, attention studies and procurement comparisons. | Finance and engineering leaders agree assumptions and outcome value. |
+| Evolution | Improvement Candidates, baseline comparisons, composition qualification and version promotion records. | Authorized owners approve activation and changes to policy or verification controls. |
+
+A small organization may assign these responsibilities to one engineer. An enterprise may distribute them, but each interface still needs an owner, contract and escalation path. The engineer does not replace engineering leadership, domain experts, security or service owners. Start by assigning the artifacts for one bounded workflow, then use the [scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard) to expose its next constraint.
+
+When buying a component, evaluate quality, interoperability, security, reliability, observability, operational fit and total cost of ownership, including integration, support, incident and exit costs. Demonstrate replaceability with contract and recovery tests. The factory engineer remains accountable for the integrated system regardless of vendor origin; a purchase does not transfer the acceptance or release decision.
+
+Itamar Friedman’s [Software Factory Engineer framing](https://x.com/itamar_mar/status/2118356299612033305) is an external conceptual reference. Its L4 language does not replace FDLC maturity or certify an entire organization. Use [Autonomous Operating Domains](../02-design/07-governance-policy-and-risk-proportional-approval.md#autonomous-operating-domains) to qualify each workload, authority envelope and operating condition before expanding autonomy.
+
 ### Build, buy, and compose
 
 Chapter [2](../01-understand/02-the-factory-in-one-view.md) introduced the implementation stack as a frame for build-versus-buy. Use the canonical boundaries when making that decision: Model, Agent, Agent Harness, Work Graph and Orchestrator, Runtime, development environment, Sandbox, and Control Plane. **Composition over inheritance** makes the frame usable: choosing a product at one boundary should not force ownership of every boundary beneath it. An engineer should be able to choose each layer and connect open systems through qualified contracts.

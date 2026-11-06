@@ -21,6 +21,12 @@ It draws on two sources: the experience of building **Mission Control**, a contr
 
 It is written for three readers with the same problem. Engineers who will build a factory and need the mechanisms. Architects who must draw its boundaries and defend them. Executives who must decide whether to fund one and how to hold it accountable. Every idea is explained in plain English first, then given its precise name, so all three can read the same page and mean the same thing by it.
 
+## Software Factory Engineering: a practical reading path
+
+**Software Factory Engineering** is the practice of designing, building, integrating, operating, measuring and continuously improving systems that produce verified software outcomes. The primary artifact is the factory: versioned workflows, replaceable Agent and Harness interfaces, durable execution and recovery, organizational knowledge, independent verification, executable governance, observability and evaluation.
+
+Start with [chapter 38’s ownership model](../05-operate/38-enterprise-adoption-and-the-infrastructure-landscape.md#software-factory-engineering-ownership). Follow [validated knowledge and the payment example](../03-build/19-data-knowledge-and-semantic-engineering.md#worked-example-the-payment-segment-exception), [operating domains](../02-design/07-governance-policy-and-risk-proportional-approval.md#autonomous-operating-domains), [independent proof and release authority](../04-prove/27-quality-and-evidence-architecture.md#protected-criteria-and-release-authority), [governed improvement](../06-improve/40-governed-learning.md#production-failure-to-qualified-factory-improvement) and the [performance scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard). These are entry points within the existing chapters, not additional lifecycle stages.
+
 ## The two orientation models
 
 The whole book unfolds from one primary value stream:

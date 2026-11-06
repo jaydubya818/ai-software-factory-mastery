@@ -180,6 +180,20 @@ The implementation worker cannot be the sole authority that declares its own suc
 
 A common shortcut is to run a second model. Using a different model can reduce correlated reasoning error, but model diversity alone does not establish independence. Two agents that share the same state, the same commands, and the same assumptions will reproduce the same mistake with different phrasing. Independence is established through systems and execution paths, not through titles or vendor names.
 
+### Protected criteria and release authority
+
+**The author must not self-approve.** Self-critique can help repair a proposal, but cannot establish independent acceptance. A second reviewing Agent can share the author’s mistaken interpretation. The requirements owner protects acceptance criteria, authoritative requirements and expected behavior before execution; the implementation author cannot redefine them to obtain a pass. A legitimate requirement change creates an approved contract revision and fresh evaluation obligations.
+
+```fdlc-diagram
+verification
+```
+
+Local verification checks each WorkOrder or Task against its consumed inputs. Global verification checks the exact integrated Candidate against the Objective and current upstream evidence. Passing local receipts do not establish integrated behavior. Retain test, security, runtime, behavioral and production evidence with subject identity, method, environment, verifier and observation window. Production evidence remains an obligation after controlled release, not something pre-release tests can fabricate.
+
+Missing, stale, failed, contradictory or insufficient evidence blocks the dependent transition. Escalate limitations and unresolved assumptions to the appropriate owner rather than averaging them into a confidence score. A changed Candidate needs proof bound to its new identity and fresh authorization; old-artifact evidence does not prove the new artifact. See [chapter 31](./31-quality-contracts-proof-packages-and-certificates.md#currentness-verified-on-a-does-not-mean-verified-on-b) for exact-currentness and dependency invalidation.
+
+Risk and authority remain separate from verification. Evaluate [blast radius, criticality, likelihood, reversibility and evidence sufficiency](../02-design/07-governance-policy-and-risk-proportional-approval.md#autonomous-operating-domains), then require delegated autonomous authorization or the named human approval for the exact transition. A valid proof package alone grants no deployment permission.
+
 ### The verification contract
 
 Independence says who may check. It does not say what must be checked. That is the job of the **verification contract**: a structured specification, attached to the work before it starts, of the claims that must be demonstrated before completion and how each one is validated. Where the acceptance criteria above describe what must be true, the contract is the executable form of that list: every criterion paired with the evidence that would settle it and the mechanism that produces the evidence. Three rows show the shape.

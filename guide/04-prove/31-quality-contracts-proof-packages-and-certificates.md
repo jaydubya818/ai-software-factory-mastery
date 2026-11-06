@@ -356,6 +356,10 @@ flowchart LR
 
 Where the change goes on to merge, the last check is the **merge gate**: a composite of pull-request readiness that combines CI status, the review lenses (specialised reviewers and verifiers over the diff), mutation-testing results where the contract requires them, and the policy decision for the risk band, all bound to the exact PR head. The merge gate is composite so that no single green signal can stand in for the others; it is a gate, not a merge, and in a first version a human still performs the merge on the source provider ([Chapter 39](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md)).
 
+### Read the complete verification and authority path
+
+The [native verification figure in chapter 27](./27-quality-and-evidence-architecture.md#protected-criteria-and-release-authority) connects protected intent, governed execution, exact-Candidate proof, local and global verification, risk / policy, autonomous authorization or human approval, controlled release and production observation. This chapter supplies the executable records and invalidation rules behind that teaching view. Missing authority blocks progression even when proof passes; an artifact change cannot carry forward approval of a previous Candidate.
+
 ### The proof continues in production
 
 Pre-release evidence cannot reproduce every workload, dependency, customer, or failure interaction. Release progresses through an explicit canary, observation, and expansion policy: compare canary with a control using representative, attributable signals, and enforce absolute SLO limits as well. Correlate traces, metrics, logs, deployment identity, feature configuration, and business outcomes so a production fact can be traced back to the release and the original requirement. OpenTelemetry supplies the signal categories and correlation mechanisms; it does not define the product's SLO or customer-success measure.

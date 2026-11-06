@@ -2737,7 +2737,11 @@ evaluation, rather than a branch in one team's repository.
 
 **Context plane** — The cross-cutting system holding institutional knowledge, skills, standards, repository intelligence, history, retrieval, and the context lifecycle (Chapters 2, 20).
 
-**Factory engineering** — Building, measuring, maintaining, and improving the loops that produce software — the work engineers increasingly do instead of the work the loops automate (Chapters 2, 41).
+**Software Factory Engineering (Factory engineering)** — The practice of designing, building, integrating, operating, measuring and continuously improving systems that produce verified software outcomes. Its primary engineering artifact is the factory itself: workflows, component contracts, durable runtime and recovery, organizational knowledge, independent verification, executable governance, observability and evaluation (Chapters 2, 38, 41).
+
+**Software Factory Engineer** — The hands-on systems builder accountable for the integrated factory and its engineering artifacts. Responsibilities may be distributed across teams; business, domain, security and service owners retain their decision rights (Chapter 38).
+
+**Autonomous Operating Domain** — A specified class of engineering work a qualified factory may execute under explicit workload, authority, evidence, risk and operational conditions. It pins a Factory Version, scope, environment, permissions, approval rights and safe-stop / recovery paths. Qualification and current evidence support eligibility; delegated authority permits each action. It does not grant unlimited Agent permission (Chapter 7).
 
 **Factory continuum** — AI assistance → skills → automation → loops → connected loops → factory. The share of work performed by loops rises gradually; there is no completion date (Chapter 38).
 

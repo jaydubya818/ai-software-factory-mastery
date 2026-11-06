@@ -127,6 +127,33 @@ Risk bands pair with **autonomy tiers**, which describe how much authority an ag
 
 These tiers describe authority for a single grant. The Level 0–5 autonomy ladder in [Chapter 3](../01-understand/03-first-principles-trust-evidence-and-authority.md) describes the maturity of a whole workflow; a Level 3 workflow still issues Tier 2 grants for its individual actions. Every grant is short-lived, resource-scoped, purpose-bound, and no broader than both the system ceiling and the current workflow decision.
 
+### Autonomous Operating Domains
+
+An **Autonomous Operating Domain** is a specified class of engineering work a qualified factory may execute under explicit workload, authority, evidence, risk and operational conditions. It makes existing authorization envelopes and action-class policies concrete; it does not replace them or create a new permission source.
+
+```fdlc-diagram
+autonomy
+```
+
+An operating-domain record pins the Factory Version and composition qualification; workload and excluded cases; repository and environment scope; permitted actions and credential scope; acceptance and evidence requirements; operational readiness and limits; named approval rights; recovery, reconciliation and safe-stop conditions; owner, expiry and revocation. Evaluate each requested action against that record. Permission to edit does not authorize merge, release or production activation.
+
+| Workload class | Illustrative conditions to qualify; organization owners set actual authority |
+| --- | --- |
+| Documentation | Approved paths, verified rendering and links; customer commitments or security claims require the relevant owner. |
+| Isolated bug fix | Bounded repository and behavior, protected regression evidence and reversible rollout; ambiguous intent returns to the requirements owner. |
+| Test generation | Sandbox generation and execution; independent review protects acceptance criteria and holdouts from author modification. |
+| Dependency update | Eligible version and update class, compatibility and supply-chain checks, rollback evidence. |
+| Refactoring | Contracted behavior preserved; global integration proof for cross-service impact. |
+| Database migration | Data-integrity checks, rehearsal, reconciliation / recovery procedure and named data or service owner authority. |
+| Authentication / security change | Negative and abuse cases, independent security verification, explicit criticality and decision rights even for a tiny diff. |
+| Production deployment | Exact Candidate, environment, rollout, production observation and recovery contract; separate delegated deployment authority. |
+
+Assess five dimensions separately: **blast radius** is the scope affected; **business criticality** is the consequence of failure; **failure likelihood** is its estimated probability; **reversibility** is the ability to undo effects; **evidence sufficiency** is whether proof supports this decision. A two-line authentication change may be more consequential than a hundred-file documentation edit. Small scope cannot substitute for sufficient proof.
+
+Routine recoverable failures can follow qualified retry or reconciliation without automatically paging a human. Changed scope, missing authority, unresolved uncertainty or unsafe recovery requires safe stop and an actionable escalation packet. Suspend further effects, preserve lineage and reconcile in-flight side effects before re-admission.
+
+Itamar Friedman’s [L4 Autonomous Software Factories framing](https://x.com/itamar_mar/status/2118356299612033305) is an external autonomy reference, not an FDLC stage, universal certification or claim of FDLC achievement. Assess progression per workload and operating domain. Expand only after new qualification evidence and authorized delegation; narrow or revoke when conditions fail.
+
 ### The autonomy matrix
 
 Put the bands, tiers, and decision owners together and you get a one-page **autonomy matrix** — the single most useful governance artifact to hang on the wall, because it lets an engineer, an auditor, and an executive read the same answer. A worked starting point:

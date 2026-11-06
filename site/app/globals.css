@@ -607,7 +607,7 @@ h1 {
 .markdown-body ul, .markdown-body ol { margin: 0 0 24px; padding-left: 25px; }
 .markdown-body li { margin: 7px 0; padding-left: 3px; }
 .markdown-body li::marker { color: #6a8b7a; }
-.markdown-body blockquote { margin: 34px 0; padding: 2px 0 2px 24px; border-left: 3px solid var(--amber); color: #44514b; font-size: 21px; line-height: 1.55; }
+.markdown-body blockquote { margin: 34px 0; padding: 2px 0 2px 24px; border-left: 3px solid var(--amber); color: var(--muted); font-size: 21px; line-height: 1.55; }
 .markdown-body blockquote p { margin: 0; }
 .markdown-body code { padding: 2px 5px; border: 1px solid #d9ded9; border-radius: var(--radius-control); background: #eef0ec; color: #344a40; font-family: var(--font-geist-mono), monospace; font-size: .85em; }
 .markdown-body :not(pre) > code { overflow-wrap: anywhere; }
