@@ -45,11 +45,10 @@ All browser identities, qualification records and results are synthetic teaching
 
 ## Path B — build with your own stack
 
-**Allow 30–60 minutes**, estimated for a developer with Git and Node 22.13+. This is a learning estimate, not measured onboarding performance. No npm install, account, API key, model or external service is needed. Use a new folder. The implementation branch below contains this expanded exercise; do not substitute an older release that lacks the API and report commands.
+**Allow 30–60 minutes**, estimated for a developer with Node 22.13+. This is a learning estimate, not measured onboarding performance. No npm install, account, API key, model or external service is needed. [Download the standalone Reference Lab ZIP](https://fdlc.ai/downloads/fdlc-reference-lab-v1.1.0.zip) and extract it into a new folder. It includes code, contracts, protected tests and a README. No repository access is required. Inspect the [file and SHA-256 manifest](https://fdlc.ai/reference-factory/source/manifest.json) before running it.
 
 ```sh
-git clone --branch codex/engineering-experience --single-branch https://github.com/jaydubya818/FDLC.git
-cd FDLC/reference-factory
+cd fdlc-reference-lab-v1.1.0
 node lab.mjs all
 node lab.mjs failed
 node lab.mjs recovery
@@ -59,13 +58,13 @@ node lab.mjs --report > qualification.json
 
 ### 1. Inspect the frozen contract — 5 minutes
 
-Read [Factory Definition](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/factory-definition.json), [WorkOrder](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/work-order.json) and [protected API checks](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/sandbox/tests/api.test.mjs). AC-1 requires `GET /sum?a=2&b=3` to return 200 with sum 5; AC-2 preserves 400 on invalid input; AC-3 preserves 404 for unknown paths. The producer may write only `src/add.js`. The test uses native Request/Response objects without opening a server or contacting a host.
+Read [Factory Definition](https://fdlc.ai/reference-factory/source/factory-definition.json.txt), [WorkOrder](https://fdlc.ai/reference-factory/source/work-order.json.txt) and [protected API checks](https://fdlc.ai/reference-factory/source/sandbox/tests/api.test.mjs.txt). AC-1 requires `GET /sum?a=2&b=3` to return 200 with sum 5; AC-2 preserves 400 on invalid input; AC-3 preserves 404 for unknown paths. The producer may write only `src/add.js`. The test uses native Request/Response objects without opening a server or contacting a host.
 
 The Lab's small definition is a pedagogical contract, not a schema-valid canonical Factory Manifest. The [builder](https://fdlc.ai/start) and canonical specification remain separate representations; do not assume import compatibility.
 
 ### 2. Run and trace the implementation — 10 minutes
 
-Read [lab.mjs](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/lab.mjs): `runAgent` proposes a known correction, `runVerifier` executes protected tests in a fresh Node process, and `gate` checks observed paths, identity separation, exact candidate digest and passing evidence. Follow `runScenario` from a temporary fixture copy to its retained result.
+Read [lab.mjs](https://fdlc.ai/reference-factory/source/lab.mjs.txt): `runAgent` proposes a known correction, `runVerifier` executes protected tests in a fresh Node process, and `gate` checks observed paths, identity separation, exact candidate digest and passing evidence. Follow `runScenario` from a temporary fixture copy to its retained result.
 
 All eight scenarios must print `(ok)`. A blocked scenario exits 0 when the gate denies for the expected reason; this is a successful negative control, not a successful software outcome. `ALLOW` means local review eligibility. `WAIT` in the approval case means production authority is absent. No command publishes or releases.
 
@@ -121,8 +120,8 @@ The broader `pnpm run qualify:factory` script writes evidence and has additional
 
 | Concept and architectural owner | Contract | Working source | Verification and evidence / failure |
 | --- | --- | --- | --- |
-| Intent / owner and planner | Approved outcome, scope and protected acceptance | [WorkOrder](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/work-order.json) | [API tests](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/sandbox/tests/api.test.mjs) evaluate AC-1/2/3; failure blocks. |
-| Bounded execution / harness | Producer write scope and attributable Candidate | [runAgent and observed changedFiles](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/reference-factory/lab.mjs) | Scope case and [negative controls](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/tests/unit/reference-factory.test.ts); hidden or protected-file changes deny. |
+| Intent / owner and planner | Approved outcome, scope and protected acceptance | [WorkOrder](https://fdlc.ai/reference-factory/source/work-order.json.txt) | [API tests](https://fdlc.ai/reference-factory/source/sandbox/tests/api.test.mjs.txt) evaluate AC-1/2/3; failure blocks. |
+| Bounded execution / harness | Producer write scope and attributable Candidate | [runAgent and observed changedFiles](https://fdlc.ai/reference-factory/source/lab.mjs.txt) | Scope case and [negative controls](https://fdlc.ai/reference-factory/source/contract.test.mjs.txt); hidden or protected-file changes deny. |
 | Independent verification / Trust | Exact Candidate, separate role, protected criteria | Same Lab's runVerifier and gate; [chapter 27](../04-prove/27-quality-and-evidence-architecture.md) | Missing, self-signed, stale and failed evidence deny; JSON retains outputs and hashes. Security independence remains unqualified. |
 | Recovery / runtime | Bounded new Attempt, immutable prior history | Same Lab's recovery scenario; [chapter 14](../03-build/14-durable-execution.md) | Failed record retained, corrected Candidate differs, verifier re-runs. No silent retry success. |
 | Authorization / policy and human | Eligibility separate from acceptance and release | Approval scenario; [chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) | Passing evidence leaves production request awaiting-human; released=false. |
@@ -143,13 +142,13 @@ The existing [FDLC Specification](https://fdlc.ai/specification) is a proposed s
 | Immutable composition | Factory Version: factoryManifestDigest, composition, compositionDigest, riskBoundary, qualification, activations. |
 | Qualification scope and results | Qualification Record: subject, scope, dimensions, suites, evidenceIds, state and result. |
 
-Inspect the actual [Factory Manifest schema](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/content/fdlc-corpus/corpus/specification/schemas/factory-manifest.schema.json), [Factory Version schema](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/content/fdlc-corpus/corpus/specification/schemas/factory-version.schema.json) and [Qualification Record schema](https://github.com/jaydubya818/FDLC/blob/codex/engineering-experience/content/fdlc-corpus/corpus/specification/schemas/qualification-record.schema.json). Schema validity alone does not qualify an implementation.
+Inspect the actual [Factory Manifest schema](https://fdlc.ai/corpus-artifacts/corpus/specification/schemas/factory-manifest.schema.json), [Factory Version schema](https://fdlc.ai/corpus-artifacts/corpus/specification/schemas/factory-version.schema.json) and [Qualification Record schema](https://fdlc.ai/corpus-artifacts/corpus/specification/schemas/qualification-record.schema.json). Schema validity alone does not qualify an implementation.
 
 **Two illustrative bindings, one outcome contract:** Factory A could use a local single-agent harness and hosted model; Factory B could use containerized specialized agents and a self-hosted model. Both must preserve AC-1/2/3, protected tests, exact-candidate evidence, bounded recovery and explicit authority. Their agent, harness, model, runtime and context identities differ, so their Factory Versions and qualification evidence differ. These are architecture examples, not implemented integrations or qualified adapters. Portability requires documented interfaces and demonstrated compatibility; it does not promise plug-and-play substitution.
 
 ## Qualification
 
-Run `node lab.mjs --report > qualification.json` from `reference-factory`. Inspect the generated report, not a copied green score:
+Run `node lab.mjs --report > qualification.json` from the extracted Lab folder. Inspect the generated report, not a copied green score:
 
 - **Identity and scope:** exact Factory Version/composition digest, API-arithmetic workload, Node/platform/architecture, fixture and configuration.
 - **Scenarios and criteria:** eight cases, expected and observed dispositions, protected AC-1/2/3, matched and mismatched counts. Expect matched=8 and mismatched=0.
@@ -160,10 +159,10 @@ Run `node lab.mjs --report > qualification.json` from `reference-factory`. Inspe
 
 This is an illustrative report with real local test results. It is not the canonical Qualification Record payload. A real assessment needs representative functional and failure cases, isolation and policy tests, recovery, context sufficiency, evidence completeness, exact model/harness/runtime compatibility, costs, reliability denominators/windows and operational limitations. UNKNOWN hard requirements cannot be silently treated as passing. See [chapter 29](../04-prove/29-evaluation-engineering.md), [chapter 30](../04-prove/30-evals-as-factory-assets.md) and [chapter 8's scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard).
 
-Maintainer checks from the FDLC repository root:
+Run the included contract and negative-control suite from the extracted Lab folder:
 
 ```sh
-node --experimental-strip-types --test tests/unit/reference-factory.test.ts tests/unit/runtime-simulator.test.ts
+node --test contract.test.mjs
 ```
 
 These tests exercise real denial and recovery behavior, including a producer hiding a protected-test change. They do not qualify a model or certify the local machine's security boundary.
