@@ -9,6 +9,9 @@ infographics: [loop-layers, learning-loop, signal-diagnosis, recursive-loop, fac
 
 # 40. Governed learning
 
+> **Practical engineering exercise:** [Turn a failure into a tested, governed Version proposal](../appendix/engineering-experience.md#engineering-playbook). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 A factory should learn from failures and human corrections without allowing observations to rewrite active behavior. This chapter defines the governed learning chain from persisted evidence to deterministic signal, recurring cluster, Improvement Candidate, human review, experiment, and authorized work.
 
 ## The problem

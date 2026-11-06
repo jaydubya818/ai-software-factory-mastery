@@ -437,10 +437,11 @@ control-plane contracts determine their authorized use.
 authorization, workflow state, approvals, evidence requirements, audit, and
 governance decisions. It decides what may happen.
 
-**Mission Control** — The guide's living implementation and case study of an
-AI Software Factory control plane. It governs Missions, execution admission,
+**Mission Control** — An optional open-source reference implementation and the
+guide's living case study of selected AI Software Factory control-plane concepts. It governs Missions, execution admission,
 verification, evidence, and human authority; it is not the universal definition
-of a software factory or every component in the execution stack.
+of a software factory or every component in the execution stack. FDLC does not
+require Mission Control or any particular agent, harness, model, provider or infrastructure.
 
 **Execution plane** — The agents, processes, tools, worktrees, CI systems, and
 deployment systems that perform authorized work. It reports results but does not

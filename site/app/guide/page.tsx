@@ -3,7 +3,7 @@ import Link from "../components/GuideLink";
 import { appendixGroups, chapters, chaptersForPart, stages } from "../../lib/content";
 import { guideParts } from "../../lib/guide";
 import { guidePageMetadata } from "../../lib/metadata";
-import { GUIDE_ROUTES, guideContentPath } from "../../lib/paths";
+import { fdlcUrl, GUIDE_ROUTES, guideContentPath } from "../../lib/paths";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
@@ -34,6 +34,8 @@ export default function GuidePage() {
             </div>
           </div>
         </header>
+
+        <section className="guide-orientation" aria-labelledby="engineering-journey-title"><div><span className="section-kicker">Practical engineering experience</span><h2 id="engineering-journey-title">Learn → Design → Build → Run → Verify → Improve</h2><p>FDLC defines the engineering discipline, not the technology stack. Use your preferred implementation; Mission Control is optional. Start with a bounded API repair, inspect failed and passing evidence, then qualify your next Factory Version.</p><div className="hero-actions"><Link className="button button-primary" href={guideContentPath("appendix/engineering-experience")}>Build and run your first factory</Link><a className="button button-secondary" href={fdlcUrl("/simulator")}>Experience the browser demo</a></div></div></section>
 
         <section id="chapters" className="guide-orientation" aria-labelledby="guide-orientation-title">
           <div><span className="section-kicker">Browse by part</span><h2 id="guide-orientation-title">Find the chapter you need.</h2><p>Six parts take you from understanding the factory to operating and improving it. Choose one to jump to its chapters.</p></div>

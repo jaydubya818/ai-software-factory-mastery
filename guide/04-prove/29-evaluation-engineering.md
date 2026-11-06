@@ -9,6 +9,9 @@ infographics: [eval-pipeline, grader-types]
 
 # 29. Evaluation engineering
 
+> **Practical engineering exercise:** [Generate and inspect a real local report with explicit qualification gaps](../appendix/engineering-experience.md#qualification). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 Evaluation measures whether a complete agent configuration works across a representative population. This chapter defines the subject digest, governed datasets, grader roles, calibration, repeated trials, uncertainty, and the boundary between verification of one candidate and evaluation of the system that produced it.
 
 ## The problem

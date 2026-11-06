@@ -9,6 +9,9 @@ infographics: [control-vs-execution-plane, orchestration-state-machine, dispatch
 
 # 13. Control plane, orchestrator, and execution plane
 
+> **Practical engineering exercise:** [Follow the same contracts with your own stack](../appendix/engineering-experience.md#path-b-build-with-your-own-stack). The existing Reference Lab is executable; its scripted producer and local identity labels do not establish production qualification or security isolation. Mission Control is optional.
+
+
 A factory has to do two things that want very different machinery: decide what work is allowed, and actually do the work. Deciding needs consistency, durability, and an audit trail. Doing needs long-running processes, subprocesses, worktrees, model streams, and tolerance for crashes. This chapter separates the two into a **control plane** and an **execution plane**, puts an **orchestrator** at the boundary between them, and then names every component and contract that makes the arrangement hold under real failure. After reading it you should be able to place any responsibility in the correct plane, trace one command and one event across the boundary, and explain why an executor's "done" is never the same thing as the factory's "accepted".
 
 ## The problem
