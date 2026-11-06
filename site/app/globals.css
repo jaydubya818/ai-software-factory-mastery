@@ -1290,10 +1290,10 @@ html[data-theme="dark"] .architecture-home-callout p, html[data-theme="dark"] .c
   .guide-part > header, .guide-section-groups > section { padding: 22px; }
   .atlas-section { padding: 19px; }
   .atlas-loop, .atlas-stop-grid, .atlas-risk-tiers, .atlas-attention-rules { grid-template-columns: 1fr; }
-  .atlas-memory-grid, .atlas-governance, .atlas-observability, .atlas-protocol-grid { grid-template-columns: minmax(0, 1fr); }
-  .atlas-memory-grid article, .atlas-governance li, .atlas-observability article, .atlas-protocol-grid article { min-width: 0; min-height: 0; padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
-  .atlas-memory-grid article:last-child, .atlas-governance li:last-child, .atlas-observability article:last-child, .atlas-protocol-grid article:last-child { border-bottom: 0; }
-  .atlas-governance li > span, .atlas-observability article > span { margin-bottom: 16px; }
+  .atlas-memory-grid, .atlas-governance, .atlas-protocol-grid { grid-template-columns: minmax(0, 1fr); }
+  .atlas-memory-grid article, .atlas-governance li, .atlas-protocol-grid article { min-width: 0; min-height: 0; padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .atlas-memory-grid article:last-child, .atlas-governance li:last-child, .atlas-protocol-grid article:last-child { border-bottom: 0; }
+  .atlas-governance li > span { margin-bottom: 16px; }
   .atlas-protocol-grid article > span { min-height: 0; }
   .atlas-protocol-grid h3 { margin-top: 16px; }
   .atlas-loop > div::after { display: none; }
