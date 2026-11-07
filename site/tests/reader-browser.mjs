@@ -27,6 +27,25 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "
   await page.screenshot({ path: homeShot, fullPage: true });
   report.screenshots.push(homeShot);
 
+  await page.goto(`${origin}/guide/atlas`, { waitUntil: "networkidle" });
+  for (const theme of ["light", "dark"]) {
+    if ((await page.locator("html").getAttribute("data-theme")) !== theme) {
+      await page.getByRole("button", { name: `Use ${theme} theme`, exact: true }).click();
+    }
+    const atlas = await page.evaluate(() => [...document.querySelectorAll(".atlas-memory-grid, .atlas-governance, .atlas-protocol-grid")].map(grid => {
+      const bounds = grid.getBoundingClientRect();
+      return { name: grid.className, left: bounds.left, right: bounds.right, cards: [...grid.children].map(card => {
+        const box = card.getBoundingClientRect();
+        return { left: box.left, right: box.right };
+      }) };
+    }));
+    assert.equal(atlas.length, 3, "Atlas responsive card groups are present");
+    for (const grid of atlas) for (const card of grid.cards) {
+      assert.ok(card.left >= grid.left - 1 && card.right <= grid.right + 1, `${viewport.name} ${theme} ${grid.name}: every card remains visible within its container`);
+    }
+    report.checks.push(`${viewport.name}: Atlas card boundaries pass in ${theme} theme`);
+  }
+
   await page.goto(`${origin}/guide/01-understand/02-the-factory-in-one-view`, { waitUntil: "domcontentloaded" });
   await page.keyboard.press("Tab");
   assert.equal(await page.locator(".skip-link").evaluate((node) => node === document.activeElement), true);
