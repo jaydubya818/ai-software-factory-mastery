@@ -40,6 +40,7 @@ export const buildLinks = [
 export const implementations = [
   ["Mission Control", "/mission-control"],
   ["AI-FDE", "/deploy"],
+  ["AI-FDE workspace", "/deploy/app"],
   ["Enterprise", "/enterprise"],
 ] as const satisfies readonly NavLink[];
 
