@@ -1,13 +1,16 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEventHandler, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEventHandler, type ReactNode } from "react";
 import { CommandPalette } from "./CommandPalette";
 import Link from "./GuideLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { canonicalGuidePagePath, fdlcUrl, GUIDE_ROUTES, guideAssetPath } from "../../lib/paths";
 
-import { primary, guide as guideDestinations, afterGuide, aiFde, secondary, type NavLink } from "../../lib/global-navigation.generated";
+import { primary, guide as guideDestinations, tryLinks, buildLinks, implementations, secondary, fdlcRepository, type NavLink } from "../../lib/global-navigation.generated";
+
+// The FDLC journey groups, in the same order as the FDLC header.
+const globalGroups = [["Try", "try", tryLinks], ["Build", "build", buildLinks], ["Implementations", "implementations", implementations]] as const;
 
 type GuideNavLink = readonly [label: string, href: string, isActive: (pathname: string) => boolean];
 
@@ -135,21 +138,21 @@ export function SiteHeader() {
         <nav className="desktop-nav" aria-label="Primary navigation">
           {primary.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
           <NavDropdown active id="guide-navigation" label="Guide" href="/guide" links={guide} local pathname={pathname} />
-          <NavDropdown active={false} id="ai-fde-navigation" label="AI-FDE" href="/deploy" links={aiFde} />
-          {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href}>{label}</GlobalLink>)}
+          {globalGroups.map(([label, id, links]) => <NavDropdown active={false} id={`${id}-navigation`} key={id} label={label} links={links} />)}
           <NavDropdown active={false} id="more-navigation" label="More" links={secondary} />
         </nav>
-        <div className="header-utilities"><a className="header-github" href="https://github.com/jaydubya818/MissionControl" rel="noreferrer" target="_blank">GitHub <span aria-hidden="true">↗</span></a></div>
+        <div className="header-utilities"><a className="header-github" href={fdlcRepository} rel="noreferrer" target="_blank" aria-label="FDLC source on GitHub (opens in a new tab)">GitHub <span aria-hidden="true">↗</span></a></div>
         <div className={`global-mobile${mobileOpen ? " is-open" : ""}`} ref={mobileRoot} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setMobileOpen(false); }}>
           <button aria-controls="mobile-navigation" aria-expanded={mobileOpen} aria-label="Open navigation" onClick={() => setMobileOpen((value) => !value)} onKeyDown={(event) => { if (event.key === "Escape") setMobileOpen(false); }} ref={mobileTrigger} type="button">Menu</button>
           <nav aria-label="Mobile navigation" hidden={!mobileOpen} id="mobile-navigation">
             {primary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <NavDropdown active={true} id="mobile-guide-navigation" label="Guide" href="/guide" links={guide} local pathname={pathname} onNavigate={() => setMobileOpen(false)} />
             <Link className="mobile-guide-search" href={GUIDE_ROUTES.search} onClick={() => setMobileOpen(false)}>Search the Guide</Link>
-            <NavDropdown active={false} id="mobile-ai-fde-navigation" label="AI-FDE" href="/deploy" links={aiFde} onNavigate={() => setMobileOpen(false)} />
-            {afterGuide.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
-            <span>More</span>
-            {secondary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
+            <a href={fdlcRepository} rel="noreferrer" target="_blank" onClick={() => setMobileOpen(false)}>FDLC source on GitHub <span aria-hidden="true">↗</span></a>
+            {([...globalGroups.map(([label, , links]) => [label, links] as const), ["More", secondary] as const]).map(([group, links]) => <Fragment key={group}>
+              <span>{group}</span>
+              {links.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
+            </Fragment>)}
           </nav>
         </div>
       </div>

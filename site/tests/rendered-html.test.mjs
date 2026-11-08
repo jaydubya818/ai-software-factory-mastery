@@ -111,10 +111,17 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   for (const [label, href] of [
     ["Framework", "https://fdlc.ai/framework"],
     ["Architecture", "https://fdlc.ai/architecture"],
+    ["FDLC in 5 Minutes", "https://fdlc.ai/in-5-minutes"],
+    ["Factory Simulator", "https://fdlc.ai/simulator"],
+    ["Reference Lab", "https://fdlc.ai/lab"],
+    ["Define a factory line", "https://fdlc.ai/start"],
+    ["Maturity assessment", "https://fdlc.ai/maturity"],
     ["Mission Control", "https://fdlc.ai/mission-control"],
     ["AI-FDE", "https://fdlc.ai/deploy"],
-    ["Maturity", "https://fdlc.ai/maturity"],
   ]) assert.match(header, new RegExp(`href="${href}"[^>]*>${label}<`), label);
+  // Same journey groups and source link as the FDLC header.
+  for (const label of ["Try", "Build", "Implementations", "More"]) assert.match(header, new RegExp(`>${label} <span aria-hidden="true">⌄</span></button>`), label);
+  assert.match(header, /class="header-github" href="https:\/\/github\.com\/jaydubya818\/FDLC"/);
   for (const [label, href] of [
     ["Overview", "/guide"],
     ["Atlas", "/visuals"],
@@ -125,7 +132,7 @@ test("Guide pages retain the FDLC global shell and canonical Guide dropdown rout
   assert.equal([...header.matchAll(/href="\/guide"[^>]*>Guide<\/a>/g)].length, 2, "Guide opens directly on desktop and mobile");
   assert.match(header, /<button aria-label="Guide menu" aria-controls="guide-navigation" aria-expanded="false"/);
   assert.match(header, /<button aria-label="Guide menu" aria-controls="mobile-guide-navigation" aria-expanded="false"/);
-  for (const id of ["guide-navigation", "more-navigation", "mobile-navigation", "mobile-guide-navigation"]) {
+  for (const id of ["guide-navigation", "try-navigation", "build-navigation", "implementations-navigation", "more-navigation", "mobile-navigation", "mobile-guide-navigation"]) {
     assert.equal([...header.matchAll(new RegExp(`id="${id}"`, "g"))].length, 1, `${id} is unique`);
   }
 });
@@ -160,7 +167,7 @@ test("all Guide surfaces share the canonical More menu and preview footer link",
     const mobileMore = header.match(/<span>More<\/span>([\s\S]*?)<\/nav>/)?.[1];
     for (const menu of [more, mobileMore]) {
       assert.ok(menu, route);
-      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["In 5 Minutes", "Start", "Factory Skills", "Simulator", "Reference Lab", "Learning Library (Preview)", "Manifesto", "Enterprise", "Factory Updates", "About"], route);
+      assert.deepEqual([...menu.matchAll(/<a\b[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]), ["Manifesto", "Learning Library (Preview)", "Factory Updates", "About"], route);
     }
     assert.doesNotMatch(header, /href="[^"]*\/(?:spec|specification|benchmarks)"/, route);
     const footer = html.match(/<footer class="global-footer">[\s\S]*?<\/footer>/)?.[0];

@@ -1,5 +1,6 @@
 /* Generated from FDLC/app/design-system.css. Do not edit. */
 /* Canonical public FDLC design primitives. Synced into the Guide; see docs/design-system.md. */
+/* Font faces for "FDLC Sans" / "FDLC Serif" are declared by each app that serves the files (FDLC: app/globals.css; Guide: its own CSS). */
 :root {
   --paper: #f3f1ea;
   --surface: #faf9f5;
@@ -13,8 +14,8 @@
   --blue: #3f6e85;
   --white: #fffef9;
   --sage: #e3ebe4;
-  --sans: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
-  --serif: "Iowan Old Style", Baskerville, "Times New Roman", serif;
+  --sans: "Avenir Next", Avenir, "FDLC Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: "Iowan Old Style", "FDLC Serif", Baskerville, "Times New Roman", serif;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --content-width: 1240px;
   --reading-width: 760px;
@@ -87,7 +88,7 @@
 .nav-dropdown-panel[hidden], .global-mobile nav[hidden], .mobile-guide-links[hidden] { display: none; }
 
 .global-footer { padding: 64px 0 0; background: #171a18; color: #c8d0ca; font-family: var(--sans); font-size: 14px; line-height: 1.6; }
-.global-footer-inner { width: min(var(--content-width), calc(100% - 40px)); margin: 0 auto; display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 32px; }
+.global-footer-inner { width: min(var(--content-width), calc(100% - 40px)); margin: 0 auto; display: grid; grid-template-columns: 1.4fr repeat(5, 1fr); gap: 28px; }
 .global-footer-brand p { max-width: 260px; margin: 18px 0 0; color: #aeb9b1; font-size: 14px; }
 .global-footer .global-logo { width: 190px; }
 .global-footer .global-logo img { filter: grayscale(1) brightness(0) invert(1); }
@@ -101,7 +102,7 @@
   .global-logo { width: 190px; }
   .desktop-nav, .header-utilities { display: none; }
   .global-mobile { display: block; }
-  .global-footer-inner { grid-template-columns: repeat(4, 1fr); }
+  .global-footer-inner { grid-template-columns: repeat(3, 1fr); }
   .global-footer-brand { grid-column: 1 / -1; }
 }
 @media (max-width: 640px) {
