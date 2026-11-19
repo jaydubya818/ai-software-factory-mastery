@@ -873,10 +873,12 @@ a self-operating learning factory.
   find-automations skill (PR history mining for scheduled or triggered
   automations).
 - Warp, *Closing the loop with self-improving cloud software factories*
-  (2026): the factory defined as code with a manifest, scorers as graded
+  (2026-08-27): the factory defined as code with a manifest, scorers as graded
   functions over runs with sampling, cadence, and batch size, self-improvement
   agents proposing factory-definition diffs reviewed as pull requests, and
   benchmarks as configuration matrices over reference tasks.
+  [warp.dev/blog/agent-self-improving-software-factories](https://www.warp.dev/blog/agent-self-improving-software-factories)
+  (confirmed live 2026-11-19).
 - Public practitioner talks (2026): the four loop layers, the seven
   meta-loops, maintenance loops and maintenance agents, automation discovery,
   the six self-improvement levels, workflow discovery, eval-driven factory
