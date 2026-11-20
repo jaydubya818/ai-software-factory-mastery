@@ -14,6 +14,36 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-11-19 — Factory engineering research update (Nov 2026 brief)
+
+### Source fix
+
+- **initial-canon.md**: Corrected the Warp entry for *Closing the loop with self-improving cloud software factories*. The post exists at [warp.dev/blog/agent-self-improving-software-factories](https://www.warp.dev/blog/agent-self-improving-software-factories) (published 2026-08-27, confirmed live 2026-11-19). The previous entry stated no warp.dev post under that title could be confirmed.
+- **Chapter 41** (sources): Updated the Warp citation with the confirmed URL and publication date.
+
+### Glossary additions
+
+Added eleven terms to `appendix/glossary.md` attributed to first-party sources from the Nov 2026 research window:
+- **What a software factory is not** (four patterns) — Zach Lloyd, Nov 10, 2026.
+- **Coding agent ladder** (coding agent → cloud coding agent → automation → factory) — Zach Lloyd, Nov 6, 2026.
+- **Multi-player interactive agents** (stepping-stone stage) — Zach Lloyd, Sep 22, 2026.
+- **Factory inbox** (runs needing a specific person's attention).
+- **Factory champions** (pre-rollout tuning team) — Zach Lloyd, Oct 15, 2026.
+- **Gardening / outer loop** — @poteto via Ben Holmes, Oct 6, 2026.
+- **Merge risk** (five-criterion rubric) — Ben Holmes, Nov 6, 2026.
+- **Hermetic replay** — Zach Lloyd, Nov 4, 2026.
+- **Private replay benchmark ("Me Bench")** — Zach Lloyd, Nov 4, 2026.
+- **Human touches per PR** (PR-scoped variant) — Zach Lloyd, Sep 30, 2026.
+- **Factory leaderboard** (cost-aware, shipped-work view) — Zach Lloyd, Oct 22, 2026.
+
+### Chapter updates
+
+**Chapter 8 — Economics, metrics, and human attention**: Added a "Reading public factory numbers" section covering anti-metrics (LOC, tokens, raw PR count), adoption-first metric ordering, and a worked example of why the same vendor's figures vary across posts (different cohort, window, denominator). Sources: Zach Lloyd Oct–Nov 2026 posts; Warp benchmarks blog (Sep 3, 2026); Uber QCon SF (Nov 2026).
+
+**Chapter 39 — Production feedback, review, and the agentic merge queue**: Added a "Evidence artifacts for agent pull requests" section covering: screen-recording and computer-use artifacts as a PR requirement; the five-criterion merge-risk rubric (alignment, impact, verification, rollback cost, error detection) mapped to FDLC stages; keeping review-agent loop traffic off the PR thread; Warp's adversarial-review cost benchmarks; and FDLC's position on agent PR authorship (acceptable only inside a declared operating domain with a named human holding approval authority). Sources: Warp *Addressing the code review bottleneck* (Nov 5, 2026); Ben Holmes merge-risk skill (Nov 6, 2026); Zach Lloyd Oct–Nov 2026 posts.
+
+**Chapter 38 — Enterprise adoption and the infrastructure landscape**: Added a "Rolling out a software factory: practice patterns" section covering the crawl/walk/run framework; chores-first automations and the slop-cannon anti-pattern; factory champions; meeting engineers in existing tools; infra-not-product positioning; encourage-don't-require; adoption-first metric ordering; working in public (benefits and costs); and term-discomfort acknowledgment. Sources: Zach Lloyd *Tactics for rolling out software factories* (Oct 15, 2026); Warp *Overcoming challenges in software factory adoption* (Nov 16, 2026); Warp *Adopting the software factory model: crawl, walk, run* (Sep 15, 2026); Ben Holmes *Becoming a factory engineer* (Nov 19, 2026).
+
 ## 2026-09-07 — Production reliability and incident operations
 
 Added a production operations playbook covering saga and compensation contracts,
