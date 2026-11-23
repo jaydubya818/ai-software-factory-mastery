@@ -6,6 +6,10 @@ import { normalizeSearchText, readingMinutes } from "../lib/text.ts";
 
 const index = JSON.parse(await readFile(new URL("../public/guide/search-index.json", import.meta.url), "utf8"));
 
+test("the public search index excludes withdrawn editorial material", () => {
+  assert.doesNotMatch(JSON.stringify(index), /zach|software-factory-as-code/i);
+});
+
 test("hyphenated and spaced search forms resolve to the same subsection", () => {
   const hyphenated = searchDocuments(index, "multi-repository", 1)[0];
   const spaced = searchDocuments(index, "multi repository", 1)[0];

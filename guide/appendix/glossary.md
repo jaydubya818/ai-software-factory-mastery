@@ -26,8 +26,6 @@ process, automation, environments, quality controls, and feedback from intent
 through production. An AI Software Factory uses agents as bounded participants;
 the factory remains the larger engineering system.
 
-**What a software factory is not** — Four patterns that look like a factory but lack the closed-loop, code-defined, measurable properties that make one: (1) a loose collection of automations around cloud agents; (2) a team of "AI Engineers" that developers manage interactively; (3) a set of skills and MCPs that individual engineers adopt independently; (4) a personal agent swarm. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2120245800924262816) (Nov 10, 2026).
-
 **Factory** — A governed, versioned composition of workflows, capabilities,
 policies, context, execution environments, verification rules, evidence
 requirements, and authority designed to produce a defined class of outcome. A
@@ -39,13 +37,7 @@ orchestration, runtime, sandboxing, observability, evaluation, evidence,
 approvals, and release integration. Shared infrastructure does not collapse the
 identity or authority of each Factory Version.
 
-**Coding agent ladder** — A progression of four terms ordered by increasing factory maturity: (1) *coding agent* — a single agent invoked directly by an engineer; (2) *cloud coding agent* — an agent running in the cloud rather than on the engineer's machine; (3) *cloud coding agent automation* — an event-triggered, headless workflow around a cloud agent; (4) *software factory* — a closed-loop, code-defined, cloud-based system that runs multiple agents, stores all agent data, and is measurable, testable, and self-improving. Something is only a factory at step 4. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2118725953966715217) (Nov 6, 2026).
-
-**Multi-player interactive agents** — An intermediate adoption stage between local coding agents and a full software factory: individuals still prompt directly but through shared, public-facing tools (Slack, Linear, GitHub) so teammates can add context, see the work, and continue it from any device. Benefits the team's shared context without requiring dedicated factory infrastructure. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2102520507883012589) (Sep 22, 2026).
-
 **Factory inbox** — The runs in a factory that need a specific person's attention right now: stalled approvals, escalations, failed steps waiting for context, and review-ready pull requests. The inbox surfaces only the decisions that cannot proceed without a named human, and is scoped to the reviewer, not a shared queue of all activity.
-
-**Factory champions** — A small group of engineers, designated before wide rollout, who tune and dog-food a new factory configuration before it reaches the full team. They surface noise and misconfigurations early, reducing the risk that the factory's first impression is "slop cannon." Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2110808772058960367) (Oct 15, 2026); see also [warp.dev/blog/software-factory-adoption-challenges](https://www.warp.dev/blog/software-factory-adoption-challenges).
 
 **Gardening (outer loop)** — The practice of supervising, pruning, and shaping the factory's automated loops rather than writing code directly — running scorers, reviewing self-improvement proposals, retiring stale skills, and accepting or declining candidates. Product engineering is the inner loop (writing the product); factory engineering is the outer loop of "gardeners." Credit: @poteto, via Ben Holmes, [@BHolmesDev](https://x.com/BHolmesDev/status/2107588784275816461) (Oct 6, 2026).
 
@@ -2456,9 +2448,7 @@ candidate under explicit success criteria, scope, and stop conditions, run so
 that its effect can be measured before any durable change. An experiment
 produces evidence; it does not promote itself.
 
-**Hermetic replay** — Re-running a past task against a new factory configuration in a controlled environment that restores the original context — including side-effect state such as issue-tracker status and merged-PR records — so that the replay produces comparable, repeatable results. Without hermetic state, naively replaying a completed task produces misleading results (e.g. the tracker has already marked it done). Source: Zach Lloyd, [warp.dev/blog/build-production-software-factory](https://www.warp.dev/blog/build-production-software-factory) (Nov 4, 2026).
-
-**Private replay benchmark ("Me Bench")** — A benchmark built from the organization's own past agent runs rather than a public leaderboard dataset. Tasks come from prior verified outcomes; configurations under test are scored by the same scorers used in production; results are plotted as cost vs. quality (Pareto) and deployed as code. Because it uses your own workload, it reflects your model selection tradeoffs more accurately than published SOTA scores. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2117995298165580153) (Nov 4, 2026).
+**Hermetic replay** — Re-running a task with its original inputs and isolated external state. Reset the working tree, fixtures and simulated services before comparing two configurations.
 
 **A/B testing** — A controlled comparison that assigns eligible cases to two
 versions under predefined measures, guardrails, sample, duration, stop
@@ -2872,6 +2862,4 @@ or failure.
 
 **Core factory metrics** — PR throughput, average cost per PR, automation percent (human touchpoints per PR), savings over human work, and acceleration of shipped product — inner-loop measures more granular than DORA, available only from a closed-loop factory (Chapter 8).
 
-**Human touches per PR** — The number of unplanned human interventions (clarification, correction, manual testing, explicit review comment requiring a response, merge decision) required per pull request produced by the factory. Tracks as "automation percent" in the core metrics; a falling trend over time indicates improving factory autonomy. Distinct from the broader human-touches-per-accepted-outcome measure, which includes non-PR delivery steps. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2105296615783436436) (Sep 30, 2026).
-
-**Factory leaderboard** — A ranked view of factory efficiency that surfaces cost per accepted outcome, cycle time, and shipped-work volume — not token spend, LOC generated, or PR count. A leaderboard that celebrates token consumption or PR velocity inverts the incentive: the goal is verified customer value at lower cost, not agent activity. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2113405050903237103) (Oct 22, 2026).
+**Human touches per PR** — Count each human intervention on a pull request. Separate planned approval from clarification, investigation and recovery, and report the time involved alongside the count.
