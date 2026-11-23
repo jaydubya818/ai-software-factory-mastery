@@ -7,11 +7,17 @@ function scopeSvgIds(markup: string, suffix: string) {
 
   return markup
     .replace(/\bid=(["'])([^"']+)\1/g, (match, quote: string, id: string) => ids.has(id) ? `id=${quote}${id}-${suffix}${quote}` : match)
+    .replace(/\b(aria-labelledby|aria-describedby)=(["'])([^"']+)\2/g, (_, attribute: string, quote: string, references: string) => {
+      const scoped = references.split(/\s+/).map((id) => ids.has(id) ? `${id}-${suffix}` : id);
+      return `${attribute}=${quote}${scoped.join(" ")}${quote}`;
+    })
     .replace(/url\(#([^)]+)\)/g, (match, id: string) => ids.has(id) ? `url(#${id}-${suffix})` : match)
     .replace(/\b(xlink:href|href)=(["'])#([^"']+)\2/g, (match, attribute: string, quote: string, id: string) => ids.has(id) ? `${attribute}=${quote}#${id}-${suffix}${quote}` : match);
 }
 
-export function Mermaid({ chart, label = "Architecture diagram" }: { chart: string; label?: string }) {
+export function Mermaid({ chart, label: headingLabel = "Architecture diagram" }: { chart: string; label?: string }) {
+  const label = chart.match(/^\s*accTitle:[ \t]*(.+)$/m)?.[1].trim() || headingLabel;
+  const description = chart.match(/^\s*accDescr:[ \t]*(.+)$/m)?.[1].trim();
   const reactId = useId();
   const [svg, setSvg] = useState("");
   const [failed, setFailed] = useState(false);
@@ -81,13 +87,13 @@ export function Mermaid({ chart, label = "Architecture diagram" }: { chart: stri
   }, [chart, reactId]);
 
   if (failed) {
-    return <div className="diagram-failure"><p role="status">This diagram could not be displayed.</p><details><summary>Read the diagram source</summary><pre className="mermaid-fallback" tabIndex={0} role="region" aria-label={`${label} source`}><code>{chart}</code></pre></details></div>;
+    return <div className="diagram-failure"><p role="status">This diagram could not be displayed.</p>{description && <p>{description}</p>}<details><summary>Read the diagram source</summary><pre className="mermaid-fallback" tabIndex={0} role="region" aria-label={`${label} source`}><code>{chart}</code></pre></details></div>;
   }
 
   return <figure className="mermaid-figure">
     <div className={`mermaid-diagram${svg ? "" : " is-loading"}`} role="region" aria-label={label} aria-busy={!svg} tabIndex={0} dangerouslySetInnerHTML={{ __html: svg }} />
     <figcaption><span>{label}</span><button ref={openRef} type="button" disabled={!svg} onClick={() => setExpanded(true)}>View full-size</button></figcaption>
-    <details className="diagram-text"><summary>Read diagram as text</summary>{textView.length ? <ol>{textView.map((line, index) => <li key={`${index}-${line}`}>{line}</li>)}</ol> : <pre><code>{chart}</code></pre>}</details>
+    <details className="diagram-text"><summary>Read diagram as text</summary>{description ? <p>{description}</p> : textView.length ? <ol>{textView.map((line, index) => <li key={`${index}-${line}`}>{line}</li>)}</ol> : <pre><code>{chart}</code></pre>}</details>
     {expanded && <div className="diagram-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) { setExpanded(false); openRef.current?.focus(); } }}>
       <section ref={dialogRef} className="diagram-dialog" role="dialog" aria-modal="true" aria-label={`${label}, full-size`}>
         <header><strong>{label}</strong><button ref={closeRef} type="button" onClick={() => { setExpanded(false); openRef.current?.focus(); }}>Close</button></header>

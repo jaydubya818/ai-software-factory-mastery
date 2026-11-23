@@ -32,6 +32,21 @@ it replaces or merely repeats current material.
 
 ## Reviewed additions
 
+### Agent platforms and governed knowledge curation
+
+Reviewed November 22 in US Central. Accept the sources as architectural proposals and first-party accounts. They supply no comparative outcome measurements. The operating contracts, recovery examples, and acceptance decisions in the Guide are FDLC's interpretation.
+
+| Reader question | Existing owner and coverage | Addition accepted |
+| --- | --- | --- |
+| Where does an agent run? | Chapters 13–17 separate Harness, Runtime, Sandbox, Orchestrator and Control Plane | Map three platform capabilities onto those owners. Trace an instance through fenced recovery and compare checkpoint and artifact boundaries. |
+| What did it do, and did it improve? | Chapters 29–30 and 35 cover datasets, replay and correlation | Compare paired trajectories, protect the evaluator from the producer, and follow the result to an exact candidate and production outcome. |
+| Who can act? | Chapters 7, 26, 33 and 37 cover grants, admission and human decisions | Trace enforcement at gateways and underlying resources, including retries and decision receipts across sessions. |
+| Which knowledge may reach the next Attempt? | Chapters 19–20 separate governed knowledge and compiled context | Define a curator's proposal, its quality checks, source revocation and the old/new Context Package boundary. |
+| Who can change the factory? | Chapters 40–41 already own the deterministic learning chain | Apply that chain to a knowledge correction and a coding skill. Keep the existing recurrence threshold, experiment review and promotion owner. |
+| What would support the 2027 prediction? | Chapter 44 considers extensible software | Add testable questions on portability, isolation, cost and operator control. |
+
+Sources reviewed: John Suh’s four-page [platform proposal](https://x.com/john_ssuh/status/2124336124172935336) (November 22 UTC), Harrison Chase’s [response](https://x.com/hwchase17/status/2124654748104302930) (November 23 UTC, November 22 Central) and [knowledge factory article](https://www.langchain.com/blog/knowledge-factory) (November 21). Supporting product and governance context came from [Sam Crowder](https://www.langchain.com/blog/we-rebuilt-langsmith-around-the-agent) and [Christine Manegan](https://www.langchain.com/blog/agent-governance-observability).
+
 ### Architecture and system-design study graphics
 
 - Source: user-supplied `codex-clipboard-225a7629-b9ad-4b63-bacf-48e7f13fdb48.png`

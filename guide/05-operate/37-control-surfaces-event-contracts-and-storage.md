@@ -138,6 +138,20 @@ What goes in the packet is not negotiable downward. A reviewer asked to approve 
 
 A decision packet also enforces the distinction between rejecting and requesting a revision. Rejection ends the proposal and records why. Request-revision keeps the Plan alive and sends it back with a specific ask. Collapsing the two loses the record of what the human actually wanted, and it is exactly the kind of loss that chapter [40](../06-improve/40-governed-learning.md) later needs to mine.
 
+### One conversation, several sessions
+
+A **Conversation** presents selected progress, WorkOrders, artifacts, evidence and questions to an authorized reader. Internal **Agent Sessions** keep their own identities for recovery and audit. Give operators an exception-first decision inbox. Restrict raw traces to appropriately scoped diagnostic access. Neither a chat reply nor possession of a session link changes authoritative state.
+
+| What the operator sees | Decision the interface can request |
+| --- | --- |
+| One session awaits deployment | Show the candidate digest, passing verification, target environment, rollback version and expiry. An eligible reviewer can request release or defer. |
+| A second session failed independent verification | Show the blocking criterion and evidence. Route for correction or stop. A failed gate cannot become a release button. |
+| A third session timed out at an external service | Show the logical effect key, elapsed time and last receipt. Request reconciliation or escalation before considering a retry. |
+
+Each packet names the requested action, affected resource, current workflow state, risk, policy decision, evidence, available choices, expected side effects, expiry, responsible reviewer and audit reference. On submission the authoritative Control Plane command rechecks identity, target, current state and expiry, then returns a decision receipt. If another reviewer already acted, display the recorded outcome.
+
+Agent-generated evidence views, repair dashboards and task-specific approval screens can use the same APIs. Treat their code and links as presentation. Give read-only views read-only credentials and preserve server-side action checks even when an operator edits a view. [Admission from events](../03-build/26-autonomous-engineering-workflows.md#from-an-event-to-admitted-work)
+
 ### Preserve safe human control
 
 Pause and cancel are different operations, and the interface has to say which it is doing. **Pause/resume** is one reversible pair: pause holds the lease and retained state so the run can resume from the same point; cancel releases the lease, records the terminal state, and may trigger cleanup or compensation. Before any approval the interface previews the side effects it will unlock (which repositories, environments, spend), and after an action is accepted it confirms what was recorded, so the operator never guesses whether the click landed.

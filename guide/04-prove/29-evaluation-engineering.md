@@ -64,6 +64,21 @@ Scope is the second axis. A **global eval** measures behavior the whole factory 
 | Online | Fleet-wide unauthorized-action rate, escalation correctness, cost per accepted outcome | Builder acceptance and correction rate for this repository's changes |
 | Regression | Every escaped platform failure, run on every factory change | Every escaped defect from this repository, run on every PR ([Chapter 39](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md)) |
 
+### Compare intended and observed behavior
+
+Before a trial, write the expected trajectory and the outcomes that would disqualify it. Afterward, reconstruct actual tool choices, denied actions, retries and completion from redacted spans.
+
+| Evaluation | Decision it informs |
+| --- | --- |
+| Offline | On representative pinned tasks, is the proposed configuration eligible for a controlled trial? |
+| Online | In a defined sample of production work, how often do unexpected outcomes occur? Record sampling and missing outcomes. |
+| Trajectory | Did the agent choose permitted tools, recover safely and stop at the right boundary? |
+| Regression | Does a previously qualified behavior still hold, including uncommon failure cases? |
+| Human-calibrated | Where does the automated grader disagree with accountable reviewers on blinded examples? |
+| Production outcome | Did the release reduce real failures, human effort or cost per accepted result in the stated window? |
+
+Pair baseline and proposed versions on the same task revisions and initial state. Pin the Agent Definition, Harness, model profile, prompt, skill, Context Package, knowledge revision, tools, routing and evaluation definition. Change the declared variable, repeat variable trials and report denominators, paired differences and uncertainty. Keep task completion separate from independently verified success. Include policy violations, human interventions, regressions, latency, recovery success and cost per accepted result. Each individual software candidate still needs verification against its own frozen contract. [Protect the comparison](./30-evals-as-factory-assets.md#when-the-producer-writes-tests)
+
 ### The subject is the whole configuration
 
 The first mistake in evaluation is to think the subject is a model. It is not. The evaluation subject is a versioned combination:

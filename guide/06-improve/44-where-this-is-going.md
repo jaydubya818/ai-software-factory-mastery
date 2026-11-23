@@ -257,6 +257,20 @@ stack boundaries, context engineering, evaluation, environments, feedback,
 multi-repository delivery, and the infrastructure landscape first;
 prototype and extensibility patterns last.
 
+### Agent platforms as configurable application infrastructure
+
+John Suh predicts that actor-style runtimes, local and remote computers, durable workflows, shared artifacts and knowledge, event listeners, decision inboxes and customizable applications may converge. In that vision, a user describes an outcome and constraints, and agents assemble or change the interface and workflow around the job. Harrison Chase argues that teams also need to observe and evaluate actual behavior and enforce limits as configurations evolve. These are architectural hypotheses. A vendor shipping one part of the stack supplies an example, not evidence that one universal agent operating system will prevail. [Suh’s proposal](https://x.com/john_ssuh/status/2124336124172935336) · [Chase’s response](https://x.com/hwchase17/status/2124654748104302930)
+
+| Open engineering question | Evidence that would strengthen or weaken the prediction |
+| --- | --- |
+| Can thousands of isolated instances collaborate economically? | Measure recovery success, message growth, cost per accepted result and time people spend on exceptions as concurrency rises. Superlinear coordination cost weakens the case. |
+| Can tenants share infrastructure and move sessions across runtimes? | Verify artifact ACLs, checkpoint compatibility, revocation, receipts and exactly-once logical effects under failover. A tenant leak or repeated effect rules out that configuration. |
+| Will interfaces travel between platforms? | Port a decision packet and generated view to a second runtime. The same API must still enforce identity, direct resource access, policy, expiry and audit. Count vendor-specific rewrites. |
+| Can organizations govern continuously modified applications? | Track ownership, rollback, policy-denial coverage and human attention across many concurrent sessions. Repeated manual reconstruction signals a missing contract. |
+| Does learning improve production outcomes? | Use independent holdouts and controlled rollout. A rising proxy score with flat or worsening verified outcomes, incidents or attention cost weakens the improvement claim. |
+
+A team can adopt the parts that pass its own tests today. A claim about future convergence earns confidence only when those results repeat across workloads, organizations and providers.
+
 ### The research frontiers
 
 Alongside the practitioner predictions sit the questions a research program

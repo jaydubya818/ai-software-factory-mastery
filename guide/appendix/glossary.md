@@ -231,6 +231,14 @@ instructions, capabilities, eligible models, tools, skills, context policy,
 permissions, budgets, stop conditions, escalation, success criteria, and
 evaluation policy. It is configuration, not a credential.
 
+**Agent Instance** — One realization of a versioned Agent Definition for a tenant, environment and permitted scope. [Definition, instance and Attempt](../03-build/14-durable-execution.md#recover-one-instance-without-repeating-an-effect)
+
+**Agent Session** — A persistent logical execution interaction linked to an instance and its Attempts. Each Attempt retains its own manifest and lease. [Session boundaries](../03-build/15-coding-harnesses-and-agent-protocols.md#portable-sessions-across-different-harnesses)
+
+**Conversation** — A user-facing record that can refer to several internal sessions and decision packets. Authoritative commands carry decisions. [Operator example](../05-operate/37-control-surfaces-event-contracts-and-storage.md#one-conversation-several-sessions)
+
+**Actor-style agent runtime** — An execution pattern with separately addressable instances, isolated state and independent lifecycles. [Qualification contract](../03-build/16-harness-engineering.md#qualifying-actor-style-execution)
+
 **Agent Loop (Execution Loop)** — The iterative cycle by which an Agent loads
 state, plans or selects, acts, observes, evaluates, updates or replans, and
 repeats until success, a resource bound, stalled progress, policy escalation, or
@@ -390,7 +398,7 @@ review, and never the multidimensional eligibility a certification names.
 
 **Agent platform** — Infrastructure for building and operating agents, including
 tools, context, memory, identity, routing, and orchestration. It becomes part of
-a factory only when connected to the engineering operating model.
+a factory only when connected to the engineering operating model. [Platform pillars and factory authority](../03-build/13-control-plane-orchestrator-and-execution-plane.md#agent-platform-pillars-and-factory-authority)
 
 **AI Engineering** — The engineering discipline that turns model capability
 into reliable systems through data, knowledge, semantics, context, agents,
@@ -557,7 +565,7 @@ its behalf. The call is where authority is checked; the model only proposes it.
 **Tool gateway** — A single entry point through which every tool and MCP
 server, internal or third-party, is reached, so that authentication, policy,
 tenant scoping, logging, and cost attribution are enforced once. Exposing tools
-through a gateway is also what makes CLI tool resolution and code-mode possible.
+through a gateway is also what makes CLI tool resolution and code-mode possible. Resource services and Sandbox boundaries enforce the grant beyond the gateway. [Enforcement examples](../04-prove/33-security.md#gateway-decisions-and-the-resource-boundary)
 
 **CLI tool resolution** — Reaching tools by executing a shell command that
 resolves and invokes the tool against the gateway at call time, instead of
@@ -667,7 +675,13 @@ retrieval omitted.
 
 **Workflow state** — The durable, authoritative record of execution progress and decisions, read from the control plane rather than reconstructed from memory or conversation (Chapters 5, 14, 20).
 
-**Knowledge** — Source material available for retrieval whose ownership, authority, permissions and currentness must be established before use (Chapters 19, 20).
+**Knowledge** — Reusable understanding with attributable sources, applicability, permissions and freshness. Raw source material can support a knowledge asset after validation. [Knowledge versus runtime context](../03-build/20-context-engineering.md#which-knowledge-reaches-the-next-attempt)
+
+**Knowledge curator** — An accountable role or scoped agent that investigates reported gaps, checks authoritative sources and proposes versioned corrections. [Curation operating model](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation)
+
+**Knowledge correction** — A proposed revision bound to an asset, tenant, source versions, applicability, review and rollback. [Correction record](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation)
+
+**Knowledge-quality contract** — The checks that establish accuracy, provenance, freshness, allowed scope and measured retrieval and task outcomes for a knowledge revision. [Quality checks](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation)
 
 **Context engineering** — The design and operation of selecting, filtering,
 ordering, budgeting, refreshing, and attributing the information available to
@@ -711,6 +725,7 @@ combining incompatible historical states.
 **Model gateway** — The governed interface that normalizes provider access,
 identity, credentials, policy, telemetry, quotas, and failure handling. It
 separates product workflows from provider-specific APIs.
+An LLM gateway is a model gateway for language-model calls. [Gateway decisions](../04-prove/33-security.md#gateway-decisions-and-the-resource-boundary)
 
 **Reasoning effort** — The thinking budget granted to a model invocation.
 Output and reasoning tokens bill at multiples of input tokens, so the effort
@@ -1041,6 +1056,10 @@ UNKNOWN, MISSING, PENDING, FAILED, or STALE is success.
 
 ## Governance concepts
 
+**Preventive governance** — Enforcement that denies an unauthorized effect at the point of action. [Policy enforcement](../02-design/07-governance-policy-and-risk-proportional-approval.md#enforce-the-decision-at-the-resource)
+
+**Detective governance** — Monitoring and review that surface policy violations, gaps and drift. [Detection and prevention](../02-design/07-governance-policy-and-risk-proportional-approval.md#enforce-the-decision-at-the-resource)
+
 **Human Authority** — Explicit authority retained for consequential decisions
 such as acceptance, publication, release, restoration, or policy promotion.
 Verification can establish eligibility for a decision; it cannot silently
@@ -1265,6 +1284,14 @@ improvement excuses a failed hard gate.
 **Agent-legible workflow** — A workflow whose intent, execution, feedback, decisions, and outcomes exist as structured, retrievable artifacts: ticket is intent, PR is proposed change, comments are feedback, CI is verification, merge is accepted outcome, incident is delayed outcome (Chapter 26).
 
 ## Quality and assurance concepts
+
+**Intended behavior** — The actions and outcomes expected under a pinned configuration and contract. [Behavior comparison](../05-operate/35-observability-telemetry-and-forensics.md#observing-intended-behavior-versus-actual-behavior)
+
+**Observed behavior** — The trajectory and effects actually evidenced by a run. Missing telemetry limits what can be inferred. [Behavior comparison](../05-operate/35-observability-telemetry-and-forensics.md#observing-intended-behavior-versus-actual-behavior)
+
+**Agent-authored evaluation** — A case, test or rubric suggested by an agent, with author and evidence lineage retained. [Producer-written tests](../04-prove/30-evals-as-factory-assets.md#when-the-producer-writes-tests)
+
+**Evaluation independence** — Separation of the optimizing producer from the protected instrument, execution and decision used to qualify its change. [Evaluation roles](../04-prove/30-evals-as-factory-assets.md#when-the-producer-writes-tests)
 
 **Quality Contract** — A versioned, machine-readable specification of the
 requirements, constraints, risks, verification methods, evidence, hard gates,

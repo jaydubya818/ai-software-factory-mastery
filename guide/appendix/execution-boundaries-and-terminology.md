@@ -202,6 +202,12 @@ identify a boundary. Translate it to Model Harness, Agent Harness, Coding
 Harness, Evaluation Harness, Runtime, Orchestrator, or Control Plane after
 establishing which responsibility is meant.
 
+## Definition, instance, session and decision
+
+A versioned Agent Definition supplies eligible configuration. An instance binds that definition to a tenant, environment and delegated identity. An internal session connects the adapter’s work to one or more Attempts. Each Attempt still belongs to its Task and frozen execution manifest. Conversation and inbox views refer to that work through authorized commands and receipts. A shared Sandbox or artifact store conveys no additional scope. [Lifecycle and recovery](../03-build/14-durable-execution.md#recover-one-instance-without-repeating-an-effect) · [Conversation and decisions](../05-operate/37-control-surfaces-event-contracts-and-storage.md#one-conversation-several-sessions)
+
+Use the three platform pillars as questions about these existing boundaries. Runtime executes, observability records, evaluations measure, and external governance constrains actions. Independent verification, acceptance and release retain their separate owners. [Platform-to-factory map](../03-build/13-control-plane-orchestrator-and-execution-plane.md#agent-platform-pillars-and-factory-authority)
+
 ## Coding and IDE Harnesses
 
 A **Coding Harness** is an Agent Harness specialized for software engineering.

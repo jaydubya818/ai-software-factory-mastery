@@ -56,6 +56,14 @@ Allocation has separate budgets for governing contracts, task facts, repository 
 
 Context is an Attempt input, not an authority record. Retrieved text cannot alter the approved Mission, policy, tool grants, or acceptance criteria.
 
+### Which knowledge reaches the next Attempt
+
+Knowledge is maintained for reuse. Context is selected for a particular decision. Filter by tenant, principal, purpose and resource permissions **before ranking**. Check source version, expiry, revocation and applicability. Resolve contradictory claims by accountable source ownership or return an explicit conflict. Fit permitted excerpts into the context budget, preserve citations and record omissions, version IDs and the compiled package digest.
+
+Suppose a reporting agent repeatedly follows an obsolete database instruction naming `account_state`. The agent reports the gap. A curator checks the repository's signed schema migration and the database owner's current catalog. Both name `lifecycle_state` for schema v4. Clients on v3 still require the old name. The correction proposes new access guidance for v4 alone and cites both revisions.
+
+Compare both guidance versions on the same fixtures, including v3, v4, a revoked source and a tenant without schema access. Measure correct task outcomes, failure rate, latency, token cost and regressions. After independent evaluation, review and approval, publish an immutable knowledge revision. A later Attempt compiles it into a **new** Context Package. The earlier Attempt retains its original digest for audit. If access is revoked mid-run, stop affected reads and reauthorize or start a new Attempt. Never silently patch the frozen package. [Correction record and quality contract](./19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation)
+
 ### The context-centric factory
 
 Everything above treats context as the input to one Attempt. Step back one level and it is the input to the factory itself, and the order of operations matters: **context engineering precedes automation**. *You cannot reliably automate what you have not adequately defined.* A loop that runs a skill against a repository every night is only as good as the description of acceptable work it runs against, and most organisations have never written that description down in a form a machine could use. They have a style guide in a wiki, a security policy in a PDF, an architecture in three people's heads, and acceptance criteria that get invented per ticket. Automating on top of that does not produce a factory; it produces a fast way to generate work nobody can judge.

@@ -72,6 +72,31 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "
   await page.waitForFunction((button) => button === document.activeElement, await diagramButton.elementHandle());
   assert.ok(await page.getByText("Read diagram as text").count() > 0);
 
+  const platformDiagrams = [
+    ["/guide/03-build/13-control-plane-orchestrator-and-execution-plane", "Agent platform pillars within a governed software factory", "An independent verifier checks the candidate"],
+    ["/guide/06-improve/40-governed-learning", "Governed knowledge and agent improvement loop", "Independent evaluation feeds governed work"],
+  ];
+  for (const [route, title, expectedDescription] of platformDiagrams) {
+    await page.goto(origin + route, { waitUntil: "domcontentloaded" });
+    const figure = page.locator("figure.mermaid-figure").filter({ has: page.getByRole("region", { name: title, exact: true }) });
+    await figure.locator("summary").click();
+    assert.ok((await figure.locator("details p").innerText()).includes(expectedDescription));
+    await figure.getByRole("button", { name: "View full-size" }).click();
+    const dialog = page.getByRole("dialog", { name: title + ", full-size" });
+    const references = await dialog.locator("svg").evaluate((svg) => {
+      return ["aria-labelledby", "aria-describedby"].map((attribute) => {
+        const id = svg.getAttribute(attribute);
+        return id && svg.querySelector("#" + CSS.escape(id))?.textContent;
+      });
+    });
+    assert.equal(references[0], title);
+    assert.ok(references[1]?.includes(expectedDescription));
+    await page.keyboard.press("Escape");
+    await page.waitForFunction((button) => button === document.activeElement, await figure.getByRole("button").elementHandle());
+    assert.ok(await page.locator("body").evaluate((element) => element.scrollWidth <= element.clientWidth + 1), route);
+    report.checks.push(viewport.name + " accessible diagram: " + title);
+  }
+
   await page.goto(`${origin}/guide/02-design/07-governance-policy-and-risk-proportional-approval`, { waitUntil: "domcontentloaded" });
   const copyButton = page.locator(".code-block button").first();
   await copyButton.focus();

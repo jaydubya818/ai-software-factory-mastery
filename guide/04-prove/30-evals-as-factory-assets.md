@@ -19,7 +19,7 @@ A benchmark can become stale, contaminated, saturated, or disconnected from prod
 
 ### Capturing runs so failures can be reproduced
 
-Everything above assumes you can see what the agent did. That is harness engineering's job. **Trace capture** is the retention of a run's complete event history — prompts, context assembled, model calls, tool calls and their results, permissions consulted, files touched, tests run, retries, costs, and human interventions — with enough identity to know exactly which configuration produced it. An **environment snapshot** freezes the state the run started from: repository commit, dependency versions, data, configuration digest, and available tools. Together they are the flight data recorder: not a way to un-crash the aircraft, but the only way to find out what happened.
+**Trace capture** preserves the permitted event history for a run. Record configuration and context digests, model and tool invocation receipts, policy decisions, changed artifact references, test results, retries, cost and human interventions. Retain approved redacted payloads only when the evaluation needs them, with scoped access and expiry. An **environment snapshot** pins the starting repository revision, dependency versions, authorized fixture references, configuration digest and available tools. Mark withheld fields so replay consumers know the limits of the evidence.
 
 Four activities use those recordings, and they must not be confused with one another.
 
@@ -66,6 +66,20 @@ flowchart LR
 Every link is a versioned record, and every evaluation finding points at the exact link it concerns. [Chapter 35](../05-operate/35-observability-telemetry-and-forensics.md) builds the telemetry side; this chapter needs it to exist.
 
 *Without observability, evaluation isn't debuggable. Without evaluation, observability is just telemetry.*
+
+### When the producer writes tests
+
+A coding agent may propose regression cases, investigate failures and suggest rubric changes. Record the author and originating failure. Keep proposed cases in the development split until an evaluation owner reviews them.
+
+| Role | Responsibility and access |
+| --- | --- |
+| Producer | Changes the skill and proposes visible tests. Has no write access to the protected grader, thresholds or holdout. |
+| Evaluation author | Curates representative tasks and unseen negatives. Versions the rubric and checks for training or development overlap. |
+| Evaluation executor | Runs pinned baseline and candidate with separate credentials and clean environments. Retains case-level verdicts and uncertainty. |
+| Independent verifier | Tests each exact software candidate against its frozen Quality Contract and records blocking failures. |
+| Promotion authority | Reviews evaluation, verifier evidence and rollout conditions, then records the decision under its own identity. |
+
+Suppose a revised coding skill passes all tests its author wrote. On protected paired tasks it fixes a known parsing case but fails an unseen tenant-isolation check. Show both results and block qualification even if the average improves. An exposed holdout is **contamination**. Repeated tuning to a public score risks **benchmark overfitting**. A grader revision can cause **grader drift**. A proxy that rewards skipping difficult tasks invites **reward hacking**. Keep instrument revisions attributable, calibrate against human judgments and compare operational outcomes after rollout. [Comparison design](./29-evaluation-engineering.md#compare-intended-and-observed-behavior)
 
 ### Drift has more than one source
 

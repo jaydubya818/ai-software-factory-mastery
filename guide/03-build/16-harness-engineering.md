@@ -117,6 +117,12 @@ A harness session is a stateful thing that the factory needs to drive from outsi
 
 Two items deserve emphasis. **Session resume** means the Runtime and Harness adapter can reattach after a worker crash or lease expiry, which only works if the native session identity was recorded before the first tool call and the environment still exists. **Compaction** is the Harness summarizing working context to stay under the model's context window; the factory must record when it happened because earlier evidence may no longer be in the Model's view, and a checkpoint across a compaction boundary is materially different from one taken within it.
 
+### Qualifying actor-style execution
+
+Qualify each definition and adapter version under the tenant and workload it will serve. Pin the operating profile and tenant-scoped identity at dispatch. Cap concurrent work, elapsed time, tool calls and spend per instance. Exercise cancellation while a call is outstanding, lease loss during a write, checkpoint incompatibility and a revoked grant. Retain ordered audit events that join the native session to the Attempt and effect receipt.
+
+A passing restart test must show that the stale owner loses write authority, the new owner reconciles effects before continuing, and recovery obeys the tighter of the original scope and current policy. A revoked dependency blocks continuation. If the adapter cannot satisfy that contract, end the Attempt and return recovery to the Orchestrator. [Recovery example](./14-durable-execution.md#recover-one-instance-without-repeating-an-effect)
+
 ### Hooks are integration points, not authority
 
 Most harnesses expose **lifecycle hooks**: callbacks on session start, tool calls, file changes, subagent spawn, permission requests, stop, and completion. They are useful for logging, policy callbacks, credential injection, validation, notifications, and cleanup.

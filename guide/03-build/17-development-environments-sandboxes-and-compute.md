@@ -132,6 +132,20 @@ flowchart LR
     Pet -->|"automate bootstrap, prove rebuild"| Cattle
 ```
 
+### Checkpointed computers and shared artifacts
+
+| Compute choice | When to use it | What to verify |
+| --- | --- | --- |
+| Local developer environment | A person needs a device-bound tool | Limit the workspace and credential broker. Record which state will be lost when the device sleeps. |
+| Remote managed or ephemeral Sandbox | An isolated build, one Attempt per environment | Pin image and lockfile, deny unapproved egress, establish a lifetime and retain teardown evidence. |
+| Clone of a checkpoint | Parallel experiments need the same starting state | Verify the checkpoint digest and tenant, provision fresh identities, and isolate subsequent writes. |
+| Policy-approved persistent environment | A long-lived session needs a warm workspace | Revalidate lease, revocation, retention and dependency freshness on every reattach. |
+| Compute pool | Several instances share hosts or one instance coordinates several computers | Scope identity, writable state and quotas per allocation. Fence each writer and reconcile each machine before failover. |
+
+A checkpoint manifest records tenant owner, image and tool versions, source revision, dependency-lock digest, filesystem snapshot digest, network policy, compatibility range, expiry and resource/spending limits. Exclude credentials, then broker short-lived credentials after fresh admission. Record which clones were destroyed and which artifacts were retained. Cross-tenant reuse requires a separately qualified sanitized base image and evidence of isolation. A tenant's working snapshot stays inside its boundary.
+
+Two agents can collaborate through POSIX storage, an object store, repository artifacts or an immutable artifact service. Give each artifact a tenant, owner, visibility, source, version and digest. Authorize reads and writes per resource, isolate credentials, and use a generation check or compare-and-swap to detect concurrent edits. Apply retention and revocation to readers as well as writers. A verifier can independently retrieve the pinned digest and record what it checked. A shared file by itself grants no evidence status, merge, publication or production permission. [Execution recovery](./14-durable-execution.md#recover-one-instance-without-repeating-an-effect)
+
 ### Startup and preview are part of the product
 
 Cold-start time is a product metric because it lands directly on validated lead time and on whether humans trust the factory to be quick. Measure the stages separately: queue wait, allocation, checkout, dependency restore, service startup, readiness, and first useful tool call. Then attack them with **golden images** (prebuilt base images with the toolchain baked in), **dependency and build caching** (**content-addressed caches** of restored packages and compiled outputs, keyed by the hash of their inputs so a cache hit is provably the same bytes a clean build would produce), partial clones, **warm pools** of pre-provisioned workers, and preflight checks, but only when each one's invalidation rule is explicit. A prebuilt image is fast and goes stale or oversized; building from source is transparent and slow. Like a pit stop, the goal is a fast, repeatable sequence, not a heroic one.

@@ -14,6 +14,10 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## November 2026 — Agent platforms and governed knowledge
+
+Added the [platform authority map](../03-build/13-control-plane-orchestrator-and-execution-plane.md#agent-platform-pillars-and-factory-authority), the [knowledge-curation contract](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation) and the [governed improvement diagram](../06-improve/40-governed-learning.md#governed-knowledge-and-agent-improvement-loop). Chapters 7, 14–17, 20, 26, 29–30, 33, 35, 37 and 41 apply them to execution, measurement and decisions. Chapter 44 identifies evidence that could test the [configurable platform hypothesis](../06-improve/44-where-this-is-going.md#agent-platforms-as-configurable-application-infrastructure).
+
 ## 2026-11-19 — Factory engineering research update (Nov 2026 brief)
 
 ### Source fix

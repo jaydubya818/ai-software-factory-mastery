@@ -102,6 +102,24 @@ None of these depends on the model behaving well. That is the point. A model rea
 
 Security, in other words, cannot be a review that happens after the work is done. By then the run has already had whatever access it had. *Security can't be an approval meeting at the end; it's part of the execution contract.*
 
+### Gateway decisions and the resource boundary
+
+A model or **LLM gateway** checks the requester, approved provider/model route, request policy, rate and spend reservation. It isolates provider credentials and emits an invocation receipt. A **tool gateway** checks the registered contract, requester and delegated principal, tenant, exact resource, approval, tool budget and policy revision. Both record their decision against the Attempt. A service account behind a gateway still needs least-privilege provider permissions.
+
+Enforce the boundary beneath each gateway. Isolate secrets, restrict filesystem access and network egress, broker short-lived credentials, and check authorization again at the target service. This keeps a change in agent strategy inside the original grant. In these examples the Control Plane retains or references the authoritative decision. Telemetry carries redacted IDs and reason codes.
+
+| Request or failure | Enforcement boundary | Observation and recorded decision | Safe outcome |
+| --- | --- | --- | --- |
+| A defect investigator requests deployment through an unapproved API | Tool allowlist, Sandbox egress and deployment-service identity | The gateway denial and refused connection share the Attempt ID. Record the missing deployment grant. | No deployment. The agent reports the blocker. |
+| A registered tool targets a resource outside delegation | Tool gateway and resource ACL | Record principal, target, policy revision and scope denial. | No resource change. |
+| A model call would exceed remaining spend | Model gateway and atomic budget reservation | Record requested reservation, limit and refusal before invoking the provider. | Pause or request a new budget decision. |
+| An agent proposes to widen its own policy | Policy repository and independent change-control owner | Record the proposal and denied activation under the proposing identity. | Existing policy stays active during review. |
+| A credential belongs to another tenant | Broker and service-side tenant/audience check | Record a tenant mismatch without logging the credential. | Deny, investigate and revoke as policy requires. |
+| A valid commit has no deployment permit | Release controller and target environment | Preserve the candidate and verifier receipt. Record the absent release authorization. | Keep the release pending. |
+| A retry follows an unknown external result | Fenced reconciliation and provider operation key | Record the prior receipt or an explicit unknown result. | Reuse the confirmed effect or escalate uncertainty before replay. |
+
+Review denied-call patterns alongside accepted effects to distinguish a misconfigured route from a policy failure. [Chase on agent platforms](https://x.com/hwchase17/status/2124654748104302930) · [Manegan on governance and observability](https://www.langchain.com/blog/agent-governance-observability)
+
 ### Authenticate the principal, authorize the action, attest the execution
 
 Three questions, answered by three different mechanisms. **Authentication** proves who or what is calling. **Authorization** proves the principal may perform a bounded action. **Attestation** proves which software, configuration, context, and environment actually performed it.
