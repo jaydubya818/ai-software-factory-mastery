@@ -132,6 +132,7 @@ export function GuideDocument({
           {isMissionControlStatusDocument(document.slug, document.contentType) && <MissionControlStatusNotice />}
           <ChapterTOC variant="mobile" headings={headings.map((heading) => ({ id: heading.id, text: heading.text, depth: heading.depth }))} />
           <div className="markdown-body"><Markdown content={document.content} sourcePath={document.sourcePath} glossary={document.slug === "appendix/glossary"} infographicAssets={"infographicAssets" in document ? (document.infographicAssets as Record<string, string>) : {}} /></div>
+          <a className="chapter-top" href="#main-content">Back to chapter start ↑</a>
           <nav className="document-pagination" aria-label="Previous and next">
             {previous ? <Link href={guideContentPath(previous.slug)}><span>Previous · {chapterLabel(previous)}</span><strong>{previous.title}</strong></Link> : <span />}
             {next ? <Link className="next-document" href={guideContentPath(next.slug)}><span>Next · {chapterLabel(next)}</span><strong>{next.title}</strong></Link> : <span />}

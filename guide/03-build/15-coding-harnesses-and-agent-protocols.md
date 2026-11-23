@@ -240,7 +240,7 @@ flowchart TB
     Suite["Conformance suite"] -. "proves portability across backends" .-> C
 ```
 
-**Portability** is the property the contract buys: the same WorkOrder can run through a second harness or a second backend with behavior the factory can prove equivalent for that workload. It is not asserted by the contract; it is demonstrated by the [adapter conformance suite](#adapter-conformance-suite) below, which is why the suite tests behavior rather than product names. A contract without a suite is a document; a suite without a contract is a pile of tests against one vendor.
+**Portability** is the property the contract buys: the same WorkOrder can run through a second harness or a second backend with behavior the factory can prove equivalent for that workload. It is not asserted by the contract; it is demonstrated by the [adapter conformance suite](./16-harness-engineering.md#adapter-conformance-suite) in Chapter 16, which is why the suite tests behavior rather than product names. A contract without a suite is a document; a suite without a contract is a pile of tests against one vendor.
 
 The analogy is a shipping container. Nobody who ships goods builds their own crane; the crane, the ship, and the truck are commodity mechanics. What the shipper owns is the container standard: the dimensions, the corner fittings, the seal, the manifest on the door. Because the standard is fixed, any port can handle any box, and the shipper can change carriers without repacking. The agent loop is the crane. The agent contract is the container.
 

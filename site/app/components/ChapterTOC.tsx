@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Heading = { id: string; text: string; depth: number };
 
 export function ChapterTOC({ headings, variant = "aside" }: { headings: Heading[]; variant?: "aside" | "mobile" }) {
+  const menu = useRef<HTMLDetailsElement>(null);
+  function followHeading(id: string) {
+    if (!menu.current) return;
+    menu.current.open = false;
+    const target = document.getElementById(id);
+    if (target) { target.tabIndex = -1; target.focus({ preventScroll: true }); }
+  }
   const [active, setActive] = useState(headings[0]?.id ?? "");
   useEffect(() => {
     const elements = headings.map((heading) => document.getElementById(heading.id)).filter((element): element is HTMLElement => Boolean(element));
@@ -13,10 +20,10 @@ export function ChapterTOC({ headings, variant = "aside" }: { headings: Heading[
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [headings]);
-  const list = <ol>{headings.map((heading) => <li className={`${active === heading.id ? "is-active " : ""}toc-depth-${heading.depth}`} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>;
+  const list = <ol>{headings.map((heading) => <li className={`${active === heading.id ? "is-active " : ""}toc-depth-${heading.depth}`} key={heading.id}><a aria-current={active === heading.id ? "location" : undefined} onClick={() => followHeading(heading.id)} href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>;
   if (variant === "mobile") {
     return (
-      <details className="toc-mobile">
+      <details className="toc-mobile" ref={menu}>
         <summary>On this page<small>{headings.length} sections</small></summary>
         {list}
       </details>

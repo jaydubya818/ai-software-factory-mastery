@@ -1689,4 +1689,11 @@ html[data-theme="dark"] .global-header .global-logo img { filter: grayscale(1) b
 .document-nav-groups > details > summary { cursor: pointer; padding: 12px 0; color: var(--ink); font-size: 13px; font-weight: 650; line-height: 1.4; }
 .document-nav-groups > details > summary:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 .document-nav-groups > details[open] { padding-bottom: 12px; }
-#chapters { scroll-margin-top: 130px; }
+#chapters, #main-content, .markdown-body :is(h2, h3, h4)[id], .glossary-entry { scroll-margin-block-start: var(--anchor-offset); }
+.document-sidebar, .table-of-contents { top: var(--anchor-offset); max-height: calc(100dvh - var(--anchor-offset) - var(--space-4)); }
+.chapter-top { display: inline-flex; min-height: var(--control-height); align-items: center; margin-top: var(--space-6); color: var(--accent-text, var(--green)); font-weight: 650; text-decoration: underline; text-underline-offset: .2em; }
+.toc-mobile > summary, .toc-mobile li a { min-height: var(--control-height); }
+.toc-mobile li a { display: flex; align-items: center; }
+.document-article .markdown-body > :is(p, ul, ol) { max-width: 72ch; }
+.search-results [aria-selected="true"]:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

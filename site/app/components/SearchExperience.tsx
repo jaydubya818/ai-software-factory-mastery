@@ -1,10 +1,10 @@
 "use client";
 
 import { GUIDE_ROUTES, guideDocumentPath, guideNavigationHref } from "../../lib/paths";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadSearchIndex, searchDocuments, type SearchDocument, type SearchHit } from "../../lib/search-client";
-import { normalizeSearchText, searchTerms } from "../../lib/text";
+import { matchingWords, searchTerms } from "../../lib/text";
 
 const starters: { title: string; description: string; href: string; meta: string }[] = [
   { title: "The factory in one view", description: "The whole system on one page — five systems, five verbs, the one line.", href: guideDocumentPath("01-understand/02-the-factory-in-one-view"), meta: "Chapter 2" },
@@ -22,6 +22,8 @@ function labelFor(document: SearchDocument) {
 
 export function SearchExperience() {
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
+  const [attempt, setAttempt] = useState(0);
   const [active, setActive] = useState(0);
   const [index, setIndex] = useState<SearchDocument[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -29,9 +31,14 @@ export function SearchExperience() {
   const router = useRouter();
 
   useEffect(() => {
-    loadSearchIndex().then(setIndex).catch(() => setFailed(true));
+    let present = true;
+    loadSearchIndex().then((data) => { if (present) setIndex(data); }).catch(() => { if (present) setFailed(true); });
+    return () => { present = false; };
+  }, [attempt]);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "/" && document.activeElement?.tagName !== "INPUT") {
+      if (event.key === "/" && !document.activeElement?.closest("input, textarea, select, [contenteditable=true]") && !event.metaKey && !event.ctrlKey && !event.altKey) {
         event.preventDefault();
         inputRef.current?.focus();
       }
@@ -40,20 +47,29 @@ export function SearchExperience() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const results: SearchHit[] = useMemo(() => (index && query.trim() ? searchDocuments(index, query) : []), [index, query]);
+  const results: SearchHit[] = useMemo(() => (index && deferredQuery.trim() ? searchDocuments(index, deferredQuery) : []), [index, deferredQuery]);
 
+  const terms = useMemo(() => searchTerms(deferredQuery), [deferredQuery]);
   function highlighted(value: string) {
-    const terms = searchTerms(query);
-    if (!terms.length) return value;
-    const lower = normalizeSearchText(value);
-    const term = terms.find((candidate) => lower.includes(candidate));
-    if (!term) return value;
-    const at = value.toLowerCase().indexOf(term);
-    if (at < 0) return value;
-    return <>{value.slice(0, at)}<mark>{value.slice(at, at + term.length)}</mark>{value.slice(at + term.length)}</>;
+    const matches = matchingWords(value, terms);
+    if (!matches.length) return value;
+    let from = 0;
+    const pieces: React.ReactNode[] = [];
+    for (const { start, end } of matches) {
+      pieces.push(value.slice(from, start), <mark key={start}>{value.slice(start, end)}</mark>);
+      from = end;
+    }
+    return [...pieces, value.slice(from)];
   }
 
   const showingStarters = !query.trim();
+
+  const visibleCount = showingStarters ? starters.length : results.length;
+  function move(direction: number) {
+    const next = Math.max(0, Math.min(active + direction, visibleCount - 1));
+    setActive(next);
+    document.getElementById(`search-result-${next}`)?.scrollIntoView({ block: "nearest", behavior: "instant" });
+  }
 
   return (
     <div className="search-experience">
@@ -65,24 +81,28 @@ export function SearchExperience() {
           value={query}
           onChange={(event) => { setQuery(event.target.value); setActive(0); }}
           onKeyDown={(event) => {
-            if (event.key === "ArrowDown") { event.preventDefault(); setActive((value) => results.length ? Math.min(value + 1, results.length - 1) : 0); }
-            if (event.key === "ArrowUp") { event.preventDefault(); setActive((value) => Math.max(value - 1, 0)); }
-            if (event.key === "Enter" && results[active]) { event.preventDefault(); router.push(results[active].href); }
+            if (event.key === "ArrowDown") { event.preventDefault(); move(1); }
+            if (event.key === "ArrowUp") { event.preventDefault(); move(-1); }
+            if (event.key === "Enter" && query === deferredQuery) {
+              const href = showingStarters ? guideNavigationHref(starters[active].href) : results[active]?.href;
+              if (href) { event.preventDefault(); router.push(href); }
+            }
           }}
           placeholder="Search agents, harnesses, evidence, environments…"
           role="combobox"
           aria-controls="search-results"
           aria-expanded="true"
-          aria-activedescendant={results[active] ? `search-result-${active}` : undefined}
+          aria-activedescendant={active < visibleCount ? `search-result-${active}` : undefined}
         />
         <kbd>/</kbd>
       </label>
       <div className="search-summary" aria-live="polite">
-        {showingStarters ? "Suggested starting points" : index ? `${results.length} matching section${results.length === 1 ? "" : "s"}` : failed ? "Search index unavailable" : "Loading the index…"}
+        {failed ? "Search index unavailable" : showingStarters ? "Suggested starting points" : index ? `${results.length} matching section${results.length === 1 ? "" : "s"}` : "Loading the index…"}
       </div>
-      <div className="search-results" id="search-results" role="listbox">
-        {showingStarters && starters.map((starter) => (
-          <a className="search-result" href={guideNavigationHref(starter.href)} key={starter.href} role="option" aria-selected={false}>
+      {failed && <button type="button" className="button" onClick={() => { setFailed(false); setAttempt((n) => n + 1); }}>Retry search</button>}
+      <div className="search-results" id="search-results" role="listbox" aria-label="Guide search results" aria-busy={!index && !failed || query !== deferredQuery}>
+        {showingStarters && starters.map((starter, position) => (
+          <a className="search-result" href={guideNavigationHref(starter.href)} key={starter.href} role="option" id={`search-result-${position}`} aria-selected={position === active}>
             <div className="search-result-meta"><span>Start here</span><span>{starter.meta}</span></div>
             <h2>{starter.title}</h2>
             <p>{starter.description}</p>
@@ -95,13 +115,13 @@ export function SearchExperience() {
             <p>{highlighted(result.excerpt)}</p>
           </a>
         ))}
-        {!showingStarters && index && results.length === 0 && (
+      </div>
+      {!showingStarters && query === deferredQuery && index && results.length === 0 && (
           <div className="empty-state">
             <h2>No matching section</h2>
             <p>Try a canonical term such as “control plane,” “evaluation,” “harness,” or “multi-repository.”</p>
           </div>
         )}
-      </div>
     </div>
   );
 }

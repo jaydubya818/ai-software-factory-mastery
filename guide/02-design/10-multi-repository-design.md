@@ -170,7 +170,7 @@ Each repository keeps its own owners, approvers, and policy. A coordinated chang
 
 ### Cross-factory dependency contracts
 
-A repository boundary and a factory boundary are different. One factory may work across repositories; one repository may require modernization, security, and test factories. Keep their handoffs in the governed Plan, pin input and output artifacts, and invalidate downstream evidence when an upstream identity changes. Parallel branches require isolated execution and verification of their combined Candidate. The [enterprise delivery companion](../appendix/enterprise-multi-factory-delivery.md#4-governed-dependencies-and-artifact-handoffs) works through this dependency graph.
+A repository boundary and a factory boundary are different. One factory may work across repositories; one repository may require modernization, security, and test factories. Keep their handoffs in the governed Plan, pin input and output artifacts, and invalidate downstream evidence when an upstream identity changes. Parallel branches require isolated execution and verification of their combined Candidate. The [enterprise delivery companion](../appendix/enterprise-multi-factory-delivery.md#6-governed-dependencies-and-artifact-handoffs) works through this dependency graph.
 
 ## How to build it
 

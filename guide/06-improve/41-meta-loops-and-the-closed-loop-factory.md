@@ -891,7 +891,7 @@ a self-operating learning factory.
   meta-loops, maintenance loops and maintenance agents, automation discovery,
   the six self-improvement levels, workflow discovery, eval-driven factory
   engineering, and the factory flywheel.
-- [Chapter 16 — Coding harnesses and agent protocols](../03-build/16-harness-engineering.md#inner-loop-outer-loop-meta-loop)
+- [Chapter 16 — Coding harnesses and agent protocols](../03-build/16-harness-engineering.md#inner-feedback-loop-outer-verification-loop-meta-learning-loop)
   for the three-loops table and harness pruning, the meta loop's most
   routine output.
 - Team Topologies, The DevOps Handbook, and the Toyota Production System, as
