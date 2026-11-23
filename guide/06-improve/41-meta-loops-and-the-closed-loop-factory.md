@@ -265,6 +265,14 @@ person rather than changing a capability, but the advice is still derived
 from the anti-pattern catalog, and that catalog is versioned and evaluated
 like any other evaluator. *Traces may propose; the gate promotes.*
 
+### A coding skill learns from a recurring failure
+
+A repair agent repeatedly fails a repository's compatibility test. Persist the failing check, candidate SHA, skill version and redacted trace. The deterministic detector groups distinct failures under the same repository, rule and configuration. Duplicate notifications about one Attempt count once. When the existing recurrence policy is met, an Improvement Candidate proposes a skill revision. A curator verifies the repository standard and records where older clients still need the old behavior.
+
+A reviewer authorizes a paired experiment. Run the frozen and proposed skills against protected reference tasks and previously unseen negative cases. Include tests suggested by the agent in the development set, and keep its identity away from the acceptance instrument. Record targeted gains, regressions and cost per independently accepted repair. A failing safety case blocks qualification. A successful experiment creates governed work. After human promotion approval, roll out the qualified version to a bounded cohort and compare actual repair and escape rates. Retain, revise or restore the prior version against the declared window and guardrails.
+
+Use the same review chain for learned prompts, skills, routing, tools, context and knowledge revisions, evaluator additions, workflow, budget or runtime configuration. A proposal to change authority goes to its policy owner. [Learning decisions and rollback](./40-governed-learning.md#governed-knowledge-and-agent-improvement-loop)
+
 ### Mining corrections: from review history to durable assets
 
 Skill traces are one mine. The richer one, in most organizations, is the pull

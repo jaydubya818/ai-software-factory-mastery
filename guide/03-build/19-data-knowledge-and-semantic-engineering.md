@@ -68,6 +68,25 @@ Retrieval combines several methods, and none is universally best. **BM25** and o
 
 Two properties are not optional. **Permission-aware retrieval** filters by requester, tenant, purpose, lifecycle, and freshness before content reaches ranking or generation, so that an unauthorized document can never be "very relevant." The unit of that filter is the individual artifact, carrying its own ACL reference from enrichment onward (**per-document access control**); a permission decided at the level of a whole source or index is too coarse to be trusted, because one wiki space holds both the public runbook and the incident post-mortem. **Citation and source attribution** tie every excerpt to its artifact, source version, and permission; a citation without source identity, version, and permission is decoration.
 
+### From knowledge discovery to governed knowledge curation
+
+Start with a recurring question an agent gets wrong. In a reporting workflow, the procedure for validating a report is a **skill**, the business definition of active accounts is **domain knowledge**, and the owner and location of the current schema are **data access guidance**. Query the authorized source for today's figures. Copying fast-changing figures into an instruction makes them harder to revoke or keep current. Harrison Chase describes this division of labor in [How to build a knowledge factory](https://www.langchain.com/blog/knowledge-factory).
+
+A raw document supplies a claim. Memory can retain an observation. A versioned knowledge asset records which claims an accountable owner has validated, for which tenants, purposes and period. A Context Package selects eligible assets for one decision. The authoritative workflow records still own execution state and approval. None of these roles transfers because the same store holds the bytes.
+
+**The curator's job.** A task agent flags a gap with an affected Attempt and a minimal redacted example. A curator reviews authorized traces and repeated human corrections, checks the current source against its owner and version, identifies contradictions, and proposes a correction to a skill, a fact, a source selection rule or a regression case. Missing authority leaves the claim unresolved. Conflicting or sensitive material goes to quarantine or to the accountable owner. The curator's credentials allow proposing a version. Publication requires separate qualification and approval.
+
+**Example correction record.** These fields describe what a reviewer needs. They can travel with an existing proposal and introduce no new database or workflow state machine.
+
+| Part of the record | Evidence and decision fields |
+| --- | --- |
+| Identity and scope | `correction_id`, `tenant_id`, `knowledge_asset_id`, `current_version`, `proposed_version`, `knowledge_type`, `applicability_scope` |
+| Discovery | `reported_problem`, `originating_signal_ids`, `affected_workflows`, `authoritative_source_refs`, `source_versions` |
+| Proposed edit | `accountable_owner`, `freshness_requirement`, `proposed_change`, `rationale`, `permission_impact`, `security_classification`, `risk_class` |
+| Qualification and disposition | `proposed_eval_cases`, `regression_results`, `approval_status`, `promotion_status`, `rollback_reference` |
+
+**Knowledge-quality contract.** Verify factual accuracy against a pinned authoritative source. Require complete provenance, a freshness window, valid applicability and permission checks. Test a conflicting source, an expired source, an unauthorized tenant and a case where retrieval should abstain. Recompile the same authorized versions to check reproducibility. Compare correct retrievals, downstream task success and regressions before accepting a claim that the correction helped. [Compile the correction into context](./20-context-engineering.md#which-knowledge-reaches-the-next-attempt) · [Review and promotion](../06-improve/40-governed-learning.md#governed-knowledge-and-agent-improvement-loop)
+
 ### The enterprise retrieval pipeline, end to end
 
 Seen from the agent's side, the whole apparatus above collapses into one path from raw sources to a grounded, cited context. It is worth drawing that path on its own, because it is the shape a platform team actually builds and operates, and because every stage on it exists for a reason a plain vector store does not have.

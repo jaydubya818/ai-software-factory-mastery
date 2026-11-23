@@ -43,6 +43,12 @@ Because the words get blurred in practice, the factory keeps seven authority con
 
 Confusing these creates hidden authority. Approving a Plan does not accept a WorkOrder's result. Holding repository write permission does not authorize using it outside the WorkOrder. Think of a hospital: a surgeon has the skill (capability) and the credentials (permission) to operate, but this operation on this patient today still needs a consent form (approval) under hospital protocol (policy), and the discharge decision (acceptance) is a separate judgment made after the outcome is known.
 
+### Enforce the decision at the resource
+
+Give each grant an action, requester, delegated identity, tenant, target, budget, policy revision and expiry. A repair worker might inspect logs, execute tests, modify a branch, create a candidate and request verification. Acceptance, merge, deployment and promotion of learning changes each require their own authority. Revoking a grant or invoking an emergency stop must reach the services that can still cause an effect.
+
+**Preventive governance** rejects a forbidden operation before it takes effect. A tool gateway can check a signed deployment grant, but the deployment service must reject unauthorized credentials too. **Detective governance** correlates denials, spending trends and unexpected tool sequences to reveal policy drift. An alert arrives too late to be the only protection for a prohibited deployment. [Seven enforcement examples](../04-prove/33-security.md#gateway-decisions-and-the-resource-boundary)
+
 ### The governing chain
 
 Humans define intent, acceptable risk, and the rules under which agents may act. Agents propose, gather evidence, execute authorized work, and recommend outcomes. They never become the owner of business, legal, security, or operational risk. The chain looks like this:

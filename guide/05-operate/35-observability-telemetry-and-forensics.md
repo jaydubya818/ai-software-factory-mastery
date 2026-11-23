@@ -29,6 +29,20 @@ Every signal also carries its scope (tenant, workspace, repository), the relevan
 
 Correlation must not grant access. The fact that a signal carries a Mission ID does not mean every viewer of that Mission may see the signal; authorisation still filters what each person retrieves.
 
+### Observing intended behavior versus actual behavior
+
+Read the pinned Agent Definition, Harness, model route, skill and Context Package to establish intent. On the existing correlation spine, join instance and session IDs to the Attempt. Attach redacted tool-call receipts, gateway decisions, knowledge/context versions, resource use, human interventions, recovery events and external effect IDs. Follow the artifact digest to independent Verification, the approval receipt, Release and Production Outcome. An evaluation run may reference several traces. It does not own any of those decisions.
+
+For example, version A repairs a repository through a read, branch edit and test. Version B adds a routing skill. Its trace shows an extra tool call and a retry. Compare A and B on frozen reference cases, retaining failed cases and accounting for extra latency. Verify each resulting candidate independently. If B improves measured outcomes, its owner can request promotion with the evidence and rollback version.
+
+| Operator question | Evidence to inspect together |
+| --- | --- |
+| Is execution available and useful? | Runtime availability, eligible workflows completed, recovery success and age of blocked work |
+| Are decisions trustworthy? | Evaluator disagreement against calibrated cases, verification failures, policy denials and effects without matching receipts |
+| Did the release help? | Incident frequency, cost per accepted result, budget exhaustion, minutes of human intervention and the production outcome window |
+
+Log typed facts, versions and digests. Redact sensitive payloads and omit secrets and private model reasoning. Access to one record never implies access to all linked records. [Evaluation design](../04-prove/29-evaluation-engineering.md#compare-intended-and-observed-behavior)
+
 ### The execution lineage: what is recorded per run
 
 The spine names the records; **execution lineage** is the causal chain that runs through them, from the person who wanted something to the outcome they got. Written out, it is longer than the spine because it includes the components that shaped each step:

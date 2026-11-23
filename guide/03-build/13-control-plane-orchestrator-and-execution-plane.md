@@ -149,6 +149,42 @@ A more general form of the same idea is the **runtime contract envelope**, which
 
 A consumer authenticates the sender, validates scope and schema, compares the expected state version, reserves capacity, persists acceptance, and only then dispatches. It returns a durable acknowledgement that is distinct from completion. Results bind the exact input digest, environment, dependency versions, outputs, costs, errors, side-effect receipt, and any unresolved uncertainty.
 
+### Agent platform pillars and factory authority
+
+An agent platform helps a team answer three questions. **Runtime** supplies compute, sessions, checkpoints, budgets and cancellation for bounded execution. **Observability and evaluations** join two different jobs: traces reconstruct what happened, then evaluations compare that behavior with a stated objective. **Governance** enforces who may use each resource, for which purpose, under which limits. Authority comes from a decision outside the agent's editable configuration. Harrison Chase proposed these pillars in response to John Suh's runtime vision. LangSmith illustrates one commercial implementation. [Chase’s response](https://x.com/hwchase17/status/2124654748104302930) · [LangChain’s product account](https://www.langchain.com/blog/we-rebuilt-langsmith-around-the-agent)
+
+| FDLC responsibility | Owner and observable result |
+| --- | --- |
+| Model interaction and agent operation | The Model Harness shapes model requests and responses. The Agent Harness controls one agent’s tools, context, local loop and stopping conditions. |
+| Execution and isolation | The Runtime starts, resumes and terminates work. The Sandbox contains it within an assigned compute, filesystem and network boundary. |
+| Progress and decisions | The Orchestrator advances eligible dependencies and preserves workflow progress. The Control Plane admits work, owns authoritative state and records policy and approval decisions. |
+| Measurement and verification | The evaluation system compares behavior across configurations. An independent verifier binds a verdict to the exact candidate and frozen Quality Contract. |
+| Reusable knowledge and delivery | The knowledge subsystem maintains attributable versions. The Factory combines these responsibilities with intent, acceptance, release and production verification. |
+
+The eight stages remain **Intent → Plan → Define Agent → Execute through Harness → Apply Skills → Evaluate → Improve → Deliver Software**. The diagram follows the records and decisions that support those stages.
+
+```mermaid
+flowchart TD
+    accTitle: Agent platform pillars within a governed software factory
+    accDescr: Approved intent and a versioned plan select the configuration. The runtime executes with permitted context under external policy. An independent verifier checks the candidate. An authorized reviewer decides acceptance and a separate release grant permits publication. Traces and production outcomes feed governed improvement. Only qualified and approved changes return to new work.
+    I["Intent and approved Plan"] --> V["Versioned agent and capabilities"]
+    V --> E["Governed execution"]
+    R["Runtime"] --> E
+    K["Selected, authorized knowledge"] --> E
+    G["External governance"] -->|admit| E
+    E --> C["Exact candidate"]
+    C --> Q["Independent verification"]
+    Q --> A["Acceptance and human review"]
+    A --> L["Authorized release"]
+    L --> P["Production verification"]
+    E --> O["Observability and evaluations"]
+    O --> F["Governed improvement"]
+    P --> F
+    F -->|qualified version| V
+```
+
+A repository repair exits cleanly and emits a commit. An independent verifier runs the frozen compatibility suite on that commit and finds an older client can no longer read its output. The Attempt retains its completion receipt. Verification records the failing case against the commit, acceptance stays pending, and release has no permit. Giving the worker another tool or a higher evaluation score cannot change that decision.
+
 ### The questions orchestration has to answer
 
 Orchestration does not matter while work is one prompt and one answer. It starts to matter the moment work modifies repositories, calls services, waits on dependencies, runs tasks in parallel, retries, and has to coordinate the results. At that point five questions decide whether the workflow is sound, and none of them is a reasoning question:

@@ -399,6 +399,34 @@ the change that motivated it and re-derived when that code changes again.
 That is the mechanism by which escaped defects update the regression suite
 rather than the postmortem document.
 
+### Governed knowledge and agent improvement loop
+
+A curator may turn corroborated observations into a versioned proposal. Only persisted evidence, a deterministic signal and a recurring cluster under existing policy can produce an Improvement Candidate. Review decides whether to authorize an experiment against a frozen baseline. A favorable experiment returns through Mission, Plan and WorkOrder for qualification and a separate human promotion decision.
+
+```mermaid
+flowchart TD
+    accTitle: Governed knowledge and agent improvement loop
+    accDescr: An approved Attempt produces observations. Checks and evaluations flag failures. Agents and humans propose corrections. A curator checks sources and submits a versioned proposal. Persisted evidence, deterministic signals and recurrence establish an Improvement Candidate. Review may reject or authorize a baseline experiment. Independent evaluation feeds governed work and qualification. Human approval permits a bounded rollout. Outcomes determine retention, revision or rollback. Conflicts are quarantined or escalated to an owner.
+    A["Approved execution and context"] --> O["Observe behavior and outcomes"]
+    O --> E["Evaluate and check failures"]
+    E --> H["Human or agent reports a gap"]
+    H --> C["Curator checks sources and traces"]
+    C --> V["Versioned proposal"]
+    C -->|conflict| X["Quarantine or escalate"]
+    V --> S["Deterministic signal and recurring cluster"]
+    S --> I["Improvement Candidate and review"]
+    I -->|reject| D["Close with reason"]
+    I -->|authorize| T["Experiment against frozen baseline"]
+    T --> Q["Independent evaluation"]
+    Q -->|qualified for further work| W["Mission, Plan and WorkOrder"]
+    W --> P["Qualify version and approve promotion"]
+    P --> L["Bounded rollout and observation"]
+    L --> R["Retain, revise or roll back"]
+    R -->|new evidence| O
+```
+
+For an outdated API instruction, preserve the old and proposed revision, authoritative API definition, affected tenants, rollback reference and case-level results. During canary rollout, monitor the original failure and a workflow that legitimately uses the older API. Stop on a regression, restore the previous approved version for new work and keep both sets of receipts. Discovery and authorized experiments can run autonomously. Changes to shared behavior or authority require explicit qualification and promotion. [Knowledge correction contract](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation)
+
 ### Learning writeback from an execution engine
 
 A pluggable execution engine ([Chapter 13](../03-build/13-control-plane-orchestrator-and-execution-plane.md)

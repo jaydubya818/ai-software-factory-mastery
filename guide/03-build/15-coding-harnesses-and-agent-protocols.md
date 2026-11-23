@@ -153,6 +153,12 @@ no independent acceptance, publication, or Production authority. If Fab adopts
 an Agentic SDK, pin and qualify the SDK as one input to Fab's implementation;
 do not reclassify Fab or transfer Mission Control authority to the library.
 
+### Portable sessions across different harnesses
+
+A team can run a build agent and a documentation agent on the same infrastructure while giving each a different loop, tool profile and identity. In an **actor-style runtime**, an instance has a durable address, private state and a separately managed lifecycle. That pattern can support concurrency. The address alone proves neither tenant isolation nor checkpoint portability.
+
+Map the adapter's native session ID to the tenant, instance, Task, Attempt and frozen manifest at dispatch. Treat transcripts as operator-facing projections with their own access rules. A session may outlive a lease, and one Conversation may link sessions from several WorkOrders. A replacement Harness must demonstrate compatible state, cancellation, budgets and effect reconciliation before it can resume work. [Worked recovery](./14-durable-execution.md#recover-one-instance-without-repeating-an-effect) · [Suh’s actor proposal](https://x.com/john_ssuh/status/2124336124172935336)
+
 ### Coding and IDE Harnesses
 
 A **Coding Harness** is an Agent Harness specialized for repository work: code

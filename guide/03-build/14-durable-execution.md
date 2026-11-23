@@ -39,6 +39,18 @@ flowchart TD
 
 The value of this split is that the Task's lifecycle (Ready, In Progress, Review, Done) can be reasoned about independently of how many tries it took, while every try stays available for cost accounting, forensics, and learning. When the operator asks "what happened?", the answer is a list of Attempts, each with its own frozen inputs and its own outcome, not a status field that has been overwritten three times.
 
+### Recover one instance without repeating an effect
+
+An **Agent Definition** pins an eligible configuration. An **Agent Instance** realizes one version for a particular tenant and environment with a scoped workload identity. A **Session** tracks an execution interaction and can link several steps or Attempts. The Task still owns its append-only Attempts. Each Attempt executes against its frozen Execution Manifest under its WorkOrder. A user-facing **Conversation** can reference several sessions. Its messages carry no lease or grant.
+
+1. The Control Plane admits a repository repair for tenant A. Instance R7 starts session S9. Attempt A1 records the definition, Harness, Context Package and Sandbox image digests before acquiring lease generation 4.
+2. A1 requests a draft pull request under the logical operation key for this Task and candidate SHA. The provider creates it, but the worker loses its connection before recording the receipt. Expiry makes A1 suspect.
+3. The reconciler fences the old owner. A qualified replacement checks the provider for the same operation, target and SHA. A matching pull request supplies the missing receipt. An ambiguous result pauses for investigation.
+4. If the adapter proves compatible checkpoint recovery, the replacement reattaches under a current lease and rechecks the original scope, expiry and revocations. Otherwise it closes the interrupted Attempt and links a new Attempt to the reconciled effect. A change in configuration or a wider grant requires fresh admission.
+5. Termination releases the lease, revokes credentials and records the checkpoint disposition and teardown receipt. A late callback from generation 4 is recorded and refused.
+
+The operation key identifies the intended effect across retries. An Attempt ID alone would change on retry and allow a second pull request. See [the Harness recovery contract](./16-harness-engineering.md#qualifying-actor-style-execution).
+
 ### The durable state machine
 
 The rule behind all of this is simple to state: never let a multi-hour workflow live only in model context or process memory. A model's context window is a working buffer that will be compacted, truncated, or lost when the process dies; process memory dies with the process. Neither can answer, after a crash, what was authorized, what completed, or what side effects landed. Workflow state has to live in a **durable state machine**: a persisted record whose transitions are the only way the workflow moves.
