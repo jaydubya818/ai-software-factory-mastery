@@ -32,7 +32,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: `(function(){try{var s=localStorage.getItem('asfm-theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'}catch(e){}})()` }} /></head>
+      <head>
+        <link rel="preload" href={guideAssetPath("fonts/nunito-sans-latin-wght-normal.woff2")} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={guideAssetPath("fonts/source-serif-4-latin-wght-normal.woff2")} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var s=localStorage.getItem('asfm-theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'}catch(e){}})()` }} />
+      </head>
       <body><a className="skip-link" href="#main-content">Skip to reading content</a>{children}</body>
     </html>
   );
