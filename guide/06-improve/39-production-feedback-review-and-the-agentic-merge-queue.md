@@ -346,7 +346,7 @@ rate of human correction justify it; until then it advises.
 
 Risk-tiered review depends on the verification evidence attached to a change. For user-visible agent changes, text-only CI results are often insufficient: a human reviewer cannot tell whether the agent actually tested end-to-end behavior. Two artifact types close that gap.
 
-**Screen-recording and computer-use artifacts.** For any change that touches user-visible behavior, require the agent to attach a trimmed end-to-end recording — the agent navigating the application and demonstrating before/after state — to the pull request. Auto-trim to the decision-relevant segment (Warp targets approximately fifteen seconds for a standard verification pass) using computer use tooling. Avoid over-verification: one clean recording demonstrating realistic behavior is more useful than multiple overlapping captures from disconnected fragments. Use realistic backends — staging databases, test credentials, access logs — rather than mocked state. Warp reports: "We now require all PRs to include a screen recording artifact. It's the only way to verify that an agent's change was tested end to end" (Zach Lloyd, [Oct 23, 2026](https://x.com/zachlloydtweets/status/2113655321189359831)); "If an agent's PR doesn't have a screenshot verification, it's not worth reviewing" (@warpdotdev, [Oct 23, 2026](https://x.com/warpdotdev/status/2113438310916145493)). Full guidance is in the Warp blog post [Addressing the code review bottleneck](https://www.warp.dev/blog/agent-code-review-bottleneck) (Nov 5, 2026).
+**Screen recordings and screenshots.** When a change affects a user-visible workflow, demonstrate the relevant action and its result on the tested candidate. Attach a short recording for a sequence of interactions or a screenshot for a static state. Identify the environment and keep credentials and customer records out of the capture. [Warp’s account of review evidence](https://www.warp.dev/blog/agent-code-review-bottleneck)
 
 **Merge-risk assessment.** Alongside end-to-end evidence, attach a merge-risk score to every agent pull request. The five criteria are:
 
@@ -360,9 +360,9 @@ Risk-tiered review depends on the verification evidence attached to a change. Fo
 
 The score routes the change to the appropriate tier (above), it does not replace the named-human approval that tier requires. A fully automated merge of a high-impact change is not permitted because the merge-risk score is high; it is permitted only when the operating domain policy explicitly allows it and a named human retains authority to revoke that permission. Source: Ben Holmes, [@BHolmesDev](https://x.com/BHolmesDev/status/2118807366250721741) (Nov 6, 2026); skill `warpdotdev/common-skills` merge-risk.
 
-**Review-agent loop off the PR thread.** When implementation and review agents iterate to resolve findings, that exchange belongs off the pull request thread. Only findings the agents cannot resolve — ambiguous requirements, policy questions, significant architecture concerns — are surfaced as PR comments requiring human input. This keeps the review thread readable and decision-focused. Gate multi-round review by change size or risk: Warp's early benchmark of adversarial review found +140% cost for +7.5% quality improvement on its task set ([Nov 6, 2026](https://x.com/zachlloydtweets/status/2118519684387512450)); a later run found "2-3x cost" for a quality increase ([Nov 11, 2026](https://x.com/zachlloydtweets/status/2120621519487586629)). Every added review round is a hypothesis with a cost: benchmark it on your own workload before requiring it universally. Source: Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2121000139410321774) (Nov 12, 2026); [warp.dev/blog/agent-code-review-bottleneck](https://www.warp.dev/blog/agent-code-review-bottleneck).
+**Review iterations.** Keep the evidence for each attempt with the work order. Bring unresolved requirements, policy exceptions and decisions about release risk to the human reviewer. Measure the cost of an extra review round and how often it changes the decision before making it part of the workflow.
 
-**FDLC position on agent PR authorship.** Warp reports making agents the PR author and removing the requirement for a second engineer's review in certain operating domains ([Oct 22, 2026](https://x.com/zachlloydtweets/status/2113284357918224422)). FDLC's position: this is acceptable only inside a declared operating domain whose scope and risk have been validated, where a named human retains approval authority. Verification is not authorization: an agent demonstrating correct behavior end-to-end does not grant itself merge rights. The authority table in [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) and the asymmetric-autonomy model in [Chapter 41](../06-improve/41-meta-loops-and-the-closed-loop-factory.md) govern when and how a human can delegate that decision.
+**Release authority.** A producing agent can open the pull request and supply evidence. The operating-domain policy identifies who may accept the result and under what conditions. See the authority table and delegation model. [Chapter 7](../02-design/07-governance-policy-and-risk-proportional-approval.md) · [Chapter 41](../06-improve/41-meta-loops-and-the-closed-loop-factory.md)
 
 ### Advisory first, then gate
 
@@ -927,14 +927,5 @@ precision, human attention, merge latency, and change-failure outcomes.
 - Ben Holmes, [@BHolmesDev](https://x.com/BHolmesDev/status/2118807366250721741)
   (Nov 6, 2026): merge-risk skill (alignment, impact, verification, rollback
   cost, error detection); skill `warpdotdev/common-skills` merge-risk.
-- Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2113655321189359831)
-  (Oct 23, 2026): screen-recording requirement for all agent PRs.
 - @warpdotdev, [@warpdotdev](https://x.com/warpdotdev/status/2113438310916145493)
   (Oct 23, 2026): screenshot verification as a prerequisite for review.
-- Zach Lloyd, [@zachlloydtweets](https://x.com/zachlloydtweets/status/2121000139410321774)
-  (Nov 12, 2026): review-agent loop off the PR thread.
-- Zach Lloyd, adversarial-review benchmarks:
-  [@zachlloydtweets](https://x.com/zachlloydtweets/status/2118519684387512450)
-  (Nov 6, 2026) and
-  [@zachlloydtweets](https://x.com/zachlloydtweets/status/2120621519487586629)
-  (Nov 11, 2026).
