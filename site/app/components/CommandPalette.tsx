@@ -57,7 +57,7 @@ export function CommandPalette() {
   const results = useMemo(() => {
     const terms = searchTerms(query);
     if (!terms.length) return utilityItems;
-    const utilities = utilityItems.filter((item) => terms.every((term) => normalizeSearchText(`${item.label} ${item.text}`).includes(term)));
+    const utilities = utilityItems.filter((item) => terms.every((term) => normalizeSearchText(`${item.label} ${item.text}`).split(" ").includes(term)));
     const hits = index ? searchDocuments(index, query, 18).map((hit, position): PaletteItem => ({
       id: `hit-${position}-${stableAnchorId(`${hit.document.slug}-${hit.section?.id ?? "document"}`)}`,
       label: hit.section?.heading || hit.document.title,

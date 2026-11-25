@@ -325,7 +325,7 @@ The three constrain one another. Faster lead time with more failures is reckless
 
 ### Verify the node and the composition
 
-Local verification checks a WorkOrder against exact inputs and an immutable Candidate. Global verification checks the integrated Candidate and original objective criteria; several local passes do not establish an objective pass. A pre-release gate requires all prerequisite WorkOrders, not downstream deployment and production validation. Final objective closure also requires any production acceptance conditions. Read the [enterprise verification companion](../appendix/enterprise-multi-factory-delivery.md#6-local-and-global-verification) for the evidence matrix and failure cases.
+Local verification checks a WorkOrder against exact inputs and an immutable Candidate. Global verification checks the integrated Candidate and original objective criteria; several local passes do not establish an objective pass. A pre-release gate requires all prerequisite WorkOrders, not downstream deployment and production validation. Final objective closure also requires any production acceptance conditions. Read the [enterprise verification companion](../appendix/enterprise-multi-factory-delivery.md#8-local-and-global-verification) for the evidence matrix and failure cases.
 
 ## How to build it
 

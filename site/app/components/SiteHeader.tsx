@@ -143,7 +143,7 @@ export function SiteHeader() {
         </nav>
         <div className="header-utilities"><a className="header-github" href={fdlcRepository} rel="noreferrer" target="_blank" aria-label="FDLC source on GitHub (opens in a new tab)">GitHub <span aria-hidden="true">↗</span></a></div>
         <div className={`global-mobile${mobileOpen ? " is-open" : ""}`} ref={mobileRoot} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setMobileOpen(false); }}>
-          <button aria-controls="mobile-navigation" aria-expanded={mobileOpen} aria-label="Open navigation" onClick={() => setMobileOpen((value) => !value)} onKeyDown={(event) => { if (event.key === "Escape") setMobileOpen(false); }} ref={mobileTrigger} type="button">Menu</button>
+          <button aria-controls="mobile-navigation" aria-expanded={mobileOpen} aria-label="Open navigation" onClick={(event) => { event.currentTarget.focus(); setMobileOpen((value) => !value); }} onKeyDown={(event) => { if (event.key === "Escape") setMobileOpen(false); }} ref={mobileTrigger} type="button">Menu</button>
           <nav aria-label="Mobile navigation" hidden={!mobileOpen} id="mobile-navigation">
             {primary.map(([label, href]) => <GlobalLink href={href} key={href} onClick={() => setMobileOpen(false)}>{label}</GlobalLink>)}
             <NavDropdown active={true} id="mobile-guide-navigation" label="Guide" href="/guide" links={guide} local pathname={pathname} onNavigate={() => setMobileOpen(false)} />

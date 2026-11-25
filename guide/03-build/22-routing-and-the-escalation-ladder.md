@@ -246,7 +246,7 @@ The practical consequence is that routing policy for autonomous lanes can change
 
 ### Route objectives, WorkOrders, and Tasks separately
 
-Objective routing identifies capability domains before planning. WorkOrder routing selects a qualified Factory Version and Execution Profile after dependencies and authority permit execution. Task routing selects qualified resources inside that envelope. Every level filters eligibility before optimizing quality, latency, or cost; no eligible route means a blocked or escalated result. The [enterprise routing model](../appendix/enterprise-multi-factory-delivery.md#3-three-levels-of-routing) explains the records and evidence needed for each decision.
+Objective routing identifies capability domains before planning. WorkOrder routing selects a qualified Factory Version and Execution Profile after dependencies and authority permit execution. Task routing selects qualified resources inside that envelope. Every level filters eligibility before optimizing quality, latency, or cost; no eligible route means a blocked or escalated result. The [enterprise routing model](../appendix/enterprise-multi-factory-delivery.md#5-three-levels-of-routing) explains the records and evidence needed for each decision.
 
 ### Routing and scheduling have separate decisions
 

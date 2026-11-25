@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 import { htmlFor, render } from "./helpers/render.mjs";
 
 test("every internal link reachable from the canonical Guide landing resolves", async () => {
   const seen = new Set(["/guide"]);
   const queue = ["/guide"];
   const broken = [];
+  const fonts = new Set();
   while (queue.length) {
     const route = queue.shift();
     const response = await render(route);
@@ -15,9 +17,15 @@ test("every internal link reachable from the canonical Guide landing resolves", 
       const href = match[1].replace(/\/$/, "") || "/";
       if (!href.startsWith("/guide") && !href.startsWith("/docs/")
         && !["/visuals", "/topics", "/coverage", "/search", "/glossary"].includes(href)) continue;
+      if (href.endsWith(".woff2")) { fonts.add(href); continue; }
       if (href.startsWith("/_next/") || /\.(png|svg|jpg|jpeg|webp|xml|txt|json|ico|css|js)$/.test(href)) continue;
       if (!seen.has(href)) { seen.add(href); queue.push(href); }
     }
+  }
+  assert.equal(fonts.size, 2, "both shared text faces are preloaded");
+  for (const href of fonts) {
+    const bytes = await readFile(new URL(`../public${href}`, import.meta.url));
+    assert.equal(bytes.toString("ascii", 0, 4), "wOF2", `${href} is a published WOFF2 font`);
   }
   assert.ok(seen.size > 60, `expected to crawl the whole Guide, crawled ${seen.size}`);
   assert.deepEqual(broken, [], "every canonical internal link must render");
@@ -30,7 +38,7 @@ test("unpublished repository files link out to GitHub instead of a dead route", 
 });
 
 test("Guide discovery, search, and public assets are published under /guide", async () => {
-  const { readdir, readFile } = await import("node:fs/promises");
+  const { readdir } = await import("node:fs/promises");
   const sitemap = await readFile(new URL("../public/guide/sitemap.xml", import.meta.url), "utf8");
   assert.match(sitemap, /<loc>https:\/\/ai-software-factory-mastery\.vercel\.app\/glossary<\/loc>/);
   assert.match(sitemap, /\/docs\/01-understand\//);

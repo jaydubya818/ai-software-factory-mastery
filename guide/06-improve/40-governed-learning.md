@@ -93,7 +93,7 @@ Everything that improves the agent is checked into the repository so an
 improvement improves for everyone — that is the compound loop. Personal
 preferences exist (more on scope below), but the mechanism of learning is the
 shared repo, not the individual's dotfiles.
-[Chapter 16](../03-build/16-harness-engineering.md#inner-loop-outer-loop-meta-loop)
+[Chapter 16](../03-build/16-harness-engineering.md#inner-feedback-loop-outer-verification-loop-meta-learning-loop)
 gives the three loops their table, the question each answers, and the
 objective each serves (autonomy, automation, improvement); this chapter is
 about the third.

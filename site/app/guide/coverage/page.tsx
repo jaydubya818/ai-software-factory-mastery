@@ -64,7 +64,7 @@ export default function CoveragePage() {
           <div className="coverage-activity-grid">
             <Link href={GUIDE_ROUTES.home}><span>Chapters</span><strong>{numbered.length}</strong><small>Table of contents →</small></Link>
             <Link href={`${GUIDE_ROUTES.home}#stages`}><span>Stages</span><strong>{stages.length}</strong><small>The factory in one line →</small></Link>
-            <Link href={`${GUIDE_ROUTES.topics}#mission-control-case-studies`}><span>Mission Control case studies</span><strong>{caseStudies.length}</strong><small>Reference shelf →</small></Link>
+            <Link href={`${GUIDE_ROUTES.topics}#mission-control`}><span>Mission Control case studies</span><strong>{caseStudies.length}</strong><small>Reference shelf →</small></Link>
             <Link href={GUIDE_ROUTES.atlas}><span>Infographic slots</span><strong>{infographicSlots}</strong><small>Atlas →</small></Link>
           </div>
         </section>
