@@ -346,9 +346,27 @@ rate of human correction justify it; until then it advises.
 
 Risk-tiered review depends on the verification evidence attached to a change. For user-visible agent changes, text-only CI results are often insufficient: a human reviewer cannot tell whether the agent actually tested end-to-end behavior. Two artifact types close that gap.
 
-**Screen recordings and screenshots.** When a change affects a user-visible workflow, demonstrate the relevant action and its result on the tested candidate. Attach a short recording for a sequence of interactions or a screenshot for a static state. Identify the environment and keep credentials and customer records out of the capture. [Warp’s account of review evidence](https://www.warp.dev/blog/agent-code-review-bottleneck)
+**Screen recordings and screenshots.** Walk the exact requested path in the
+running application and compare the observed behavior with the approved
+acceptance criteria. A recording can show interactions; a screenshot can show
+a static result. Bind each capture to the tested Candidate or commit,
+environment, fixture, relevant viewport or device, and verifier identity.
+Include the action performed and what the artifact demonstrates; a picture
+without that context cannot establish the claim. Keep credentials and customer
+records out of captures. [Warp's account of review evidence](https://www.warp.dev/blog/agent-code-review-bottleneck)
 
-**Merge-risk assessment.** Alongside end-to-end evidence, attach a merge-risk score to every agent pull request. The five criteria are:
+If the application cannot launch, authentication is unavailable, or the path
+cannot be reached, keep the result pending or unknown and record the blocker
+and the evidence still needed. That observation establishes neither correct
+nor defective product behavior. Keep any producer self-check distinguishable from the
+independent verifier's receipt, and reassess currentness when the Candidate or
+environment changes. The [verification contract](../04-prove/27-quality-and-evidence-architecture.md#the-verification-contract)
+owns those requirements; the [Warp verification exercise](https://www.warp.dev/learn/build-a-self-improving-software-factory/add-verification-and-merge-risk)
+provides a concrete running-application example.
+
+**Merge-risk assessment.** Alongside end-to-end evidence, attach an assessment
+for each of the five existing criteria. Show its evidence, remaining gaps,
+mitigations, and where the reviewer should focus:
 
 | Criterion | What it measures | FDLC mapping |
 | --- | --- | --- |
@@ -358,7 +376,18 @@ Risk-tiered review depends on the verification evidence attached to a change. Fo
 | Rollback cost | One-way vs. two-way door — can this change be reversed at low cost? | Release and canary ([Chapter 32](../04-prove/32-cicd-progressive-delivery-and-production-verification.md)) |
 | Error detection | How quickly would a defect in this change surface in production? | Outcomes and monitoring ([Chapter 35](../05-operate/35-observability-telemetry-and-forensics.md)) |
 
-The score routes the change to the appropriate tier (above), it does not replace the named-human approval that tier requires. A fully automated merge of a high-impact change is not permitted because the merge-risk score is high; it is permitted only when the operating domain policy explicitly allows it and a named human retains authority to revoke that permission. Source: Ben Holmes, [@BHolmesDev](https://x.com/BHolmesDev/status/2118807366250721741) (Nov 6, 2026); skill `warpdotdev/common-skills` merge-risk.
+The assessment informs the policy-owned review tier; it cannot lower a required
+gate, turn missing evidence into a pass, or authorize acceptance, merge, or
+release. A producer may assess and mitigate its own work before handoff, but
+its score remains advisory. Preserve the per-criterion findings even when a
+tool supplies an aggregate score: strong results in unrelated categories do
+not cancel an unmet hard requirement. Re-evaluate after a material change and
+apply [Chapter 7's authority and operating-domain rules](../02-design/07-governance-policy-and-risk-proportional-approval.md),
+including human merge in a first version. Sources: Ben Holmes,
+[@BHolmesDev](https://x.com/BHolmesDev/status/2118807366250721741) (Nov 6, 2026),
+and [*How to build a software factory you'll actually use*](https://www.warp.dev/blog/program-software-factory-as-code)
+(Nov 24, 2026); the latter was also supplied as an attachment. The five
+dimensions are a review aid, not a second canonical risk model.
 
 **Review iterations.** Keep the evidence for each attempt with the work order. Bring unresolved requirements, policy exceptions and decisions about release risk to the human reviewer. Measure the cost of an extra review round and how often it changes the decision before making it part of the workflow.
 

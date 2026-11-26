@@ -90,6 +90,15 @@ The canonical glossary adds aliases and narrowly defined teaching terms only.
 Metrics, durable execution, trigger admission, and feedback promotion retain
 their existing owners in chapters 8, 14, 37, and 40.
 
+The subsequent Warp course and article intake uses the same ownership rule:
+chapter 6 owns `#triage-before-implementation`; chapter 37 owns
+`#backlog-and-alert-intake-examples`; chapter 39 retains the existing
+`#evidence-artifacts-for-agent-pull-requests` and its five review-risk
+dimensions; chapter 27 links that example to its verification contract.
+Chapter 41 keeps definition revision, qualification, and activation distinct.
+The engineering-experience appendix's `#calibrate-the-first-backlog-batch`
+connects these owners in an exercise without adding another lifecycle.
+
 ## Phase 1 legacy anchors
 
 Chapter 2 keeps the following headings as concise sections or empty compatible

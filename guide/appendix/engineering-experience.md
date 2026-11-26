@@ -165,6 +165,30 @@ floor, and follow [governed learning](../06-improve/40-governed-learning.md)
 before promotion. A correction to this run does not silently modify the next
 factory version.
 
+### Calibrate the first backlog batch
+
+Before connecting a full queue, exercise a few deliberately different requests
+against one pinned configuration. Define the expected disposition first and
+keep the acceptance criteria fixed. This is a design and qualification exercise
+for your chosen implementation; the local operations companion does not connect
+an issue tracker, drive a UI, or consume monitoring alerts.
+
+| Case to exercise | Result to inspect | Canonical owner |
+| --- | --- | --- |
+| A question, then a precise change request | A supported answer for the question; bounded admitted work for the change. | [Triage](../02-design/06-intent-and-specification-engineering.md#triage-before-implementation) |
+| A feature with an unresolved product choice | A focused decision request, a recorded spec revision, and implementation bound to that revision. | [Intent and specification](../02-design/06-intent-and-specification-engineering.md#triage-before-implementation) |
+| A visible interaction and an unavailable test environment | Attributable behavior evidence for the tested Candidate; the unavailable check remains unresolved. | [Review artifacts](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md#evidence-artifacts-for-agent-pull-requests) |
+| A repeated issue event or grouped alert | Existing-work correlation, no duplicate effect, and diagnosis within the grant. | [Backlog and alert intake](../05-operate/37-control-surfaces-event-contracts-and-storage.md#backlog-and-alert-intake-examples) |
+| A proposed workflow improvement | Baseline/candidate comparison and a recorded promotion decision before activation. | [Governed learning](../06-improve/40-governed-learning.md) |
+
+Review the per-dimension risk findings, evidence gaps, human decisions, and total
+cost for the whole batch. Increase admitted volume only after the declared
+quality floor and review capacity hold; a batch of completed PRs alone does not
+justify expansion. Use the [factory-engineering practice flow](https://fdlc.ai/factory-engineering#intake-to-review)
+to rehearse these decisions, then apply them to your implementation. The staged
+teaching approach is informed by [Warp's build-your-factory course](https://www.warp.dev/learn/build-a-self-improving-software-factory/build-your-factory),
+without making its platform or workflow names FDLC requirements.
+
 ## Path A — experience Mission Control
 
 Mission Control is optional. This walkthrough follows its [README at reviewed revision eb0598123b818fcf6f0a4e9b2851839550749c8d](https://github.com/jaydubya818/MissionControl/blob/eb0598123b818fcf6f0a4e9b2851839550749c8d/README.md#quickstart) and [actual package scripts](https://github.com/jaydubya818/MissionControl/blob/eb0598123b818fcf6f0a4e9b2851839550749c8d/package.json). Requires Git, Node 20+, pnpm 9+ and a Convex development deployment; Convex may require its own account. Model, GitHub and sandbox provider credentials are not required for its deterministic demo.

@@ -32,6 +32,56 @@ it replaces or merely repeats current material.
 
 ## Reviewed additions
 
+### Workflow calibration, product decisions, and review evidence
+
+- Sources: the ten Warp Learn pages listed below and the user-supplied
+  `Pasted text(20261126-165625).txt`, titled *How to build a software factory
+  you'll actually use*. Its public source is Ben Holmes's
+  [article of the same title](https://www.warp.dev/blog/program-software-factory-as-code).
+- Source type: first-party practitioner course and worked product example.
+  The attachment reproduces the article's workflow, triage, verification,
+  and merge-risk discussion; it is not an independent second source.
+- Publication date: the article displays November 24, 2026. No publication
+  dates were observed on the reviewed lesson pages; none are inferred.
+- Access date: November 26, 2026 (UTC).
+- Decision: accept the focused additions and identity corrections below under
+  the user's continuing request to implement the FDLC updates. No new chapter,
+  lifecycle, canonical stage, schema, or platform dependency is introduced.
+- Reader problem solved: choose whether intake needs an answer or a change,
+  resolve consequential product choices before implementation, attach usable
+  user-flow evidence, and calibrate a bounded queue before increasing volume.
+- Current material replaced or corrected: chapters 39 and 41 already teach
+  Warp's five merge-risk dimensions and factory-as-code/scorer/benchmark
+  pattern. Strengthen their evidence and authority boundaries rather than
+  duplicate them. Correct chapter 41's conflation of manifest with Factory
+  Version and definition-PR merge with authorized promotion.
+- Evidence strength and limitations: these are teaching examples and vendor
+  descriptions, not independent outcome measurements or proof of FDLC
+  implementations. Do not import per-issue cost claims, cloud hosting as a
+  universal requirement, model rankings, hidden weighted scores as authority,
+  producer self-checks as independent verification, or automatic improvement
+  and release claims. No Warp factory was provisioned or qualified in this
+  review.
+
+| Reviewed primary page | Decision and canonical destination |
+| --- | --- |
+| [What is factory engineering?](https://www.warp.dev/learn/build-a-self-improving-software-factory/what-is-factory-engineering) | Existing chapters 4, 8, and 41 already distinguish product judgment, engineering the delivery system, cost, quality, and attention. Retain as corroborating instruction, not another role model. |
+| [What is a software factory?](https://www.warp.dev/learn/build-a-self-improving-software-factory/what-is-a-software-factory) | Existing chapter 41 owns inner/outer loops and evaluation. Clarify that a definition change, qualification, and activation remain separate. |
+| [Set up your factory](https://www.warp.dev/learn/build-a-self-improving-software-factory/set-up-your-factory) | Adapt the initial disabled-improvement setting into a measured pilot baseline in chapter 41. Account, hosting, model presets, and starter-app setup remain vendor examples. |
+| [Tour the factory floor](https://www.warp.dev/learn/build-a-self-improving-software-factory/tour-the-factory-floor) | Map blueprint nodes to chapter 37's versioned workflow contract, worker roles to chapter 23, and runners to chapter 17. YAML labels and separate contexts do not establish authority or verifier isolation. |
+| [Build your factory](https://www.warp.dev/learn/build-a-self-improving-software-factory/build-your-factory) | Unit overview, not a separate mechanism. Extend the engineering-experience appendix with a first-batch calibration exercise. |
+| [Hello factory](https://www.warp.dev/learn/build-a-self-improving-software-factory/hello-factory) | Begin with one observable run and explicit input/output handoffs; existing workflow and operating-exercise owners cover the mechanism. |
+| [Connect an issue backlog](https://www.warp.dev/learn/build-a-self-improving-software-factory/connect-an-issue-backlog) | Add chapter 37's concrete label-selection, identity, self-event, and deduplication example. A label proposes intake; it does not authorize issue-body instructions. |
+| [Route work with triage and specs](https://www.warp.dev/learn/build-a-self-improving-software-factory/tackle-larger-features-with-specs) | Add chapter 6's answer/change/unclear routing, researched facts versus product decisions, existing-work correlation, and specification revision binding. |
+| [Add verification and merge risk](https://www.warp.dev/learn/build-a-self-improving-software-factory/add-verification-and-merge-risk) | Strengthen chapter 39's existing review artifacts and advisory rubric; link chapter 27's exact-Candidate verification contract. A blocked check stays pending/unknown. |
+| [Close the loop with alert monitoring](https://www.warp.dev/learn/build-a-self-improving-software-factory/close-the-loop-with-alert-monitoring) | Add chapter 37's signed-envelope versus untrusted-payload distinction and alert correlation; retain chapter 39's verified-reproduction and chapter 32's release boundaries. |
+
+The appendix's new exercise is design and qualification guidance for a chosen
+implementation. It does not add issue tracking, computer use, monitoring, or
+self-improvement to the local Reference Lab. The site practice flow is also
+instructional. Any future live integration needs its own implementation,
+attributable evidence, qualification scope, and authorization.
+
 ### Small factories, supervised operation, and reusable templates
 
 - Source: user-supplied *Tiny Software Factories* lesson 1 and lesson 2

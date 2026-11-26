@@ -245,6 +245,31 @@ Everything above assumes the screen is showing the truth. That depends on how th
 
 This is the cron-and-webhook item on the control plane wish-list done properly. **Triggers, schedules, and webhooks** are the three intake shapes: a trigger is any authenticated signal that proposes work, a schedule is a trigger that fires on a clock, and a webhook is a trigger that fires when an external system reports a change. "Run every night" and "run when Linear changes" are triggers into intake; the nightly run still passes admission, and still binds to an approved workflow version.
 
+### Backlog and alert intake examples
+
+A maintainer-controlled issue label can select a small backlog batch for
+intake. Record both the issue author and the principal who applied the label;
+selection does not grant the issue body authority over tools, credentials, or
+policy. Correlate follow-ups with existing work, deduplicate delivery IDs, and
+filter the factory's own generated events to prevent feedback storms. That
+filter complements idempotency; it does not replace it. Start with a bounded
+batch and inspect its outcomes before admitting a larger queue. [Warp's backlog
+exercise](https://www.warp.dev/learn/build-a-self-improving-software-factory/connect-an-issue-backlog)
+illustrates the label-trigger pattern.
+
+For a monitoring alert, authenticate the sender and preserve the provider's
+event ID, grouped issue identity, affected release, environment, and available
+diagnostic references. Signed delivery does not make stack traces, breadcrumbs,
+request parameters, or quoted user text trusted instructions. Related alerts
+may update one investigation while their individual deliveries remain
+traceable. Admission can authorize diagnosis and preparation of a draft fix;
+production changes still need their separate policy and release authority.
+Use [verified reproduction](../06-improve/39-production-feedback-review-and-the-agentic-merge-queue.md#from-untrusted-feedback-to-a-verified-reproduction)
+before treating an alert as a confirmed defect. The [Warp alert-monitoring
+exercise](https://www.warp.dev/learn/build-a-self-improving-software-factory/close-the-loop-with-alert-monitoring)
+is an example of this intake shape, not a dependency on its monitoring or
+agent provider.
+
 ### Typed event envelopes
 
 Every event that crosses a boundary inside the factory carries a typed **event envelope**. The envelope is the contract that lets consumers deduplicate, order, verify, and route without parsing the payload. Underneath it sits **durable messaging**: the events are written to a persistent log or broker before any consumer sees them, delivered at least once, and retained long enough to replay, so a consumer that was down when the fact occurred still receives it. **Event schemas**, kept in a schema registry with advertised version ranges, define what each payload type contains and how it may evolve.
