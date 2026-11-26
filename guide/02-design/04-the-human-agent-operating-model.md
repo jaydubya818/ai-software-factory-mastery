@@ -83,6 +83,29 @@ The model has a clock. During business hours developers do the work that needs j
 
 A developer may approve a plan before leaving. The next morning the review should answer, without reconstruction from logs or chat: what was completed, what code changed and why, what tests were added or modified, which validations passed or failed, what risks and assumptions surfaced, what decisions the agents made, whether the work meets the acceptance criteria, and whether the pull request is ready to merge. The developer experience should feel like leading a high-performing team: describe the outcome, review the plan, approve execution, let the team work, be interrupted only for judgment or authorization, return to an organized review package, approve with confidence.
 
+### Human near the loop
+
+**Human-near-the-loop** is a useful informal name for supervised asynchronous
+work: the factory advances within its grant, prepares a decision packet when
+judgment or authority is required, and resumes only the work that the recorded
+decision permits. It maps to this guide's **human-on-the-loop** supervision,
+with **human-in-the-loop** decisions at explicit boundaries. A person can leave
+the active session without becoming absent from accountability.
+
+These terms describe participation in a particular action or workflow. They
+are not another maturity ladder. A documentation factory may inspect a change
+without intervention, request approval for publication, and escalate an
+ambiguous product claim to an expert in the same WorkOrder. A cron trigger
+changes when work is proposed; it does not remove any of those decisions.
+
+The practical test is whether useful work happens before and after the human
+decision without requiring the person to reconstruct the conversation. Retain
+the WorkOrder, exact Candidate, evidence, pending decision, expiry, and what
+will resume. If the Candidate or authority changes while a person is away,
+revalidate the decision's binding before acting. The [small-factory
+exercise](../appendix/engineering-experience.md#operate-a-small-factory)
+connects this operating pattern to inspectable records.
+
 ### Agent roles describe authority, not personality
 
 A role is a bundle of permissions and prohibitions. Five logical roles cover the factory; a simple workflow may run several in one runtime, but the boundaries stay explicit.

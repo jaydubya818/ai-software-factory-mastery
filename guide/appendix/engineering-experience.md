@@ -1,6 +1,6 @@
 ---
 title: "Build and run your first FDLC software factory"
-summary: "A practical engineering journey: deterministic demo, optional Mission Control walkthrough, your own stack, portable contracts, qualification evidence and a six-phase playbook."
+summary: "A practical engineering journey: deterministic API repair, small-factory operation, optional Mission Control, portable contracts, qualification evidence, and governed improvement."
 status: executable-example
 audience: [builder, architect, operator]
 last_verified: 2026-11-06
@@ -45,10 +45,10 @@ All browser identities, qualification records and results are synthetic teaching
 
 ## Path B — build with your own stack
 
-**Allow 30–60 minutes**, estimated for a developer with Node 22.13+. This is a learning estimate, not measured onboarding performance. No npm install, account, API key, model or external service is needed. [Download the standalone Reference Lab ZIP](https://fdlc.ai/downloads/fdlc-reference-lab-v1.1.0.zip) and extract it into a new folder. It includes code, contracts, protected tests and a README. No repository access is required. Inspect the [file and SHA-256 manifest](https://fdlc.ai/reference-factory/source/manifest.json) before running it.
+**Allow 30–60 minutes**, estimated for a developer with Node 22.13+. This is a learning estimate, not measured onboarding performance. No npm install, account, API key, model or external service is needed. [Download the standalone Reference Lab ZIP](https://fdlc.ai/downloads/fdlc-reference-lab-v1.2.0.zip) and extract it into a new folder. It includes code, contracts, protected tests, an operations companion, and a README. No repository access is required. Inspect the [file and SHA-256 manifest](https://fdlc.ai/reference-factory/source/manifest.json) before running it.
 
 ```sh
-cd fdlc-reference-lab-v1.1.0
+cd fdlc-reference-lab-v1.2.0
 node lab.mjs all
 node lab.mjs failed
 node lab.mjs recovery
@@ -81,6 +81,89 @@ Keep the WorkOrder and protected acceptance criteria. Replace `runAgent(dir)` wi
 For real operation, protected tests, verifier identity, policy and release credentials must be outside producer control. Separate functions and identity strings in a trusted local process are illustrative separation, **not security isolation**. A temporary directory is not a sandbox. Add the isolation, authenticated identity, resource limits, evidence retention and recovery policy your workload requires. Qualify every changed agent/harness/model/runtime configuration before routing real work to it.
 
 The [Factory Skills Starter Kit](https://fdlc.ai/factory-skills) is an optional, opinionated Codex pilot with pinned skills. It checks selected local evidence and preserves human review; it does not independently certify the result, sandbox code or establish compatibility with other harnesses. FDLC does not require it.
+
+## Operate a small factory
+
+Choose one recurring problem before adding schedules or specialist teams. For
+this exercise, keep the API-repair workload, protected AC-1/2/3, bounded producer,
+and independent verification role from Path B. The next engineering question
+is how an admitted WorkOrder survives between interactions and reaches the
+right decision owner with its evidence intact.
+
+**Small describes scope.** A single repository, one permitted change class,
+one accountable owner, and a modest operating budget make a useful starting
+point. They retain the same separation of execution, verification, and authority
+as a larger factory. Adding a chat panel, a cron prompt, or several agents does
+not establish those properties by itself.
+
+### Run the local operations companion
+
+From the extracted Reference Lab v1.2.0 directory, use a new directory for this
+exercise:
+
+```sh
+node operations.mjs demo ./small-factory-demo
+node operations.mjs status ./small-factory-demo
+```
+
+The companion returns JSON and retains local work records so a later process
+can inspect them. Its explicit operations cover event intake, duplicate
+requests, one-item execution, Candidate-bound review, cancellation, and
+reconciliation. Deliberate process-crash drills make recovery inspectable. Read
+the included README and [Reference Lab](https://fdlc.ai/lab) for the individual
+commands, including the exact Candidate and evidence digests required for a
+review decision.
+
+This is a trusted local scripted fixture. It runs no live model, provisions no
+scheduler or hosted worker, and provides no isolation between security
+principals. Its accepted result is a local disposition, with no production
+release. The saved records and controlled process failures establish only the
+behaviors the companion exercises; host disaster recovery and production
+reliability remain separate qualification work.
+
+Use the following questions when inspecting the exercise and designing its
+production counterpart:
+
+| Operating question | Evidence to inspect |
+| --- | --- |
+| What initiated this work? | Trigger identity, occurrence or request ID, admission decision, and resulting WorkOrder. |
+| Did a duplicate create more work? | The same logical request resolves to its existing work; no duplicate effect is accepted. |
+| What survives a new session? | Persisted work and evidence can be read after the initiating command exits. |
+| What requires the human? | A decision packet names the exact Candidate, criteria, risk, requested authority, and what resumes. |
+| What happens after a failure? | A bounded new Attempt retains the failed evidence and re-verifies the corrected Candidate. |
+| What is actually complete? | Execution, verification, acceptance, and release remain separate dispositions. |
+
+The [Factory Definition builder](https://fdlc.ai/start) also offers a separate
+**Operating Profile draft** for the owner, trigger/source/timezone, shared
+attempt/time/spend/concurrency bounds, duplicate/effect policy, and overdue
+review handling. This is a design worksheet. Exporting it does not register a
+task, start a scheduler, activate a factory, or alter the canonical v0.2
+contract. Pair the draft with the [trigger admission contract](../05-operate/37-control-surfaces-event-contracts-and-storage.md#underneath-the-surface-triggers-are-intake-not-authority)
+before implementing real recurring execution.
+
+### Participation, attention, and improvement
+
+The operator can be [near the loop](../02-design/04-the-human-agent-operating-model.md#human-near-the-loop)
+while work advances and return for a specific decision. A production system
+also needs an owner for expired approvals, unresolved failures, unavailable
+dependencies, exhausted budgets, and intervention. The [attention contract](../02-design/04-the-human-agent-operating-model.md#the-operator-attention-contract)
+defines useful interruptions; [chapter 14](../03-build/14-durable-execution.md)
+defines crash recovery and uncertain external effects. Continuing after a
+browser closes is a different property from surviving a worker crash or a host
+failure.
+
+Measure the workload with the [existing scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard):
+accepted outcomes over a stated window, failure and recovery rates, human
+touchpoints per accepted outcome, and total cost per accepted outcome. Include
+failed attempts, summaries, delegation, verification, and recovery in the cost
+numerator; show the denominator and missing measurements. A busy agent, a
+positive feedback click, and an accepted result mean different things.
+
+Capture feedback against the exact WorkOrder, Candidate, and Factory Version.
+Use it to propose a change, compare against the same workload and quality
+floor, and follow [governed learning](../06-improve/40-governed-learning.md)
+before promotion. A correction to this run does not silently modify the next
+factory version.
 
 ## Path A — experience Mission Control
 
@@ -146,6 +229,33 @@ Inspect the actual [Factory Manifest schema](https://fdlc.ai/corpus-artifacts/co
 
 **Two illustrative bindings, one outcome contract:** Factory A could use a local single-agent harness and hosted model; Factory B could use containerized specialized agents and a self-hosted model. Both must preserve AC-1/2/3, protected tests, exact-candidate evidence, bounded recovery and explicit authority. Their agent, harness, model, runtime and context identities differ, so their Factory Versions and qualification evidence differ. These are architecture examples, not implemented integrations or qualified adapters. Portability requires documented interfaces and demonstrated compatibility; it does not promise plug-and-play substitution.
 
+## From template to authorized operation
+
+The TSF language of an empty and a running factory can help explain reuse.
+Map it to the existing FDLC records and decisions rather than treating it as
+another governing lifecycle:
+
+| Teaching concept | FDLC meaning | What it does not establish |
+| --- | --- | --- |
+| Reusable factory template | Authoring input: proposed workflows, capabilities, context, checks, and operating defaults. | An approved problem, qualification, or execution authority. |
+| Specialized Factory Definition | A defined workload, outcome, owner, acceptance criteria, dependencies, constraints, and intended composition. | That the implementation works or is eligible for a particular environment. |
+| Qualified Factory Version | Exact immutable composition with attributable qualification evidence and a stated operating scope. | Activation, readiness at this moment, or permission for every WorkOrder. |
+| Authorized deployment or activation | An accountable decision to operate an eligible version in a specified environment and policy envelope. | Automatic admission of all incoming triggers or permission to change its own boundaries. |
+| Admitted WorkOrder and Attempts | Bounded execution under the applicable grant and frozen contract. | Verification, acceptance, merge, or release merely because an Attempt completed. |
+
+These are explanatory mappings, not additional schema objects. The Reference
+Lab's illustrative JSON remains distinct from the [canonical specification](https://fdlc.ai/specification).
+An implementation may package these concerns differently while retaining
+their identities and decisions. No agent, harness, model, provider, or Mission
+Control dependency is implied.
+
+When a local improvement should become reusable, follow [template backports
+and upgrades](../06-improve/41-meta-loops-and-the-closed-loop-factory.md#template-backports-and-running-factory-upgrades).
+Future instances may select a revised template; existing factories need an
+explicit upgrade decision. Keep in-flight Attempts bound to their admitted
+version and retain the change, comparison evidence, decision, and restoration
+plan.
+
 ## Qualification
 
 Run `node lab.mjs --report > qualification.json` from the extracted Lab folder. Inspect the generated report, not a copied green score:
@@ -158,6 +268,11 @@ Run `node lab.mjs --report > qualification.json` from the extracted Lab folder. 
 - **Operating domain:** trusted deterministic local fixture only. `productionQualified` remains false; the report grants no production operating domain or activation.
 
 This is an illustrative report with real local test results. It is not the canonical Qualification Record payload. A real assessment needs representative functional and failure cases, isolation and policy tests, recovery, context sufficiency, evidence completeness, exact model/harness/runtime compatibility, costs, reliability denominators/windows and operational limitations. UNKNOWN hard requirements cannot be silently treated as passing. See [chapter 29](../04-prove/29-evaluation-engineering.md), [chapter 30](../04-prove/30-evals-as-factory-assets.md) and [chapter 8's scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard).
+
+The operations companion retains its own work and review records in the
+directory supplied to `operations.mjs`. Inspect them with `status`; they are
+separate from the eight-scenario `lab.mjs` qualification report. The companion
+does not expand that report's production operating domain.
 
 Run the included contract and negative-control suite from the extracted Lab folder:
 
@@ -194,6 +309,33 @@ Use the existing [system-design worksheet](./factory-system-design-playbook.md) 
 ### Improve
 
 **Objective / prerequisite:** retained production or evaluation evidence. **Activities:** analyze failure, propose a context/workflow/capability correction, independently evaluate, qualify a new Version and seek promotion authority. **Deliverable:** Governed Factory Evolution. **Acceptance:** comparison uses the same workload; earlier evidence is preserved; promotion is explicit and reversible. **Example:** preserve failed API evidence before correction and re-verification. **Common failure:** a passing proposal changing its own policy or activation. Read [governed learning](../06-improve/40-governed-learning.md).
+
+## Tiny Software Factories crosswalk
+
+The user-supplied *Tiny Software Factories* transcripts reviewed on November
+26, 2026 emphasize small problem scope, asynchronous work, configurable agents,
+and reusable factory designs. FDLC adapts those teaching ideas to its existing
+contracts. The transcripts are practitioner demonstrations, not evidence of
+FDLC implementation maturity or comparative outcomes. No original video URLs
+or publication dates were supplied, so none are inferred here.
+
+| Source idea and location | FDLC adaptation and canonical owner |
+| --- | --- |
+| Small and empty factories; lesson 1, chapters 2–5, 2:12–9:07; lesson 2, chapters 2–4, 3:08–8:03 | Begin with one workload and specialize reusable authoring inputs. Use the [mapping above](#from-template-to-authorized-operation). |
+| Human near the loop; in/near/out transcript, chapters 2–3, 2:07–8:30 | [Supervise asynchronous work and decide at explicit boundaries](../02-design/04-the-human-agent-operating-model.md#human-near-the-loop). Participation varies by action; it is not a new maturity ladder. |
+| Context, model, prompts, and tools; lesson 1, chapter 7, 9:56–12:39 | Agent configuration fits within [the larger execution contract](../03-build/18-agent-architecture.md#the-execution-manifest-is-frozen-before-work-begins), including policy, budgets, state, and verification. |
+| Scheduled prompts; lesson 1, chapter 10, 16:10–18:14 | [Triggers propose work for admission](../05-operate/37-control-surfaces-event-contracts-and-storage.md#underneath-the-surface-triggers-are-intake-not-authority). A schedule carries neither autonomy nor publication permission. |
+| Tool summaries and agentic access parity; lesson 2, chapters 5 and 7, 8:12–9:54 and 12:31–14:44 | Use [authorized action parity](../05-operate/37-control-surfaces-event-contracts-and-storage.md#authorized-action-parity); summaries link to authoritative evidence. |
+| Bounded subagents and persistent factory owners; lesson 2, chapter 6, 10:02–12:21; level 4, chapter 9, 19:08–23:21 | Distinguish [temporary delegation from persistent roles](../03-build/23-agent-and-loop-engineering.md#persistent-roles-and-temporary-subagents); retain accountable human ownership. |
+| Metafactory templates and backports; level 4, chapters 5–9, 8:38–23:21 | Apply [ordinary governed changes to factory designs and deployments](../06-improve/41-meta-loops-and-the-closed-loop-factory.md#template-backports-and-running-factory-upgrades). Template publication and live upgrade are separate decisions. |
+| Factory mailboxes; level 4, chapter 10, 23:45–25:38 | Use [bounded collaboration contracts](../03-build/23-agent-and-loop-engineering.md#collaboration-contracts) with authenticated intake, deduplication, recipient policy, and explicit result semantics. |
+| Feedback and continuously active agents; in/near/out transcript, 11:19–11:54 and 20:47–21:50 | Measure [accepted outcomes and attention](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard), and qualify improvements through [chapter 40](../06-improve/40-governed-learning.md). Feedback alone does not change a version. |
+
+The in/near/out material was supplied as `Pasted text (2)(6).txt`; the level-4
+material as `Pasted text(20261126-160441).txt`. Lesson 3 was not supplied, and
+the lesson-1 and level-4 excerpts end during transitions. The adaptation makes
+no claim that a fixed percentage of engineering work can be automated, that
+every agent outperforms a person, or that more agents means more value.
 
 ## Your next engineering step
 

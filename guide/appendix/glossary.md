@@ -192,6 +192,17 @@ through explicit handoffs, shared typed state, and bounded authority per
 agent. Every extra agent is tokens, latency, and failure surface; the guide's
 rule is one agent until a boundary demands a second (Chapter 23).
 
+**Temporary subagent** — A delegate assigned one bounded unit of work under a
+parent's authority and reserved budget. Its result, evidence, costs, and parent
+linkage survive the assignment; the assignment itself ends on completion,
+failure, cancellation, or deadline (Chapter 23).
+
+**Persistent specialist role** — A versioned operational responsibility that
+continues across assignments and process lifetimes, with an accountable human
+or team, durable work ownership, approved profile, and aggregate budget.
+Persistence does not require continuous model inference or confer authority
+over future WorkOrders (Chapter 23).
+
 **Model** — An inference engine that supplies reasoning, generation,
 classification, extraction, or other model intelligence. A Model is not an
 Agent, Harness, Runtime, or Factory.
@@ -462,6 +473,19 @@ grant itself authority.
 **Factory Configuration** — A versioned policy envelope connecting a repository
 to approved workflows, executors, environments, tools, verifiers, budgets, risk
 boundaries, and recovery limits.
+
+**Factory template** — Reusable authoring input for a Factory Definition,
+including operating defaults and capability choices. A derived factory still
+needs specialization, an exact version, qualification, and explicit activation
+for its intended use. This teaching term introduces no additional canonical
+wire-format object; changing a template does not change existing running
+factories (Chapter 41).
+
+**Metafactory** — An informal architectural pattern in which governed work
+creates or maintains reusable factory designs and prepares upgrades to
+derived factories. Factory changes remain WorkOrders with evidence and
+authorized promotion. The pattern adds no authority, mandatory agent topology,
+or new FDLC lifecycle (Chapter 41).
 
 **Factory Version** — An immutable, qualified composition used to govern a
 class of execution. It binds exact Work Graph, Agent Definition, Harness
@@ -1169,6 +1193,12 @@ presence is useful only when the decision and evidence are explicit.
 **Human-on-the-loop** — An operating mode in which bounded work proceeds under
 policy while a person supervises outcomes and handles exceptions. Supervision
 does not mean reading every agent action.
+
+**Human-near-the-loop** — An informal alias for supervised asynchronous
+operation: bounded work advances while the person is away, and a decision
+packet requests judgment or authority when needed. It maps to human-on-the-loop
+supervision with human-in-the-loop decisions at explicit boundaries; it is
+not a separate autonomy level (Chapter 4).
 
 **Human-out-of-the-loop** — An operating mode in which one bounded workflow
 instance can complete without an in-run human decision. Prior human policy,

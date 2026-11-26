@@ -32,6 +32,46 @@ it replaces or merely repeats current material.
 
 ## Reviewed additions
 
+### Small factories, supervised operation, and reusable templates
+
+- Source: user-supplied *Tiny Software Factories* lesson 1 and lesson 2
+  transcripts; `Pasted text (2)(6).txt` (in-loop, near-loop, and out-of-loop
+  operation); `Pasted text(20261126-160441).txt` (TSF level 4, metafactories).
+- Source type: practitioner teaching transcripts with narrated demonstrations.
+  Original video URLs, publication dates, and independently inspected source
+  implementations were not supplied. Lesson 3 was not supplied; lesson 1 and
+  the level-4 transcript end during transitions.
+- Access date: 2026-11-26, America/Chicago.
+- Decision: accept the bounded additions below under the user's explicit
+  request to implement the reviewed FDLC updates. Preserve canonical owners,
+  existing lifecycle models, and implementation/evidence status.
+- Reader problem solved: move from understanding a single factory run to
+  operating recurring work, making asynchronous decisions, distinguishing
+  persistent roles from temporary delegation, and maintaining reusable
+  factory designs without changing active executions silently.
+- Current material replaced or corrected: no chapter or governing model is
+  replaced. The source terms are translated into existing FDLC concepts; the
+  practical exercise extends the existing engineering-experience appendix.
+- Evidence strength and limitations: the transcripts provide design prompts,
+  not comparative performance or production reliability evidence. Reject
+  universal claims about agents outperforming people, percentages of work
+  that can be automated, agent count as success, cron as autonomy, blanket
+  human/agent privilege parity, and feedback as automatic improvement.
+
+| Accepted teaching addition | Canonical owner | Source location |
+| --- | --- | --- |
+| Human-near-the-loop as an explanatory alias for supervised asynchronous work; participation varies by action | Chapter 4; glossary | In/near/out transcript, chapters 2–3, 2:07–8:30; TSF lesson 1, chapter 2, 2:50–3:34 |
+| Small-factory operating exercise and template-to-operation crosswalk | Engineering experience appendix, linking existing owners | TSF lesson 1, chapters 2–5, 2:12–9:07; lesson 2, chapters 2–4, 3:08–8:03 |
+| Persistent specialist roles versus temporary subagents | Chapter 23; glossary | TSF lesson 2, chapter 6, 10:02–12:21; level 4, chapters 3–4 and 9, 4:02–8:27 and 19:08–23:21 |
+| Authorized action parity with decision and policy boundaries intact | Chapter 37; existing glossary definition | TSF lesson 1, chapters 6–7, 9:15–12:39; level 4, chapter 9, 19:49–21:13 |
+| Template backports, qualified versions, explicit upgrades, and accountable ownership | Chapter 41; glossary | TSF level 4, chapters 5–10, 8:38–25:38 |
+
+The appendix's source crosswalk records what each accepted idea means in FDLC.
+Executable companion claims require inspection and test evidence for that
+companion; the transcripts supply none of that evidence. Existing chapters 8,
+14, 35, 37, and 40 remain the owners of outcome metrics, durable recovery,
+trace provenance, trigger admission, and governed feedback.
+
 ### Agent platforms and governed knowledge curation
 
 Reviewed November 22 in US Central. Accept the sources as architectural proposals and first-party accounts. They supply no comparative outcome measurements. The operating contracts, recovery examples, and acceptance decisions in the Guide are FDLC's interpretation.

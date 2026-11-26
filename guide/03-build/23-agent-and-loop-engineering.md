@@ -149,6 +149,33 @@ The last row is the one that most often justifies a second agent, and it is the 
 >
 > *Multi-agent is a means, not the product.*
 
+### Persistent roles and temporary subagents
+
+A **temporary subagent** receives one bounded Delegation Record, returns a
+result, and ends that assignment. A **persistent specialist role** retains a
+versioned responsibility across assignments: for example, monitoring the
+documentation factory's drift and proposing maintenance WorkOrders. Its
+identity, approved profile, work ownership, relevant state, and handoff history
+must survive the process that last performed the role. Persistent does not
+mean a model must run continuously or keep one conversation forever.
+
+| Design question | Temporary subagent | Persistent specialist role |
+| --- | --- | --- |
+| What owns its work? | A parent Task or Attempt and bounded delegation | An accountable human/team and a versioned responsibility |
+| What survives execution? | Result, evidence, costs, and parent linkage | Those records plus pending responsibilities and authorized subscriptions |
+| How does work start? | An admitted delegation | An admitted WorkOrder arising from an authorized event or request |
+| What limits spending? | Reserved parent budget and child limits | Per-assignment limits plus an aggregate operating budget |
+| How does it stop? | Completion, failure, cancellation, or deadline | Those assignment boundaries plus suspension, reassignment, or retirement of the role |
+
+A lead agent can summarize a team's state and route requests. A factory
+maintenance agent can prepare configuration changes. Neither role acquires
+human approval rights, verifier authority, or permission to create more
+persistent roles merely because it has a management title. Adding a role
+changes the operating composition and requires the corresponding qualification
+and activation decision. One owner agent per factory is an optional topology;
+the accountable human owner remains explicit. [Chapter 41](../06-improve/41-meta-loops-and-the-closed-loop-factory.md#template-backports-and-running-factory-upgrades)
+applies these boundaries to reusable templates and deployed factories.
+
 ### Topologies: when several agents earn their cost
 
 Agent count is an architecture cost to justify, not a maturity signal. Multi-agent designs can decompose large work and add useful independent critique; they also multiply state, context, cost, attack surface, correlated error, handoff ambiguity, and partial failure. Luke's taxonomy gives the five primitives every framework is built from: **delegation** (one agent spawns another and gets a result back; the simplest and most common), **creator-verifier** (a fresh agent with fresh context checks the work, because the implementer has a cost bias toward believing its own code works, which is also why humans do code review), **direct communication** (agents message each other without a coordinator; state fragments and there is no source of truth, so it is hard to get right), **negotiation** (agents contend over a shared resource such as the same API or the same region of the codebase; best when there is a positive-sum trade), and **broadcast** (one agent sends shared constraints or context to many; unglamorous but essential for coherence over long runs).

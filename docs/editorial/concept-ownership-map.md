@@ -69,6 +69,27 @@ No detail view is another canonical top-level model.
 | Explanation and mastery | Chapter 43 and Architecture Communication appendix | Homepage and Chapter 2 | Synthesize only | Product owner |
 | Future direction | Chapter 44 | Research canon | Label predictions and open questions | Product owner |
 
+## November 2026 small-factory extension
+
+The accepted Tiny Software Factories intake extends existing owners. No chapter,
+stage, record state, or top-level model is replaced. The engineering-experience
+appendix owns the integrated learning exercise and the source-to-FDLC crosswalk;
+it links to the mechanisms below rather than teaching another architecture.
+
+| Addition | Canonical location |
+| --- | --- |
+| Human-near-the-loop alias and participation boundaries | Chapter 4, `#human-near-the-loop` |
+| Persistent roles and temporary subagents | Chapter 23, `#persistent-roles-and-temporary-subagents` |
+| Authorized action parity | Chapter 37, `#authorized-action-parity` |
+| Template backports and controlled upgrades | Chapter 41, `#template-backports-and-running-factory-upgrades` |
+| Small-factory operations exercise | Engineering experience appendix, `#operate-a-small-factory` |
+| Template, Definition, Version, and activation crosswalk | Engineering experience appendix, `#from-template-to-authorized-operation` |
+| Transcript provenance and adaptation decisions | Engineering experience appendix, `#tiny-software-factories-crosswalk`; research intake |
+
+The canonical glossary adds aliases and narrowly defined teaching terms only.
+Metrics, durable execution, trigger admission, and feedback promotion retain
+their existing owners in chapters 8, 14, 37, and 40.
+
 ## Phase 1 legacy anchors
 
 Chapter 2 keeps the following headings as concise sections or empty compatible

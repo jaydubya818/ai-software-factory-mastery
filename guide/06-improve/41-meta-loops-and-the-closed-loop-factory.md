@@ -424,6 +424,47 @@ flowchart LR
     G -->|"new maintenance loop"| W
 ```
 
+### Template backports and running factory upgrades
+
+A **factory template** is a reusable authoring starting point for a Factory
+Definition: workflows, capability choices, context policies, verification
+requirements, and operating defaults. The informal **metafactory** pattern
+applies ordinary governed engineering to these designs and the factories
+derived from them. It adds no authority and is not a new FDLC lifecycle or a
+claim of recursive model improvement. Its output is a reviewable change to a
+defined factory artifact, followed by qualification and an authorized rollout.
+
+Separate template maintenance from running-factory maintenance. A template
+maintainer proposes reusable changes. A persistent factory maintenance role
+tracks one or more deployments, detects drift, and prepares upgrade
+WorkOrders. The accountable human or team owns suitability, budget, risk, and
+activation in both cases. The Agent Factory still supplies reusable
+capabilities; template management does not replace that supply chain.
+
+A useful correction in one factory may be **backported to a template** only
+after its scope is reviewed. Remove tenant data, secrets, local assumptions,
+and unnecessary permissions; determine which other workloads should benefit;
+then evaluate the proposed reusable version. Preserve the original change,
+reason, evidence, decision, and dependency identities. A local preference is
+not automatically an organization-wide default.
+
+| Change | Required distinction |
+| --- | --- |
+| Publish a revised template | New factories may select it; existing instances are not silently changed. |
+| Specialize a Factory Definition | Record the intended workload and local constraints; defaults are proposals until reviewed. |
+| Qualify a new Factory Version | Evaluate the exact composition and affected workload; qualification does not activate it. |
+| Upgrade a running factory | Name the current and target versions, compatibility checks, migration, rollout owner, observation window, and restoration plan. |
+| Handle in-flight work | Keep each Attempt pinned to its admitted composition; drain, finish, or explicitly cancel and re-admit work under policy. |
+| Restore a prior version | Check data and external-effect compatibility; reverting configuration alone may not undo a migration or publication. |
+
+Cross-factory requests use the [collaboration contract](../03-build/23-agent-and-loop-engineering.md#collaboration-contracts)
+and [event intake boundary](../05-operate/37-control-surfaces-event-contracts-and-storage.md#underneath-the-surface-triggers-are-intake-not-authority).
+The recipient authenticates the sender, deduplicates the request, checks its
+own authority, and admits a WorkOrder before acting. A mailbox receipt is not
+work acceptance, execution completion, or verified success. Start with one
+useful factory before building a portfolio-management system; reuse should
+reduce measured operating effort rather than multiply agent coordination.
+
 ### Scope: personal fit versus organizational truth
 
 Corrections occur at different scopes. "Use this tone in my draft" is a

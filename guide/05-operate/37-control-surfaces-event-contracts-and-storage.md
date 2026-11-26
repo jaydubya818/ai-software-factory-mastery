@@ -213,6 +213,32 @@ Every normalized `IntakeRequest` preserves the authenticated channel principal a
 
 Voice and forwarded content need an extra rule because transformation can change meaning. A low-confidence transcript, ambiguous identity, or consequential request must be confirmed against the normalized intent before planning or action. An outbound response carries the same correlation identity and reports the authoritative state—received, awaiting clarification, awaiting approval, executing, blocked, completed, or rejected—rather than inventing a channel-specific status. Adding a channel is complete only when the same request, denial, approval, progress, accessibility, and recovery semantics work through it and appear in the shared control-plane record.
 
+### Authorized action parity
+
+**Authorized action parity** gives UI, CLI, API, and agent tools access to the
+same governed operation contracts for the outcomes each caller may perform.
+It does not require every caller to hold the same privileges. A missing agent
+tool can be an interface gap; a human-only approval can be an intentional
+authority boundary. Record the distinction in the capability map instead of
+silently adding a more privileged route.
+
+For a small factory, an agent may inspect its queue, produce an unpublished
+Candidate, prepare a schedule change, or request a different approved model
+route. The gateway still checks identity, scope, current policy, budget, and
+the operation's approval requirements. Changing display preferences does not
+authorize changing verifier criteria. A request to enable a tool does not grant
+its permissions. A request for a higher spending limit does not raise the
+limit. Configuration proposals enter the normal change process when they alter
+the qualified composition or authority envelope.
+
+Human-readable tool summaries help a reviewer choose which records to inspect.
+Link each summary to the exact calls, receipts, errors, Candidate and evidence
+it summarizes, with uncertainty visible. The summary cannot replace those
+records or turn a proposed action into a verified effect. Keep the
+[attention contract](../02-design/04-the-human-agent-operating-model.md#the-operator-attention-contract)
+and [outcome scorecard](../02-design/08-economics-metrics-and-human-attention.md#factory-performance-scorecard)
+as the measures of whether this interface makes operation easier.
+
 ### Underneath the surface: triggers are intake, not authority
 
 Everything above assumes the screen is showing the truth. That depends on how the factory ingests the world. Schedules, webhooks, messages, API calls, and repository events all create or update *proposed* work through an intake path that is authenticated and idempotent. None of them starts execution on their own. **Admission** then verifies the current owner, the scope, the applicable policy, the risk class, readiness (is the environment and configuration present?), and budget before anything runs. A webhook is a claim from a provider about its own state. It may be forged, replayed, or incomplete, so the factory treats it as intake and lets the control plane decide.
