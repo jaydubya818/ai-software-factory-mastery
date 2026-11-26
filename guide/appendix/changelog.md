@@ -14,6 +14,32 @@ Material changes to scope, terminology, maturity, architecture, and review
 status are recorded here. Minor punctuation and formatting corrections may be
 grouped.
 
+## 2026-11-26 — Small factories and controlled reuse
+
+Extended the [engineering experience](./engineering-experience.md#operate-a-small-factory)
+with the Reference Lab v1.2.0 local operations companion, small-factory
+operating questions, a template-to-operation mapping, and a
+source crosswalk for the supplied Tiny Software Factories transcripts. Added
+focused guidance on [human-near-the-loop participation](../02-design/04-the-human-agent-operating-model.md#human-near-the-loop),
+[persistent roles and temporary subagents](../03-build/23-agent-and-loop-engineering.md#persistent-roles-and-temporary-subagents),
+[authorized action parity](../05-operate/37-control-surfaces-event-contracts-and-storage.md#authorized-action-parity),
+and [template backports and controlled upgrades](../06-improve/41-meta-loops-and-the-closed-loop-factory.md#template-backports-and-running-factory-upgrades).
+The glossary maps aliases into existing concepts. Existing lifecycle models,
+WorkOrder semantics, and Mission Control evidence assessments remain intact;
+the additions do not establish production qualification or an autonomous
+operating domain.
+
+The follow-up Warp course and article review adds [triage before
+implementation](../02-design/06-intent-and-specification-engineering.md#triage-before-implementation),
+[backlog and alert intake examples](../05-operate/37-control-surfaces-event-contracts-and-storage.md#backlog-and-alert-intake-examples),
+and a [first-batch calibration exercise](./engineering-experience.md#calibrate-the-first-backlog-batch).
+Strengthened the existing review-artifact and merge-risk guidance with
+Candidate/environment binding, pending or unknown results for blocked checks,
+and advisory producer assessments. Corrected chapter 41's manifest/Version
+and merge/promotion conflations. The research intake records all ten primary
+course URLs, the supplied article, attribution, and the limitations of their
+teaching examples.
+
 ## November 2026 — Agent platforms and governed knowledge
 
 Added the [platform authority map](../03-build/13-control-plane-orchestrator-and-execution-plane.md#agent-platform-pillars-and-factory-authority), the [knowledge-curation contract](../03-build/19-data-knowledge-and-semantic-engineering.md#from-knowledge-discovery-to-governed-knowledge-curation) and the [governed improvement diagram](../06-improve/40-governed-learning.md#governed-knowledge-and-agent-improvement-loop). Chapters 7, 14–17, 20, 26, 29–30, 33, 35, 37 and 41 apply them to execution, measurement and decisions. Chapter 44 identifies evidence that could test the [configurable platform hypothesis](../06-improve/44-where-this-is-going.md#agent-platforms-as-configurable-application-infrastructure).

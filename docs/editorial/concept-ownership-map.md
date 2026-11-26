@@ -69,6 +69,36 @@ No detail view is another canonical top-level model.
 | Explanation and mastery | Chapter 43 and Architecture Communication appendix | Homepage and Chapter 2 | Synthesize only | Product owner |
 | Future direction | Chapter 44 | Research canon | Label predictions and open questions | Product owner |
 
+## November 2026 small-factory extension
+
+The accepted Tiny Software Factories intake extends existing owners. No chapter,
+stage, record state, or top-level model is replaced. The engineering-experience
+appendix owns the integrated learning exercise and the source-to-FDLC crosswalk;
+it links to the mechanisms below rather than teaching another architecture.
+
+| Addition | Canonical location |
+| --- | --- |
+| Human-near-the-loop alias and participation boundaries | Chapter 4, `#human-near-the-loop` |
+| Persistent roles and temporary subagents | Chapter 23, `#persistent-roles-and-temporary-subagents` |
+| Authorized action parity | Chapter 37, `#authorized-action-parity` |
+| Template backports and controlled upgrades | Chapter 41, `#template-backports-and-running-factory-upgrades` |
+| Small-factory operations exercise | Engineering experience appendix, `#operate-a-small-factory` |
+| Template, Definition, Version, and activation crosswalk | Engineering experience appendix, `#from-template-to-authorized-operation` |
+| Transcript provenance and adaptation decisions | Engineering experience appendix, `#tiny-software-factories-crosswalk`; research intake |
+
+The canonical glossary adds aliases and narrowly defined teaching terms only.
+Metrics, durable execution, trigger admission, and feedback promotion retain
+their existing owners in chapters 8, 14, 37, and 40.
+
+The subsequent Warp course and article intake uses the same ownership rule:
+chapter 6 owns `#triage-before-implementation`; chapter 37 owns
+`#backlog-and-alert-intake-examples`; chapter 39 retains the existing
+`#evidence-artifacts-for-agent-pull-requests` and its five review-risk
+dimensions; chapter 27 links that example to its verification contract.
+Chapter 41 keeps definition revision, qualification, and activation distinct.
+The engineering-experience appendix's `#calibrate-the-first-backlog-batch`
+connects these owners in an exercise without adding another lifecycle.
+
 ## Phase 1 legacy anchors
 
 Chapter 2 keeps the following headings as concise sections or empty compatible

@@ -189,6 +189,39 @@ Automated analysis, including an LLM acting as critic, may propose findings. Bus
 
 LLMs are good ambiguity critics and bad requirement authors, because they invent implied requirements with the same fluency they use to find missing ones. Preserve provenance: distinguish stakeholder statements, policy-derived constraints, agent-proposed assumptions, and human-approved decisions. A specification that cannot say where each line came from cannot say which lines a human actually agreed to.
 
+### Triage before implementation
+
+An incoming request may need an answer, a change, or clarification. Preserve
+the request and its source links, inspect the relevant repository and existing
+work, then state which outcome is being requested. This is an intake decision
+within the existing value stream, not another WorkOrder lifecycle.
+
+| Request disposition | Next action | What remains required |
+| --- | --- | --- |
+| Answer only | Return a supported answer with its limits. | Do not turn a question into an unsolicited code change. |
+| Bounded change with resolved behavior | Propose the smallest Plan and verification contract needed for the risk. | Ordinary admission, scope, budget, and decision rights still apply. |
+| Change with open product choices | Resolve the consequential choices and record a specification revision. | Bind implementation to the approved revision; approval does not itself dispatch work. |
+| Goal still unclear | Ask the smallest set of questions that changes the decision. | Keep unresolved assumptions visible and withhold implementation authority. |
+
+Separate missing facts from missing decisions. An agent can investigate where
+a component lives or which interface already exists. The product owner decides
+what behavior users should get; a tradeoff about migration, architecture, or
+risk goes to its accountable owner. Batch related open questions after doing
+the available research, and explain the consequence of each choice. For a
+bulk action, for example, settle its scope, treatment of excluded items, and
+reversal behavior before selecting a control or writing code.
+
+For a follow-up, correlate the request with the existing issue, WorkOrder,
+branch, and pull request before proposing parallel work. Retain the previous
+specification and decision; record the revised scope and acceptance criteria,
+then apply [baseline and change control](#baseline-and-change-control). A
+different channel or a new message does not silently create a fresh budget or
+reset an existing approval.
+
+This adapts the triage-and-spec exercise in [Warp's course](https://www.warp.dev/learn/build-a-self-improving-software-factory/tackle-larger-features-with-specs)
+and the supplied [worked article](https://www.warp.dev/blog/program-software-factory-as-code)
+to FDLC's existing intent, Plan, and authority contracts.
+
 ### The Planning layer and independent review
 
 Once a Mission exists, agents investigate the environment and propose a **Plan**. A plan that is fit for review contains: current-state understanding; the relevant code and architecture; the proposed changes; dependencies; risks; the test strategy; the rollback strategy; estimated cost and complexity; and the questions that require human judgment. That last item is the one most often missing, and it is the most valuable, because a plan that raises no questions is either trivial or hiding its assumptions.

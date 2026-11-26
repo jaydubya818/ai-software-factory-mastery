@@ -18,6 +18,8 @@ For enterprise architecture and adoption, read [Enterprise multi-factory softwar
 
 For a practical learning path, use [Build and run your first FDLC software factory](./appendix/engineering-experience.md): browser demo, executable API repair, your own stack, optional Mission Control, contracts, qualification and improvement.
 
+Then [operate a small factory](./appendix/engineering-experience.md#operate-a-small-factory): follow recurring work into a decision queue, preserve evidence across sessions, and distinguish reusable templates from authorized operation. The [Tiny Software Factories crosswalk](./appendix/engineering-experience.md#tiny-software-factories-crosswalk) maps the supplied teaching patterns to existing FDLC responsibilities.
+
 ## The factory in one line, stage by stage
 
 Click a stage for a concise contract brief, then follow its links to the

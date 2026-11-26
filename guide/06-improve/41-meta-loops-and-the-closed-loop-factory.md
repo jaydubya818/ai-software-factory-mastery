@@ -4,7 +4,7 @@ part: improve
 chapter: 41
 summary: "How a factory defined as code harvests corrections, evaluates its own proposed changes, and promotes them by action class without self-authorizing."
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [closed-loop-factory, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder, factory-flywheel]
+infographics: [correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder, factory-flywheel]
 ---
 
 # 41. Meta-loops and the closed-loop factory
@@ -33,12 +33,16 @@ share of agent pull requests at this cost per pull request, routing across
 these models, with these skills"), version control with rollback, branching,
 approvals, and history, and the property the rest of the loop depends on:
 the factory becomes instantiable and testable, and an agent can propose a
-diff to it. In this guide's terms the manifest is the Factory Version of
-[Chapter 11](../03-build/11-the-agent-factory.md) written as a file, and the
-metrics it baselines (pull-request throughput, average cost per pull
-request, automation percentage as average human touchpoints per pull request,
-savings over human work) are the inner-loop economics of
-[Chapter 8](../02-design/08-economics-metrics-and-human-attention.md).
+diff to it. In FDLC, these files are versioned authoring inputs. A Factory
+Version identifies the exact manifest and composition digests. Qualification
+determines the supported scope; activation requires its own authorization.
+A file named `factory.yaml` does not establish those properties by itself.
+[Chapter 11](../03-build/11-the-agent-factory.md)
+owns the capability lifecycle, and the [template-to-operation mapping](../appendix/engineering-experience.md#from-template-to-authorized-operation)
+keeps definition, qualification, and activation distinct. Baseline economics
+through [Chapter 8](../02-design/08-economics-metrics-and-human-attention.md),
+including accepted outcomes, all-in cost, and human attention; pull-request
+volume alone is activity.
 
 **Scorers grade runs.** A **scorer** is a function from an input (agent runs
 and traces, including the human interactions around them: pull-request
@@ -57,37 +61,54 @@ chapter puts it: factory agents build, scorer agents grade, self-improvement
 agents suggest, humans review and merge factory-definition pull requests.
 
 **Benchmarks are configuration matrices.** A factory benchmark is not an A/B
-test on live traffic. It picks five to ten representative **reference
+test on live traffic. It starts with a bounded set of **reference
 tasks**, from scratch or from past runs, varies the configuration (the model
 mix or any other factory primitive), runs the variants in parallel, grades
 them with the same scorers, and produces a results matrix; an agent then
 synthesizes the matrix into a diff that updates the affected primitive, such
-as the routing rules. The loop closes when that diff is reviewed and merged
-like any other.
+as the routing rules. Review and merge preserve the proposed definition change;
+qualification and authorized activation determine whether a new Factory Version
+may serve work. Choose workload coverage and repetition according to the
+[evaluation program](../04-prove/29-evaluation-engineering.md), not a universal
+sample count.
 
-<!-- infographic: closed-loop-factory -->
-> **Infographic — The closed-loop factory.**
+> **FDLC interpretation — Qualification and authorization separate a definition revision from operation.**
 
 ```mermaid
-flowchart LR
-    Def["Factory definition as code<br/>manifest · agents · skills · MCPs · routing"] --> Build["Factory agents build"]
-    Build --> Runs["Runs and traces<br/>incl. PR comments, tracker input"]
-    Runs --> Score["Scorer agents grade<br/>sampling · cadence · batch"]
-    Score --> SI["Self-improvement agents<br/>find patterns, propose diffs"]
-    Bench["Benchmarks: reference tasks × configurations,<br/>graded by the same scorers"] --> SI
-    SI --> PR["Pull request against the factory definition"]
-    PR --> Human{"Human review"}
-    Human -->|"merge"| Def
-    Human -->|"reject"| SI
+flowchart TD
+    Def["Definition revision"] --> Qualify["Qualify candidate Version"]
+    Qualify -->|"pass"| Authorize{"Activation authorized?"}
+    Qualify -->|"fail"| Revise["Revise or reject"]
+    Authorize -->|"yes"| Operate["Operate pinned Version"]
+    Authorize -->|"no"| Hold["Hold candidate"]
+    Operate --> Observe["Observe and score outcomes"]
+    Observe --> Proposal["Propose bounded improvement"]
+    Proposal --> Review{"Revision approved?"}
+    Review -->|"reviewed merge"| Def
+    Review -->|"no"| Revise
+    Revise -->|"new proposal"| Proposal
 ```
 
 Read against this chapter, the pattern is the Factory Learning chain with a
 different surface: the scorer is the deterministic signal or the LLM-judge
-evaluator, the pattern-finding agent is discovery, the pull request is the
-Improvement Candidate, and the merge is promotion. What the pattern adds is
+evaluator, the pattern-finding agent is discovery, and the pull request carries
+an Improvement Candidate. Merging definition files publishes a revision; it is
+not evidence of qualification or authorization to activate it. The promotion
+decision remains the governed boundary in [Chapter 40](./40-governed-learning.md).
+What the pattern adds is
 the insistence that the factory itself be a diffable artifact, which is the
 precondition for an agent proposing a change to it, and the reminder that
 grading has a cost that must be sampled and scheduled like any other spend.
+
+Warp's [introductory course](https://www.warp.dev/learn/build-a-self-improving-software-factory/what-is-a-software-factory)
+uses inner and outer loops for the same distinction: deliver product work,
+then measure and propose improvements to the delivery system. Its [setup
+exercise](https://www.warp.dev/learn/build-a-self-improving-software-factory/set-up-your-factory)
+starts with self-improvement disabled. For an FDLC pilot, establish a measured
+baseline and protected evaluation before enabling improvement proposals;
+proposal generation and activation authority remain separate thereafter.
+Shared definitions and evidence can be operated locally, in hosted
+infrastructure, or across both; cloud hosting is an implementation choice.
 
 ### Eval-driven factory engineering
 
@@ -423,6 +444,47 @@ flowchart LR
     G -->|"promote"| W
     G -->|"new maintenance loop"| W
 ```
+
+### Template backports and running factory upgrades
+
+A **factory template** is a reusable authoring starting point for a Factory
+Definition: workflows, capability choices, context policies, verification
+requirements, and operating defaults. The informal **metafactory** pattern
+applies ordinary governed engineering to these designs and the factories
+derived from them. It adds no authority and is not a new FDLC lifecycle or a
+claim of recursive model improvement. Its output is a reviewable change to a
+defined factory artifact, followed by qualification and an authorized rollout.
+
+Separate template maintenance from running-factory maintenance. A template
+maintainer proposes reusable changes. A persistent factory maintenance role
+tracks one or more deployments, detects drift, and prepares upgrade
+WorkOrders. The accountable human or team owns suitability, budget, risk, and
+activation in both cases. The Agent Factory still supplies reusable
+capabilities; template management does not replace that supply chain.
+
+A useful correction in one factory may be **backported to a template** only
+after its scope is reviewed. Remove tenant data, secrets, local assumptions,
+and unnecessary permissions; determine which other workloads should benefit;
+then evaluate the proposed reusable version. Preserve the original change,
+reason, evidence, decision, and dependency identities. A local preference is
+not automatically an organization-wide default.
+
+| Change | Required distinction |
+| --- | --- |
+| Publish a revised template | New factories may select it; existing instances are not silently changed. |
+| Specialize a Factory Definition | Record the intended workload and local constraints; defaults are proposals until reviewed. |
+| Qualify a new Factory Version | Evaluate the exact composition and affected workload; qualification does not activate it. |
+| Upgrade a running factory | Name the current and target versions, compatibility checks, migration, rollout owner, observation window, and restoration plan. |
+| Handle in-flight work | Keep each Attempt pinned to its admitted composition; drain, finish, or explicitly cancel and re-admit work under policy. |
+| Restore a prior version | Check data and external-effect compatibility; reverting configuration alone may not undo a migration or publication. |
+
+Cross-factory requests use the [collaboration contract](../03-build/23-agent-and-loop-engineering.md#collaboration-contracts)
+and [event intake boundary](../05-operate/37-control-surfaces-event-contracts-and-storage.md#underneath-the-surface-triggers-are-intake-not-authority).
+The recipient authenticates the sender, deduplicates the request, checks its
+own authority, and admits a WorkOrder before acting. A mailbox receipt is not
+work acceptance, execution completion, or verified success. Start with one
+useful factory before building a portfolio-management system; reuse should
+reduce measured operating effort rather than multiply agent coordination.
 
 ### Scope: personal fit versus organizational truth
 
