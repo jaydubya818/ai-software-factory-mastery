@@ -4,7 +4,7 @@ part: improve
 chapter: 41
 summary: "How a factory defined as code harvests corrections, evaluates its own proposed changes, and promotes them by action class without self-authorizing."
 absorbs: [03-operating-model/03-governed-continuous-learning-and-recursive-improvement.md, 03-operating-model/05-compounding-engineering-and-human-attention.md, 06-ai-engineering/07-capability-learning-optimization-and-regression-control.md]
-infographics: [closed-loop-factory, correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder, factory-flywheel]
+infographics: [correction-to-skill, promotion-gate, autonomy-by-action-class, adaptation-ladder, factory-flywheel]
 ---
 
 # 41. Meta-loops and the closed-loop factory
@@ -72,8 +72,7 @@ may serve work. Choose workload coverage and repetition according to the
 [evaluation program](../04-prove/29-evaluation-engineering.md), not a universal
 sample count.
 
-<!-- infographic: closed-loop-factory -->
-> **Infographic — FDLC interpretation: qualification and authorization separate a definition revision from operation.**
+> **FDLC interpretation — Qualification and authorization separate a definition revision from operation.**
 
 ```mermaid
 flowchart TD
