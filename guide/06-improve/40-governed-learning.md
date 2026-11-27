@@ -200,6 +200,15 @@ Keep **observation → hypothesis → proposal → evaluated change → qualifie
 
 The factory’s own policies, acceptance criteria and authority boundaries are controlled artifacts. Changes need the same independent evaluation, qualification and appropriate authorization as application changes. Learning must never silently grant the factory permission to rewrite its controls.
 
+### Daily trace review
+
+A support agent can finish a run successfully while leaving the customer’s question unanswered. A small team can check for this during a daily review. The following example uses synthetic cases and adapts a published trace-review workflow. [Langfuse walkthrough](https://langfuse.com/blog/2026-11-24-simplest-software-factory-loop)
+
+1. **Sample the previous day.** Use authorized, redacted traces. Include flagged runs and a sample of apparently successful ones. Keep the version and a restricted trace reference with each case. If the sample shows nothing actionable, record that result and stop.
+2. **Ask for a judgment.** One customer requested an update on an existing bug and received only an acknowledgment. Another asked only for confirmation that the report arrived. The support owner marks the first response incomplete and the second acceptable. Those two decisions define the behavior the team wants.
+3. **Test a proposed fix.** Turn the redacted cases into regression tests. For a status request, expect the agent to report the verified issue state or explain that it is unknown. For a receipt request, an acknowledgment is sufficient. Run the current and proposed versions on the same cases and on held-out examples. Record the case-level differences, including any regressions.
+4. **Hand off the evidence.** Once the owner approves pursuing the fix, open a draft PR with the candidate revision and comparison. An independent reviewer checks the evidence. Release authorization remains with the designated owner. After rollout, sample new status requests to see whether customers receive a useful answer.
+
 ### Signals and source diagnosis
 
 A thumbs-up is not a learning signal; it is one bit of one person's mood at

@@ -926,6 +926,6 @@ precision, human attention, merge latency, and change-failure outcomes.
   review."
 - Ben Holmes, [@BHolmesDev](https://x.com/BHolmesDev/status/2118807366250721741)
   (Nov 6, 2026): merge-risk skill (alignment, impact, verification, rollback
-  cost, error detection); skill `warpdotdev/common-skills` merge-risk.
+  cost, error detection). [Read Warp’s /merge-risk skill](https://github.com/warpdotdev/common-skills/blob/8792394ff1b655e0af451b8fabb68ef0cfcbd208/.agents/skills/merge-risk/SKILL.md).
 - @warpdotdev, [@warpdotdev](https://x.com/warpdotdev/status/2113438310916145493)
   (Oct 23, 2026): screenshot verification as a prerequisite for review.
