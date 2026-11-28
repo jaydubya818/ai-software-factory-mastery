@@ -4,3 +4,7 @@ recordings/
 raw-evidence/
 .vercel
 node_modules
+
+# Added by daily-repo-improvement
+.env
+.env.local
